@@ -3,7 +3,7 @@ const CACHE_NAME = 'lolme-static-v1';
 const STATIC_ASSETS = [
   '/', // لو تحتاج
   '/index.html',
-  '/css/global.css',
+  '/css/style.css',
   '/js/meme-editor.js',
   '/icons/icon-192.png',
   '/icons/icon-512.png',

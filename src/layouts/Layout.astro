@@ -1,7 +1,8 @@
 ---
 // src/layouts/Layout.astro
 import Footer from "../components/Footer.astro";
-const { title = "LOLME - العب واتهزر" } = Astro.props;
+const { title = "", description } = Astro.props;
+import "../../css/style.css";
 ---
 
 <html lang="ar" dir="rtl">
@@ -9,35 +10,58 @@ const { title = "LOLME - العب واتهزر" } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/png" href="/favicon64.png" />
     <meta name="theme-color" content="#1f8ef1" />
     <!-- ضروري HTTPS علشان يظهر زر التثبيت -->
 
-  <script type="module" src="/js/register-sw.js"></script>
-    
+    <script type="module" src="/js/register-sw.js"></script>
+
     <!-- خطوط جوجل -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Changa&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Impact&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Changa&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Impact&display=swap" rel="stylesheet" />
 
     <title>{title}</title>
-    <link rel="stylesheet" href="/global.css" />
+    <meta name="description" content={description} />
+
+    <!-- <link rel="stylesheet" href="/global.css" /> -->
   </head>
   <body>
     <!-- <div class="ad-space">
       مساحتك الإعلانية هنا
     </div> -->
-    
-    <slot />
 
-    <div class="ad-space">
-      مساحتك الإعلانية هنا
-    </div>
-    
+    <!-- <slot /> -->
+    <main>
+      <!-- لو الصفحة بتحتوي على title/description -->
+      {
+        Astro.props.title && (
+          <>
+            <header class="page-header">
+              <nav class="header-nav">
+                <a href="/">🏠 الرئيسية</a>
+                <span class="divider">|</span>
+                <a href="/articles">📚 المقالات</a>
+              {/* <img src="/favicon.png" alt="LOLME" class="logo" /> */}
+              </nav>
+            </header>
+            <h1>{Astro.props.title}</h1>
+            {Astro.props.description && (
+              <p class="description">{Astro.props.description}</p>
+            )}
+          </>
+        )
+      }
+
+      <!-- محتوى الصفحة/المقال -->
+      <slot />
+    </main>
+    <div class="ad-space">مساحتك الإعلانية هنا</div>
+
     <Footer />
   </body>
 </html>

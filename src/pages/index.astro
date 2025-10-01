@@ -3,18 +3,18 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="LOLME - العب واتهزر">
-  <header style="text-align:center; padding:2rem;">
-    <h1>🤣 LOLME</h1>
+<Layout title="🤣 LOLME">
+  <section style="text-align:center; padding: 0px 0.1rem ;">
+    <!-- <h1>🤣 LOLME</h1> -->
     <p>3 أدوات ترفيهية هايفة ومجنونة 🕺🔥</p>
     <p>
       LOLME هو مكانك للضحك والهزار! ارفع صورة، اكتب ميمز، وروّست أصحابك بطريقة
       مرحة 😎
     </p>
 
-    <button id="install-btn" class="btn" style="background:#f39c12;">⬇️ حمّل LOLME كتطبيق</button>
+    <button id="install-btn" class="appbtn" style="background:#f39c12;">⬇️ حمّل LOLME كتطبيق</button>
 
-  </header>
+  </section>
 
   <div class="imojidiv">
     <div class="emoji" style=" font-size:2rem;">🤣</div>
@@ -26,14 +26,14 @@ import Layout from "../layouts/Layout.astro";
     <div class="emoji" style=" font-size:2rem;">🥳</div>
   </div>
 
-  <main
-    style="display:flex; flex-direction:column; align-items:center; gap:1rem; "
-  >
+  <main style="display:flex; flex-direction:column; align-items:center; gap:1rem; " >
     <a href="/meme" class="btn">📸 اعمل ميميز دلوقتي</a>
     <a href="/roast" class="btn">🔥 روّست صاحبك</a>
     <a href="/mashup" class="btn">🎭 اعمل مشقب جنان</a>
   </main>
-  <script>
+  <script type="module" src="/js/install-btn.js"></script>
+
+  <!-- <script>
     let deferredPrompt;
     const installBtn = document.getElementById("install-btn");
 
@@ -55,5 +55,5 @@ import Layout from "../layouts/Layout.astro";
         alert("متصفحك لا يدعم تثبيت التطبيقات. استخدم Chrome على الموبايل!");
       }
     });
-  </script>
+  </script> -->
 </Layout>

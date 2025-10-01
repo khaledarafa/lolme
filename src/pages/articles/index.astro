@@ -1,0 +1,40 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="المقالات" description="أحدث مقالات الميمز والترفيه">
+    <ul class="articles-list">
+      <li><a href="/articles/history">تاريخ الميمز وانتشارها</a></li>
+      <li><a href="/articles/top-memes">أشهر الميمز 2025</a></li>
+      <li><a href="/articles/how-to-meme">إزاي تعمل ميم مضحك</a></li>
+    </ul>
+  </Layout>
+  
+  <style>
+    .articles-list {
+      list-style: none;
+      padding: 2rem;        /* padding للصفحة */
+      margin: 0 auto;
+      max-width: 720px;     /* عشان تكون في النص */
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;            /* مسافة بين العناصر */
+    }
+    
+    .articles-list li a {
+      display: block;
+      padding: 1rem 1.5rem;      /* padding جوه كل بطاقة */
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+      text-decoration: none;
+      color: #1f8ef1;
+      font-weight: bold;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    
+    .articles-list li a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    </style>
