@@ -1,0 +1,20 @@
+---
+// src/components/Footer.astro
+---
+
+<footer class="site-footer">
+  <div class="footer-content">
+    <form id="feedback-form" action="https://formspree.io/f/xjkawjzw" method="POST" >
+      <label for="feedback">شاركنا رأيك أو اقتراحك:</label>
+      <textarea name="message" id="feedback" placeholder="اكتب رسالتك هنا..." required></textarea>
+      <button type="submit">إرسال</button>
+    </form>
+  </div>
+  <p>
+    <a href="/">الرئيسية</a> |
+    <a href="/privacy">سياسة الخصوصية</a> |
+    <a href="/terms">الشروط والأحكام</a>
+  </p>
+  <p>&copy; {new Date().getFullYear()} LOLME. جميع الحقوق محفوظة.</p>
+  <p>صنع بحب ❤️ بواسطة فريق LOLME</p>
+</footer>

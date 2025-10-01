@@ -1,0 +1,351 @@
+/* url(global.css) */
+/* ======== Base ======== */
+body {
+  font-family: "Tajawal", system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #fefefe;
+  color: #333;
+}
+
+/* ======== Header ======== */
+h1 {
+  font-size: 2rem;
+  text-align: center;
+  font-weight: 700;
+  margin: 1rem 0 1rem 0;
+  line-height: 1.2;
+}
+
+/* ======== Container ======== */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 1rem;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ======== Canvas ======== */
+canvas {
+  touch-action: none;
+}
+
+canvas#memeCanvas {
+  width: 100% !important;
+  height: auto !important;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f6f6f6;
+}
+
+/* ======== Form Controls ======== */
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+select,
+input[type="file"],
+textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: "Tajawal", sans-serif;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+/* ======== Buttons ======== */
+.btn {
+  display: inline-block;
+  padding: 10px;
+  background: #555;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+.btn-primary {
+  background: #3498db;
+}
+
+.btn-success {
+  background: #2ecc71;
+}
+
+.btn-purple {
+  background: #9b59b6;
+}
+
+.btn-danger {
+  background: #ff6b6b;
+}
+
+/* ======== Button Groups ======== */
+.btn-group {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+
+/* ======== Layers Container ======== */
+#layers-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* ======== Textarea inside layer ======== */
+.layer-text {
+  width: 100%;
+  min-height: 50px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  font-family: "Tajawal", sans-serif;
+  font-size: 0.95rem;
+}
+
+/* ======== Info Text ======== */
+.info-text {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #666;
+  text-align: center;
+}
+
+/* ======== Fonts ======== */
+.font-btn {
+  padding: 4px 8px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f9f9f9;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.font-btn:hover {
+  background: #eee;
+}
+.font-btn.active {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+/* ======== container ======== */
+/* تعديل ال container للصفحات النصية */
+.text-container {
+  display: block; /* بدل flex */
+  max-width: 700px; /* اعرض معقول للنصوص */
+  margin: 2rem auto; /* يسيطر على الهامش من فوق وتحت */
+  padding: 0 1rem;
+  line-height: 1.6;
+  text-align: right; /* للغة العربية */
+}
+
+.text-container h1,
+.text-container h2 {
+  text-align: right;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.text-container p {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  #controls-container {
+    max-height: 50vh; /* تقريبياً نص ارتفاع الشاشة */
+    width: 100%;
+    overflow-y: auto;
+    text-align: right;
+    justify-items: center;
+    margin: auto;
+  }
+
+  #font-buttons {
+    display: flex;
+    flex-wrap: nowrap; /* يمنع الالتفاف */
+    overflow-x: auto; /* scroll أفقي */
+    gap: 6px;
+    padding-bottom: 4px;
+  }
+
+  #font-buttons .font-btn {
+    flex: 0 0 auto; /* يخلي كل زر حجمه ثابت */
+  }
+
+  /* خلي الـ container الرئيسي flex column على الموبايل */
+  .main-container {
+    flex-direction: column;
+  }
+
+}
+
+
+/* ======== emoji ======== */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.imojidiv {
+  display: flex;
+  justify-content: center;
+  gap: 15px; /* مسافة بين الإيموجيات */
+  height: 150px;
+  align-items: center;
+  margin-top: -50px;
+  /* margin-bottom: -60px; */
+  overflow: hidden;
+  position: relative;
+}
+
+.emoji {
+  font-size: 3rem;
+  display: inline-block;
+  animation: float 3s infinite ease-in-out;
+}
+
+.emoji:nth-child(1) {
+  animation-delay: 0s;
+}
+.emoji:nth-child(2) {
+  animation-delay: 0.5s;
+}
+.emoji:nth-child(3) {
+  animation-delay: 1s;
+}
+.emoji:nth-child(4) {
+  animation-delay: 1.5s;
+}
+.emoji:nth-child(5) {
+  animation-delay: 2s;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-25px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* ======== Responsive Ads ======== */
+.ads-container {
+  width: 100%;
+  text-align: center;
+  margin-top: 12px;
+}
+.ad-space {
+  width: 100%;
+  max-width: 728px;
+  height: 90px; /* حجم إعلان قياسي */
+  margin: 20px auto;
+  margin-bottom: 0px;
+  background: #f1f1f1;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  color: #555;
+  text-align: center;
+}
+
+/* ======== Footer ======== */
+.site-footer {
+  background: #222;
+  color: #fff;
+  padding: 30px 20px;
+  text-align: center;
+  font-size: 0.95rem;
+  border-top: 1px solid #444;
+  margin-top: 40px;
+}
+
+.site-footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
+
+.site-footer .footer-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.site-footer form {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.site-footer textarea {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  resize: vertical;
+  min-height: 60px;
+  font-family: "Tajawal", sans-serif;
+  font-size: 0.95rem;
+}
+
+.site-footer button {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #3498db;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+
+.site-footer button:hover {
+  opacity: 0.85;
+}
+/* Responsive */
+@media (max-width: 500px) {
+  .site-footer .footer-content {
+    padding: 0 1rem;
+  }
+}

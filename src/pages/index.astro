@@ -1,12 +1,59 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// src/pages/index.astro
+import Layout from "../layouts/Layout.astro";
 ---
--
 
-<Layout>
-	<Welcome />
+<Layout title="LOLME - العب واتهزر">
+  <header style="text-align:center; padding:2rem;">
+    <h1>🤣 LOLME</h1>
+    <p>3 أدوات ترفيهية هايفة ومجنونة 🕺🔥</p>
+    <p>
+      LOLME هو مكانك للضحك والهزار! ارفع صورة، اكتب ميمز، وروّست أصحابك بطريقة
+      مرحة 😎
+    </p>
+
+    <button id="install-btn" class="btn" style="background:#f39c12;">⬇️ حمّل LOLME كتطبيق</button>
+
+  </header>
+
+  <div class="imojidiv">
+    <div class="emoji" style=" font-size:2rem;">🤣</div>
+    <div class="emoji" style="left:20%;">🤣</div>
+    <div class="emoji" style="left:35%;">😂</div>
+    <div class="emoji" style="left:50%;">😎</div>
+    <div class="emoji" style="left:65%;">🥳</div>
+    <div class="emoji" style="left:80%;">🤪</div>
+    <div class="emoji" style=" font-size:2rem;">🥳</div>
+  </div>
+
+  <main
+    style="display:flex; flex-direction:column; align-items:center; gap:1rem; "
+  >
+    <a href="/meme" class="btn">📸 اعمل ميميز دلوقتي</a>
+    <a href="/roast" class="btn">🔥 روّست صاحبك</a>
+    <a href="/mashup" class="btn">🎭 اعمل مشقب جنان</a>
+  </main>
+  <script>
+    let deferredPrompt;
+    const installBtn = document.getElementById("install-btn");
+
+    // حاول تستقبل الـ prompt
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    installBtn.addEventListener("click", async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if (choice.outcome === "accepted") {
+          console.log("تم تثبيت التطبيق 😎");
+        }
+        deferredPrompt = null;
+      } else {
+        alert("متصفحك لا يدعم تثبيت التطبيقات. استخدم Chrome على الموبايل!");
+      }
+    });
+  </script>
 </Layout>
