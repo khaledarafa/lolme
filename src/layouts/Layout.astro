@@ -37,26 +37,38 @@ import "../../css/style.css";
 
     <!-- <slot /> -->
     <main>
-      <!-- لو الصفحة بتحتوي على title/description -->
-      {
-        Astro.props.title && (
-          <>
-            <header class="page-header">
-              <nav class="header-nav">
-                <a href="/">🏠 الرئيسية</a>
-                <span class="divider">|</span>
-                <a href="/articles">📚 المقالات</a>
-              {/* <img src="/favicon.png" alt="LOLME" class="logo" /> */}
-              </nav>
-            </header>
-            <h1>{Astro.props.title}</h1>
-            {Astro.props.description && (
-              <p class="description">{Astro.props.description}</p>
-            )}
-          </>
-        )
-      }
+  <!-- الهيدر الثابت -->
+  <header class="page-header" style="
+  width: 100%; 
+  display: flex; 
+  align-items: center; 
+  justify-content: 
+  space-around; 
+  padding: 0.0rem 1rem; 
+  background: #00000000; 
+  border-radius: 0 0 8px 8px; 
+  box-sizing: border-box; 
+  margin: auto; 
+  z-index: 999; ">
+    <nav class="header-nav">
+      <a href="/">🏠 الرئيسية</a>
+      <span class="divider">|</span>
+      <a href="/articles">📚 المقالات</a>
+    </nav>
+    <div class="header-left">
+      <img src="/favicon.png" alt="LOLME" class="logo" style="margin-bottom: -5px;"/>
+    </div>
+  </header>
 
+  <!-- العنوان الرئيسي -->
+  {Astro.props.title && (
+    <div class="page-title">
+      <h1>{Astro.props.title}</h1>
+      {Astro.props.description && (
+        <p class="description">{Astro.props.description}</p>
+      )}
+    </div>
+  )}
       <!-- محتوى الصفحة/المقال -->
       <slot />
     </main>

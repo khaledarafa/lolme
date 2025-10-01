@@ -6,12 +6,12 @@ import Layout from "../layouts/Layout.astro";
 <Layout title="مولد الميميز - LOLME">
   <!-- <h1 style="text-align:center; margin-bottom:1rem;">📸 مولد الميميز</h1> -->
   
-  <div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:0.0rem; padding:1rem; align-items:flex-start;" >
+  <div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:0.0rem; padding: 0 0.5rem; align-items:flex-start;" >
     
         <!-- الكانفاس -->
-        <div style="flex:1 1 480px; min-width:300px; text-align:center;">
+        <div style="flex:2 1 600px; min-width:300px;">
           <div style="border:1px solid #ddd; display:inline-block; background:#f6f6f6; width:100%;" >
-            <canvas id="memeCanvas"></canvas>
+            <canvas id="memeCanvas" style="display: flex;"></canvas>
           </div>
     
           <!-- إعلان AdSense responsive -->
@@ -26,8 +26,8 @@ import Layout from "../layouts/Layout.astro";
           </div>
         </div>
     <!-- الأدوات -->
-    <div id="controls-container">
-      <div style="flex:1 1 320px; min-width:280px;">
+    <div id="controls-container" style="flex:1 1 400px; min-width:320px;">
+      <div style="flex:1 1 320px; min-width:280px; padding: 0px 5px;">
         <label
           >اختر صورة جاهزة:
           <select id="preset-select" style="width:100%; margin-top:0.4rem;">
@@ -38,18 +38,14 @@ import Layout from "../layouts/Layout.astro";
         </label>
 
         <label><input type="checkbox" id="darkOverlay" /> طبقة غامقة</label>
-        <label
-          ><input type="checkbox" id="blurBackground" /> ضبابية الخلفية</label
-        >
+        <label ><input type="checkbox" id="blurBackground" /> ضبابية الخلفية</label >
 
         <label style="display:block; margin-top:0.6rem;">
           أو ارفع صورة:
           <input type="file" id="upload-image" accept="image/*" />
         </label>
 
-        <label for="category" style="margin-top:0.6rem;"
-          >🎯 اختر نوع الجمل:</label
-        >
+        <label for="category" style="margin-top:0.6rem;" >🎯 اختر نوع الجمل:</label >
         <select id="category" style="width:100%; margin-top:0.4rem;">
           <option value="any">🎲 عشوائي من أي حاجة</option>
         </select>
@@ -58,61 +54,26 @@ import Layout from "../layouts/Layout.astro";
 
         <div style="display:flex; gap:0.5rem; align-items:center;">
           <button id="add-text" class="btn" style="flex:1;">➕ إضافة نص</button>
-          <button
-            id="random-meme"
-            class="btn"
-            style="flex:1; background:#3498db;">🎲 عشوائي</button
-          >
+          <button id="random-meme" class="btn" style="flex:1; background:#3498db;">🎲 عشوائي</button >
         </div>
 
         <div id="layers-container" style="margin-top:12px;"></div>
 
         <hr style="margin:12px 0;" />
 
-        <div
-          id="font-buttons"
-          style="display:flex; flex-wrap:wrap; gap:6px; margin:10px 0;"
-        >
-          <button
-            class="font-btn"
-            data-font="Tajawal"
-            style="font-family:Tajawal;">Tajawal</button
-          >
-          <button class="font-btn" data-font="Amiri" style="font-family:Amiri;"
-            >Amiri</button
-          >
-          <button class="font-btn" data-font="Cairo" style="font-family:Cairo;"
-            >Cairo</button
-          >
-          <button
-            class="font-btn"
-            data-font="Changa"
-            style="font-family:Changa;">Changa</button
-          >
-          <button
-            class="font-btn"
-            data-font="Reem Kufi"
-            style="font-family:'Reem Kufi';">Reem</button
-          >
-          <button class="font-btn" data-font="Anton" style="font-family:Anton;"
-            >Anton</button
-          >
-          <button
-            class="font-btn"
-            data-font="Impact"
-            style="font-family:Impact;">Impact</button
-          >
+        <div id="font-buttons" style="display:flex; flex-wrap:wrap; gap:6px; margin:10px 0;" >
+          <button class="font-btn" data-font="Tajawal" style="font-family:Tajawal;">Tajawal</button >
+          <button class="font-btn" data-font="Amiri" style="font-family:Amiri;" >Amiri</button >
+          <button class="font-btn" data-font="Cairo" style="font-family:Cairo;" >Cairo</button >
+          <button class="font-btn" data-font="Changa" style="font-family:Changa;">Changa</button >
+          <button class="font-btn" data-font="Reem Kufi" style="font-family:'Reem Kufi';">Reem</button >
+          <button class="font-btn" data-font="Anton" style="font-family:Anton;" >Anton</button >
+          <button class="font-btn" data-font="Impact" style="font-family:Impact;">Impact</button >
         </div>
 
         <div style="display:flex; gap:0.6rem;">
-          <button
-            id="download-btn"
-            class="btn"
-            style="flex:1; background:#2ecc71;">⬇️ تحميل</button
-          >
-          <button id="share-btn" class="btn" style="flex:1; background:#9b59b6;"
-            >🔗 مشاركة</button
-          >
+          <button id="download-btn" class="btn" style="flex:1; background:#2ecc71;">⬇️ تحميل</button >
+          <button id="share-btn" class="btn" style="flex:1; background:#9b59b6;" >🔗 مشاركة</button >
         </div>
 
         <div style="margin-top:8px; font-size:0.9rem; color:#666;">

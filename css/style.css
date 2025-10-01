@@ -1,15 +1,15 @@
 /* url(style.css) */
 /* ======== Base ======== */
-html {
+/* html {
   box-sizing: border-box;
   scroll-behavior: smooth;
   padding: 0px;
   margin: 0px;
-}
+} */
 body {
   font-family: "Tajawal", system-ui, sans-serif;
-  /* margin: 20px auto; */
-  /* padding: 1rem; */
+  margin: 20px auto;
+  padding: 1rem;
   background: #fefefe;
   color: #333;
 }
@@ -19,20 +19,21 @@ h1 {
   font-size: 2rem;
   text-align: center;
   font-weight: 700;
-  margin: 0.5rem 0;
+  margin: 0.2rem 0;
   /* line-height: 1.2; */
 }
-.page-header {
+/* .page-header {
+  position: fixed;       
+  width: 50%;     
+  display: flex;         
   align-items: center;
-  justify-content: space-between; /* اللوجو على الشمال، اللينكات على اليمين */
-  width: 100%;                    /* الهيدر يشغل العرض كله */
-  padding: 0.5rem 2rem;           /* padding داخلي للهواء حول العناصر */
+  justify-content: space-between;
+  padding: 0.5rem 2rem;
   background: #f0f4f8;
-  border-radius: 8px;
-  box-sizing: border-box;          /* يخلي padding يحسب مع العرض */
-  margin: 0.1rem 0;
-  display: inline-block;
-}
+  border-radius: 0 0 8px 8px;
+  box-sizing: border-box;
+  z-index: 999;     
+} */
 
 .logo {
   height: 40px;
@@ -40,7 +41,7 @@ h1 {
 }
 
 .header-nav {
-  display: inline-block;
+  display: flex;
   align-items: center;
   gap: 0.5rem;
 }
@@ -60,6 +61,11 @@ h1 {
   color: #888;
 }
 
+/* عشان محتوى الصفحة مايخشش على الهيدر */
+body main {
+  padding-top: 60px;
+}
+
 /* ======== Container ======== */
 .container {
   display: flex;
@@ -75,6 +81,7 @@ h1 {
 /* ======== Canvas ======== */
 canvas {
   touch-action: none;
+  /* touch-action: pan-y; */
 }
 
 canvas#memeCanvas {
@@ -83,6 +90,7 @@ canvas#memeCanvas {
   border: 1px solid #ddd;
   border-radius: 8px;
   background: #f6f6f6;
+  display: flex;
 }
 
 /* ======== Form Controls ======== */
