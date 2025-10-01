@@ -62,9 +62,9 @@ h1 {
 }
 
 /* عشان محتوى الصفحة مايخشش على الهيدر */
-body main {
+/* body main {
   padding-top: 60px;
-}
+} */
 
 /* ======== Container ======== */
 .container {
