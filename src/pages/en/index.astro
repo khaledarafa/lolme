@@ -1,0 +1,36 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="🤣 LOLME">
+  <section style="text-align:center; padding: 0px 0.1rem;">
+    <p style="margin: 0px;">3 Fun & Crazy Entertainment Tools 🕺🔥</p>
+    <p>
+      LOLME is your place for fun and laughter! Upload a photo, create memes,
+      and roast your friends in a hilarious way 😎
+    </p>
+
+    <button id="install-btn" class="appbtn" style="background:#f39c12;">
+      ⬇️ Install LOLME as an App
+    </button>
+  </section>
+
+  <div class="imojidiv">
+    <div class="emoji" style="font-size:2rem;">🤣</div>
+    <div class="emoji" style="left:20%;">🤣</div>
+    <div class="emoji" style="left:35%;">😂</div>
+    <div class="emoji" style="left:50%;">😎</div>
+    <div class="emoji" style="left:65%;">🥳</div>
+    <div class="emoji" style="left:80%;">🤪</div>
+    <div class="emoji" style="font-size:2rem;">🥳</div>
+  </div>
+
+  <main style="display:flex; flex-direction:column; align-items:center; gap:1rem;">
+    <button id="open-meme" class="btn">📸 Create Memes Now</button>
+    <a href="/roast-en" class="btn">🔥 Roast Your Friend</a>
+    <a href="/mashup-en" class="btn">🎭 Make a Crazy Mashup</a>
+  </main>
+
+  <script type="module" src="/js/install-btn.js"></script>
+  <script type="module" src="/js/open-meme.js"></script>
+</Layout>

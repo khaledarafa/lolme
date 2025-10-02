@@ -27,33 +27,12 @@ import Layout from "../layouts/Layout.astro";
   </div>
 
   <main style="display:flex; flex-direction:column; align-items:center; gap:1rem; " >
-    <a href="/meme" class="btn">📸 اعمل ميميز دلوقتي</a>
+    <!-- <a href="/meme" class="btn">📸 اعمل ميميز دلوقتي</a> -->
+    <button id="open-meme" class="btn">📸 اعمل ميميز دلوقتي</button>
     <a href="/roast" class="btn">🔥 روّست صاحبك</a>
     <a href="/mashup" class="btn">🎭 اعمل مشقب جنان</a>
   </main>
   <script type="module" src="/js/install-btn.js"></script>
+  <script type="module" src="/js/open-meme.js"></script>
 
-  <!-- <script>
-    let deferredPrompt;
-    const installBtn = document.getElementById("install-btn");
-
-    // حاول تستقبل الـ prompt
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-    });
-
-    installBtn.addEventListener("click", async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const choice = await deferredPrompt.userChoice;
-        if (choice.outcome === "accepted") {
-          console.log("تم تثبيت التطبيق 😎");
-        }
-        deferredPrompt = null;
-      } else {
-        alert("متصفحك لا يدعم تثبيت التطبيقات. استخدم Chrome على الموبايل!");
-      }
-    });
-  </script> -->
 </Layout>

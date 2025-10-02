@@ -1,11 +1,12 @@
-// public/js/meme-editor.js كومبيوتر
+// public/js/mememob.js موبايل
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => Array.from(document.querySelectorAll(s));
 
 let applyOverlay = false;
 let applyBlur = false;
-
 let memeTexts = null;
+
+// fetch النصوص
 fetch("/texts.json")
   .then((r) => r.json())
   .then((data) => {
@@ -18,28 +19,27 @@ fetch("/texts.json")
       catSel.appendChild(o);
     });
   });
-  
-  const fonts = [
-    "'Tajawal', sans-serif",
-    "'Amiri', serif",
-    "'Cairo', sans-serif",
-    "'Changa', sans-serif",
-    "'Reem Kufi', sans-serif",
-    "'Anton', sans-serif",
-    "'Impact', sans-serif",
-  ];
-  
-const canvas = $("#memeCanvas"), ctx = canvas.getContext("2d");
-const presetSelect = $("#preset-select"), uploadInput = $("#upload-image");
-const addTextBtn = $("#add-text"), layersContainer = $("#layers-container");
-const downloadBtn = $("#download-btn"), shareBtn = $("#share-btn");
+
+const canvas = $("#memeCanvas");
+const ctx = canvas.getContext("2d");
+const presetSelect = $("#preset-select");
+const uploadInput = $("#upload-image");
+const addTextBtn = $("#add-text");
+const layersContainer = $("#layers-container");
+const downloadBtn = $("#download-btn");
+const shareBtn = $("#share-btn");
 const randomMemeBtn = $("#random-meme");
+
+const drawer = $("#drawer");
+const openDrawerBtn = $("#open-drawer");
+const closeDrawerBtn = $("#close-drawer");
 
 let img = null,
   layers = [],
   selectedIndex = null,
   isDragging = false,
   dragOffset = { x: 0, y: 0 };
+
 const DEFAULTS = {
   fontFamily: "Tajawal",
   fontSize: 48,
@@ -51,13 +51,21 @@ const DEFAULTS = {
 };
 
 async function ensureFontsLoaded() {
-  const fontsToLoad = ["Tajawal","Amiri","Cairo","Changa","Reem Kufi","Anton","Impact"];
-  await Promise.all(
-    fontsToLoad.map(f => document.fonts.load(`16px "${f}"`))
-  );
-  console.log("All fonts loaded");
+  const fontsToLoad = [
+    "Tajawal",
+    "Amiri",
+    "Cairo",
+    "Changa",
+    "Reem Kufi",
+    "Anton",
+    "Impact",
+  ];
+  await Promise.all(fontsToLoad.map((f) => document.fonts.load(`16px "${f}"`)));
 }
 
+// =========================
+// canvas + draw functions
+// =========================
 function loadImage(src) {
   const i = new Image();
   i.crossOrigin = "anonymous";
@@ -68,9 +76,10 @@ function loadImage(src) {
   };
   i.src = src;
 }
+
 function fitCanvas() {
   if (!img) return;
-  const maxW = 900;
+  const maxW = window.innerWidth - 20;
   const ratio = Math.min(1, maxW / img.width);
   canvas.width = Math.round(img.width * ratio);
   canvas.height = Math.round(img.height * ratio);
@@ -78,10 +87,8 @@ function fitCanvas() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (!img) return; // هنا وقف من غير ما يرسم لو مفيش صورة
-  if (applyBlur) {
-    ctx.filter = "blur(5px)";
-  }
+  if (!img) return;
+  if (applyBlur) ctx.filter = "blur(5px)";
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   ctx.filter = "none";
 
@@ -102,15 +109,18 @@ function drawLayer(layer, isSel) {
   ctx.strokeStyle = layer.strokeColor;
   ctx.lineWidth = layer.strokeWidth;
   ctx.textBaseline = "top";
+
   const lines = wrapText(layer.text, canvas.width - 20, ctx);
   const lineH = layer.fontSize * 1.05;
   const totalH = lines.length * lineH;
   let startY = layer.y - (layer.anchor === "center" ? totalH / 2 : 0);
+
   lines.forEach((line, i) => {
     if (layer.strokeWidth > 0)
       ctx.strokeText(line, layer.x, startY + i * lineH);
     ctx.fillText(line, layer.x, startY + i * lineH);
   });
+
   if (isSel) {
     let maxW = 0;
     lines.forEach((l) => {
@@ -126,6 +136,7 @@ function drawLayer(layer, isSel) {
     ctx.lineWidth = 2;
     ctx.strokeRect(bx - 6, startY - 6, maxW + 12, totalH + 12);
   }
+
   ctx.restore();
 }
 
@@ -148,12 +159,21 @@ function wrapText(text, maxW, ctx) {
   return out;
 }
 
-function addLayer(text = "نص هنا") {
+// =========================
+// Layers
+// =========================
+function addLayer(
+  text = "نص هنا",
+  fontSize = DEFAULTS.fontSize,
+  x = null,
+  y = null
+) {
   layers.push({
     text,
-    x: canvas.width / 2,
-    y: canvas.height / 2,
+    x: x !== null ? x : canvas.width / 2,
+    y: y !== null ? y : canvas.height / 2,
     ...DEFAULTS,
+    fontSize,
     anchor: "center",
   });
   selectedIndex = layers.length - 1;
@@ -162,6 +182,7 @@ function addLayer(text = "نص هنا") {
 }
 
 function rebuildLayersUI() {
+  if (!layersContainer) return;
   layersContainer.innerHTML = "";
   layers.forEach((layer, idx) => {
     const div = document.createElement("div");
@@ -198,6 +219,7 @@ function rebuildLayersUI() {
     layersContainer.appendChild(div);
   });
 
+  // event listeners
   $$(".select-layer").forEach((b) =>
     b.addEventListener("click", (e) => {
       selectedIndex = +e.currentTarget.dataset.idx;
@@ -238,49 +260,37 @@ function rebuildLayersUI() {
   );
 }
 
-// منع التكبير بالـ double-tap على الموبايل
-canvas.addEventListener(
-  "touchstart",
-  (e) => {
-    if (e.touches.length === 1) {
-      e.preventDefault(); // يمنع التكبير
-      const touch = e.touches[0];
-      const fakeEvent = {
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-        pointerId: "touch",
-      };
-      canvas.dispatchEvent(new PointerEvent("pointerdown", fakeEvent));
-    }
-  },
-  { passive: false }
-);
+// =========================
+// drawer open/close
+// =========================
+openDrawerBtn.addEventListener("click", () => {
+  if (drawer.style.display === "flex") {
+    drawer.style.display = "none"; // لو مفتوح، يقفل
+  } else {
+    drawer.style.display = "flex"; // لو مغلق، يفتح
+    isDragging = false; // تمنع السحب أثناء فتح الأدوات
+  }
+});
 
-// خليك على pointer events فقط
-canvas.style.touchAction = "none"; // يمنع السحب بتاع الصفحة
+// =========================
+// Canvas Pointer Events
+// =========================
+canvas.style.touchAction = "none";
 
 canvas.addEventListener("pointerdown", (e) => {
+  //   if (drawer.style.display === "flex") return; // drawer مفتوح، تجاهل اللمس
   e.preventDefault();
-
-  // blur أي input مفتوح (عشان نرجع للكانفاس)
   const active = document.activeElement;
-  if (active && (active.tagName === "TEXTAREA" || active.tagName === "INPUT")) {
+  if (active && (active.tagName === "TEXTAREA" || active.tagName === "INPUT"))
     active.blur();
-  }
-
   const pos = toCanvasPos(e);
   let clickedLayer = null;
-
-  // دور على النص اللي اتضغط عليه (من فوق لتحت)
-  for (let i = layers.length - 1; i >= 0; i--) {
+  for (let i = layers.length - 1; i >= 0; i--)
     if (isPointInLayer(pos, layers[i])) {
       clickedLayer = i;
       break;
     }
-  }
-
   if (clickedLayer !== null) {
-    // ✅ أي لمسة على النص تحدده على طول
     selectedIndex = clickedLayer;
     isDragging = true;
     dragOffset = {
@@ -288,13 +298,10 @@ canvas.addEventListener("pointerdown", (e) => {
       y: pos.y - layers[clickedLayer].y,
     };
   } else {
-    // ✅ الضغط في مكان فاضي هو اللي يلغي التحديد
     selectedIndex = null;
     isDragging = false;
   }
-
   draw();
-  document.documentElement.style.userSelect = "none";
   canvas.setPointerCapture(e.pointerId);
 });
 
@@ -302,21 +309,21 @@ canvas.addEventListener("pointermove", (e) => {
   if (!isDragging || selectedIndex === null) return;
   e.preventDefault();
   const pos = toCanvasPos(e);
-  const layer = layers[selectedIndex];
-  layer.x = pos.x - dragOffset.x;
-  layer.y = pos.y - dragOffset.y;
+  layers[selectedIndex].x = pos.x - dragOffset.x;
+  layers[selectedIndex].y = pos.y - dragOffset.y;
   draw();
 });
 
-canvas.addEventListener("pointerup", (e) => {
+canvas.addEventListener("pointerup", stopDragging);
+canvas.addEventListener("pointercancel", stopDragging);
+
+function stopDragging(e) {
   isDragging = false;
-  document.documentElement.style.userSelect = "";
   try {
     canvas.releasePointerCapture(e.pointerId);
   } catch {}
-});
+}
 
-canvas.addEventListener("pointercancel", stopDragging);
 function toCanvasPos(e) {
   const r = canvas.getBoundingClientRect();
   return {
@@ -324,28 +331,16 @@ function toCanvasPos(e) {
     y: (e.clientY - r.top) * (canvas.height / r.height),
   };
 }
-function stopDragging(e) {
-  if (!isDragging) return;
-  isDragging = false;
-  try {
-    canvas.releasePointerCapture(e.pointerId);
-  } catch (err) {}
-  document.documentElement.style.userSelect = "";
-}
+
 function isPointInLayer(pos, layer) {
   ctx.save();
   ctx.font = `${layer.fontSize}px ${layer.fontFamily || "Tajawal"}`;
   const metrics = ctx.measureText(layer.text);
-
-  // حساب أبعاد المستطيل حوالين النص
   const textWidth = metrics.width;
-  const textHeight = layer.fontSize; // تقريب كويس لارتفاع الخط
-
+  const textHeight = layer.fontSize;
   const x = layer.x - textWidth / 2;
   const y = layer.y - textHeight / 2;
-
   ctx.restore();
-
   return (
     pos.x >= x &&
     pos.x <= x + textWidth &&
@@ -354,13 +349,9 @@ function isPointInLayer(pos, layer) {
   );
 }
 
-document.addEventListener("mousedown", (e) => {
-  // لو المستخدم ضغط على أي حاجة مش text area أو input
-  if (e.target.tagName !== "TEXTAREA" && e.target.tagName !== "INPUT") {
-    document.activeElement.blur();
-  }
-});
-
+// =========================
+// inputs & buttons
+// =========================
 presetSelect.addEventListener("change", (e) => loadImage(e.target.value));
 uploadInput.addEventListener("change", (e) => {
   const f = e.target.files[0];
@@ -413,36 +404,41 @@ window.addEventListener("resize", () => {
   fitCanvas();
   draw();
 });
-
 document.getElementById("darkOverlay").addEventListener("change", (e) => {
   applyOverlay = e.target.checked;
   draw();
 });
-
 document.getElementById("blurBackground").addEventListener("change", (e) => {
   applyBlur = e.target.checked;
   draw();
 });
 
+// fonts buttons
 $$(".font-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     if (selectedIndex !== null) {
       layers[selectedIndex].fontFamily = btn.dataset.font;
       draw();
     }
-    // خلى الزر المختار باين عليه
     $$(".font-btn").forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
   });
 });
 
 // init
-if (!presetSelect.value) {
-  presetSelect.value = "/memes/drake.jpg"; // اختار Drake افتراضي
-}
-
+if (!presetSelect.value) presetSelect.value = "/memes/drake.jpg";
 ensureFontsLoaded().then(() => {
   loadImage(presetSelect.value);
   addLayer("اكتب نص فوق");
   addLayer("اكتب نص تحت");
+});
+
+window.addEventListener("focusin", (e) => {
+  // لما تفتح أي input أو textarea
+  document.body.style.position = "fixed";
+});
+
+window.addEventListener("focusout", (e) => {
+  // لما نقفل الكيبورد
+  document.body.style.position = "";
 });
