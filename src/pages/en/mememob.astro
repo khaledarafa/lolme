@@ -16,7 +16,7 @@ import Layout from "../../layouts/Layout.astro";
     position:fixed; bottom:0; left:0; right:0;
     background:white; border-top:1px solid #ccc;
     max-height:50%; overflow-y:auto; padding:10px;
-    display:none; flex-direction:column; gap:10px; margin:0 10px 10px 10px; border-radius:10px;
+    display:none; flex-direction:column; gap:10px; border-radius:10px;
   ">
     <label>Select a preset image:
       <select id="preset-select" style="width:100%;">
@@ -47,15 +47,14 @@ import Layout from "../../layouts/Layout.astro";
     <div id="layers-container"></div>
 
     <div id="font-buttons" style="display:flex; gap:6px; overflow-x:auto; flex-wrap:nowrap; padding-bottom:5px;">
-      <button class="font-btn" data-font="Tajawal" style="font-family:Tajawal;">Tajawal</button>
-      <button class="font-btn" data-font="Amiri" style="font-family:Amiri;">Amiri</button>
-      <button class="font-btn" data-font="Cairo" style="font-family:Cairo;">Cairo</button>
-      <button class="font-btn" data-font="Changa" style="font-family:Changa;">Changa</button>
-      <button class="font-btn" data-font="Reem Kufi" style="font-family:'Reem Kufi';">Reem</button>
-      <button class="font-btn" data-font="Anton" style="font-family:Anton;">Anton</button>
       <button class="font-btn" data-font="Impact" style="font-family:Impact;">Impact</button>
+      <button class="font-btn" data-font="Anton" style="font-family:Anton;">Anton</button>
+      <button class="font-btn" data-font="Arial" style="font-family:Arial, sans-serif;">Arial</button>
+      <button class="font-btn" data-font="Roboto" style="font-family:Roboto, sans-serif;">Roboto</button>
+      <button class="font-btn" data-font="'Comic Sans MS'" style="font-family:'Comic Sans MS', cursive;">Comic Sans</button>
+      <button class="font-btn" data-font="'Courier New'" style="font-family:'Courier New', monospace;">Courier</button>
     </div>
-
+    
     <div style="display:flex; gap:0.6rem;">
       <button id="download-btn" class="btn" style="flex:1; background:#2ecc71;">⬇️ Download</button>
       <button id="share-btn" class="btn" style="flex:1; background:#9b59b6;">🔗 Share</button>
@@ -70,5 +69,35 @@ import Layout from "../../layouts/Layout.astro";
   ">⚙️ Tools</button>
 </div>
 
-<script type="module" src="/js/mememob.js"></script>
+<script type="module" src="/js/mememob-en.js"></script>
 </Layout>
+<style>
+  #font-buttons {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;       /* يسمح بالسحب أفقيًا */
+  overflow-y: hidden;     /* يمنع أي scroll رأسي */
+  flex-wrap: nowrap;      /* يمنع الكسر لسطور جديدة */
+  padding: 8px 0;         /* padding مناسب علشان يبقى مرتاح */
+  min-height: 50px;       /* ارتفاع كافي يظهر الزرار بالكامل */
+  -webkit-overflow-scrolling: touch; /* smooth scroll على الموبايل */
+}
+
+.font-btn {
+  flex: 0 0 auto;        /* يمنع التمدد الغريب */
+  padding: 8px 14px;     /* حجم مناسب للضغط */
+  font-size: 1rem;       /* حجم الخط داخل الزرار */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f0f0f0;
+  cursor: pointer;
+  white-space: nowrap;    /* منع الكسر */
+}
+
+.font-btn.active {
+  background: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+</style>

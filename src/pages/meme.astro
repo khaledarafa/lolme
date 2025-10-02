@@ -7,24 +7,7 @@ import Layout from "../layouts/Layout.astro";
   <!-- <h1 style="text-align:center; margin-bottom:1rem;">📸 مولد الميميز</h1> -->
   
   <div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:0.0rem; padding: 0 0.5rem; align-items:flex-start;" >
-    
-        <!-- الكانفاس -->
-        <div style="flex:2 1 600px; min-width:300px;">
-          <div style="border:1px solid #ddd; display:inline-block; background:#f6f6f6; width:100%;" >
-            <canvas id="memeCanvas" style="display: flex;"></canvas>
-          </div>
-    
-          <!-- إعلان AdSense responsive -->
-          <div style="width:100%; text-align:center; margin-top:12px;">
-            <ins
-              class="adsbygoogle"
-              style="display:block"
-              data-ad-client="ca-pub-XXXXXXXXXXXX"
-              data-ad-slot="YYYYYYYYYY"
-              data-ad-format="auto"
-              data-full-width-responsive="true"></ins>
-          </div>
-        </div>
+
     <!-- الأدوات -->
     <div id="controls-container" style="flex:1 1 400px; min-width:320px;">
       <div style="flex:1 1 320px; min-width:280px; padding: 0px 5px;">
@@ -81,7 +64,24 @@ import Layout from "../layouts/Layout.astro";
         </div>
       </div>
     </div>
-
+    
+        <!-- الكانفاس -->
+        <div style="flex:2 1 600px; min-width:300px;">
+          <div style="border:1px solid #ddd; display:inline-block; background:#f6f6f6; width:100%;" >
+            <canvas id="memeCanvas" style="display: flex;"></canvas>
+          </div>
+    
+          <!-- إعلان AdSense responsive -->
+          <div style="width:100%; text-align:center; margin-top:12px;">
+            <ins
+              class="adsbygoogle"
+              style="display:block"
+              data-ad-client="ca-pub-XXXXXXXXXXXX"
+              data-ad-slot="YYYYYYYYYY"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+          </div>
+        </div>
   </div>
-  <script type="module" src="/js/meme-editor.js"></script>
+  <script type="module" src="/js/meme.js"></script>
 </Layout>

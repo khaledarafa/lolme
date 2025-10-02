@@ -6,18 +6,13 @@ import "../../css/style.css";
 
 // تعريف الترجمة
 const translations = {
-  ar: {
-    home: "🏠 الرئيسية",
-    articles: "📚 المقالات",
-  },
-  en: {
-    home: "🏠 Home",
-    articles: "📚 Articles",
-  },
-} as const; // نخليها ثابتة بالأنواع
+  ar: { home: "🏠 الرئيسية", articles: "📚 المقالات" },
+  en: { home: "🏠 Home", articles: "📚 Articles" },
+} as const;
 
-// خلي اللغة نوعها union مش string
-let lang: "ar" | "en" = "ar";
+// قراءة اللغة من الكوكيز (لو موجودة)
+let lang: "ar" | "en" =
+  (Astro.cookies.get("lang")?.value as "ar" | "en") || "ar";
 ---
 
 <html lang={lang} dir={lang === "ar" ? "rtl" : "ltr"}>
@@ -56,24 +51,21 @@ let lang: "ar" | "en" = "ar";
       })();
     </script>
     
-    <!-- <div class="ad-space">
-      مساحتك الإعلانية هنا
-    </div> -->
 
     <!-- <slot /> -->
     <main>
   <!-- الهيدر الثابت -->
-  <header class="page-header" style=" width: 100%; display: flex; align-items: center; justify-content: space-around; padding: 0.0rem 1rem; background: #00000000; border-radius: 0 0 8px 8px; box-sizing: border-box; margin: auto; z-index: 999; ">
-    <nav class="header-nav">
-      <a href="/">{translations[lang].home}</a>
-      <span class="divider">|</span>
-      <a href="/articles">{translations[lang].articles}</a>
+      <header class="page-header" style="display:flex;justify-content:space-around;align-items:center;width:94%;padding:0.5rem 1rem;background:#0000;">
+        <nav class="header-nav">
+          <a id="nav-home" href="/">{translations[lang].home}</a>
+          <span class="divider">|</span>
+          <a id="nav-articles" href="/articles">{translations[lang].articles}</a>
 
-      <select id="lang-switch">
-        <option value="ar">العربية</option>
-        <option value="en">English</option>
-      </select>
-    </nav>
+          <select id="lang-switch">
+            <option value="ar">العربية</option>
+            <option value="en">English</option>
+          </select>
+        </nav>
     <!-- <nav class="header-nav">
       <a href="/">🏠 الرئيسية</a>
       <span class="divider">|</span>
@@ -102,12 +94,6 @@ let lang: "ar" | "en" = "ar";
       <!-- محتوى الصفحة/المقال -->
       <slot />
     </main>
-    <!-- <div class="ad-space">
-      <a href="https://www.easy-orders.net?view=646de210-fb46-4b6c-b20e-f1372660dc86" target="_blank" rel="nofollow noopener noreferrer">
-        <img src="/images/easy-orders-banner.jpg" alt="Easy Orders" style="max-width:100%; height:auto; border-radius:8px;" />
-      </a>
-    </div> -->
-    
     <div class="ad-space">مساحتك الإعلانية هنا</div>
 
     <Footer />

@@ -1,15 +1,16 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-const title = "المقالات";
-const description = "أحدث مقالات الميمز والترفيه";
+// /src/pages/en/articles/index.astro
+import Layout from "../../../layouts/Layout.astro";
+const title = "Articles";
+const description = "Latest articles about memes and entertainment.";
 ---
 
 <Layout {title} {description}>
-    <ul class="articles-list">
-      <li><a href="/articles/history">تاريخ الميمز وانتشارها</a></li>
-      <li><a href="/articles/top-memes">أشهر الميمز 2025</a></li>
-      <li><a href="/articles/how-to-meme">إزاي تعمل ميم مضحك</a></li>
-    </ul>
+  <ul class="articles-list">
+    <li><a href="/en/articles/history">The History of Memes</a></li>
+    <li><a href="/en/articles/top-memes">Top Memes of 2025</a></li>
+    <li><a href="/en/articles/how-to-meme">How to Make a Funny Meme</a></li>
+  </ul>
   </Layout>
   
   <style>

@@ -7,24 +7,7 @@ import Layout from "../../layouts/Layout.astro";
   <!-- <h1 style="text-align:center; margin-bottom:1rem;">📸 Meme Generator</h1> -->
   
   <div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:0.0rem; padding: 0 0.5rem; align-items:flex-start;" >
-    
-        <!-- canvas -->
-        <div style="flex:2 1 600px; min-width:300px;">
-          <div style="border:1px solid #ddd; display:inline-block; background:#f6f6f6; width:100%;" >
-            <canvas id="memeCanvas" style="display: flex;"></canvas>
-          </div>
-    
-          <!-- AdSense responsive ad -->
-          <div style="width:100%; text-align:center; margin-top:12px;">
-            <ins
-              class="adsbygoogle"
-              style="display:block"
-              data-ad-client="ca-pub-XXXXXXXXXXXX"
-              data-ad-slot="YYYYYYYYYY"
-              data-ad-format="auto"
-              data-full-width-responsive="true"></ins>
-          </div>
-        </div>
+
     <!-- controls -->
     <div id="controls-container" style="flex:1 1 400px; min-width:320px;">
       <div style="flex:1 1 320px; min-width:280px; padding: 0px 5px;">
@@ -61,16 +44,15 @@ import Layout from "../../layouts/Layout.astro";
 
         <hr style="margin:12px 0;" />
 
-        <div id="font-buttons" style="display:flex; flex-wrap:wrap; gap:6px; margin:10px 0;" >
-          <button class="font-btn" data-font="Tajawal" style="font-family:Tajawal;">Tajawal</button >
-          <button class="font-btn" data-font="Amiri" style="font-family:Amiri;" >Amiri</button >
-          <button class="font-btn" data-font="Cairo" style="font-family:Cairo;" >Cairo</button >
-          <button class="font-btn" data-font="Changa" style="font-family:Changa;">Changa</button >
-          <button class="font-btn" data-font="Reem Kufi" style="font-family:'Reem Kufi';">Reem</button >
-          <button class="font-btn" data-font="Anton" style="font-family:Anton;" >Anton</button >
-          <button class="font-btn" data-font="Impact" style="font-family:Impact;">Impact</button >
+        <div id="font-buttons" style="display:flex; flex-wrap:wrap; gap:6px; margin:10px 0;">
+          <button class="font-btn" data-font="Impact" style="font-family:Impact;">Impact</button>
+          <button class="font-btn" data-font="Anton" style="font-family:Anton;">Anton</button>
+          <button class="font-btn" data-font="Arial" style="font-family:Arial, sans-serif;">Arial</button>
+          <button class="font-btn" data-font="Roboto" style="font-family:Roboto, sans-serif;">Roboto</button>
+          <button class="font-btn" data-font="'Comic Sans MS'" style="font-family:'Comic Sans MS', cursive;">Comic Sans</button>
+          <button class="font-btn" data-font="'Courier New'" style="font-family:'Courier New', monospace;">Courier</button>
         </div>
-
+        
         <div style="display:flex; gap:0.6rem;">
           <button id="download-btn" class="btn" style="flex:1; background:#2ecc71;">⬇️ Download</button >
           <button id="share-btn" class="btn" style="flex:1; background:#9b59b6;" >🔗 Share</button >
@@ -81,7 +63,24 @@ import Layout from "../../layouts/Layout.astro";
         </div>
       </div>
     </div>
-
+    
+        <!-- canvas -->
+        <div style="flex:2 1 600px; min-width:300px;">
+          <div style="border:1px solid #ddd; display:inline-block; background:#f6f6f6; width:100%;" >
+            <canvas id="memeCanvas" style="display: flex;"></canvas>
+          </div>
+    
+          <!-- AdSense responsive ad -->
+          <div style="width:100%; text-align:center; margin-top:12px;">
+            <ins
+              class="adsbygoogle"
+              style="display:block"
+              data-ad-client="ca-pub-XXXXXXXXXXXX"
+              data-ad-slot="YYYYYYYYYY"
+              data-ad-format="auto"
+              data-full-width-responsive="true"></ins>
+          </div>
+        </div>
   </div>
-  <script type="module" src="/js/meme-editor.js"></script>
+  <script type="module" src="/js/meme-en.js"></script>
 </Layout>

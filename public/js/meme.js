@@ -1,4 +1,4 @@
-// public/js/meme-editor.js كومبيوتر
+// public/js/meme.js كومبيوتر
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => Array.from(document.querySelectorAll(s));
 
