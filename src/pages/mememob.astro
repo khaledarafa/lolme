@@ -1,15 +1,19 @@
 ---
-// src/pages/mememob.astro
+// src/pages/mememobnew.astro
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout>
+<Layout title="">
 
 <div style="display:flex; flex-direction:column; margin:0; padding:0;">
+
   <!-- الكانفاس -->
   <div style="display:flex; justify-content:center; align-items:center; background:#f6f6f6; position:relative;">
-    <canvas id="memeCanvas" style="max-width:100%; max-height:100%; touch-action:none;"></canvas>
+    <canvas id="memeCanvas" style="max-width:100%; max-height:60vh; touch-action:none;"></canvas>
   </div>
+
+  <!-- gallery الصور -->
+  <div id="meme-gallery" style="display:flex; gap:8px; overflow-x:auto; padding:8px; scroll-behavior:smooth;"></div>
 
   <!-- drawer الأدوات أسفل الشاشة -->
   <div id="drawer" style="
@@ -18,7 +22,123 @@ import Layout from "../layouts/Layout.astro";
     max-height:50%; overflow-y:auto; padding:10px;
     display:none; flex-direction:column; gap:10px; border-radius:10px;
   ">
-    <!-- <button id="close-drawer" style="align-self:flex-end; font-size:1.2rem;">✖️</button> -->
+
+    <!-- أزرار الفئات -->
+    <div id="category-buttons" style="margin-bottom:8px;"></div>
+
+    <label><input type="checkbox" id="darkOverlay" /> طبقة غامقة</label>
+    <label><input type="checkbox" id="blurBackground" /> ضبابية الخلفية</label>
+
+    <label style="display:block; margin-top:0.6rem;">
+      أو ارفع صورة:
+      <input type="file" id="upload-image" accept="image/*" />
+    </label>
+
+    <label for="category" style="margin-top:0.6rem;" >🎯 اختر نوع الجمل:</label>
+    <select id="category" style="width:100%; margin-top:0.4rem;">
+      <option value="any">🎲 عشوائي من أي حاجة</option>
+    </select>
+
+    <hr style="margin:12px 0;" />
+
+    <div style="display:flex; gap:0.5rem; align-items:center;">
+      <button id="add-text" class="btn" style="flex:1;">➕ إضافة نص</button>
+      <button id="random-meme" class="btn" style="flex:1; background:#3498db;">🎲 عشوائي</button>
+      <button id="random-text" class="btn" style="flex:1; background:#3498db;">🎲 نص عشوائي</button>
+    </div>
+
+    <div id="layers-container" style="margin-top:12px;"></div>
+
+    <hr style="margin:12px 0;" />
+
+    <div id="font-buttons" style="display:flex; flex-wrap:nowrap; gap:6px; overflow-x:auto; padding-bottom:5px;">
+      <button class="font-btn" data-font="Tajawal" style="font-family:Tajawal;">Tajawal</button>
+      <button class="font-btn" data-font="Amiri" style="font-family:Amiri;" >Amiri</button>
+      <button class="font-btn" data-font="Cairo" style="font-family:Cairo;" >Cairo</button>
+      <button class="font-btn" data-font="Changa" style="font-family:Changa;">Changa</button>
+      <button class="font-btn" data-font="Reem Kufi" style="font-family:'Reem Kufi';">Reem</button>
+      <button class="font-btn" data-font="Anton" style="font-family:Anton;" >Anton</button>
+      <button class="font-btn" data-font="Impact" style="font-family:Impact;">Impact</button>
+    </div>
+
+    <div style="display:flex; gap:0.6rem;">
+      <button id="download-btn" class="btn" style="flex:1; background:#2ecc71;">⬇️ تحميل</button>
+      <button id="share-btn" class="btn" style="flex:1; background:#9b59b6;" >🔗 مشاركة</button>
+    </div>
+    <br><br><br>
+  </div>
+
+  <!-- زر فتح drawer -->
+  <button id="open-drawer" style="
+    position:fixed; bottom:50px; left:50%; transform:translateX(-50%);
+    padding:10px 20px; border-radius:25px; background:#3498db; color:white; font-size:1.1rem;
+  ">⚙️ أدوات</button>
+
+</div>
+
+<script type="module" src="/js/meme.js"></script>
+<script type="module" src="/js/drawer.js"></script>
+
+<style>
+  #font-buttons {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    padding: 8px 0;
+    min-height: 50px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .font-btn {
+    flex: 0 0 auto;
+    padding: 8px 14px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #f0f0f0;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .font-btn.active {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+  }
+</style>
+
+</Layout>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ---
+// src/pages/mememob.astro
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+
+<div style="display:flex; flex-direction:column; margin:0; padding:0;">
+  
+  <div style="display:flex; justify-content:center; align-items:center; background:#f6f6f6; position:relative;">
+    <canvas id="memeCanvas" style="max-width:100%; max-height:100%; touch-action:none;"></canvas>
+  </div>
+  <div id="drawer" style="
+    position:fixed; bottom:0; left:0; right:0;
+    background:white; border-top:1px solid #ccc;
+    max-height:50%; overflow-y:auto; padding:10px;
+    display:none; flex-direction:column; gap:10px; border-radius:10px;
+  ">
+    
 
     <label>اختر صورة جاهزة:
       <select id="preset-select" style="width:100%;">
@@ -31,9 +151,15 @@ import Layout from "../layouts/Layout.astro";
     <label><input type="checkbox" id="darkOverlay" /> طبقة غامقة</label>
     <label><input type="checkbox" id="blurBackground" /> ضبابية الخلفية</label>
 
-    <label>أو ارفع صورة:
-      <input type="file" id="upload-image" accept="image/*" />
-    </label>
+    
+    <p style="color:#e74c3c; font-size:0.9rem; margin-bottom:5px;">
+      ⚠️ لو الصورة ما اترفعتش، جرب تحديث متصفح متصفح اخر.
+    </p>
+
+    <button id="upload-btn" style="padding:10px; background:#333; color:#fff; border:none; border-radius:5px; margin:10px 0;">
+      📸 اختر صورة
+    </button>
+    <input type="file" id="upload-image" accept="image/*" style="display:none;">
 
     <label>🎯 اختر نوع الجمل:
       <select id="category" style="width:100%;">
@@ -65,7 +191,6 @@ import Layout from "../layouts/Layout.astro";
     <br><br><br><br><br>
   </div>
 
-  <!-- زر فتح drawer -->
   <button id="open-drawer" style="
     position:fixed; bottom:50px; left:50%; transform:translateX(-50%);
     padding:10px 20px; border-radius:25px; background:#3498db; color:white; font-size:1.1rem;
@@ -73,7 +198,7 @@ import Layout from "../layouts/Layout.astro";
 </div>
 
 <script type="module" src="/js/mememob.js"></script>
-</Layout>
+</Layout> -->
 <style>
   #font-buttons {
   display: flex;

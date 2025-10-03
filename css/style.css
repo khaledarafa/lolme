@@ -422,3 +422,13 @@ textarea {
     padding: 0 1rem;
   }
 }
+
+/* ======== img ======== */
+.img {
+  width: 100%;       /* عشان تتوافق مع حجم القسم */
+  max-width: 600px;  /* الحد الأقصى لحجم الصورة */
+  height: auto;      /* يحافظ على نسبة الطول للعرض */
+  display: block;
+  margin: 20px auto; /* صورة في النص مع مسافة فوق وتحت */
+  border-radius: 8px; /* حواف خفيفة حلوة */
+}

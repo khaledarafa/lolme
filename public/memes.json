@@ -1,0 +1,30 @@
+{
+  "animals": [
+    "/memes/animals/3.webp",
+    "/memes/animals/4.webp",
+    "/memes/animals/5.webp",
+    "/memes/animals/6.webp",
+    "/memes/animals/7.webp",
+    "/memes/animals/8.webp",
+    "/memes/animals/doge.jpg"
+  ],
+  "daily": [
+    "/memes/daily/3.webp",
+    "/memes/daily/4.webp",
+    "/memes/daily/5.webp",
+    "/memes/daily/6.webp",
+    "/memes/daily/7.webp",
+    "/memes/daily/8.webp",
+    "/memes/daily/crying.jpg",
+    "/memes/daily/هنام بدري.jpg"
+  ],
+  "friends": [
+    "/memes/friends/3.webp",
+    "/memes/friends/4.webp",
+    "/memes/friends/5.webp",
+    "/memes/friends/6.webp",
+    "/memes/friends/7.webp",
+    "/memes/friends/8.webp",
+    "/memes/friends/drake.jpg"
+  ]
+}
