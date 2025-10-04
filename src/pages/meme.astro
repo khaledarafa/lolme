@@ -21,7 +21,7 @@ import Layout from "../layouts/Layout.astro";
         </div>
       </div>    
       <!-- أزرار الفئات -->
-      <div id="category-buttons" style="margin-bottom:8px;"></div>
+      <div id="category-buttons" class="category-buttons"></div>
 
       <!-- gallery الصور -->
       <div id="meme-gallery" style="display:flex; gap:8px; overflow-x:auto; padding:4px 0; scroll-behavior:smooth;"></div>
@@ -42,9 +42,9 @@ import Layout from "../layouts/Layout.astro";
       <hr style="margin:12px 0;" />
 
       <div style="display:flex; gap:0.5rem; align-items:center;">
-        <button id="add-text" class="btn" style="flex:1;">➕ إضافة نص</button>
-        <button id="random-meme" class="btn" style="flex:1; background:#3498db;">🎲 عشوائي</button>
-        <button id="random-text" class="btn" style="flex:1; background:#3498db;">🎲 نص عشوائي</button>
+        <button id="add-text"    class="btn" style="flex:1;">➕ إضافة نص</button>
+        <button id="random-meme" class="btn" style="flex:1; ">🎲 عشوائي</button>
+        <button id="random-text" class="btn" style="flex:1; ">🎲 نص عشوائي</button>
       </div>
 
       <div id="layers-container" style="margin-top:12px;"></div>
@@ -106,7 +106,7 @@ import Layout from "../layouts/Layout.astro";
   transform: scale(1.05);
 }
 
-.category-btn {
+/* .category-btn {
   padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -120,11 +120,11 @@ import Layout from "../layouts/Layout.astro";
 }
 
 .category-btn.active {
-  background: #007bff; /* أزرق مثل البوتستراب */
+  background: #007bff;
   color: #fff;
   border-color: #007bff;
   font-weight: bold;
-}
+} */
 
 </style>
 

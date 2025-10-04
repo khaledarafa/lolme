@@ -215,41 +215,22 @@ function rebuildLayersUI() {
   layersContainer.innerHTML = "";
   layers.forEach((layer, idx) => {
     const div = document.createElement("div");
-    div.style =
-      "border:1px solid #eee;padding:8px;margin-bottom:8px;background:white";
+    div.style = "padding:8px;margin-bottom:8px;background:var(--bg);box-shadow: 0 1px 2px var(--shadow-color);";
     div.innerHTML = `
       <div style="display:flex;gap:8px;align-items:center;">
-        <button data-idx="${idx}" class="select-layer" style="flex:0 0 36px;">${
-      idx + 1
-    }</button>
-        <textarea data-idx="${idx}" class="layer-text" style="flex:1; min-height:60px;">${
-      layer.text
-    }</textarea>
+        <button data-idx="${idx}" class="select-layer" style="flex:0 0 36px;">${ idx + 1 }</button>
+        <textarea data-idx="${idx}" class="layer-text" style="flex:1; min-height:60px;">${ layer.text }</textarea>
       </div>
-      <div style="display:flex;gap:8px;margin-top:6px;align-items:center;">
+      <div style="display:flex;gap:8px;margin-top:6px;align-items:center; justify-content: space-between;">
         <label style="font-size:12px;">
           حجم
-          <input data-idx="${idx}" class="layer-size" type="range" min="12" max="200" value="${
-      layer.fontSize
-    }" />
-          <input data-idx="${idx}" class="layer-size-number" type="number" min="12" max="200" value="${
-      layer.fontSize
-    }" style="display:none; width:50px;" />
+          <input data-idx="${idx}" class="layer-size" type="range" min="12" max="200" value="${ layer.fontSize }" />
+          <input data-idx="${idx}" class="layer-size-number" type="number" min="12" max="200" value="${ layer.fontSize }" style="display:none; width:50px;" />
         </label>
-        <label style="font-size:12px;">
-          <input type="checkbox" class="size-mode" data-idx="${idx}" /> رقم بدلاً من السلايدر
-        </label>
-        <label style="font-size:12px;">لون
-          <input data-idx="${idx}" class="layer-color" type="color" value="${
-      layer.color
-    }" />
-        </label>
-        <label style="font-size:12px;">stroke
-          <input data-idx="${idx}" class="layer-strokecolor" type="color" value="${
-      layer.strokeColor
-    }" />
-        </label>
-        <button data-idx="${idx}" class="del-layer" style="background:#ff6b6b;">حذف</button>
+        <label style="font-size:12px;"> <input type="checkbox" class="size-mode" data-idx="${idx}" /> رقم </label>
+        <label style="font-size:12px;">لون <input data-idx="${idx}" class="layer-color" type="color" value="${ layer.color }" /> </label>
+        <label style="font-size:12px;">stroke <input data-idx="${idx}" class="layer-strokecolor" type="color" value="${ layer.strokeColor }" /> </label>
+        <button data-idx="${idx}" class="del-layer">🗑️</button>
       </div>
     `;
     layersContainer.appendChild(div);

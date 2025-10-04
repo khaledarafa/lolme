@@ -1,17 +1,17 @@
 ---
 // src/pages/roast.astro
 import Layout from "../layouts/Layout.astro";
-import "../../css/roast.css";
+// import "../../css/roast.css";
 ---
 
 <Layout title="">
-    <main class="container">
+    <main class="roast-container">
       <header>
         <h1>روست أصحابك 🤪</h1>
-        <p class="lead">أدخل اسم صاحبك واختار مستوى الهزار. خليها مرحة وما تخش في الإهانة الشخصية.</p>
+        <p class="roast-lead">أدخل اسم صاحبك واختار مستوى الهزار. خليها مرحة وما تخش في الإهانة الشخصية.</p>
       </header>
 
-      <section class="controls">
+      <section class="roast-controls">
         <label for="name">اسم صاحبك</label>
         <input id="name" placeholder="اكتب اسم صاحَبك هنا (مثال: محمد)" />
 
@@ -22,19 +22,23 @@ import "../../css/roast.css";
           <option value="hard">جامد (انت مسئول)</option>
         </select>
 
-        <div class="buttons">
+        <div class="roast-buttons">
           <button id="generate">طلع روست جديد</button>
           <button id="copy">انسخ</button>
           <button id="share">شارك</button>
         </div>
       </section>
 
-      <section class="result">
+      <section class="roast-result">
         <div id="roastBox" class="roastBox">اضغط "طلع روست جديد" 😂</div>
-        <small id="warn" class="warn"></small>
+        <small id="warn" class="roast-warn"></small>
       </section>
       <br><br>
     </main>
 
     <script type="module" src="/js/roast.js"></script>
+    <!-- <script type="module">
+      import { initThemeToggle } from '/js/theme-toggle.js';
+      initThemeToggle(); // لو الأيقونة id="toggle-theme" عادي
+    </script> -->
 </Layout>
