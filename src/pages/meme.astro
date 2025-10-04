@@ -1,14 +1,25 @@
 ---
+// src/pages/meme.astro
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="مولد الميميز - LOLME">
 
   <div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:0.5rem; padding: 0 0.5rem; align-items:flex-start;" >
-
     <!-- الأدوات -->
     <div id="controls-container" style="flex:1 1 400px; min-width:320px; padding: 0 5px;">
-      
+
+      <div style="display:flex; flex-direction:column; margin:0; padding:0;">
+        <label>📐 اختر مقاس الكانفاس:</label>
+
+        <!-- أزرار صغيرة للتبديل -->
+        <div id="canvas-size-buttons" style="display:flex; gap:0.3rem; flex-wrap:wrap; margin-top:0.4rem;">
+          <button type="button" data-size="original" style="font-size:0.7rem; padding:0.2rem 0.4rem;">📷</button>
+          <button type="button" data-size="1:1" style="font-size:0.7rem; padding:0.2rem 0.4rem;">1:1</button>
+          <button type="button" data-size="16:9" style="font-size:0.7rem; padding:0.2rem 0.4rem;">16:9</button>
+          <!-- <button type="button" data-size="9:16" style="font-size:0.7rem; padding:0.2rem 0.4rem;">9:16</button> -->
+        </div>
+      </div>    
       <!-- أزرار الفئات -->
       <div id="category-buttons" style="margin-bottom:8px;"></div>
 
@@ -82,7 +93,40 @@ import Layout from "../layouts/Layout.astro";
   <script type="module" src="/js/meme.js"></script>
 </Layout>
 
+<style>
 
+#canvas-size-buttons button.active {
+  background-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+}
+
+#meme-gallery img.active {
+  border: 3px solid #007bff;
+  transform: scale(1.05);
+}
+
+.category-btn {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #f8f8f8;
+  transition: all 0.2s ease;
+}
+
+.category-btn:hover {
+  background: #eee;
+}
+
+.category-btn.active {
+  background: #007bff; /* أزرق مثل البوتستراب */
+  color: #fff;
+  border-color: #007bff;
+  font-weight: bold;
+}
+
+</style>
 
 
 

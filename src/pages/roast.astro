@@ -1,0 +1,40 @@
+---
+// src/pages/roast.astro
+import Layout from "../layouts/Layout.astro";
+import "../../css/roast.css";
+---
+
+<Layout title="">
+    <main class="container">
+      <header>
+        <h1>روست أصحابك 🤪</h1>
+        <p class="lead">أدخل اسم صاحبك واختار مستوى الهزار. خليها مرحة وما تخش في الإهانة الشخصية.</p>
+      </header>
+
+      <section class="controls">
+        <label for="name">اسم صاحبك</label>
+        <input id="name" placeholder="اكتب اسم صاحَبك هنا (مثال: محمد)" />
+
+        <label for="tone">المستوى</label>
+        <select id="tone">
+          <option value="gentle">لطيف</option>
+          <option value="roast">روست عادي</option>
+          <option value="hard">جامد (انت مسئول)</option>
+        </select>
+
+        <div class="buttons">
+          <button id="generate">طلع روست جديد</button>
+          <button id="copy">انسخ</button>
+          <button id="share">شارك</button>
+        </div>
+      </section>
+
+      <section class="result">
+        <div id="roastBox" class="roastBox">اضغط "طلع روست جديد" 😂</div>
+        <small id="warn" class="warn"></small>
+      </section>
+      <br><br>
+    </main>
+
+    <script type="module" src="/js/roast.js"></script>
+</Layout>

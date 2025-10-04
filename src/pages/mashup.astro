@@ -1,0 +1,48 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Mashup - LOLME">
+
+  <div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:0.5rem; padding:0 0.5rem;">
+    
+    <!-- أدوات التحكم -->
+    <div id="controls-container" style="flex:1 1 400px; min-width:320px; padding:0 5px;">
+
+      <!-- صورة -->
+      <label>📸 ارفع صورة أو اختار من gallery:
+        <input type="file" id="upload-image" accept="image/*" />
+      </label>
+      <div id="meme-gallery" style="display:flex; gap:8px; overflow-x:auto; margin-top:4px;"></div>
+
+      <!-- اختيار روست -->
+      <label>🔥 روست: 
+        <select id="roast-select"><option>اختيار عشوائي</option></select>
+      </label>
+
+      <!-- اختيار نص ميمز -->
+      <label>✏️ ميمز: 
+        <select id="meme-select"><option>اختيار عشوائي</option></select>
+      </label>
+
+      <hr/>
+
+      <div style="display:flex; gap:0.5rem;">
+        <button id="add-layer" class="btn" style="flex:1;">➕ إضافة طبقة</button>
+        <button id="download-btn" class="btn" style="flex:1; background:#2ecc71;">⬇️ تحميل</button>
+        <button id="share-btn" class="btn" style="flex:1; background:#9b59b6;">🔗 مشاركة</button>
+      </div>
+
+      <div id="layers-container" style="margin-top:12px;"></div>
+    </div>
+
+    <!-- canvas -->
+    <div style="flex:2 1 600px; min-width:300px;">
+      <div style="border:1px solid #ddd; background:#f6f6f6;">
+        <canvas id="mashupCanvas" style="display:flex;"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/mashup.js"></script>
+</Layout>

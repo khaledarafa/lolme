@@ -6,6 +6,17 @@ import Layout from "../layouts/Layout.astro";
 <Layout title="">
 
 <div style="display:flex; flex-direction:column; margin:0; padding:0;">
+  <div style="display:flex; flex-direction:column; margin:0; padding:0;">
+
+    <!-- أزرار صغيرة للتبديل -->
+    <div id="canvas-size-buttons" style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:0.0rem; padding: 2px;">
+      <!-- <label style="padding: 2px;">📐 اختر مقاس الكانفاس:</label> -->
+      <button type="button" data-size="original" style="font-size:0.7rem; padding:0.2rem 0.4rem;">📷</button>
+      <button type="button" data-size="1:1" style="font-size:0.7rem; padding:0.2rem 0.4rem;">1:1</button>
+      <button type="button" data-size="16:9" style="font-size:0.7rem; padding:0.2rem 0.4rem;">16:9</button>
+      <!-- <button type="button" data-size="9:16" style="font-size:0.7rem; padding:0.2rem 0.4rem;">9:16</button> -->
+    </div>
+  </div>
 
   <!-- الكانفاس -->
   <div style="display:flex; justify-content:center; align-items:center; background:#f6f6f6; position:relative;">
@@ -105,6 +116,28 @@ import Layout from "../layouts/Layout.astro";
     color: white;
     border-color: #3498db;
   }
+
+  #canvas-size-buttons button.active {
+  background-color: #007bff; /* أزرق مثل البوتون */
+  color: #fff;
+  font-weight: bold;
+}
+
+#meme-gallery img.active {
+  border: 3px solid #007bff;
+  transform: scale(1.05);
+}
+
+#category-buttons button.active {
+  background: #007bff;
+  color: #fff;
+  border-radius: 6px;
+}
+.category-btn.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
 </style>
 
 </Layout>
@@ -199,27 +232,27 @@ import Layout from "../layouts/Layout.astro";
 
 <script type="module" src="/js/mememob.js"></script>
 </Layout> -->
-<style>
+<!-- <style>
   #font-buttons {
   display: flex;
   gap: 6px;
-  overflow-x: auto;       /* يسمح بالسحب أفقيًا */
-  overflow-y: hidden;     /* يمنع أي scroll رأسي */
-  flex-wrap: nowrap;      /* يمنع الكسر لسطور جديدة */
-  padding: 8px 0;         /* padding مناسب علشان يبقى مرتاح */
-  min-height: 50px;       /* ارتفاع كافي يظهر الزرار بالكامل */
-  -webkit-overflow-scrolling: touch; /* smooth scroll على الموبايل */
+  overflow-x: auto;     
+  overflow-y: hidden;     
+  padding: 8px 0;       
+  flex-wrap: nowrap;    
+  min-height: 50px;     
+  -webkit-overflow-scrolling: touch;
 }
 
 .font-btn {
-  flex: 0 0 auto;        /* يمنع التمدد الغريب */
-  padding: 8px 14px;     /* حجم مناسب للضغط */
-  font-size: 1rem;       /* حجم الخط داخل الزرار */
+  flex: 0 0 auto;        
+  padding: 8px 14px;     
+  font-size: 1rem;       
   border: 1px solid #ccc;
   border-radius: 6px;
   background: #f0f0f0;
   cursor: pointer;
-  white-space: nowrap;    /* منع الكسر */
+  white-space: nowrap;   
 }
 
 .font-btn.active {
@@ -227,5 +260,4 @@ import Layout from "../layouts/Layout.astro";
   color: white;
   border-color: #3498db;
 }
-
-</style>
+</style> -->
