@@ -42,9 +42,11 @@ import Layout from "../layouts/Layout.astro";
 
     <label style="display:block; margin-top:0.6rem;">
       أو ارفع صورة:
+      <p style="color:red; font-size:12px; margin-top:4px;">
+        ⚠️ بعض المتصفحات قد لا تدعم رفع الصور. إذا لم تعمل، حاول متصفح آخر.
+      </p>
       <input type="file" id="upload-image" accept="image/*" />
     </label>
-
     <label for="category" style="margin-top:0.6rem;" >🎯 اختر نوع الجمل:</label>
     <select id="category" style="width:100%; margin-top:0.4rem;">
       <option value="any">🎲 عشوائي من أي حاجة</option>
@@ -68,6 +70,7 @@ import Layout from "../layouts/Layout.astro";
       <button class="font-btn" data-font="Cairo" style="font-family:Cairo;" >Cairo</button>
       <button class="font-btn" data-font="Changa" style="font-family:Changa;">Changa</button>
       <button class="font-btn" data-font="Reem Kufi" style="font-family:'Reem Kufi';">Reem</button>
+      <button class="font-btn" data-font="Marhey" style="font-family:'Marhey';">Marhey</button>
       <button class="font-btn" data-font="Anton" style="font-family:Anton;" >Anton</button>
       <button class="font-btn" data-font="Impact" style="font-family:Impact;">Impact</button>
     </div>

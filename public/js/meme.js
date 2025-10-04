@@ -144,24 +144,63 @@ function draw() {
   layers.forEach((l, i) => drawLayer(l, i === selectedIndex));
 }
 
+// function drawLayer(layer, isSel) {
+//   ctx.save();
+//   ctx.direction = layer.rtl ? "rtl" : "ltr";
+//   ctx.textAlign = layer.align;
+//   ctx.font = `${layer.fontSize}px ${layer.fontFamily}, sans-serif`;
+//   ctx.fillStyle = layer.color;
+//   ctx.strokeStyle = layer.strokeColor;
+//   ctx.lineWidth = layer.strokeWidth;
+//   ctx.textBaseline = "top";
+//   const lines = wrapText(layer.text, canvas.width - 20, ctx);
+//   const lineH = layer.fontSize * 1.05;
+//   const totalH = lines.length * lineH;
+//   let startY = layer.y - (layer.anchor === "center" ? totalH / 2 : 0);
+//   lines.forEach((line, i) => {
+//     if (layer.strokeWidth > 0)
+//       ctx.strokeText(line, layer.x, startY + i * lineH);
+//     ctx.fillText(line, layer.x, startY + i * lineH);
+//   });
+//   if (isSel) {
+//     let maxW = 0;
+//     lines.forEach((l) => (maxW = Math.max(maxW, ctx.measureText(l).width)));
+//     let bx =
+//       layer.align === "center"
+//         ? layer.x - maxW / 2
+//         : layer.align === "left"
+//         ? layer.x
+//         : layer.x - maxW;
+//     ctx.strokeStyle = "#00aaff";
+//     ctx.lineWidth = 2;
+//     ctx.strokeRect(bx - 6, startY - 6, maxW + 12, totalH + 12);
+//   }
+//   ctx.restore();
+// }
 function drawLayer(layer, isSel) {
   ctx.save();
   ctx.direction = layer.rtl ? "rtl" : "ltr";
   ctx.textAlign = layer.align;
-  ctx.font = `${layer.fontSize}px ${layer.fontFamily}, sans-serif`;
+
+  // اضفنا layer.bold
+  const fontWeight = layer.bold ? "bold" : "normal";
+  ctx.font = `${fontWeight} ${layer.fontSize}px ${layer.fontFamily}, sans-serif`;
+
   ctx.fillStyle = layer.color;
   ctx.strokeStyle = layer.strokeColor;
   ctx.lineWidth = layer.strokeWidth;
   ctx.textBaseline = "top";
+
   const lines = wrapText(layer.text, canvas.width - 20, ctx);
   const lineH = layer.fontSize * 1.05;
   const totalH = lines.length * lineH;
   let startY = layer.y - (layer.anchor === "center" ? totalH / 2 : 0);
+
   lines.forEach((line, i) => {
-    if (layer.strokeWidth > 0)
-      ctx.strokeText(line, layer.x, startY + i * lineH);
+    if (layer.strokeWidth > 0) ctx.strokeText(line, layer.x, startY + i * lineH);
     ctx.fillText(line, layer.x, startY + i * lineH);
   });
+
   if (isSel) {
     let maxW = 0;
     lines.forEach((l) => (maxW = Math.max(maxW, ctx.measureText(l).width)));
@@ -175,6 +214,7 @@ function drawLayer(layer, isSel) {
     ctx.lineWidth = 2;
     ctx.strokeRect(bx - 6, startY - 6, maxW + 12, totalH + 12);
   }
+
   ctx.restore();
 }
 
@@ -203,6 +243,7 @@ function addLayer(text = "نص هنا") {
     y: canvas.height / 2,
     ...DEFAULTS,
     anchor: "center",
+    bold: false
   });
   selectedIndex = layers.length - 1;
   rebuildLayersUI();
@@ -219,17 +260,18 @@ function rebuildLayersUI() {
     div.innerHTML = `
       <div style="display:flex;gap:8px;align-items:center;">
         <button data-idx="${idx}" class="select-layer" style="flex:0 0 36px;">${ idx + 1 }</button>
-        <textarea data-idx="${idx}" class="layer-text" style="flex:1; min-height:60px;">${ layer.text }</textarea>
+        <textarea data-idx="${idx}" class="layer-text" style="flex:1; min-height:40px;">${ layer.text }</textarea>
       </div>
-      <div style="display:flex;gap:8px;margin-top:6px;align-items:center; justify-content: space-between;">
+      <div class="my-container" style="display:flex;gap:8px;margin-top:6px;align-items:center; justify-content: space-between;">
         <label style="font-size:12px;">
-          حجم
-          <input data-idx="${idx}" class="layer-size" type="range" min="12" max="200" value="${ layer.fontSize }" />
-          <input data-idx="${idx}" class="layer-size-number" type="number" min="12" max="200" value="${ layer.fontSize }" style="display:none; width:50px;" />
+          
+          <input data-idx="${idx}" class="layer-size" type="range" min="12" max="400" value="${ layer.fontSize }" />
+          <input data-idx="${idx}" class="layer-size-number" type="number" min="12" max="400" value="${ layer.fontSize }" style="display:none; width:50px;" />
         </label>
-        <label style="font-size:12px;"> <input type="checkbox" class="size-mode" data-idx="${idx}" /> رقم </label>
-        <label style="font-size:12px;">لون <input data-idx="${idx}" class="layer-color" type="color" value="${ layer.color }" /> </label>
-        <label style="font-size:12px;">stroke <input data-idx="${idx}" class="layer-strokecolor" type="color" value="${ layer.strokeColor }" /> </label>
+        <label style="font-size:12px;"> <input type="checkbox" class="size-mode" data-idx="${idx}" />  </label>
+        <button data-idx="${idx}" class="toggle-bold" style="background:#3498db; color:#fff; padding:4px 6px; border-radius:4px;">B</button>
+        <label style="font-size:12px;"> <input data-idx="${idx}" class="layer-color" type="color" value="${ '#14ff03' }" /> </label>
+        <label style="font-size:12px;"> <input data-idx="${idx}" class="layer-strokecolor" type="color" value="${ layer.strokeColor }" /> </label>
         <button data-idx="${idx}" class="del-layer">🗑️</button>
       </div>
     `;
@@ -307,6 +349,14 @@ function rebuildLayersUI() {
       layers.splice(idx, 1);
       selectedIndex = null;
       rebuildLayersUI();
+      draw();
+      saveState();
+    });
+
+    const boldBtn = div.querySelector(".toggle-bold");
+    boldBtn.addEventListener("click", () => {
+      layer.bold = !layer.bold;
+      boldBtn.style.background = layer.bold ? "#1abc9c" : "#3498db";
       draw();
       saveState();
     });

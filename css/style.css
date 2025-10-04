@@ -126,7 +126,11 @@ h1 {
   max-width: 500px;
   margin: 0 auto;
 }
-
+@media (min-width: 200px) {
+  .my-container {
+    display: ruby;
+  }
+}
 /* ======== Canvas ======== */
 canvas {
   touch-action: none;
@@ -145,7 +149,6 @@ canvas#memeCanvas {
 /* ======== Form Controls ======== */
 label {
   display: block;
-  /* margin-top: 10px; */
   font-weight: 600;
   font-size: 0.95rem;
 }
@@ -203,7 +206,7 @@ textarea {
   /* opacity: 0.2; */
 }
 .layer-size {
-  width: 60px;
+  width: 50px;
 }
 .layer-color {
   margin: 0px;
