@@ -5,8 +5,9 @@ const $$ = (s) => Array.from(document.querySelectorAll(s));
 let applyOverlay = false;
 let applyBlur = false;
 let currentCanvasChoice = "original"; // default
-
+let useShadow = false;
 let memeTexts = null;
+
 fetch("/texts.json")
   .then((r) => r.json())
   .then((data) => {
@@ -28,62 +29,72 @@ fetch("/memes.json")
     setupCategoryButtons();
   });
 
-  function setupCategoryButtons() {
-    const catContainer = $("#category-buttons");
-    catContainer.innerHTML = "";
-  
-    Object.keys(memesData).forEach((cat) => {
-      const btn = document.createElement("button");
-      btn.textContent = cat;
-      btn.className = "category-btn";
-      btn.addEventListener("click", () => {
-        showGallery(cat);
-        localStorage.setItem("lastGallery", cat);
-  
-        // غير الـ active
-        $$("#category-buttons .category-btn").forEach((b) =>
-          b.classList.remove("active")
-        );
-        btn.classList.add("active");
-      });
-      catContainer.appendChild(btn);
-    });
-  
-    // ✅ بعد ما نرسم الأزرار كلها نعمل استرجاع
-    const savedGallery = localStorage.getItem("lastGallery");
-    if (savedGallery && memesData[savedGallery]?.length) {
-      showGallery(savedGallery);
-  
-      // دور على الزرار اللي ليه نفس الاسم
-      const savedBtn = Array.from(
-        document.querySelectorAll("#category-buttons .category-btn")
-      ).find((b) => b.textContent === savedGallery);
-  
-      if (savedBtn) {
-        savedBtn.classList.add("active");
-      }
-    } else {
-      // الافتراضي
-      const firstCat = Object.keys(memesData).find(
-        (c) => memesData[c].length > 0
+function setupCategoryButtons() {
+  const catContainer = $("#category-buttons");
+  catContainer.innerHTML = "";
+
+  Object.keys(memesData).forEach((cat) => {
+    const btn = document.createElement("button");
+    btn.textContent = cat;
+    btn.className = "category-btn";
+    btn.addEventListener("click", () => {
+      showGallery(cat);
+      localStorage.setItem("lastGallery", cat);
+
+      // غير الـ active
+      $$("#category-buttons .category-btn").forEach((b) =>
+        b.classList.remove("active")
       );
-      if (firstCat) {
-        showGallery(firstCat);
-        const firstBtn = $("#category-buttons .category-btn");
-        if (firstBtn) firstBtn.classList.add("active");
-      }
+      btn.classList.add("active");
+    });
+    catContainer.appendChild(btn);
+  });
+
+  // ✅ بعد ما نرسم الأزرار كلها نعمل استرجاع
+  const savedGallery = localStorage.getItem("lastGallery");
+  if (savedGallery && memesData[savedGallery]?.length) {
+    showGallery(savedGallery);
+
+    // دور على الزرار اللي ليه نفس الاسم
+    const savedBtn = Array.from(
+      document.querySelectorAll("#category-buttons .category-btn")
+    ).find((b) => b.textContent === savedGallery);
+
+    if (savedBtn) {
+      savedBtn.classList.add("active");
+    }
+  } else {
+    // الافتراضي: خليها 'friends'
+    const defaultCat = "friends";
+    if (memesData[defaultCat]?.length) {
+      showGallery(defaultCat);
+      const defaultBtn = Array.from(
+        document.querySelectorAll("#category-buttons .category-btn")
+      ).find((b) => b.textContent === defaultCat);
+      if (defaultBtn) defaultBtn.classList.add("active");
     }
   }
-  
+}
+
 function showGallery(cat) {
   localStorage.setItem("lastGallery", cat);
 
   const gallery = $("#meme-gallery");
   gallery.innerHTML = "";
 
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.src = img.dataset.src; // لما تدخل الشاشة يتحمل
+        observer.unobserve(img);
+      }
+    });
+  }, { rootMargin: "200px" }); // يبدأ التحميل قبل ما تظهر الصورة بشوية
+
   memesData[cat].forEach((src) => {
     const imgEl = document.createElement("img");
-    imgEl.src = src;
+    imgEl.dataset.src = src; // نخلي src في dataset بدل ما يتحمل فورًا
     imgEl.style.width = "120px";
     imgEl.style.height = "120px";
     imgEl.style.objectFit = "cover";
@@ -94,8 +105,31 @@ function showGallery(cat) {
     });
 
     gallery.appendChild(imgEl);
+    observer.observe(imgEl); // نراقب الصورة للتحميل lazy
   });
 }
+
+// function showGallery(cat) {
+//   localStorage.setItem("lastGallery", cat);
+
+//   const gallery = $("#meme-gallery");
+//   gallery.innerHTML = "";
+
+//   memesData[cat].forEach((src) => {
+//     const imgEl = document.createElement("img");
+//     imgEl.src = src;
+//     imgEl.style.width = "120px";
+//     imgEl.style.height = "120px";
+//     imgEl.style.objectFit = "cover";
+//     imgEl.style.cursor = "pointer";
+
+//     imgEl.addEventListener("click", () => {
+//       loadImage(src, false);
+//     });
+
+//     gallery.appendChild(imgEl);
+//   });
+// }
 
 // CANVAS SETUP
 const canvas = $("#memeCanvas"),
@@ -107,12 +141,13 @@ let img = null,
   dragOffset = { x: 0, y: 0 };
 const DEFAULTS = {
   fontFamily: "Tajawal",
-  fontSize: 48,
+  fontSize: 200,
   color: "#fff",
   strokeColor: "#000",
   strokeWidth: 4,
   align: "center",
   rtl: true,
+  bold: true, 
 };
 
 function fitCanvas() {
@@ -143,7 +178,10 @@ function draw() {
 
   layers.forEach((l, i) => drawLayer(l, i === selectedIndex));
 }
-
+$("#shadow-toggle").addEventListener("change", (e) => {
+  useShadow = e.target.checked;
+  draw(); // نعيد رسم الكانفس فورًا
+});
 function drawLayer(layer, isSel) {
   ctx.save();
   ctx.direction = layer.rtl ? "rtl" : "ltr";
@@ -152,6 +190,15 @@ function drawLayer(layer, isSel) {
   // اضفنا layer.bold
   const fontWeight = layer.bold ? "bold" : "normal";
   ctx.font = `${fontWeight} ${layer.fontSize}px ${layer.fontFamily}, sans-serif`;
+
+  if (useShadow) {
+    ctx.shadowColor = "rgba(0,0,0,0.5)";
+    ctx.shadowBlur = 5;
+    ctx.shadowOffsetX = 3;
+    ctx.shadowOffsetY = 3;
+  } else {
+    ctx.shadowColor = "transparent";
+  }
 
   ctx.fillStyle = layer.color;
   ctx.strokeStyle = layer.strokeColor;
@@ -164,11 +211,11 @@ function drawLayer(layer, isSel) {
   let startY = layer.y - (layer.anchor === "center" ? totalH / 2 : 0);
 
   lines.forEach((line, i) => {
-    const y = startY + i * lineH + lineH / 1.7; // بدل ما يبدأ من فوق
+    const y = startY + i * lineH + lineH / 1.7;
     if (layer.strokeWidth > 0) ctx.strokeText(line, layer.x, y);
     ctx.fillText(line, layer.x, y);
   });
-  
+
   if (isSel) {
     let maxW = 0;
     lines.forEach((l) => {
@@ -213,7 +260,6 @@ function addLayer(text = "نص هنا") {
     y: canvas.height / 2,
     ...DEFAULTS,
     anchor: "center",
-    bold: false
   });
   selectedIndex = layers.length - 1;
   rebuildLayersUI();
@@ -226,22 +272,33 @@ function rebuildLayersUI() {
   layersContainer.innerHTML = "";
   layers.forEach((layer, idx) => {
     const div = document.createElement("div");
-    div.style = "padding:8px;margin-bottom:8px;background:var(--bg);box-shadow: 0 1px 2px var(--shadow-color);";
+    div.style =
+      "padding:8px;margin-bottom:8px;background:var(--bg);box-shadow: 0 1px 2px var(--shadow-color);";
     div.innerHTML = `
       <div style="display:flex;gap:8px;align-items:center;">
-        <button data-idx="${idx}" class="select-layer" style="flex:0 0 36px;">${ idx + 1 }</button>
-        <textarea data-idx="${idx}" class="layer-text" style="flex:1; min-height:40px;">${ layer.text }</textarea>
+        <button data-idx="${idx}" class="select-layer" style="flex:0 0 36px;">${
+      idx + 1
+    }</button>
+        <textarea data-idx="${idx}" class="layer-text" style="flex:1; min-height:40px;">${
+      layer.text
+    }</textarea>
       </div>
       <div class="my-container" style="display:flex;gap:8px;margin-top:6px;align-items:center; justify-content: space-between;">
         <label style="font-size:12px;">
           
-          <input data-idx="${idx}" class="layer-size" type="range" min="12" max="400" value="${ layer.fontSize }" />
-          <input data-idx="${idx}" class="layer-size-number" type="number" min="12" max="400" value="${ layer.fontSize }" style="display:none; width:50px;" />
+          <input data-idx="${idx}" class="layer-size" type="range" min="12" max="500" value="${
+      layer.fontSize
+    }" />
+          <input data-idx="${idx}" class="layer-size-number" type="number" min="12" max="500" value="${
+      layer.fontSize
+    }" style="display:none; width:50px;" />
         </label>
         <label style="font-size:12px;"> <input type="checkbox" class="size-mode" data-idx="${idx}" />  </label>
         <button data-idx="${idx}" class="toggle-bold" style="background:#3498db; color:#fff; padding:4px 6px; border-radius:4px;">B</button>
-        <label style="font-size:12px;"> <input data-idx="${idx}" class="layer-color" type="color" value="${ '#14ff03' }" /> </label>
-        <label style="font-size:12px;"> <input data-idx="${idx}" class="layer-strokecolor" type="color" value="${ layer.strokeColor }" /> </label>
+        <label style="font-size:12px;"> <input data-idx="${idx}" class="layer-color" type="color" value="${"#14ff03"}" /> </label>
+        <label style="font-size:12px;"> <input data-idx="${idx}" class="layer-strokecolor" type="color" value="${
+      layer.strokeColor
+    }" /> </label>
         <button data-idx="${idx}" class="del-layer">🗑️</button>
       </div>
     `;
@@ -324,12 +381,16 @@ function rebuildLayersUI() {
     });
 
     const boldBtn = div.querySelector(".toggle-bold");
+    // حدّد لون الزر حسب حالة الطبقة
+    boldBtn.style.background = layer.bold ? "#1abc9c" : "#3498db";
+    
     boldBtn.addEventListener("click", () => {
       layer.bold = !layer.bold;
       boldBtn.style.background = layer.bold ? "#1abc9c" : "#3498db";
       draw();
       saveState();
     });
+    
   });
 }
 
@@ -421,6 +482,7 @@ function saveState() {
       layers,
       applyOverlay,
       applyBlur,
+      useShadow,
     })
   );
 }
@@ -466,6 +528,12 @@ function loadState() {
       });
     }
 
+    if (state.useShadow !== undefined) {
+      useShadow = state.useShadow;
+      const shadowCheckbox = $("#shadow-toggle");
+      if (shadowCheckbox) shadowCheckbox.checked = useShadow;
+    }    
+
     if (state.applyOverlay !== undefined) {
       applyOverlay = state.applyOverlay;
       $("#darkOverlay").checked = applyOverlay;
@@ -479,6 +547,15 @@ function loadState() {
     console.error(e);
     return false;
   }
+}
+
+const shadowToggle = $("#shadow-toggle");
+if (shadowToggle) {
+  shadowToggle.addEventListener("change", (e) => {
+    useShadow = e.target.checked;
+    draw();        // نرسم النصوص بالـ shadow لو مفعل
+    saveState();   // نحفظ الحالة الجديدة فورًا
+  });
 }
 window.addEventListener("load", () => {
   const loaded = loadState();
@@ -520,12 +597,18 @@ $("#random-meme").addEventListener("click", () => {
   if (!memesData) return;
 
   // ناخد الفئة من الزرار اللي عنده active
-  const activeBtn = document.querySelector("#category-buttons .category-btn.active");
+  const activeBtn = document.querySelector(
+    "#category-buttons .category-btn.active"
+  );
   let chosenCat = activeBtn ? activeBtn.textContent : null;
 
   // لو الفئة مش موجودة أو فاضية، ناخد أول فئة فيها صور
-  if (!chosenCat || !memesData[chosenCat] || memesData[chosenCat].length === 0) {
-    chosenCat = Object.keys(memesData).find(cat => memesData[cat].length > 0);
+  if (
+    !chosenCat ||
+    !memesData[chosenCat] ||
+    memesData[chosenCat].length === 0
+  ) {
+    chosenCat = Object.keys(memesData).find((cat) => memesData[cat].length > 0);
     if (!chosenCat) return; // لو مفيش صور خالص
   }
 
@@ -584,6 +667,11 @@ uploadInput.addEventListener("change", (e) => {
 // FONT BUTTONS
 $$(".font-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
+        // لو مفيش طبقة محددة، خلي آخر طبقة مضافة تتحدد تلقائي
+        if (selectedIndex === null && layers.length) {
+          selectedIndex = layers.length - 1;
+        }
+    
     if (selectedIndex !== null) {
       layers[selectedIndex].fontFamily = btn.dataset.font;
       draw();
@@ -712,35 +800,6 @@ canvasSizeButtons.forEach((btn) => {
 canvasSizeButtons.forEach((b) => {
   if (b.dataset.size === currentCanvasChoice) b.classList.add("active");
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // CANVAS DRAG بيخلى الكانفس يتحرك مع السحب
 // canvas.style.touchAction = "pan-y"; // خلي السحب العمودي للصفحة طبيعي
