@@ -159,7 +159,7 @@ function drawLayer(layer, isSel) {
   ctx.textBaseline = "top";
 
   const lines = wrapText(layer.text, canvas.width - 20, ctx);
-  const lineH = layer.fontSize * 1.05;
+  const lineH = layer.fontSize * 1.4;
   const totalH = lines.length * lineH;
   let startY = layer.y - (layer.anchor === "center" ? totalH / 2 : 0);
 
@@ -591,10 +591,10 @@ $$(".font-btn").forEach((btn) => {
   });
 });
 
-window.addEventListener("resize", () => {
-  fitCanvas();
-  draw();
-});
+// window.addEventListener("resize", () => {
+//   fitCanvas();
+//   draw();
+// });
 
 function resizeCanvasByChoice(choice) {
   if (!img) return;

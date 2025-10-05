@@ -16,6 +16,7 @@ let lang: "ar" | "en" =
 ---
 
 <html lang={lang} dir={lang === "ar" ? "rtl" : "ltr"}>
+<!-- <html > -->
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -33,6 +34,7 @@ let lang: "ar" | "en" =
     <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Changa&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Marhey&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Impact&display=swap" rel="stylesheet" />
 
@@ -55,30 +57,31 @@ let lang: "ar" | "en" =
     <!-- <slot /> -->
     <main>
   <!-- الهيدر الثابت -->
-      <header class="page-header" style="display:flex;justify-content:space-around;align-items:center;width:94%;padding:0.5rem 1rem;background:#0000;">
+  <header class="page-header" style="display:flex;justify-content:space-around;align-items:center;width:94%;padding:0.5rem 1rem;background:#0000;">     
         <nav class="header-nav">
           <a id="nav-home" href="/">{translations[lang].home}</a>
           <span class="divider">|</span>
           <a id="nav-articles" href="/articles">{translations[lang].articles}</a>
-<!-- أيقونة الهلال لتغيير الثيم -->
-<span id="toggle-theme" style="cursor:pointer; font-size:1.5rem;">🌙</span>
 
-          <!-- <select id="lang-switch">
+          <span id="toggle-theme" style="cursor:pointer; font-size:1.5rem;">🌙</span>
+
+           <!-- <select id="lang-switch">
             <option value="ar">العربية</option>
             <option value="en">English</option>
-          </select> -->
+          </select>  -->
         </nav>
-    <!-- <nav class="header-nav">
-      <a href="/">🏠 الرئيسية</a>
-      <span class="divider">|</span>
-      <a href="/articles">📚 المقالات</a>
-      
-      <select id="lang-switch" style="margin-left:8px;">
+    
+      <!-- <nav class="header-nav"></nav>
+        <a href="/">🏠 الرئيسية</a>
+        <span class="divider">|</span>
+        <a href="/articles">📚 المقالات</a>
+      <span id="toggle-theme" style="cursor:pointer; font-size:1.5rem;">🌙</span> -->
+      <!-- <select id="lang-switch" style="margin-left:8px;">
         <option value="ar">العربية</option>
         <option value="en">English</option>
-      </select>
+      </select> -->
       
-    </nav> -->
+    </nav>
     <div class="header-left">
       <img src="/favicon.png" alt="LOLME" class="logo" style="margin-bottom: -5px;"/>
     </div>
