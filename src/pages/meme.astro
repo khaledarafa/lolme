@@ -8,25 +8,28 @@ import Layout from "../layouts/Layout.astro";
   <div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:0.5rem; padding: 0 0.5rem; align-items:flex-start;" >
     <!-- الأدوات -->
     <div id="controls-container" style="flex:1 1 400px; min-width:320px; padding: 0 5px;">
+      
+      <!-- gallery الصور -->
+      <div id="meme-gallery" style="display:flex; gap:8px; overflow-x:auto; border-radius: 8px; scroll-behavior:smooth;"></div>
 
       <div style="display:flex; flex-direction:column; margin:0; padding:0;">
-        <label>📐 اختر مقاس الكانفاس:</label>
-
+        
         <!-- أزرار صغيرة للتبديل -->
         <div id="canvas-size-buttons" style="display:flex; gap:0.3rem; flex-wrap:wrap; margin-top:0.4rem;">
+          <!-- <label style="margin-left: 2px;">📐 اختر مقاس الكانفاس:</label> -->
           <button type="button" data-size="original" style="font-size:0.7rem; padding:0.2rem 0.4rem;">📷</button>
           <button type="button" data-size="1:1" style="font-size:0.7rem; padding:0.2rem 0.4rem;">1:1</button>
           <button type="button" data-size="16:9" style="font-size:0.7rem; padding:0.2rem 0.4rem;">16:9</button>
           <!-- <button type="button" data-size="9:16" style="font-size:0.7rem; padding:0.2rem 0.4rem;">9:16</button> -->
         </div>
-      </div>    
+      </div> 
+
+      
       <!-- أزرار الفئات -->
       <div id="category-buttons" class="category-buttons"></div>
 
-      <!-- gallery الصور -->
-      <div id="meme-gallery" style="display:flex; gap:8px; overflow-x:auto; padding:4px 0; scroll-behavior:smooth;"></div>
       
-      <div style="display:flex; gap:0.5rem; align-items:center; justify-content: space-between;">
+      <div style="display:flex; gap:0.5rem; align-items:center; justify-content: space-between;margin-top: 8px;">
         <label><input type="checkbox" id="darkOverlay" /> غامق</label>
         <label><input type="checkbox" id="blurBackground" /> ضباب</label>
         <label><input type="checkbox" id="shadow-toggle" /> ظل</label>
@@ -40,7 +43,7 @@ import Layout from "../layouts/Layout.astro";
       </div>
       
       <label style="display:block; margin-top:0.6rem;">
-        أو ارفع صورة:
+        إختر صورة او ارفع صورة:
         <input type="file" id="upload-image" accept="image/*" />
       </label>
 
@@ -87,7 +90,13 @@ import Layout from "../layouts/Layout.astro";
       <div style="display:inline-block; width:100%;" >
         <canvas id="memeCanvas" style="display: flex;"></canvas>
       </div>
-
+  <!-- مربع الإعلان الواضح -->
+  <!-- <div style="width:100%; text-align:center; margin-top:12px; 
+              height:120px; border:2px dashed #007bff; 
+              display:flex; align-items:center; justify-content:center;
+              background-color:#f0f8ff; color:#007bff; font-weight:bold;">
+     مساحة إعلانية
+  </div> -->
       <!-- إعلان AdSense responsive -->
       <div style="width:100%; text-align:center; margin-top:12px;">
         <ins
@@ -105,7 +114,6 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <style>
-
 #canvas-size-buttons button.active {
   background-color: #007bff;
   color: #fff;
@@ -116,121 +124,4 @@ import Layout from "../layouts/Layout.astro";
   border: 3px solid #007bff;
   transform: scale(1.05);
 }
-
-/* .category-btn {
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  cursor: pointer;
-  background: #f8f8f8;
-  transition: all 0.2s ease;
-}
-
-.category-btn:hover {
-  background: #eee;
-}
-
-.category-btn.active {
-  background: #007bff;
-  color: #fff;
-  border-color: #007bff;
-  font-weight: bold;
-} */
-
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ---
-// src/pages/meme.astro
-import Layout from "../layouts/Layout.astro";
----
-
-<Layout title="مولد الميميز - LOLME">
-  
-  <div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:0.0rem; padding: 0 0.5rem; align-items:flex-start;" >
-
-    <div id="controls-container" style="flex:1 1 400px; min-width:320px;">
-      <div style="flex:1 1 320px; min-width:280px; padding: 0px 5px;">
-        <label >اختر صورة جاهزة:
-          <select id="preset-select" style="width:100%; margin-top:0.4rem;">
-            <option value="/memes/drake.jpg">Drake</option>
-            <option value="/memes/doge.jpg">Doge</option>
-            <option value="/memes/crying.jpg">Crying</option>
-          </select>
-        </label>
-        
-        <label><input type="checkbox" id="darkOverlay" /> طبقة غامقة</label>
-        <label ><input type="checkbox" id="blurBackground" /> ضبابية الخلفية</label >
-
-        <label style="display:block; margin-top:0.6rem;">
-          أو ارفع صورة:
-          <input type="file" id="upload-image" accept="image/*" />
-        </label>
-
-        <label for="category" style="margin-top:0.6rem;" >🎯 اختر نوع الجمل:</label >
-        <select id="category" style="width:100%; margin-top:0.4rem;">
-          <option value="any">🎲 عشوائي من أي حاجة</option>
-        </select>
-
-        <hr style="margin:12px 0;" />
-
-        <div style="display:flex; gap:0.5rem; align-items:center;">
-          <button id="add-text" class="btn" style="flex:1;">➕ إضافة نص</button>
-          <button id="random-meme" class="btn" style="flex:1; background:#3498db;">🎲 عشوائي</button >
-        </div>
-
-        <div id="layers-container" style="margin-top:12px;"></div>
-
-        <hr style="margin:12px 0;" />
-
-        <div id="font-buttons" style="display:flex; flex-wrap:wrap; gap:6px; margin:10px 0;" >
-          <button class="font-btn" data-font="Tajawal" style="font-family:Tajawal;">Tajawal</button >
-          <button class="font-btn" data-font="Amiri" style="font-family:Amiri;" >Amiri</button >
-          <button class="font-btn" data-font="Cairo" style="font-family:Cairo;" >Cairo</button >
-          <button class="font-btn" data-font="Changa" style="font-family:Changa;">Changa</button >
-          <button class="font-btn" data-font="Reem Kufi" style="font-family:'Reem Kufi';">Reem</button >
-          <button class="font-btn" data-font="Anton" style="font-family:Anton;" >Anton</button >
-          <button class="font-btn" data-font="Impact" style="font-family:Impact;">Impact</button >
-        </div>
-
-        <div style="display:flex; gap:0.6rem;">
-          <button id="download-btn" class="btn" style="flex:1; background:#2ecc71;">⬇️ تحميل</button >
-          <button id="share-btn" class="btn" style="flex:1; background:#9b59b6;" >🔗 مشاركة</button >
-        </div>
-
-        <div style="margin-top:8px; font-size:0.9rem; color:#666;">
-          نصائح: اضغط على أي طبقة نص لتعديلها. اسحب النص لتحريكه.
-        </div>
-      </div>
-    </div>
-    
-        <div style="flex:2 1 600px; min-width:300px;">
-          <div style="border:1px solid #ddd; display:inline-block; background:#f6f6f6; width:100%;" >
-            <canvas id="memeCanvas" style="display: flex;"></canvas>
-          </div>
-    
-          <div style="width:100%; text-align:center; margin-top:12px;">
-            <ins
-              class="adsbygoogle"
-              style="display:block"
-              data-ad-client="ca-pub-XXXXXXXXXXXX"
-              data-ad-slot="YYYYYYYYYY"
-              data-ad-format="auto"
-              data-full-width-responsive="true"></ins>
-          </div>
-        </div>
-  </div>
-  <script type="module" src="/js/meme.js"></script>
-</Layout> -->
