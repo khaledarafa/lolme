@@ -156,7 +156,7 @@ function drawLayer(layer, isSel) {
   ctx.fillStyle = layer.color;
   ctx.strokeStyle = layer.strokeColor;
   ctx.lineWidth = layer.strokeWidth;
-  ctx.textBaseline = "top";
+  ctx.textBaseline = "middle";
 
   const lines = wrapText(layer.text, canvas.width - 20, ctx);
   const lineH = layer.fontSize * 1.4;
@@ -164,13 +164,16 @@ function drawLayer(layer, isSel) {
   let startY = layer.y - (layer.anchor === "center" ? totalH / 2 : 0);
 
   lines.forEach((line, i) => {
-    if (layer.strokeWidth > 0) ctx.strokeText(line, layer.x, startY + i * lineH);
-    ctx.fillText(line, layer.x, startY + i * lineH);
+    const y = startY + i * lineH + lineH / 1.7; // بدل ما يبدأ من فوق
+    if (layer.strokeWidth > 0) ctx.strokeText(line, layer.x, y);
+    ctx.fillText(line, layer.x, y);
   });
-
+  
   if (isSel) {
     let maxW = 0;
-    lines.forEach((l) => (maxW = Math.max(maxW, ctx.measureText(l).width)));
+    lines.forEach((l) => {
+      maxW = Math.max(maxW, ctx.measureText(l).width);
+    });
     let bx =
       layer.align === "center"
         ? layer.x - maxW / 2
@@ -590,7 +593,7 @@ $$(".font-btn").forEach((btn) => {
     btn.classList.add("active");
   });
 });
-
+// بتخلي الكانفس يتغير حجمه لا الكيبورد يظهر
 // window.addEventListener("resize", () => {
 //   fitCanvas();
 //   draw();
@@ -709,3 +712,66 @@ canvasSizeButtons.forEach((btn) => {
 canvasSizeButtons.forEach((b) => {
   if (b.dataset.size === currentCanvasChoice) b.classList.add("active");
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CANVAS DRAG بيخلى الكانفس يتحرك مع السحب
+// canvas.style.touchAction = "pan-y"; // خلي السحب العمودي للصفحة طبيعي
+
+// canvas.addEventListener("pointerdown", (e) => {
+//   const pos = toCanvasPos(e);
+//   selectedIndex = null;
+//   for (let i = layers.length - 1; i >= 0; i--) {
+//     if (isPointInLayer(pos, layers[i])) {
+//       selectedIndex = i;
+//       break;
+//     }
+//   }
+//   if (selectedIndex !== null) {
+//     isDragging = true;
+//     dragOffset = {
+//       x: pos.x - layers[selectedIndex].x,
+//       y: pos.y - layers[selectedIndex].y,
+//     };
+//     canvas.setPointerCapture(e.pointerId);
+//   }
+// });
+
+// canvas.addEventListener("pointermove", (e) => {
+//   if (!isDragging || selectedIndex === null) return;
+//   const pos = toCanvasPos(e);
+//   const layer = layers[selectedIndex];
+//   layer.x = pos.x - dragOffset.x;
+//   layer.y = pos.y - dragOffset.y;
+//   draw(); // فقط إعادة رسم الطبقة
+// });
+
+// canvas.addEventListener("pointerup", () => (isDragging = false));
+// canvas.addEventListener("pointercancel", () => (isDragging = false));

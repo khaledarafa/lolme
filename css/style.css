@@ -53,6 +53,10 @@ body.light-theme {
   --btn-active-text: #fff;
   --shadow-color: rgba(0,0,0,0.4);
 }
+html {
+  height: 100%;
+  scroll-behavior: smooth;
+}
 body {
   font-family: "Tajawal", system-ui, sans-serif;
   background: var(--bg);
@@ -555,13 +559,8 @@ p, h2 {
 }
 
 /* ======== Responsive Ads ======== */
-.ads-container {
-  width: 100%;
-  text-align: center;
-  margin-top: 12px;
-}
 .ad-space {
-  width: 100%;
+  width: 98%;
   max-width: 728px;
   height: 90px; /* حجم إعلان قياسي */
   margin: 20px auto;
@@ -585,7 +584,7 @@ p, h2 {
   text-align: center;
   font-size: 0.95rem;
   border-top: 1px solid #444;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
 .site-footer a {

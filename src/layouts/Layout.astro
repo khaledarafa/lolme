@@ -57,7 +57,7 @@ let lang: "ar" | "en" =
     <!-- <slot /> -->
     <main>
   <!-- الهيدر الثابت -->
-  <header class="page-header" style="display:flex;justify-content:space-around;align-items:center;width:94%;padding:0.5rem 1rem;background:#0000;">     
+  <header class="page-header" style="display:flex;justify-content:space-around;align-items:center;width:94%;padding:0rem 1rem;background:#0000;">     
         <nav class="header-nav">
           <a id="nav-home" href="/">{translations[lang].home}</a>
           <span class="divider">|</span>
@@ -102,33 +102,33 @@ let lang: "ar" | "en" =
     <div class="ad-space">مساحتك الإعلانية هنا</div>
 
     <Footer />
-  </body>
-  <script type="module">
-    document.addEventListener("DOMContentLoaded", () => {
-      const themeToggle = document.getElementById("toggle-theme");
-      if (!themeToggle) return; // لو العنصر مش موجود نخرج
-  
-      function applyTheme(theme) {
-        if(theme === "light") {
-          document.body.classList.add("light-theme");
-          themeToggle.textContent = "🌞";
-        } else {
-          document.body.classList.remove("light-theme");
-          themeToggle.textContent = "🌙";
+    <script type="module">
+      document.addEventListener("DOMContentLoaded", () => {
+        const themeToggle = document.getElementById("toggle-theme");
+        if (!themeToggle) return; // لو العنصر مش موجود نخرج
+    
+        function applyTheme(theme) {
+          if(theme === "light") {
+            document.body.classList.add("light-theme");
+            themeToggle.textContent = "🌞";
+          } else {
+            document.body.classList.remove("light-theme");
+            themeToggle.textContent = "🌙";
+          }
         }
-      }
-  
-      const savedTheme = localStorage.getItem("theme") || "dark";
-      applyTheme(savedTheme);
-  
-      themeToggle.addEventListener("click", () => {
-        const newTheme = document.body.classList.contains("light-theme") ? "dark" : "light";
-        applyTheme(newTheme);
-        localStorage.setItem("theme", newTheme);
+    
+        const savedTheme = localStorage.getItem("theme") || "dark";
+        applyTheme(savedTheme);
+    
+        themeToggle.addEventListener("click", () => {
+          const newTheme = document.body.classList.contains("light-theme") ? "dark" : "light";
+          applyTheme(newTheme);
+          localStorage.setItem("theme", newTheme);
+        });
       });
-    });
-  </script>
-  
+    </script>
+    
+  </body>
 </html>
 
 <style>
