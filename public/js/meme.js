@@ -144,39 +144,6 @@ function draw() {
   layers.forEach((l, i) => drawLayer(l, i === selectedIndex));
 }
 
-// function drawLayer(layer, isSel) {
-//   ctx.save();
-//   ctx.direction = layer.rtl ? "rtl" : "ltr";
-//   ctx.textAlign = layer.align;
-//   ctx.font = `${layer.fontSize}px ${layer.fontFamily}, sans-serif`;
-//   ctx.fillStyle = layer.color;
-//   ctx.strokeStyle = layer.strokeColor;
-//   ctx.lineWidth = layer.strokeWidth;
-//   ctx.textBaseline = "top";
-//   const lines = wrapText(layer.text, canvas.width - 20, ctx);
-//   const lineH = layer.fontSize * 1.05;
-//   const totalH = lines.length * lineH;
-//   let startY = layer.y - (layer.anchor === "center" ? totalH / 2 : 0);
-//   lines.forEach((line, i) => {
-//     if (layer.strokeWidth > 0)
-//       ctx.strokeText(line, layer.x, startY + i * lineH);
-//     ctx.fillText(line, layer.x, startY + i * lineH);
-//   });
-//   if (isSel) {
-//     let maxW = 0;
-//     lines.forEach((l) => (maxW = Math.max(maxW, ctx.measureText(l).width)));
-//     let bx =
-//       layer.align === "center"
-//         ? layer.x - maxW / 2
-//         : layer.align === "left"
-//         ? layer.x
-//         : layer.x - maxW;
-//     ctx.strokeStyle = "#00aaff";
-//     ctx.lineWidth = 2;
-//     ctx.strokeRect(bx - 6, startY - 6, maxW + 12, totalH + 12);
-//   }
-//   ctx.restore();
-// }
 function drawLayer(layer, isSel) {
   ctx.save();
   ctx.direction = layer.rtl ? "rtl" : "ltr";
@@ -545,21 +512,41 @@ $("#share-btn").addEventListener("click", async () => {
   else window.open(dataUrl);
 });
 
-// RANDOM MEME
+// RANDOM MEME (تغيير الصورة فقط من نفس الفئة)
 $("#random-meme").addEventListener("click", () => {
   if (!memesData) return;
-  const cats = Object.keys(memesData).filter((c) => memesData[c].length > 0);
-  const chosenCat = cats[Math.floor(Math.random() * cats.length)];
+
+  // ناخد الفئة من الزرار اللي عنده active
+  const activeBtn = document.querySelector("#category-buttons .category-btn.active");
+  let chosenCat = activeBtn ? activeBtn.textContent : null;
+
+  // لو الفئة مش موجودة أو فاضية، ناخد أول فئة فيها صور
+  if (!chosenCat || !memesData[chosenCat] || memesData[chosenCat].length === 0) {
+    chosenCat = Object.keys(memesData).find(cat => memesData[cat].length > 0);
+    if (!chosenCat) return; // لو مفيش صور خالص
+  }
+
   const images = memesData[chosenCat];
   const imgSrc = images[Math.floor(Math.random() * images.length)];
-  loadImage(imgSrc, false); // false عشان مانمسحش النصوص
 
-  if (memeTexts) {
-    const texts = memeTexts[chosenCat] || memeTexts[cats[0]];
-    addLayer(texts[Math.floor(Math.random() * texts.length)]);
-    addLayer(texts[Math.floor(Math.random() * texts.length)]);
-  }
+  // تغيير الصورة فقط، بدون مسح الطبقات
+  loadImage(imgSrc, false);
 });
+
+// $("#random-meme").addEventListener("click", () => {
+//   if (!memesData) return;
+//   const cats = Object.keys(memesData).filter((c) => memesData[c].length > 0);
+//   const chosenCat = cats[Math.floor(Math.random() * cats.length)];
+//   const images = memesData[chosenCat];
+//   const imgSrc = images[Math.floor(Math.random() * images.length)];
+//   loadImage(imgSrc, false); // false عشان مانمسحش النصوص
+
+//   if (memeTexts) {
+//     const texts = memeTexts[chosenCat] || memeTexts[cats[0]];
+//     addLayer(texts[Math.floor(Math.random() * texts.length)]);
+//     addLayer(texts[Math.floor(Math.random() * texts.length)]);
+//   }
+// });
 $("#random-text").addEventListener("click", () => {
   if (!memeTexts) return;
   if (!layers.length) return;
