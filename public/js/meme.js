@@ -141,7 +141,7 @@ let img = null,
   dragOffset = { x: 0, y: 0 };
 const DEFAULTS = {
   fontFamily: "Tajawal",
-  fontSize: 200,
+  fontSize: 100,
   color: "#fff",
   strokeColor: "#000",
   strokeWidth: 4,
