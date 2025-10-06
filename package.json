@@ -4,11 +4,13 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/generate-sitemap.js",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.14.1"
+    "astro": "^5.14.1",
+    "glob": "^11.0.3",
+    "sitemap": "^8.0.0"
   }
 }

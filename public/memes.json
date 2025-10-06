@@ -1,12 +1,26 @@
 {
   "animals": [
-    "/memes/animals/3.webp",
-    "/memes/animals/4.webp",
-    "/memes/animals/5.webp",
-    "/memes/animals/6.webp",
-    "/memes/animals/7.webp",
-    "/memes/animals/8.webp",
-    "/memes/animals/doge.jpg"
+    "/memes/animals/00001.webp",
+    "/memes/animals/00002.webp",
+    "/memes/animals/00003.webp",
+    "/memes/animals/00005.webp",
+    "/memes/animals/00006.jpeg",
+    "/memes/animals/00007.webp",
+    "/memes/animals/00008.jpeg",
+    "/memes/animals/00009.webp",
+    "/memes/animals/00010.webp",
+    "/memes/animals/00011.jpeg",
+    "/memes/animals/00012.webp",
+    "/memes/animals/00013.webp",
+    "/memes/animals/00014.webp",
+    "/memes/animals/00015.webp",
+    "/memes/animals/00016.webp",
+    "/memes/animals/00017.webp",
+    "/memes/animals/00018.webp",
+    "/memes/animals/00019.webp",
+    "/memes/animals/00020.jpeg",
+    "/memes/animals/00021.webp",
+    "/memes/animals/00022.webp"
   ],
   "daily": [
     "/memes/daily/0001.webp",
