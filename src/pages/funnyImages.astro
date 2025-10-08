@@ -1,0 +1,183 @@
+---
+// funnyImages.astro
+import Layout from "../layouts/Layout.astro";
+import memes from "../data/memes-captions.json";
+const siteEmoji = "/images/site-emoji.png";
+---
+
+<Layout>
+  <h2 class="accordion"> مربعات ميمز مضحكة عن الحيوانات <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> </h2>
+  <div class="panel">
+    <div class="memes-grid">
+      {
+        memes.animals.map((meme, index) => (
+          <div class="meme-card cards">
+            <span class="meme-number">{index + 1}</span>
+            <img src={meme.src} alt={`Meme ${index + 1}`} />
+            <>
+              <p>{meme.caption}</p>
+              <button class="download-btn">تحميل</button>
+            </>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  
+  <h2 class="accordion"> مربعات ميمز مضحكة عن الحياة اليومية <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> </h2>
+  <div class="panel">
+    <div class="memes-grid">
+      {
+        memes.daily.map((meme, index) => (
+          <div class="meme-card cards">
+            <span class="meme-number">{index + 1}</span>
+            <img src={meme.src} alt={`Meme ${index + 1}`} />
+            <>
+              <p>{meme.caption}</p>
+              <button class="download-btn">تحميل</button>
+            </>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  
+  <h2 class="accordion"> مربعات ميمز مضحكة عن الأصدقاء <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> </h2>
+  <div class="panel">
+    <div class="memes-grid">
+      {
+        memes.friends.map((meme, index) => (
+          <div class="meme-card cards">
+            <span class="meme-number">{index + 1}</span>
+            <img src={meme.src} alt={`Meme ${index + 1}`} />
+            <>
+              <p>{meme.caption}</p>
+              <button class="download-btn">تحميل</button>
+            </>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  
+  <h2 class="accordion"> مربعات ميمز مضحكة عن العلاقات <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> </h2>
+  <div class="panel">
+    <div class="memes-grid">
+      {
+        memes.relations.map((meme, index) => (
+          <div class="meme-card cards">
+            <span class="meme-number">{index + 1}</span>
+            <img src={meme.src} alt={`Meme ${index + 1}`} />
+            <>
+              <p>{meme.caption}</p>
+              <button class="download-btn">تحميل</button>
+            </>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</Layout>
+
+<script type="module">
+  import { initDownloadMeme } from "../scripts/memes-client.js";
+  if (typeof window !== "undefined") {
+    window.addEventListener("DOMContentLoaded", () => {
+      initDownloadMeme();
+
+      // الكود بتاع الـ accordion
+      const accordions = document.querySelectorAll(".accordion");
+      accordions.forEach((acc) => {
+        acc.addEventListener("click", () => {
+          const panel = acc.nextElementSibling;
+          if (panel.style.maxHeight) panel.style.maxHeight = null;
+          else panel.style.maxHeight = panel.scrollHeight + "px";
+        });
+      });
+    });
+  }
+</script>
+
+<style>
+  .meme-number {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.3rem;
+    color: var(--text-color, #000);
+  }
+  .accordion {
+    cursor: pointer;
+    padding: 1rem;
+    background: var(--card);
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .funny-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .funny-card {
+    background: var(--card);
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px var(--shadow-color);
+    text-align: center;
+  }
+
+  .funny-card img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+  }
+
+  .funny-card p {
+    font-size: 1rem;
+    color: var(--text-color);
+  }
+  .memes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1rem;
+  }
+
+  .panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .meme-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  .cards {
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
+    color: var(--text-color, #000); /* fallback لو المتغير مش متعرف */
+    background: var(--card, #fff); /* fallback للون أبيض */
+    padding: 0.5rem 0.5rem; /* مسافة داخلية تخلي المحتوى يظهر */
+    border-radius: 10px; /* حواف مدورة */
+    box-shadow: 0 1px 1px var(--shadow-color); /* ظل خفيف يظهر البطاقة */
+  }
+  .meme-card .caption-overlay {
+    position: absolute;
+    bottom: 0;
+    right: 0; /* اللغة عربية */
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px 10px;
+    font-weight: bold;
+    text-align: right;
+  }
+</style>

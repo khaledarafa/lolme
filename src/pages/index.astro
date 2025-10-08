@@ -3,17 +3,21 @@
 import Layout from "../layouts/Layout.astro";
 
 // scripts/generate-memes-json.js
+// firebase deploy --only functions
+// npx astro dev --host
+// npm run build 
+
+
+// git add .
+// git commit -m "no en"
+// git push
 ---
 
 <Layout title="🤣 LOLME">
   <section style="text-align:center; padding: 0px 0.1rem ;">
     <!-- <h1>🤣 LOLME</h1> -->
     <p style="margin: 0px;"> أدوات ترفيهية هايفة ومجنونة 🕺🔥</p>
-    <p>
-      LOLME هو مكانك للضحك والهزار! ارفع صورة، اكتب ميمز، وروّست أصحابك بطريقة
-      مرحة 😎
-    </p>
-
+    <p> LOLME هو مكانك للضحك والهزار! ارفع صورة، اكتب ميمز، وروّست أصحابك بطريقة مرحة 😎 </p>
     <button id="install-btn" class="appbtn" style="background:#f39c12;">⬇️ حمّل LOLME كتطبيق</button>
 
   </section>
@@ -33,6 +37,8 @@ import Layout from "../layouts/Layout.astro";
     <button id="open-meme" class="btn">📸 اعمل ميميز دلوقتي</button>
     <!-- <button id="open-meme" class="btn">🔥 روّست صاحبك</button> -->
     <a href="/roast" class="btn">🔥 روّست صاحبك</a>
+    <a href="/jokes" class="btn">🤣 نكت مضحكة</a>
+    <a href="/funnyImages" class="btn">🤣 صور مضحكة</a>
     <p >🎭 إنتطروا المزيد</p>
   </main>
   <script type="module" src="/js/install-btn.js"></script>

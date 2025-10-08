@@ -21,7 +21,7 @@
 :root {
   /* ===== Dark Theme (افتراضي) ===== */
   --bg: #0f1723;
-  --card: #111827;
+  --card: #1e293b;
   --accent: #e5e7eb;
   --muted: #9ca3af;
   --btn-bg: #555;
@@ -574,6 +574,40 @@ p, h2 {
   font-size: 14px;
   color: #555;
   text-align: center;
+}
+
+/* ======== JOKES ======== */
+.jokes-page {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 15px;
+}
+
+.jokes-page h1 { text-align: center; color: #ff6600; }
+.jokes-page ul { list-style: none; padding: 0; }
+.jokes-page li {
+  background: var(--bg); margin: 1rem 0; padding: 1rem; border-radius: 10px; box-shadow: 0 1px 1px var(--shadow-color);
+}
+
+.card {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--text-color, #000); /* fallback لو المتغير مش متعرف */
+  background: var(--card, #fff);  /* fallback للون أبيض */
+  padding: 1rem 1.5rem;           /* مسافة داخلية تخلي المحتوى يظهر */
+  border-radius: 10px;            /* حواف مدورة */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5); /* ظل خفيف يظهر البطاقة */
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+}
+
+.emoji-icon {
+  width: 2em;
+  height: 2em;
+  vertical-align: middle;
 }
 
 /* ======== Footer ======== */
