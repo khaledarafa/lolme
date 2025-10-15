@@ -19,10 +19,4 @@ export default defineConfig({
   site: 'https://lolme.cc',
   output: 'static',
   adapter: vercel({}),
-
-  vite: {
-    server: {
-      hmr: true,
-    },
-  },
 });
