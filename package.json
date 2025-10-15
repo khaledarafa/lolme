@@ -11,6 +11,9 @@
   "dependencies": {
     "astro": "^5.14.1",
     "glob": "^11.0.3",
+    "jspdf": "^3.0.3",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^5.4.296",
     "sitemap": "^8.0.0"
   }
 }
