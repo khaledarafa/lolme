@@ -1,5 +1,6 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
+// @ts-check
+import vercel from '@astrojs/vercel/static';
 
 // https://astro.build/config
 // export default defineConfig({});
@@ -15,9 +16,13 @@ import { defineConfig } from 'astro/config';
 // });
 
 export default defineConfig({
-    vite: {
-      server: {
-        hmr: true
-      }
-    }
-  });
+  site: 'https://lolme.cc',
+  output: 'static',
+  adapter: vercel(),
+
+  vite: {
+    server: {
+      hmr: true,
+    },
+  },
+});
