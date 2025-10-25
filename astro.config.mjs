@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel/static';
+import vercel from '@astrojs/vercel/serverless';
 
 // https://astro.build/config
 // export default defineConfig({});
@@ -17,6 +17,6 @@ import vercel from '@astrojs/vercel/static';
 
 export default defineConfig({
   site: 'https://lolme.cc',
-  output: 'static',
+  output: 'server',
   adapter: vercel({}),
 });
