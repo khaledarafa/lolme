@@ -64,7 +64,7 @@ const questions: Question[] = shuffle([
     <form id="quizForm">
       {questions.map((q, i) => (
         <div class="question">
-          <h3>{q.question}</h3>
+            <h3 style="color:var(--h3); font-weight:bolder; font-size:24px;">{q.question}</h3>
           {q.options.map((opt) => (
             <label>
               <input type="radio" name={`q${i}`} value={opt.value} required />
@@ -213,7 +213,16 @@ const desc = [...res.titles.slice(1), ...res.descs].join("<br>");
         resultDiv.innerHTML = `
             <h2>${title}</h2>
             <p>${desc}</p>
-            <button id="retry">جرّب تاني 🔁</button>
+            <button id="retry" style="margin:0 0 10px 0">جرّب تاني 🔁</button>
+            
+<div class="share-buttons" style="margin:15px 0 15px 0; text-align:center;">
+  <p>شارك نتيجتك مع أصحابك! 🎯</p>
+  <div style="gap:10px; align-items:center; text-align:center;">
+    <a href="#" id="share-whatsapp" target="_blank" style="color: var(--accent); text-decoration: none !important;" class="share-btn whatsapp">📱 واتساب</a>
+    <a href="#" id="share-facebook" target="_blank" style="color: var(--accent); text-decoration: none !important;" class="share-btn facebook">📘 فيسبوك</a>
+    <a href="#" id="share-twitter" target="_blank" style="color: var(--accent); text-decoration: none !important;" class="share-btn twitter">🐦 تويتر</a>
+  </div>
+</div>
 
             <div class="next-quiz">
                 <h3 style="color: var(--accent); text-align:center;">🎯 جرب اختبار تاني!</h3>
@@ -227,12 +236,19 @@ const desc = [...res.titles.slice(1), ...res.descs].join("<br>");
                 </a>
             </div>
             `;
+  // بعد ما اضفنا المحتوى نعمل روابط الشير
+  const currentUrl = window.location.href;
+  const shareText = encodeURIComponent(`${title} - ${desc.replace(/<br>/g," ")} 😎 جرب الاختبار بنفسك!`);
+  document.querySelector("#share-whatsapp").href = `https://wa.me/?text=${shareText} ${currentUrl}`;
+  document.querySelector("#share-facebook").href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}&quote=${shareText}`;
+  document.querySelector("#share-twitter").href = `https://twitter.com/intent/tweet?text=${shareText}&url=${encodeURIComponent(currentUrl)}`;
 
-        resultDiv.classList.remove("hidden");
+  resultDiv.classList.remove("hidden");
+  resultDiv.scrollIntoView({ behavior: "smooth" });
 
-        document.querySelector("#retry").addEventListener("click", () => {
-          location.reload();
-        });
+  document.querySelector("#retry").addEventListener("click", () => {
+    location.reload();
+  });
       });
     });
   </script>

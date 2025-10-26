@@ -20,6 +20,7 @@
 } */
 :root {
   /* ===== Dark Theme (افتراضي) ===== */
+  --h3: greenyellow;
   --bg: #0f1723;
   --card: #1e293b;
   --accent: #e5e7eb;
@@ -38,6 +39,7 @@
 
 /* Light Theme */
 body.light-theme {
+  --h3: black;
   --bg: #fefefe;
   --card: #fff;
   --accent: #333;
