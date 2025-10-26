@@ -8,7 +8,7 @@ const siteUrl = 'https://lolme.cc'; // رابط موقعك
 
 (async () => {
   const sitemap = new SitemapStream({ hostname: siteUrl });
-  const writeStream = createWriteStream(path.resolve('dist/sitemap.xml'));
+  const writeStream = createWriteStream(path.resolve('public/sitemap.xml'));
   sitemap.pipe(writeStream);
 
   const files = await glob('dist/**/*.html');
