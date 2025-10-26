@@ -244,6 +244,7 @@ const desc = [...res.titles.slice(1), ...res.descs].join("<br>");
   document.querySelector("#share-twitter").href = `https://twitter.com/intent/tweet?text=${shareText}&url=${encodeURIComponent(currentUrl)}`;
 
   resultDiv.classList.remove("hidden");
+  
   resultDiv.scrollIntoView({ behavior: "smooth" });
 
   document.querySelector("#retry").addEventListener("click", () => {
