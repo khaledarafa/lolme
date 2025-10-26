@@ -1,0 +1,251 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+interface Option {
+  text: string;
+  value: "mercury" | "venus" | "mars" | "jupiter" | "saturn";
+}
+
+interface Question {
+  question: string;
+  options: Option[];
+}
+
+function shuffle<T>(arr: T[]): T[] {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+const questions: Question[] = shuffle([
+  {
+    question: "لو هتسافر، تختار السفر فين؟",
+    options: shuffle([
+      { text: "مكان صغير وسريع زي عطارد 🌑", value: "mercury" },
+      { text: "مكان رومانسي وجميل زي الزهرة 🌸", value: "venus" },
+      { text: "مكان مليان تحديات زي المريخ 🔴", value: "mars" },
+      { text: "مكان واسع وقوي زي المشتري 🌌", value: "jupiter" },
+      { text: "مكان هادئ ومنظم زي زحل 🪐", value: "saturn" },
+    ]),
+  },
+  {
+    question: "أصحابك يوصفوك بإيه؟",
+    options: shuffle([
+      { text: "سريع وذكي ⚡️", value: "mercury" },
+      { text: "رومانسي وجذاب 💖", value: "venus" },
+      { text: "مغامر وجرئ 🔥", value: "mars" },
+      { text: "قوي وواسع الحيلة 🌟", value: "jupiter" },
+      { text: "منظم وحكيم 🛋️", value: "saturn" },
+    ]),
+  },
+  {
+    question: "في وقت فراغك، إنت عادة؟",
+    options: shuffle([
+      { text: "بتعمل كل حاجة بسرعة ⚡️", value: "mercury" },
+      { text: "بتحب الهدوء والاسترخاء 🌸", value: "venus" },
+      { text: "بتجرب حاجات جديدة ومثيرة 🔴", value: "mars" },
+      { text: "بتخطط لكل حاجة واسعة وجديدة 🌌", value: "jupiter" },
+      { text: "بتحب النظام والتنظيم 🪐", value: "saturn" },
+    ]),
+  },
+  {
+    question: "أهم حاجة في شخصيتك؟",
+    options: shuffle([
+      { text: "سرعة البديهة والذكاء 💡", value: "mercury" },
+      { text: "جمال الروح والرومانسية 🌹", value: "venus" },
+      { text: "شجاعة وجرأة 🔥", value: "mars" },
+      { text: "قوة وتأثير كبير 💪", value: "jupiter" },
+      { text: "حكمة وهدوء 🌿", value: "saturn" },
+    ]),
+  },
+]);
+---
+
+<Layout title="لو كنت كوكب تكون إيه؟ 🌍">
+  <section class="quiz">
+    <form id="quizForm">
+      {questions.map((q, i) => (
+        <div class="question">
+          <h3>{q.question}</h3>
+          {q.options.map((opt) => (
+            <label>
+              <input type="radio" name={`q${i}`} value={opt.value} required />
+              {opt.text}
+            </label>
+          ))}
+        </div>
+      ))}
+      <button type="submit">شوف النتيجة 🔮</button>
+    </form>
+
+    <div id="result" class="hidden"></div>
+  </section>
+
+  <script is:inline lang="ts">
+    const otherQuizzes = [
+        {
+            slug: "if-you-were-food",
+            title: "اعرف نوعك لو كنت أكلة 😂",
+            desc: "اختبار مضحك وخفيف الدم! اكتشف لو كنت أكلة تكون بيتزا ولا كشري ولا بطانية 😅",
+            img: "/images/food.webp",
+        },
+        {
+            slug: "what-car-model-are-you",
+            title: "إنت موديل عربية إيه؟ 🚗",
+            desc: "جاوب بسرعة وشوف شخصيتك تمشي مع مرسيدس فخمة ولا كيا عملية ولا فيات مجنونة 😂",
+            img: "/images/car.webp",
+        },
+        {
+            slug: "which-cartoon-character",
+            title: "شخصيتك تشبه مين من الكرتون؟ 🧸",
+            desc: "جاوب على 6 أسئلة بسيطة وشوف إنت أقرب لمين من عالم الكرتون 😍",
+            img: "/images/cartoon.webp",
+        },
+        {
+            slug: "if-you-were-drink",
+            title: "لو كنت مشروب تكون إيه؟ 🥤",
+            desc: "شاي ولا قهوة ولا حاجة ساقعة؟ اعرف بنفسك في اختبار لول مي الجديد ☕️",
+            img: "/images/drink.webp",
+        },
+        {
+            slug: "what-kind-of-animal",
+            title: "إيه الحيوان اللي يمثلك أكتر؟ 🐯",
+            desc: "هل أنت أسد شجاع ولا باندا هادئة؟ 😎 جاوب وشوف النتيجة!",
+            img: "/images/animal.webp",
+        },
+        {
+            slug: "which-influencer-are-you",
+            title: "اعرف إنت مين من نجوم السوشيال ميديا 😂",
+            desc: "هل أنت زي بودي، ولا بتميل أكتر للطاقة الإيجابية زي إيناس؟ جاوب وشوف النتيجة 🤳",
+            img: "/images/influencer.webp",
+        },
+        {
+            slug: "if-your-life-was-a-movie",
+            title: "لو حياتك فيلم.. يكون اسمه إيه؟ 🎬",
+            desc: "جاوب على شوية أسئلة وشوف حياتك فيلم كوميدي ولا درامي ولا أكشن 😂",
+            img: "/images/movie.webp",
+        },
+        {
+            slug: "how-lazy-are-you",
+            title: "نسبة الكسل عندك كام٪؟ 😂",
+            desc: "اختبار خفيف ومضحك يعرفك أنت كسلان بنسبة قد إيه وبتحب السرير قد إيه 😴",
+            img: "/images/lazy.webp",
+        },
+        {
+            slug: "positive-or-negative-energy",
+            title: "إنت طاقتك إيجابية ولا سلبية؟ ⚡️",
+            desc: "اعرف نوع طاقتك وتأثيرك على اللي حواليك.. اختبار ممتع ومفيد 👀",
+            img: "/images/energy.webp",
+        },
+        {
+            slug: "which-planet-are-you",
+            title: "لو كنت كوكب تكون إيه؟ 🌍",
+            desc: "اعرف نفسك من منظور كوني 😄 اختبار خفيف يكشف عن شخصيتك من خلال الكواكب.",
+            img: "/images/planet.webp",
+        },
+    ];
+
+    const resultsData = {
+        mercury: {
+            titles: ["إنت عطارد 🌑", "سريع وذكي ⚡️", "شخصية نشيطة وفضولية 🧠"],
+            descs: [
+            "بديهة سريعة وعقلك دايمًا مشغول بالحلول.",
+            "تحب السرعة والإنجاز ومتابعة كل جديد.",
+            "مغامر في اكتشاف كل حاجة حواليك.",
+            ],
+        },
+        venus: {
+            titles: ["إنت الزهرة 🌸", "رومانسي وجذاب 💖", "شخصية هادئة وملهمة ✨"],
+            descs: [
+            "تحب الجمال والهدوء والراحة النفسية.",
+            "تجذب الناس لطبيعتك الرقيقة والمميزة.",
+            "رومانسي ودايمًا بتسعى للجمال حولك.",
+            ],
+        },
+        mars: {
+            titles: ["إنت المريخ 🔴", "مغامر وجرئ 🔥", "شخصية قوية ومثيرة 💥"],
+            descs: [
+            "تحب المغامرة والتحديات ومواجهة الصعاب.",
+            "شجاع ودايمًا مستعد لتجربة كل جديد.",
+            "طاقتك قوية وبتحب التأثير في محيطك.",
+            ],
+        },
+        jupiter: {
+            titles: ["إنت المشتري 🌌", "واسع وقوي 🌟", "شخصية قيادية وملهمة 👑"],
+            descs: [
+            "شخصية كبيرة ومؤثرة وبتحب التخطيط الواسع.",
+            "قوي وملهم للناس حواليك.",
+            "تحب التجربة والتأثير في كل مجال بتدخل فيه.",
+            ],
+        },
+        saturn: {
+            titles: ["إنت زحل 🪐", "منظم وحكيم 🛋️", "شخصية متزنة وعملية 🌿"],
+            descs: [
+            "تحب النظام والتخطيط والهدوء.",
+            "حكيم ودايمًا بحاول أعمل الصح.",
+            "شخصيتك متزنة وبتحب ترتيب حياتك وحياة الناس حواليك.",
+            ],
+        },
+    };
+
+    const randomPick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.querySelector("#quizForm");
+      const resultDiv = document.querySelector("#result");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const counts = {};
+        for (const [_, val] of formData.entries()) {
+          counts[val] = (counts[val] || 0) + 1;
+        }
+
+        const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+const res = resultsData[top] || resultsData["mickey"];
+        // const title = randomPick(res.titles);
+        const title = res.titles[0];
+        // const desc = randomPick(res.descs);
+const desc = [...res.titles.slice(1), ...res.descs].join("<br>");
+        const nextQuiz = randomPick(otherQuizzes);
+
+        form.style.display = "none";
+        resultDiv.innerHTML = `
+            <h2>${title}</h2>
+            <p>${desc}</p>
+            <button id="retry">جرّب تاني 🔁</button>
+
+            <div class="next-quiz">
+                <h3 style="color: var(--accent); text-align:center;">🎯 جرب اختبار تاني!</h3>
+
+                <a href="/tests/${nextQuiz.slug}" class="quiz-card next-card">
+                <img class="img" src="${nextQuiz.img}" alt="${nextQuiz.title}" loading="lazy" />
+                <div class="content">
+                    <h3 style="color: var(--accent)">${nextQuiz.title}</h3>
+                    <p>اختبار جديد وممتع من لول مي 😍 اضغط وابدأ دلوقتي!</p>
+                </div>
+                </a>
+            </div>
+            `;
+
+        resultDiv.classList.remove("hidden");
+
+        document.querySelector("#retry").addEventListener("click", () => {
+          location.reload();
+        });
+      });
+    });
+  </script>
+
+  <style>
+    .quiz { max-width: 600px; margin: auto; text-align: center; }
+    label { display: block; margin: 8px 0; padding: 8px; border-radius: 6px; cursor: pointer; background: var(--bg-color); box-shadow: 0 1px 2px var(--shadow-color); }
+    label:hover { background: var(--header-link-hover); }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 1.2rem; border: none; background: #ff4081; color: var(--accent); border-radius: 6px; cursor: pointer; }
+    .hidden { display: none; }
+    #result { margin-top: 30px; padding: 20px; background: var(--bg-color); box-shadow: 0 2px 3px var(--shadow-color); border-radius: 8px; animation: fadeIn 0.5s ease-in-out; }
+    .next-quiz { margin-top: 20px; background: var(--bg-color); padding: 15px; border-radius: 8px; }
+    .quiz-card img { width: 100%; height: 180px; object-fit: cover; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</Layout>

@@ -1,0 +1,240 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+interface Option {
+  text: string;
+  value: "luxury" | "sport" | "compact" | "unique";
+}
+
+interface Question {
+  question: string;
+  options: Option[];
+}
+
+function shuffle<T>(arr: T[]): T[] {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+const questions: Question[] = shuffle([
+  {
+    question: "إنت لما تمشي بالعربية، ستايلك إزاي؟",
+    options: shuffle([
+      { text: "هادي ورزين 🚙", value: "luxury" },
+      { text: "سريع ومغامر 🏎️", value: "sport" },
+      { text: "اقتصادي وعملي 🚗", value: "compact" },
+      { text: "غريب وفريد 😎", value: "unique" },
+    ]),
+  },
+  {
+    question: "تختار العربية على أساس إيه؟",
+    options: shuffle([
+      { text: "الفخامة والراحة 🛋️", value: "luxury" },
+      { text: "السرعة والأدرينالين ⚡️", value: "sport" },
+      { text: "الاقتصادية في البنزين 💸", value: "compact" },
+      { text: "التصميم الغريب والجذاب 🎨", value: "unique" },
+    ]),
+  },
+  {
+    question: "تحب عربية الأحلام تكون شكلها؟",
+    options: shuffle([
+      { text: "SUV كبيرة ومرتبة 🛻", value: "luxury" },
+      { text: "سبورت كوبيه 🔥", value: "sport" },
+      { text: "صغيرة وسهلة الركنة 🚗", value: "compact" },
+      { text: "مختلفة، تلفت النظر 👀", value: "unique" },
+    ]),
+  },
+  {
+    question: "أهم حاجة عندك في العربية؟",
+    options: shuffle([
+      { text: "الراحة والفخامة 😌", value: "luxury" },
+      { text: "الأداء العالي والسرعة 🏁", value: "sport" },
+      { text: "الاقتصاد وسهولة الاستخدام 💡", value: "compact" },
+      { text: "تميز وغرابة الشكل ✨", value: "unique" },
+    ]),
+  },
+]);
+
+---
+
+<Layout title="إنت موديل عربية إيه؟ 🚗">
+  <section class="quiz">
+    <form id="quizForm">
+      {questions.map((q, i) => (
+        <div class="question">
+          <h3>{q.question}</h3>
+          {q.options.map((opt) => (
+            <label>
+              <input type="radio" name={`q${i}`} value={opt.value} required />
+              {opt.text}
+            </label>
+          ))}
+        </div>
+      ))}
+      <button type="submit">شوف النتيجة 🔮</button>
+    </form>
+
+    <div id="result" class="hidden"></div>
+  </section>
+
+  <script is:inline lang="ts">
+    const otherQuizzes = [
+        {
+            slug: "if-you-were-food",
+            title: "اعرف نوعك لو كنت أكلة 😂",
+            desc: "اختبار مضحك وخفيف الدم! اكتشف لو كنت أكلة تكون بيتزا ولا كشري ولا بطانية 😅",
+            img: "/images/food.webp",
+        },
+        {
+            slug: "what-car-model-are-you",
+            title: "إنت موديل عربية إيه؟ 🚗",
+            desc: "جاوب بسرعة وشوف شخصيتك تمشي مع مرسيدس فخمة ولا كيا عملية ولا فيات مجنونة 😂",
+            img: "/images/car.webp",
+        },
+        {
+            slug: "which-cartoon-character",
+            title: "شخصيتك تشبه مين من الكرتون؟ 🧸",
+            desc: "جاوب على 6 أسئلة بسيطة وشوف إنت أقرب لمين من عالم الكرتون 😍",
+            img: "/images/cartoon.webp",
+        },
+        {
+            slug: "if-you-were-drink",
+            title: "لو كنت مشروب تكون إيه؟ 🥤",
+            desc: "شاي ولا قهوة ولا حاجة ساقعة؟ اعرف بنفسك في اختبار لول مي الجديد ☕️",
+            img: "/images/drink.webp",
+        },
+        {
+            slug: "what-kind-of-animal",
+            title: "إيه الحيوان اللي يمثلك أكتر؟ 🐯",
+            desc: "هل أنت أسد شجاع ولا باندا هادئة؟ 😎 جاوب وشوف النتيجة!",
+            img: "/images/animal.webp",
+        },
+        {
+            slug: "which-influencer-are-you",
+            title: "اعرف إنت مين من نجوم السوشيال ميديا 😂",
+            desc: "هل أنت زي بودي، ولا بتميل أكتر للطاقة الإيجابية زي إيناس؟ جاوب وشوف النتيجة 🤳",
+            img: "/images/influencer.webp",
+        },
+        {
+            slug: "if-your-life-was-a-movie",
+            title: "لو حياتك فيلم.. يكون اسمه إيه؟ 🎬",
+            desc: "جاوب على شوية أسئلة وشوف حياتك فيلم كوميدي ولا درامي ولا أكشن 😂",
+            img: "/images/movie.webp",
+        },
+        {
+            slug: "how-lazy-are-you",
+            title: "نسبة الكسل عندك كام٪؟ 😂",
+            desc: "اختبار خفيف ومضحك يعرفك أنت كسلان بنسبة قد إيه وبتحب السرير قد إيه 😴",
+            img: "/images/lazy.webp",
+        },
+        {
+            slug: "positive-or-negative-energy",
+            title: "إنت طاقتك إيجابية ولا سلبية؟ ⚡️",
+            desc: "اعرف نوع طاقتك وتأثيرك على اللي حواليك.. اختبار ممتع ومفيد 👀",
+            img: "/images/energy.webp",
+        },
+        {
+            slug: "which-planet-are-you",
+            title: "لو كنت كوكب تكون إيه؟ 🌍",
+            desc: "اعرف نفسك من منظور كوني 😄 اختبار خفيف يكشف عن شخصيتك من خلال الكواكب.",
+            img: "/images/planet.webp",
+        },
+    ];
+
+    const resultsData = {
+        luxury: {
+            titles: ["إنت عربية فخمة 🛋️", "ستايلك رفاهي وفخم 🚙", "ملك الراحة والأناقة 👑"],
+            descs: [
+            "تحب الرفاهية والراحة والفخامة في كل حاجة حواليك.",
+            "ستايلك راقي وعندك طابع مميز دايمًا.",
+            "تميل لكل حاجة جميلة ومريحة 😎",
+            ],
+        },
+        sport: {
+            titles: ["إنت عربية سبورت 🏎️", "أدرينالين وسبيد ⚡️", "ملك السرعة 🔥"],
+            descs: [
+            "تحب المغامرة والسرعة والإثارة في حياتك.",
+            "ستايلك مليان طاقة وحركة.",
+            "كل حاجة عندك دايمًا على سرعات عالية! 🚀",
+            ],
+        },
+        compact: {
+            titles: ["إنت عربية عملية 🚗", "اقتصادي وعملي 💡", "ستايل بسيط وسريع 😄"],
+            descs: [
+            "تحب البساطة والعملية وتكره التعقيد.",
+            "كل حاجة عندك منظمة وسهلة.",
+            "اقتصادي وعملي في كل خطواتك 😎",
+            ],
+        },
+        unique: {
+            titles: ["إنت عربية مميزة 😎", "ستايل غريب وفريد ✨", "ملك التميز 👑"],
+            descs: [
+            "تحب التميز وتخلي كل حاجة حواليك مميزة.",
+            "ستايلك مختلف ومميز دايمًا.",
+            "مش أي حد زيك.. كل حاجة عندك فريدة 🎨",
+            ],
+        },
+        };
+
+    const randomPick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.querySelector("#quizForm");
+      const resultDiv = document.querySelector("#result");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const counts = {};
+        for (const [_, val] of formData.entries()) {
+          counts[val] = (counts[val] || 0) + 1;
+        }
+
+        const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+const res = resultsData[top] || resultsData["mickey"];
+        // const title = randomPick(res.titles);
+        const title = res.titles[0];
+        // const desc = randomPick(res.descs);
+const desc = [...res.titles.slice(1), ...res.descs].join("<br>");
+        const nextQuiz = randomPick(otherQuizzes);
+
+        form.style.display = "none";
+        resultDiv.innerHTML = `
+            <h2>${title}</h2>
+            <p>${desc}</p>
+            <button id="retry">جرّب تاني 🔁</button>
+
+            <div class="next-quiz">
+                <h3 style="color: var(--accent); text-align:center;">🎯 جرب اختبار تاني!</h3>
+
+                <a href="/tests/${nextQuiz.slug}" class="quiz-card next-card">
+                <img class="img" src="${nextQuiz.img}" alt="${nextQuiz.title}" loading="lazy" />
+                <div class="content">
+                    <h3 style="color: var(--accent)">${nextQuiz.title}</h3>
+                    <p>اختبار جديد وممتع من لول مي 😍 اضغط وابدأ دلوقتي!</p>
+                </div>
+                </a>
+            </div>
+            `;
+
+        resultDiv.classList.remove("hidden");
+
+        document.querySelector("#retry").addEventListener("click", () => {
+          location.reload();
+        });
+      });
+    });
+  </script>
+
+  <style>
+    .quiz { max-width: 600px; margin: auto; text-align: center; }
+    label { display: block; margin: 8px 0; padding: 8px; border-radius: 6px; cursor: pointer; background: var(--bg-color); box-shadow: 0 1px 2px var(--shadow-color); }
+    label:hover { background: var(--header-link-hover); }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 1.2rem; border: none; background: #ff4081; color: var(--accent); border-radius: 6px; cursor: pointer; }
+    .hidden { display: none; }
+    #result { margin-top: 30px; padding: 20px; background: var(--bg-color); box-shadow: 0 2px 3px var(--shadow-color); border-radius: 8px; animation: fadeIn 0.5s ease-in-out; }
+    .next-quiz { margin-top: 20px; background: var(--bg-color); padding: 15px; border-radius: 8px; }
+    .quiz-card img { width: 100%; height: 180px; object-fit: cover; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</Layout>

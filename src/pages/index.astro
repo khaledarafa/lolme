@@ -2,11 +2,48 @@
 // src/pages/index.astro
 import Layout from "../layouts/Layout.astro";
 
+const homeButtons = [
+  {
+    title: "📸 اعمل ميميز دلوقتي",
+    slug: "/meme",
+    img: "/images/meme.webp",
+  },
+  {
+    title: "🔮 إختبارات مضحكة",
+    slug: "/tests",
+    img: "/images/tests.webp",
+  },
+  {
+    title: "🔥 روّست صاحبك",
+    slug: "/roast",
+    img: "/images/roast.webp",
+  },
+  {
+    title: "🤣 نكت مضحكة",
+    slug: "/jokes",
+    img: "/images/jokes.webp",
+  },
+  {
+    title: "🤣 صور مضحكة",
+    slug: "/funnyImages",
+    img: "/images/funny.webp",
+  },
+  {
+    title: "حوّل PDF إلى صور 🤯",
+    slug: "/pdf-to-images",
+    img: "/images/pdf2imgs.webp",
+  },
+];
+
 // scripts/generate-memes-json.js
 // node scripts/generate-memes-json.js
 // firebase deploy --only functions
 // npx astro dev --host
 // npm run build 
+
+// rm -rf dist
+// astro build
+// vercel deploy
 
 
 // git add .
@@ -32,18 +69,73 @@ import Layout from "../layouts/Layout.astro";
     <div class="emoji" style="left:80%;">🤪</div>
     <div class="emoji" style=" font-size:2rem;">🥳</div>
   </div>
-
-  <main style="display:flex; flex-direction:column; align-items:center; gap:1rem; " >
-    <!-- <a href="/meme" class="btn">📸 اعمل ميميز دلوقتي</a> -->
+  <main class="home-grid">
+    {homeButtons.map((btn) => (
+      <a href={btn.slug} class="home-card">
+        <img src={btn.img} alt={btn.title} loading="lazy" />
+        <div class="content">
+          <h3>{btn.title}</h3>
+        </div>
+      </a>
+    ))}
+  </main>
+  
+  <!-- <main style="display:flex; flex-direction:column; align-items:center; gap:1rem; " >
     <button id="open-meme" class="btn">📸 اعمل ميميز دلوقتي</button>
-    <!-- <button id="open-meme" class="btn">🔥 روّست صاحبك</button> -->
+    <a href="/tests" class="btn">🔮 إختبارات مضحكة</a>
     <a href="/roast" class="btn">🔥 روّست صاحبك</a>
     <a href="/jokes" class="btn">🤣 نكت مضحكة</a>
     <a href="/funnyImages" class="btn">🤣 صور مضحكة</a>
     <a href="/pdf-to-images" class="btn">حوّل PDF إلى صور 🤯</a>
     <p >🎭 إنتطروا المزيد</p>
-  </main>
+  </main> -->
   <script type="module" src="/js/install-btn.js"></script>
   <script type="module" src="/js/open-meme.js"></script>
 
 </Layout>
+<style>
+  .home-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    max-width: 1000px;
+    margin: auto;
+    padding: 40px 20px;
+  }
+
+  .home-card {
+    text-decoration: none;
+    color: inherit;
+    background: var(--bg-color);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px var(--shadow-color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .home-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px var(--shadow-color);
+  }
+
+  .home-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+
+  .home-card .content {
+    padding: 10px;
+    text-align: center;
+  }
+
+  .home-card h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    color: var(--accent);
+  }
+
+</style>

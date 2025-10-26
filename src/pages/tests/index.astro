@@ -1,0 +1,174 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const quizzes = [
+  {
+    slug: "if-you-were-food",
+    title: "اعرف نوعك لو كنت أكلة 😂",
+    desc: "اختبار مضحك وخفيف الدم! اكتشف لو كنت أكلة تكون بيتزا ولا كشري ولا بطانية 😅",
+    img: "/images/food.webp",
+  },
+  {
+    slug: "what-car-model-are-you",
+    title: "إنت موديل عربية إيه؟ 🚗",
+    desc: "جاوب بسرعة وشوف شخصيتك تمشي مع مرسيدس فخمة ولا كيا عملية ولا فيات مجنونة 😂",
+    img: "/images/car.webp",
+  },
+  {
+    slug: "which-cartoon-character",
+    title: "شخصيتك تشبه مين من الكرتون؟ 🧸",
+    desc: "جاوب على 4 أسئلة بسيطة وشوف إنت أقرب لمين من عالم الكرتون 😍",
+    img: "/images/cartoon.webp",
+  },
+  {
+    slug: "if-you-were-drink",
+    title: "لو كنت مشروب تكون إيه؟ 🥤",
+    desc: "شاي ولا قهوة ولا حاجة ساقعة؟ اعرف بنفسك في اختبار لول مي الجديد ☕️",
+    img: "/images/drink.webp",
+  },
+  {
+    slug: "what-kind-of-animal",
+    title: "إيه الحيوان اللي يمثلك أكتر؟ 🐯",
+    desc: "هل أنت أسد شجاع ولا باندا هادئة؟ 😎 جاوب وشوف النتيجة!",
+    img: "/images/animal.webp",
+  },
+  {
+    slug: "which-influencer-are-you",
+    title: "اعرف إنت مين من نجوم السوشيال ميديا 😂",
+    desc: "هل أنت زي بودي، ولا بتميل أكتر للطاقة الإيجابية زي إيناس؟ جاوب وشوف النتيجة 🤳",
+    img: "/images/influencer.webp",
+  },
+  {
+    slug: "if-your-life-was-a-movie",
+    title: "لو حياتك فيلم.. يكون اسمه إيه؟ 🎬",
+    desc: "جاوب على شوية أسئلة وشوف حياتك فيلم كوميدي ولا درامي ولا أكشن 😂",
+    img: "/images/movie.webp",
+  },
+  {
+    slug: "how-lazy-are-you",
+    title: "نسبة الكسل عندك كام٪؟ 😂",
+    desc: "اختبار خفيف ومضحك يعرفك أنت كسلان بنسبة قد إيه وبتحب السرير قد إيه 😴",
+    img: "/images/lazy.webp",
+  },
+  {
+    slug: "positive-or-negative-energy",
+    title: "إنت طاقتك إيجابية ولا سلبية؟ ⚡️",
+    desc: "اعرف نوع طاقتك وتأثيرك على اللي حواليك.. اختبار ممتع ومفيد 👀",
+    img: "/images/energy.webp",
+  },
+  {
+    slug: "which-planet-are-you",
+    title: "لو كنت كوكب تكون إيه؟ 🌍",
+    desc: "اعرف نفسك من منظور كوني 😄 اختبار خفيف يكشف عن شخصيتك من خلال الكواكب.",
+    img: "/images/planet.webp",
+  },
+];
+---
+
+<Layout>
+<!-- title="اختبارات مضحكة وشخصيات | لول مي 😂" 
+description="مجموعة من الاختبارات المضحكة والمسلية من لول مي. اكتشف شخصيتك لو كنت أكلة أو فيلم أو حيوان أو مشروب، بطريقة خفيفة ومرحة!" -->
+  <main class="tests-page">
+    <section class="intro">
+      <h1>اختبارات مضحكة وشخصيات 🔮</h1>
+      <p>
+        عايز تضحك وتعرف أكتر عن شخصيتك؟ 😄  
+        هنا هتلاقي اختبارات ممتعة وخفيفة الدم من <strong>لول مي</strong>!  
+        جاوب على شوية أسئلة بسيطة وشوف إنت مين لو كنت أكلة، مشروب، فيلم أو حتى حيوان! 🧠✨
+      </p>
+    </section>
+
+    <section class="grid">
+      {quizzes.map((quiz) => (
+        <a href={`/tests/${quiz.slug}`} class="quiz-card">
+          <img src={quiz.img} alt={quiz.title} loading="lazy" />
+          <div class="content">
+            <h3>{quiz.title}</h3>
+            <p>{quiz.desc}</p>
+          </div>
+        </a>
+      ))}
+    </section>
+  </main>
+
+  <style>
+    .tests-page {
+      max-width: 1000px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .intro h1 {
+      font-size: 2.2rem;
+      color: var(--highlight-color, #ff4081);
+      margin-bottom: 15px;
+    }
+
+    .intro p {
+      color: #444;
+      line-height: 1.7;
+      font-size: 1.1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+    }
+
+    .quiz-card {
+      text-decoration: none;
+      color: inherit;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .quiz-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+    }
+
+    .quiz-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .quiz-card .content {
+      padding: 15px;
+      flex: 1;
+    }
+
+    .quiz-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #222;
+    }
+
+    .quiz-card p {
+      color: #555;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 500px) {
+      .intro h1 {
+        font-size: 1.7rem;
+      }
+      .quiz-card img {
+        height: 150px;
+      }
+    }
+  </style>
+</Layout>
