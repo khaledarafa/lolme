@@ -1,4 +1,5 @@
 ---
+export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 
 interface Option {
@@ -196,7 +197,9 @@ const desc = [...res.titles.slice(1), ...res.descs].join("<br>");
                 <img class="img" src="${nextQuiz.img}" alt="${nextQuiz.title}" loading="lazy" />
                 <div class="content">
                     <h3 style="color: var(--accent)">${nextQuiz.title}</h3>
-                    <p>اختبار جديد وممتع من لول مي 😍 اضغط وابدأ دلوقتي!</p>
+                    <p>اختبار جديد وممتع من لول مي 😍 <br>
+                    اضغط وابدأ دلوقتي! lolme.cc
+                    </p>
                 </div>
                 </a>
             </div>

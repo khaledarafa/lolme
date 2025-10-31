@@ -5,156 +5,156 @@
     xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
     xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
     <url>
-        <loc>https://lolme.cc/client/</loc>
-        <lastmod>2025-10-26T13:29:23.324Z</lastmod>
+        <loc>https://lolme.cc/</loc>
+        <lastmod>2025-10-26T13:37:29.804Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://lolme.cc/roast/</loc>
+        <lastmod>2025-10-26T13:37:29.777Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/terms/</loc>
-        <lastmod>2025-10-26T13:29:23.294Z</lastmod>
+        <loc>https://lolme.cc/privacy/</loc>
+        <lastmod>2025-10-26T13:37:29.774Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/privacy/</loc>
-        <lastmod>2025-10-26T13:29:23.292Z</lastmod>
+        <loc>https://lolme.cc/tests/</loc>
+        <lastmod>2025-10-26T13:37:29.803Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/tests/</loc>
-        <lastmod>2025-10-26T13:29:23.323Z</lastmod>
+        <loc>https://lolme.cc/terms/</loc>
+        <lastmod>2025-10-26T13:37:29.778Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/roast/</loc>
-        <lastmod>2025-10-26T13:29:23.293Z</lastmod>
+        <loc>https://lolme.cc/mememob/</loc>
+        <lastmod>2025-10-26T13:37:29.772Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/mememob/</loc>
-        <lastmod>2025-10-26T13:29:23.291Z</lastmod>
+        <loc>https://lolme.cc/meme/</loc>
+        <lastmod>2025-10-26T13:37:29.768Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/meme/</loc>
-        <lastmod>2025-10-26T13:29:23.289Z</lastmod>
+        <loc>https://lolme.cc/jokes/</loc>
+        <lastmod>2025-10-26T13:37:29.766Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/jokes/</loc>
-        <lastmod>2025-10-26T13:29:23.288Z</lastmod>
+        <loc>https://lolme.cc/images-to-pdf/</loc>
+        <lastmod>2025-10-26T13:37:29.761Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/images-to-pdf/</loc>
-        <lastmod>2025-10-26T13:29:23.285Z</lastmod>
+        <loc>https://lolme.cc/funnyImages/</loc>
+        <lastmod>2025-10-26T13:37:29.756Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/funnyImages/</loc>
-        <lastmod>2025-10-26T13:29:23.283Z</lastmod>
+        <loc>https://lolme.cc/about/</loc>
+        <lastmod>2025-10-26T13:37:29.640Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/about/</loc>
-        <lastmod>2025-10-26T13:29:23.245Z</lastmod>
+        <loc>https://lolme.cc/articles/</loc>
+        <lastmod>2025-10-26T13:37:29.718Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/articles/</loc>
-        <lastmod>2025-10-26T13:29:23.264Z</lastmod>
+        <loc>https://lolme.cc/tests/which-planet-are-you/</loc>
+        <lastmod>2025-10-26T13:37:29.801Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/tests/which-planet-are-you/</loc>
-        <lastmod>2025-10-26T13:29:23.321Z</lastmod>
+        <loc>https://lolme.cc/tests/which-cartoon-character/</loc>
+        <lastmod>2025-10-26T13:37:29.799Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/tests/which-cartoon-character/</loc>
-        <lastmod>2025-10-26T13:29:23.320Z</lastmod>
+        <loc>https://lolme.cc/tests/what-kind-of-animal/</loc>
+        <lastmod>2025-10-26T13:37:29.794Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/tests/what-kind-of-animal/</loc>
-        <lastmod>2025-10-26T13:29:23.318Z</lastmod>
+        <loc>https://lolme.cc/tests/what-car-model-are-you/</loc>
+        <lastmod>2025-10-26T13:37:29.791Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/tests/what-car-model-are-you/</loc>
-        <lastmod>2025-10-26T13:29:23.315Z</lastmod>
+        <loc>https://lolme.cc/tests/positive-or-negative-energy/</loc>
+        <lastmod>2025-10-26T13:37:29.788Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/tests/if-you-were-drink/</loc>
-        <lastmod>2025-10-26T13:29:23.298Z</lastmod>
+        <loc>https://lolme.cc/tests/if-you-were-drink/</loc>
+        <lastmod>2025-10-26T13:37:29.783Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/tests/how-lazy-are-you/</loc>
-        <lastmod>2025-10-26T13:29:23.297Z</lastmod>
+        <loc>https://lolme.cc/tests/how-lazy-are-you/</loc>
+        <lastmod>2025-10-26T13:37:29.781Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://lolme.cc/client/tests/positive-or-negative-energy/</loc>
-        <lastmod>2025-10-26T13:29:23.308Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>https://lolme.cc/client/tests/if-you-were-food/</loc>
-        <lastmod>2025-10-26T13:29:23.300Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>
-            https://lolme.cc/client/articles/%D9%84%D9%8A%D9%87-%D8%A7%D9%84%D9%85%D9%8A%D9%85%D8%B2-%D8%A8%D8%AA%D8%AE%D9%84%D9%8A-%D9%8A%D9%88%D9%85%D9%83-%D8%A7%D9%94%D8%AD%D8%B3%D9%86%D8%9F/</loc>
-        <lastmod>2025-10-26T13:29:23.262Z</lastmod>
+        <loc>https://lolme.cc/tests/if-you-were-food/</loc>
+        <lastmod>2025-10-26T13:37:29.786Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>
-            https://lolme.cc/client/articles/%D8%AB%D9%82%D8%A7%D9%81%D8%A9-%D8%A7%D9%84%D9%85%D9%8A%D9%85%D8%B2/</loc>
-        <lastmod>2025-10-26T13:29:23.260Z</lastmod>
+            https://lolme.cc/articles/%D9%84%D9%8A%D9%87-%D8%A7%D9%84%D9%85%D9%8A%D9%85%D8%B2-%D8%A8%D8%AA%D8%AE%D9%84%D9%8A-%D9%8A%D9%88%D9%85%D9%83-%D8%A7%D9%94%D8%AD%D8%B3%D9%86%D8%9F/</loc>
+        <lastmod>2025-10-26T13:37:29.714Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>
-            https://lolme.cc/client/articles/%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE-%D8%A7%D9%84%D9%85%D9%8A%D9%85%D8%B2-%D9%88%D8%A7%D9%86%D8%AA%D8%B4%D8%A7%D8%B1%D9%87%D8%A7/</loc>
-        <lastmod>2025-10-26T13:29:23.257Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>https://lolme.cc/client/articles/geel-kamel/</loc>
-        <lastmod>2025-10-26T13:29:23.252Z</lastmod>
+            https://lolme.cc/articles/%D8%AB%D9%82%D8%A7%D9%81%D8%A9-%D8%A7%D9%84%D9%85%D9%8A%D9%85%D8%B2/</loc>
+        <lastmod>2025-10-26T13:37:29.712Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>
-            https://lolme.cc/client/articles/%D8%A7%D9%84%D9%86%D9%83%D8%AA:-%D8%A7%D9%84%D8%B9%D9%84%D8%A7%D8%AC-%D8%A7%D9%84%D8%B7%D8%A8%D9%8A%D8%B9%D9%8A-%D9%84%D9%84%D8%B1%D9%88%D8%AD/</loc>
-        <lastmod>2025-10-26T13:29:23.255Z</lastmod>
+            https://lolme.cc/articles/%D8%AA%D8%A7%D8%B1%D9%8A%D8%AE-%D8%A7%D9%84%D9%85%D9%8A%D9%85%D8%B2-%D9%88%D8%A7%D9%86%D8%AA%D8%B4%D8%A7%D8%B1%D9%87%D8%A7/</loc>
+        <lastmod>2025-10-26T13:37:29.708Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>
+            https://lolme.cc/articles/%D8%A7%D9%84%D9%86%D9%83%D8%AA:-%D8%A7%D9%84%D8%B9%D9%84%D8%A7%D8%AC-%D8%A7%D9%84%D8%B7%D8%A8%D9%8A%D8%B9%D9%8A-%D9%84%D9%84%D8%B1%D9%88%D8%AD/</loc>
+        <lastmod>2025-10-26T13:37:29.705Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://lolme.cc/articles/geel-kamel/</loc>
+        <lastmod>2025-10-26T13:37:29.702Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>

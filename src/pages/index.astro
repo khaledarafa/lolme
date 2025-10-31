@@ -1,5 +1,6 @@
 ---
 // src/pages/index.astro
+export const prerender = false;
 import Layout from "../layouts/Layout.astro";
 
 const homeButtons = [
@@ -44,6 +45,7 @@ const homeButtons = [
 // rm -rf dist
 // npx astro build
 // vercel deploy
+// vercel --prod
 
 // npx astro build
 
@@ -51,7 +53,7 @@ const homeButtons = [
 // node scripts/generate-sitemap.js
 
 // git add .
-// git commit -m "no en"
+// git commit -m ""
 // git push
 ---
 
@@ -122,7 +124,7 @@ const homeButtons = [
 
   .home-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 15px var(--shadow-color);
+    box-shadow: 0 6px 15px rgb(241, 249, 16);
   }
 
   .home-card img {

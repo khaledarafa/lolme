@@ -20,7 +20,107 @@
 			"dest": "_render"
 		},
 		{
+			"src": "^/about/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/articles/geel-kamel/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/articles/النكت:-العلاج-الطبيعي-للروح/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/articles/تاريخ-الميمز-وانتشارها/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/articles/ثقافة-الميمز/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/articles/ليه-الميمز-بتخلي-يومك-أحسن؟/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/articles/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/funnyImages/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/images-to-pdf/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/jokes/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/meme/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/mememob/?$",
+			"dest": "_render"
+		},
+		{
 			"src": "^/pdf-to-images/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/privacy/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/roast/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/terms/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/tests/how-lazy-are-you/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/tests/if-you-were-drink/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/tests/if-you-were-food/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/tests/positive-or-negative-energy/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/tests/what-car-model-are-you/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/tests/what-kind-of-animal/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/tests/which-cartoon-character/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/tests/which-planet-are-you/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/tests/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/$",
 			"dest": "_render"
 		}
 	]

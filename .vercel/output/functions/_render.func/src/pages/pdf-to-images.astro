@@ -12,6 +12,175 @@ const pageTitle = "تحويل PDF إلى صور - LOLME";
     <input type="file" id="pdfFile" accept="application/pdf" />
     <button id="convertBtn">حوّل PDF</button>
 
+    <div id="progressContainer" style="display:none; margin-top: 1rem;">
+      <div id="progressBar" style="width:0%; height: 20px; background:#0fe85b; border-radius:10px;"></div>
+      <p id="progressText">0 / 0 صفحات</p>
+    </div>
+
+    <div id="output" style="margin-top: 2rem;"></div>
+
+    <button id="downloadAllBtn" style="display:none; margin-top:1rem;">
+      تحميل كل الصور كـ ZIP 📦
+    </button>
+  </section>
+
+  <script type="module">
+    import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs";
+    import JSZip from "https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm";
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.mjs";
+
+    const fileInput = document.getElementById("pdfFile");
+    const convertBtn = document.getElementById("convertBtn");
+    const outputDiv = document.getElementById("output");
+    const downloadAllBtn = document.getElementById("downloadAllBtn");
+    const progressContainer = document.getElementById("progressContainer");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+
+    let imageUrls = [];
+
+    function updateProgress(current, total) {
+      const percent = Math.round((current / total) * 100);
+      progressBar.style.width = percent + "%";
+      progressText.textContent = `${current} / ${total} صفحات`;
+    }
+
+    convertBtn.addEventListener("click", async () => {
+      const file = fileInput.files[0];
+      if (!file) {
+        alert("اختار ملف PDF الأول 😅");
+        return;
+      }
+
+      outputDiv.innerHTML = "";
+      downloadAllBtn.style.display = "none";
+      imageUrls = [];
+
+      progressContainer.style.display = "block";
+
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+      const totalPages = pdf.numPages;
+      updateProgress(0, totalPages);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 1.5 });
+
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        await page.render({ canvasContext: context, viewport }).promise;
+
+        const imgData = canvas.toDataURL("image/png");
+        imageUrls.push(imgData);
+
+        const card = document.createElement("div");
+        card.style.margin = "1rem 0";
+        card.style.padding = "1rem";
+        card.style.background = "#111";
+        card.style.border = "2px solid #0fe85b";
+        card.style.borderRadius = "10px";
+        card.style.display = "flex";
+        card.style.flexDirection = "column";
+        card.style.alignItems = "center";
+
+        const img = document.createElement("img");
+        img.src = imgData;
+        img.style.maxWidth = "90%";
+        img.style.borderRadius = "8px";
+
+        const downloadBtn = document.createElement("button");
+        downloadBtn.textContent = `تحميل صفحة ${i} ⬇️`;
+        downloadBtn.style.marginTop = "0.5rem";
+        downloadBtn.style.background = "#0fe85b";
+        downloadBtn.style.color = "#000";
+        downloadBtn.style.border = "none";
+        downloadBtn.style.padding = "0.5rem 1rem";
+        downloadBtn.style.borderRadius = "6px";
+        downloadBtn.style.cursor = "pointer";
+        downloadBtn.onclick = () => {
+          const link = document.createElement("a");
+          link.href = imgData;
+          link.download = `page-${i}.png`;
+          link.click();
+        };
+
+        card.appendChild(img);
+        card.appendChild(downloadBtn);
+        outputDiv.appendChild(card);
+
+        updateProgress(i, totalPages);
+        await new Promise(r => setTimeout(r, 50)); // تحكم بسيط لتحديث progress
+      }
+
+      if (imageUrls.length > 0) {
+        downloadAllBtn.style.display = "inline-block";
+      }
+    });
+
+    downloadAllBtn.addEventListener("click", async () => {
+      if (imageUrls.length === 0) return;
+
+      const zip = new JSZip();
+      const folder = zip.folder("pdf-images");
+
+      imageUrls.forEach((dataUrl, index) => {
+        const base64Data = dataUrl.split(",")[1];
+        folder.file(`page-${index + 1}.png`, base64Data, { base64: true });
+      });
+
+      const content = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(content);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "pdf-images.zip";
+      link.click();
+
+      URL.revokeObjectURL(url);
+
+      alert("تم إنشاء ZIP بنجاح! 🔥");
+    });
+  </script>
+</Layout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ---
+export const prerender = false;
+import Layout from "../layouts/Layout.astro";
+const pageTitle = "تحويل PDF إلى صور - LOLME";
+---
+
+<Layout title={pageTitle}>
+  <section style="padding: 2rem; text-align: center;">
+    <h1>حوّل PDF إلى صور 🤯</h1>
+    <p>اختار ملف PDF وهنحوّله صور تقدر تحمّلها كلّها أو كل صفحة لوحدها 😎</p>
+
+    <input type="file" id="pdfFile" accept="application/pdf" />
+    <button id="convertBtn">حوّل PDF</button>
+
     <div id="output" style="margin-top: 2rem;"></div>
 
     <button id="downloadAllBtn" style="display:none; margin-top:1rem;">
@@ -106,114 +275,6 @@ const pageTitle = "تحويل PDF إلى صور - LOLME";
     });
 
     // ✅ تحميل كل الصور كـ ZIP واحد
-    downloadAllBtn.addEventListener("click", async () => {
-      if (imageUrls.length === 0) return;
-
-      const zip = new JSZip();
-      const folder = zip.folder("pdf-images");
-
-      imageUrls.forEach((dataUrl, index) => {
-        const base64Data = dataUrl.split(",")[1];
-        folder.file(`page-${index + 1}.png`, base64Data, { base64: true });
-      });
-
-      const content = await zip.generateAsync({ type: "blob" });
-      const url = URL.createObjectURL(content);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "pdf-images.zip";
-      link.click();
-
-      URL.revokeObjectURL(url);
-    });
-  </script>
-</Layout>
-
-
-
-
-
-
-
-
-
-<!-- ---
-export const prerender = false;
-import Layout from "../layouts/Layout.astro";
-const pageTitle = "تحويل PDF إلى صور - LOLME";
----
-
-<Layout title={pageTitle}>
-  <section style="padding: 2rem; text-align: center;">
-    <h1>حوّل PDF إلى صور 🤯</h1>
-    <p>اختار ملف PDF وهنحوّله صور تقدر تحمّلها كلّها دفعة واحدة 😎</p>
-
-    <input type="file" id="pdfFile" accept="application/pdf" />
-    <button id="convertBtn">حوّل PDF</button>
-
-    <div id="output" style="margin-top: 2rem;"></div>
-    <button id="downloadAllBtn" style="display:none; margin-top:1rem;">تحميل كل الصور كـ ZIP 📦</button>
-  </section>
-
-  <script type="module">
-    import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs";
-    import JSZip from "https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm";
-
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.mjs";
-
-    const fileInput = document.getElementById("pdfFile");
-    const convertBtn = document.getElementById("convertBtn");
-    const outputDiv = document.getElementById("output");
-    const downloadAllBtn = document.getElementById("downloadAllBtn");
-
-    let imageUrls = [];
-
-    convertBtn.addEventListener("click", async () => {
-      const file = fileInput.files[0];
-      if (!file) {
-        alert("اختار ملف PDF الأول 😅");
-        return;
-      }
-
-      outputDiv.innerHTML = "<p>بنحوّل الملف... ⏳</p>";
-      downloadAllBtn.style.display = "none";
-      imageUrls = [];
-
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-
-      outputDiv.innerHTML = `<p>الملف فيه ${pdf.numPages} صفحة 📄</p>`;
-
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const viewport = page.getViewport({ scale: 1.5 });
-
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-
-        await page.render({ canvasContext: context, viewport }).promise;
-
-        const imgData = canvas.toDataURL("image/png");
-        imageUrls.push(imgData);
-
-        const img = document.createElement("img");
-        img.src = imgData;
-        img.style.margin = "1rem 0";
-        img.style.border = "2px solid #0fe85b";
-        img.style.borderRadius = "8px";
-        img.style.maxWidth = "90%";
-        outputDiv.appendChild(img);
-      }
-
-      if (imageUrls.length > 0) {
-        downloadAllBtn.style.display = "inline-block";
-      }
-    });
-
     downloadAllBtn.addEventListener("click", async () => {
       if (imageUrls.length === 0) return;
 

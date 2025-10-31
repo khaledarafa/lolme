@@ -15,9 +15,9 @@ const siteUrl = 'https://lolme.cc'; // رابط موقعك
 
   for (const file of files) {
     let url = file
-      .replace(/^dist/, '')
-      .replace(/index\.html$/, '')
-      .replace(/\.html$/, '');
+      .replace(/^dist\/client/, '')  // ✅ احذف 'dist/client' من أول المسار
+      .replace(/index\.html$/, '')   // شيل index.html
+      .replace(/\.html$/, '');       // شيل .html لو موجود
     if (!url.startsWith('/')) url = '/' + url;
     if (url === '') url = '/';
 

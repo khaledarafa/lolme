@@ -1,1 +1,44 @@
-// Contents removed by Astro as it's used for prerendering only
+import { e as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../../chunks/astro/server_tVLEeqaO.mjs';
+import 'kleur/colors';
+import { $ as $$Layout } from '../../chunks/Layout_CDAhgi8t.mjs';
+export { renderers } from '../../renderers.mjs';
+
+const prerender = false;
+const $$ = createComponent(($$result, $$props, $$slots) => {
+  const title = "\u062A\u0627\u0631\u064A\u062E \u0627\u0644\u0645\u064A\u0645\u0632 \u0648\u0627\u0646\u062A\u0634\u0627\u0631\u0647\u0627 \u0639\u0644\u0649 \u0627\u0644\u0625\u0646\u062A\u0631\u0646\u062A";
+  const description = "\u062A\u0639\u0631\u0641 \u0639\u0644\u0649 \u062A\u0627\u0631\u064A\u062E \u0627\u0644\u0645\u064A\u0645\u0632 \u0648\u0643\u064A\u0641 \u0627\u0646\u062A\u0634\u0631\u062A \u0639\u0644\u0649 \u0627\u0644\u0625\u0646\u062A\u0631\u0646\u062A \u0648\u0623\u0635\u0628\u062D\u062A \u062C\u0632\u0621 \u0645\u0646 \u062B\u0642\u0627\u0641\u0629 \u0627\u0644\u0625\u0646\u062A\u0631\u0646\u062A \u0627\u0644\u062D\u062F\u064A\u062B\u0629.";
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": title, "description": description }, { "default": ($$result2) => renderTemplate` ${maybeRenderHead()}<div style="text-align: start; margin:auto; max-width: 1000px;"> <img class="img" src="/images/memes-intro.webp" alt="funny internet memes illustration showing various meme characters"> <p>
+الميمز أصبحت جزء لا يتجزأ من ثقافة الإنترنت، وكل يوم بنشوف صور وجمل مضحكة على السوشيال ميديا بتضحكنا أو تعكس واقعنا بطريقة ساخرة. 
+  لكن هل سألت نفسك قبل كده عن <strong>تاريخ الميمز وانتشارها على الإنترنت</strong>؟ المقال ده هيكشف لك القصة الكاملة من بدايات الميمز لحد 2025.
+</p> <h2>ما هو الميم ولماذا سُمّي بهذا الاسم؟</h2> <p>
+كلمة "ميم" ابتكرها عالم البيولوجيا <strong>ريتشارد دوكينز</strong> سنة 1976 في كتابه "الجين الأناني"، وكانت تشير لفكرة أن الثقافة تنتقل بين الناس بشكل يشبه الجينات. 
+  على الإنترنت، بدأت الكلمة ترتبط بالصور والنكات والرسوم الساخرة، وبقت وسيلة سريعة لنشر الفكاهة والمواقف اليومية.
+</p> <img class="img" src="/images/meme-origin.webp" alt="Richard Dawkins with memes floating around representing the origin of the term meme"> <h2>البدايات: أول ميمز الإنترنت</h2> <p>
+في أوائل التسعينات، ظهرت الميمز على المنتديات والمجتمعات الرقمية. أول ميم معروف كان <em>Dancing Baby</em> سنة 1996، طفل صغير يرقص بطريقة غريبة على الكمبيوتر. بعده ظهرت صور القطط المضحكة <em>LOLcats</em>، ودي كانت البداية لظاهرة الميمز اللي عرفناها النهاردة.
+</p> <img class="img" src="/images/early-memes.webp" alt="Dancing Baby meme with LOLcats showing early internet memes"> <h2>أشهر الميمز على مر السنين</h2> <p>
+على مدار السنين، ظهرت ميمز مختلفة أثرت على ثقافة الإنترنت:
+</p> <ul> <li><strong>Trollface وForever Alone:</strong> أوائل 2000، ميمز للضحك على المواقف المحرجة واليومية.</li> <li><strong>Grumpy Cat:</strong> سنة 2012، القط العبوس اللي حبه الناس كله على الإنترنت.</li> <li><strong>Distracted Boyfriend:</strong> سنة 2017، الميم اللي عبر عن المواقف الطريفة في العلاقات والمجتمع.</li> <li><strong>2025 Trend Memes:</strong> الميمز الجديدة على تيك توك وإنستجرام اللي بقت ترند للشباب، مثل تحديات الفيديوهات القصيرة والميمز الصوتية.</li> </ul> <img class="img" src="/images/famous-memes.webp" alt="collage of famous internet memes including Trollface, Forever Alone, Grumpy Cat, Distracted Boyfriend"> <h2>انتشار الميمز على الإنترنت وتأثيرها الثقافي</h2> <p> <em>انتشار الميمز على الإنترنت</em> مش بس للضحك، لكنها بقت وسيلة للتعبير عن الرأي والنقد الاجتماعي والثقافي. الشباب بيستخدموها للتعبير عن مواقفهم اليومية، مثل الدراسة، الشغل، العلاقات، أو حتى السياسة بطريقة ساخرة. 
+  كمان الشركات بدأت تستخدم الميمز في التسويق للوصول للجيل الجديد بطريقة ممتعة وجذابة.
+</p> <img class="img" src="/images/meme-culture.webp" alt="young people sharing memes on social media, highlighting the spread of memes online"> <h2>لماذا الميمز لغة الإنترنت الحديثة؟</h2> <p>
+الميمز لغة مختصرة وسريعة. صورة مع جملة قصيرة ممكن توصل مشاعر أو فكرة معقدة في ثانية واحدة. ده اللي بيخلي الميمز جزء مهم من ثقافة الإنترنت، وسبب شهرتها الكبير في 2025.
+</p> <img class="img" src="/images/memes-language.webp" alt="memes as a modern language of the internet, images and text forming communication"> <h2>كيف تصنع ميم ناجح؟</h2> <p>
+لو حابب تدخل عالم الميمز بنفسك، اتبع النصائح دي:
+</p><ul> <li>اختر صورة جذابة وملفتة للنظر.</li> <li>اكتب نص قصير وساخر، يحكي موقف يومي.</li> <li>حافظ على البساطة والوضوح.</li> <li>شارك الميم على منصات التواصل الاجتماعي اللي الناس فيها كتير.</li> </ul>  <img class="img" src="/images/create-meme.webp" alt="step-by-step illustration showing someone creating a meme and sharing it online"> <h2>خاتمة</h2> <p> <em>تاريخ الميمز وانتشارها على الإنترنت</em> قصة بدأت بسيطة، لكنها اتطورت لمرحلة أصبحت فيها لغة ثقافة الإنترنت الحديثة. دلوقتي دورك، جرب تصنع ميمك الخاص، يمكن يكون أشهر ميم في 2025 وتشارك العالم ضحكتك.
+</p> <img class="img" src="/images/meme-celebration.webp" alt="person celebrating after creating a viral meme, happy internet users reacting with likes and shares"> <p style="text-align:center; margin-top:2rem; ">
+👀 اقرأ كمان: <a style="color: var(--accent);" href="/articles/ليه-الميمز-بتخلي-يومك-أحسن؟">ليه الميمز بتخلي يومك أحسن؟</a> </p> </div> ` })}`;
+}, "/Users/khaledarafa/lolme/src/pages/articles/\u062A\u0627\u0631\u064A\u062E-\u0627\u0644\u0645\u064A\u0645\u0632-\u0648\u0627\u0646\u062A\u0634\u0627\u0631\u0647\u0627.astro", void 0);
+
+const $$file = "/Users/khaledarafa/lolme/src/pages/articles/تاريخ-الميمز-وانتشارها.astro";
+const $$url = "/articles/تاريخ-الميمز-وانتشارها";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$,
+  file: $$file,
+  prerender,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };
