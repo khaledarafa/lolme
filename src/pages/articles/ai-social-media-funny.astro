@@ -5,15 +5,15 @@ export const frontmatter = {
   title: "الذكاء الاصطناعي دخل السوشيال ميديا... وبدأ يقلدنا 😂",
   description: "الذكاء الاصطناعي بقى بيقلد الناس على تيك توك وإنستجرام، وبيعمل ميمز أحسن مننا! اكتشف إزاي الذكاء الصناعي هيقلب الترندات في 2025.",
   image: "/images/ai-social-media-funny.webp",
-date: "2025-10-30"
+  date: "2025-10-30",
+  slug: "ai-social-media-funny",
 };
+import Comments from "../../components/Comments.astro";
 
 ---
 
-<Layout 
-  title={frontmatter.title} 
-  description={frontmatter.description}
->
+<Layout title={frontmatter.title} description={frontmatter.description} >
+  <div class="article-container" >
   <div style="text-align:start; margin:auto; max-width:1000px; line-height:1.9; font-size:18px;">
     <img 
       class="img" 
@@ -85,6 +85,9 @@ date: "2025-10-30"
     فلو شفت صورة مضحكة قوي ومش مصدق إنها حقيقية... بنسبة 90٪ دي شغل روبوت بيحاول يبقى مؤثر 😅  
     مرحبًا بعصر الميمز الصناعية يا جماعة 💥
   </p>
+  
+  <!-- ✅ قسم التعليقات -->
+  <Comments slug={frontmatter.slug} />
 
 </div>
 

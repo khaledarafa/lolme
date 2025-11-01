@@ -7,12 +7,14 @@ export const frontmatter = {
   title: "أفكار محتوى مجنونة للتيك توك هتخليك تريند وانت نايم 😎",
   description: "عايز تبقى تريند على تيك توك؟ جرب الأفكار المجنونة دي اللي بتخلي الناس تضحك وتعمل شير من أول ثانية 😂",
   image: "/images/tiktok-crazy-ideas.webp",
-date: "2025-10-27"
+date: "2025-10-27",
+  slug: "أفكار محتوى مجنونة للتيك توك هتخليك تريند وانت نايم 😎",
 };
+import Comments from "../../components/Comments.astro";
 ---
 
 <Layout title={frontmatter.title} description={frontmatter.description}>
-  <article style="text-align:start; margin:auto; max-width:1000px; line-height:1.9; font-size:18px;">
+  <div class="article-container" >
     <img class="img" 
          src={frontmatter.image} 
          alt="funny tiktok content creator dancing with props and pets" 
@@ -97,6 +99,10 @@ date: "2025-10-27"
     التيك توك مكان للناس اللي بتضحك على نفسها قبل غيرها،  
     فابدأ دلوقتي... يمكن الفيديو الجاي يخليك تريند وانت فعلًا نايم 😂💤
   </p>
+
+  <!-- ✅ قسم التعليقات -->
+  <Comments slug={frontmatter.slug} />
+  
 
 </div>
 

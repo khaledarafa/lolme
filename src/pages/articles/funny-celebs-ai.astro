@@ -7,18 +7,23 @@ export const frontmatter = {
   description: "ضحك بدون قصد! مواقف مشاهير انقلبت لتريندات وميمز على انستقرام وتيك توك بدون تخطيط 😂",
   image: "/images/funny-celebs-ai.webp",
   keywords: ["مشاهير انستقرام", "ميمز", "ضحك", "سوشيال ميديا"],
-  date: "2025-10-29"
+  date: "2025-10-29",
+  slug: "ai-social-media-funny",
 };
+import Comments from "../../components/Comments.astro";
 ---
 
 <Layout title={frontmatter.title} description={frontmatter.description} keywords={frontmatter.keywords} >
-  <article class="funny-article">
-    <header>
-      <h1>{frontmatter.title}</h1>
-      <p class="desc">{frontmatter.description}</p>
-      <img src={frontmatter.image} alt="ميمز مشاهير السوشيال ميديا" loading="lazy" />
-    </header>
-    
+  <div class="article-container" >
+      <div style="text-align:start; margin:auto; max-width:1000px; line-height:1.9; font-size:18px;">
+        <img 
+          class="img" 
+          src={frontmatter.image} 
+          alt="AI-generated funny social media scene with robots using TikTok and Instagram" 
+          loading="lazy" 
+          style="display:block; margin:auto; border-radius:12px; max-width:100%; height:auto;" 
+        />
+      </div>
     <section>
       <h2>😎 محمد رمضان لما قال «ثقة في الله نجاح»</h2>
       <p>
@@ -57,28 +62,21 @@ export const frontmatter = {
       </p>
     </section>
 
-    <section class="ad-space">
-      <!-- إعلان تاني -->
-      <ins class="adsbygoogle"
-        style="display:block; text-align:center;"
-        data-ad-client="ca-pub-XXXX"
-        data-ad-slot="ZZZZ"
-        data-ad-format="auto"
-        data-full-width-responsive="true"></ins>
-    </section>
-
     <footer>
-      <h3>الخلاصة:</h3>
       <p>
         التريند بيبدأ من لحظة عادية جدًا... بس السوشيال ميديا بتعرف تخليها 
         <strong>ميم يعيش للأبد</strong> 💥  
         فخليك جاهز يمكن صورتك وإنت بتعطس تبقى التريند الجاي 😎
       </p>
     </footer>
-  </article>
+
+    <!-- ✅ قسم التعليقات -->
+    <Comments slug={frontmatter.slug} />
+    
+   </div>
 </Layout>
 
-<style>
+<!-- <style>
   article {
     max-width: 720px;
     margin: auto;
@@ -115,4 +113,4 @@ export const frontmatter = {
     margin-top: 2rem;
     text-align: center;
   }
-</style>
+</style> -->

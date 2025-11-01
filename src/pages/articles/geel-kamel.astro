@@ -6,14 +6,15 @@ export const frontmatter = {
   title: "الميمز: المرآة اللي بتعكس جيل كامل 😂",
   description: "تعرف إزاي الميمز بقت وسيلة تعبير لجيل كامل، وازاي كل صورة صغيرة ممكن تختصر ألف كلمة وموقف في لحظة واحدة.",
   image: "/images/12.webp",
-  date: "2025-10-28"
+  date: "2025-10-28",
+  slug: "الميمز: المرآة اللي بتعكس جيل كامل 😂",
 };
-
+import Comments from "../../components/Comments.astro";
 ---
 
 <Layout title={frontmatter.title} description={frontmatter.description}>
 
-<div style="text-align:start; margin:auto; max-width:1000px;">
+  <div class="article-container" >
 
   <p style="font-size:1.1rem; text-align:center; margin-top:10px;">
     الميمز النهارده مش بس صور مضحكة، دي طريقة جيل كامل بيعبّر بيها عن نفسه.  
@@ -101,6 +102,10 @@ export const frontmatter = {
   <p style="text-align:center; margin-top:2rem; ">
     👀 اقرأ كمان: <a style="color: var(--accent);" href="/articles/ثقافة-الميمز">ثقافة الميمز: ليه بقت لغة العالم الجديد؟</a>
   </p>
+
+  <!-- ✅ قسم التعليقات -->
+  <Comments slug={frontmatter.slug} />
+  
   
 </div>
 

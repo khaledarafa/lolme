@@ -6,13 +6,15 @@ export const frontmatter = {
   title: "تاريخ الميمز وانتشارها على الإنترنت",
   description: "تعرف على تاريخ الميمز وكيف انتشرت على الإنترنت وأصبحت جزء من ثقافة الإنترنت الحديثة.",
   image: "/images/memes-intro.webp",
-  date: "2025-10-24"
+  date: "2025-10-24",
+  slug: "تاريخ الميمز وانتشارها على الإنترنت",
 };
+import Comments from "../../components/Comments.astro";
 ---
 
 <Layout title={frontmatter.title} description={frontmatter.description}>
 
-  <div style="text-align: start; margin:auto; max-width: 1000px;">
+  <div class="article-container" >
 
   <img class="img" src={frontmatter.image} alt="funny internet memes illustration showing various meme characters" />
 
@@ -87,6 +89,10 @@ export const frontmatter = {
   <p style="text-align:center; margin-top:2rem; ">
     👀 اقرأ كمان: <a style="color: var(--accent);" href="/articles/ليه-الميمز-بتخلي-يومك-أحسن؟">ليه الميمز بتخلي يومك أحسن؟</a>
   </p>
+
+  <!-- ✅ قسم التعليقات -->
+  <Comments slug={frontmatter.slug} />
+
   
 </div>
 </Layout>

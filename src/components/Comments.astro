@@ -1,4 +1,83 @@
 ---
+const { slug } = Astro.props;
+const url = new URL(Astro.url);
+const isAdmin = url.searchParams.get("key") === "lolme_admin";
+---
+
+<section id="comments-section" data-slug={slug}>
+  <h3>💬 التعليقات</h3>
+  <div id="comment-list">جاري التحميل...</div>
+
+  <form id="comment-form">
+    <input name="name" placeholder="اسمك (اختياري)" maxlength="50" />
+    <textarea name="text" placeholder="اكتب تعليقك..." required maxlength="500"></textarea>
+    <button type="submit">أضف تعليق</button>
+  </form>
+
+  {isAdmin && (
+    <button id="delete-comments" class="danger-btn">🗑️ حذف كل التعليقات</button>
+  )}
+</section>
+
+<script type="module" src="/js/comments.js"></script>
+
+<style>
+  #comments-section {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: var(--bg);
+    box-shadow: 0px 0px 5px 0px var(--shadow-color);
+    border-radius: 10px;
+  }
+
+  #comment-list {
+    margin-bottom: 1rem;
+  }
+
+  .danger-btn {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .danger-btn:hover {
+    background: #c0392b;
+  }
+
+  .comment {
+    background: var(--bg);
+    /* background: rgba(255, 255, 255, 0.05); */
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  .comment .delete-comment {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 2px 6px;
+  }
+
+  .comment .delete-comment:hover {
+    background: #c0392b;
+  }
+
+</style>
+
+
+
+<!-- ---
 // src/components/Comments.astro
 const { slug } = Astro.props;
 ---
@@ -55,4 +134,4 @@ const { slug } = Astro.props;
     border-radius: 6px;
     cursor: pointer;
   }
-</style>
+</style> -->

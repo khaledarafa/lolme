@@ -12,14 +12,18 @@ slug: "ai-jokes-2025",
 }
 ---
 
-<Layout 
-  title={frontmatter.title} description={frontmatter.description} keywords={frontmatter.keywords} >
-  <article class="funny-article">
-    <header>
-      <h1>{frontmatter.title}</h1>
-      <p class="desc">{frontmatter.description}</p>
-      <img src={frontmatter.image} alt="روبوت بيضحك وسط بشر بيهزروا" loading="lazy" />
-    </header>
+<Layout title={frontmatter.title} description={frontmatter.description} keywords={frontmatter.keywords} >
+
+    <div class="article-container" >
+      <div style="text-align:start; margin:auto; max-width:1000px; line-height:1.9; font-size:18px;">
+        <img 
+          class="img" 
+          src={frontmatter.image} 
+          alt="AI-generated funny social media scene with robots using TikTok and Instagram" 
+          loading="lazy" 
+          style="display:block; margin:auto; border-radius:12px; max-width:100%; height:auto;" 
+        />
+      </div>
     
     <section>
       <h2>😂 نكت بشرية 2025</h2>
@@ -60,7 +64,6 @@ slug: "ai-jokes-2025",
     </section>
     
     <footer>
-      <!-- <h3>الخلاصة:</h3> -->
       <p>
         واضح إن حتى الذكاء الصناعي نفسه بدأ يزهق من الجدية وعايز يضحك 😎  
         بس احنا مش زعلانين... طالما بيطلع نكت بالشكل ده، نخليه يكمّل! 😂
@@ -69,10 +72,11 @@ slug: "ai-jokes-2025",
     
     <!-- ✅ قسم التعليقات -->
     <Comments slug={frontmatter.slug} />
-  </article>
+    
+   </div>
 </Layout>
 
-<style>
+<!-- <style>
   article {
     max-width: 720px;
     margin: auto;
@@ -109,4 +113,4 @@ slug: "ai-jokes-2025",
     margin-top: 2rem;
     text-align: center;
   }
-</style>
+</style> -->

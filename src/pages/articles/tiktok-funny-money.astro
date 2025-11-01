@@ -6,13 +6,15 @@ export const frontmatter = {
   title: "أغرب طرق الناس لكسب الفلوس من الإنترنت (الطريقة رقم 3 هتضحكك 😂)",
   description: "اكتشف أغرب وأطرف الطرق اللي الناس بتحاول تكسب بيها فلوس من الإنترنت في 2025! من التيك توك للذكاء الاصطناعي للميمز، المقال ده هيخليك تضحك وتتعلم في نفس الوقت.",
   image: "/images/tiktok-funny-money.webp",
-  date: "2025-10-26"
+  date: "2025-10-26",
+  slug: "أغرب طرق الناس لكسب الفلوس من الإنترنت (الطريقة رقم 3 هتضحكك 😂)",
 };
+import Comments from "../../components/Comments.astro";
 ---
 
 <Layout title={frontmatter.title} description={frontmatter.description}>
 
-  <div style="text-align:start; margin:auto; max-width: 1000px; line-height:1.9; font-size:18px;">
+  <div class="article-container" >
 
   <img class="img" src={frontmatter.image} alt="people trying to make money online in funny ways illustration" loading="lazy" style="display:block; margin:auto; border-radius:12px; max-width:100%; height:auto;" />
 
@@ -62,6 +64,11 @@ export const frontmatter = {
   <p>لو كنت فاكر إن الإنترنت مكان جاد ومليان ناس بتشتغل بضمير، فكر تاني 😅  
   العالم بيتغير، والضحك بقى صناعة، والميمز بقت عملة.  
   ومين عارف؟ يمكن بعد ما تخلص المقال ده... تطلعلك فكرة تخليك تكسب من الضحك برضو 😉</p>
+
+
+  <!-- ✅ قسم التعليقات -->
+  <Comments slug={frontmatter.slug} />
+  
 
   </div>
 

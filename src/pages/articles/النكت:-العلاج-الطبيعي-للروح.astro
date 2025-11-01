@@ -6,13 +6,15 @@ export const frontmatter = {
   title: "النكت: العلاج الطبيعي للروح 😄",
   description: "النكت مش مجرد هزار… دي وسيلة تواصل وطاقة إيجابية بتفك الضغط وتخلي الروح تضحك.",
   image: "/images/21.webp",
-  date: "2025-10-25"
+  date: "2025-10-25",
+  slug: "النكت: العلاج الطبيعي للروح 😄",
 };
+import Comments from "../../components/Comments.astro";
 ---
 
 <Layout title={frontmatter.title} description={frontmatter.description}>
 
-<div style="text-align:start; margin:auto; max-width:1000px;">
+  <div class="article-container" >
 
   <img class="img" src={frontmatter.image} alt="ضحك ومرح عبر النكت القديمة والحديثة" />
 
@@ -65,7 +67,9 @@ export const frontmatter = {
   <p style="text-align:center; margin-top:2rem; ">
     👀 اقرأ كمان: <a style="color: var(--accent);" href="/articles/ثقافة-الميمز">ثقافة الميمز: ليه بقت لغة العالم الجديد؟</a>
   </p>
-  
+
+  <!-- ✅ قسم التعليقات -->
+  <Comments slug={frontmatter.slug} />
 
 </div>
 

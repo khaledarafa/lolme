@@ -6,13 +6,15 @@ export const frontmatter = {
   title: "ثقافة الميمز: ليه بقت لغة العالم الجديد؟",
   description: "تعرف على سر انتشار الميمز وليه بقت جزء من حياتنا اليومية على السوشيال ميديا في 2025.",
   image: "/images/1.webp",
-  date: "2025-10-23"
+  date: "2025-10-23",
+  slug: "ثقافة الميمز: ليه بقت لغة العالم الجديد؟",
 };
+import Comments from "../../components/Comments.astro";
 ---
 
 <Layout title={frontmatter.title} description={frontmatter.description}>
 
-<div style="text-align: start; margin:auto; max-width: 1000px;">
+  <div class="article-container" >
 
   <p style="font-size: 1.1rem; margin-top: 10px; text-align: center;">
     الميمز بقت جزء من يومنا العادي، من أول ما نصحى لحد ما ننام. سواء على تيك توك، إنستجرام، أو حتى جروب واتساب، الميمز بقت اللغة اللي الناس بتتكلم بيها بدل الكلام نفسه.
@@ -81,6 +83,9 @@ export const frontmatter = {
   <p style="text-align:center; margin-top:2rem; ">
     👀 اقرأ كمان: <a style="color: var(--accent);" href="/articles/ليه-الميمز-بتخلي-يومك-أحسن؟">ليه الميمز بتخلي يومك أحسن؟</a>
   </p>
+
+  <!-- ✅ قسم التعليقات -->
+  <Comments slug={frontmatter.slug} />
   
 </div>
 
