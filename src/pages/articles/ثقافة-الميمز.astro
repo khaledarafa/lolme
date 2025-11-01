@@ -2,11 +2,15 @@
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 
-const title = "ثقافة الميمز: ليه بقت لغة العالم الجديد؟";
-const description = "تعرف على سر انتشار الميمز وليه بقت جزء من حياتنا اليومية على السوشيال ميديا في 2025.";
+export const frontmatter = {
+  title: "ثقافة الميمز: ليه بقت لغة العالم الجديد؟",
+  description: "تعرف على سر انتشار الميمز وليه بقت جزء من حياتنا اليومية على السوشيال ميديا في 2025.",
+  image: "/images/1.webp",
+  date: "2025-10-23"
+};
 ---
 
-<Layout {title} {description}>
+<Layout title={frontmatter.title} description={frontmatter.description}>
 
 <div style="text-align: start; margin:auto; max-width: 1000px;">
 
@@ -19,7 +23,7 @@ const description = "تعرف على سر انتشار الميمز وليه ب�
     الميم ببساطة هو صورة أو فيديو أو حتى جملة فيها فكرة مضحكة أو ساخرة، بتنتشر بسرعة رهيبة على الإنترنت. الناس بتستخدمها عشان تعبّر عن مشاعرها، أو تضحك، أو تعلق على موقف معين.
   </p>
 
-  <img class="img" src="/images/1.webp" alt="funny internet meme culture illustration" />
+  <img class="img" src={frontmatter.image} alt="funny internet meme culture illustration" />
 
   <h2>ليه الميمز انتشرت بالشكل ده؟</h2>
   <p>

@@ -2,6 +2,133 @@
 // src/pages/articles/index.astro
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
+
+const title = "المقالات";
+const description = "أحدث مقالات الميمز والترفيه";
+
+const articles = [
+  {
+    title: "تاريخ الميمز وانتشارها",
+    slug: "/articles/تاريخ-الميمز-وانتشارها",
+    img: "/images/meme-origin.webp",
+  },
+  {
+    title: "ثقافة الميمز: ليه بقت لغة العالم الجديد؟",
+    slug: "/articles/ثقافة-الميمز",
+    img: "/images/1.webp",
+  },
+  {
+    title: "ليه الميمز بتخلي يومك أحسن؟",
+    slug: "/articles/ليه-الميمز-بتخلي-يومك-أحسن؟",
+    img: "/images/6.webp",
+  },
+  {
+    title: "الميمز: المرآة اللي بتعكس جيل كامل 😂",
+    slug: "/articles/geel-kamel",
+    img: "/images/12.webp",
+  },
+  {
+    title: "النكت: العلاج الطبيعي للروح 😄",
+    slug: "/articles/النكت:-العلاج-الطبيعي-للروح",
+    img: "/images/21.webp",
+  },
+  {
+    title: "أغرب طرق الناس لكسب الفلوس من الإنترنت (الطريقة رقم 3 هتضحكك 😂)",
+    slug: "/articles/tiktok-funny-money",
+    img: "/images/tiktok-funny-money.webp",
+  },
+  {
+    title: "الذكاء الاصطناعي دخل السوشيال ميديا... وبدأ يقلدنا 😂",
+    slug: "/articles/ai-social-media-funny",
+    img: "/images/ai-social-media-funny.webp",
+  },
+  {
+    title: "أفكار محتوى مجنونة للتيك توك هتخليك تريند وانت نايم 😎",
+    slug: "/articles/tiktok-crazy-ideas",
+    img: "/images/tiktok-crazy-ideas.webp",
+  },
+  {
+    title: "المشاهير اللي قلبوا السوشيال ميديا ميمز بدون قصد 😂",
+    slug: "/articles/funny-celebs-ai",
+    img: "/images/funny-celebs-ai.webp",
+  },
+  {
+    title: "نكت 2025: الذكاء الاصطناعي بيهزر هو كمان 🤖😂",
+    slug: "/articles/ai-jokes-2025",
+    img: "/images/ai-jokes-2025.webp",
+  },
+];
+---
+
+<Layout {title} {description}>
+  <section style="text-align:center; padding: 20px;">
+    <h1>📰 أحدث مقالات LOLME</h1>
+    <p>اضحك وتعلم عن عالم الميمز والضحك بطريقة خفيفة ومجنونة 😎</p>
+  </section>
+
+  <main class="articles-grid">
+    {articles.map((article) => (
+      <a href={article.slug} class="article-card">
+        <img src={article.img} alt={article.title} loading="lazy" />
+        <div class="content">
+          <h3>{article.title}</h3>
+        </div>
+      </a>
+    ))}
+  </main>
+</Layout>
+
+<style>
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    max-width: 1000px;
+    margin: auto;
+    padding: 40px 20px;
+  }
+
+  .article-card {
+    text-decoration: none;
+    color: inherit;
+    background: var(--bg-color);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px var(--shadow-color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .article-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgb(241, 249, 16);
+  }
+
+  .article-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+
+  .article-card .content {
+    padding: 10px;
+    text-align: center;
+  }
+
+  .article-card h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    color: var(--accent);
+  }
+</style>
+
+
+<!-- ---
+// src/pages/articles/index.astro
+export const prerender = false;
+import Layout from "../../layouts/Layout.astro";
 const title = "المقالات";
 const description = "أحدث مقالات الميمز والترفيه";
 ---
@@ -13,34 +140,8 @@ const description = "أحدث مقالات الميمز والترفيه";
       <li><a href="/articles/ليه-الميمز-بتخلي-يومك-أحسن؟">ليه الميمز بتخلي يومك أحسن؟</a></li>
       <li><a href="/articles/geel-kamel">الميمز: المرآة اللي بتعكس جيل كامل 😂</a></li>
       <li><a href="/articles/النكت:-العلاج-الطبيعي-للروح">النكت: العلاج الطبيعي للروح 😄</a></li>
+      <li><a href="/articles/tiktok-funny-money">أغرب طرق الناس لكسب الفلوس من الإنترنت (الطريقة رقم 3 هتضحكك 😂)</a></li>
+      <li><a href="/articles/ai-social-media-funny">الذكاء الاصطناعي دخل السوشيال ميديا... وبدأ يقلدنا 😂</a></li>
+      <li><a href="/articles/tiktok-crazy-ideas">أفكار محتوى مجنونة للتيك توك هتخليك تريند وانت نايم 😎</a></li>
     </ul>
-  </Layout>
-  
-  <!-- <style>
-    .articles-list {
-      list-style: none;
-      padding: 2rem;   
-      margin: 0 auto;
-      max-width: 720px; 
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;       
-    }
-    
-    .articles-list li a {
-      display: block;
-      padding: 1rem 1.5rem;  
-      background: var(--card-bg);
-      border-radius: 10px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-      text-decoration: none;
-      color: #1f8ef1;
-      font-weight: bold;
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
-    }
-    
-    .articles-list li a:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    </style> -->
+  </Layout> -->

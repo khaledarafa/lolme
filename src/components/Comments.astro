@@ -1,0 +1,58 @@
+---
+// src/components/Comments.astro
+const { slug } = Astro.props;
+---
+
+<section id="comments-section" data-slug={slug}>
+  <h3>💬 التعليقات</h3>
+  <div id="comment-list">جاري التحميل...</div>
+
+  <form id="comment-form">
+    <input name="name" placeholder="اسمك (اختياري)" maxlength="50" />
+    <textarea name="text" placeholder="اكتب تعليقك..." required maxlength="500"></textarea>
+    <button type="submit">أضف تعليق</button>
+  </form>
+</section>
+
+<script type="module" src="/js/comments.js"></script>
+
+<style>
+  #comments-section {
+    margin-top: 40px;
+    padding: 15px;
+    background: var(--bg-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px var(--shadow-color);
+  }
+  #comments-section h3 {
+    color: var(--accent);
+    margin-bottom: 15px;
+  }
+  #comment-list .comment {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+  }
+  #comment-list .comment strong { color: var(--accent); }
+  #comment-list p { margin: 5px 0; }
+  #comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  #comment-form input, #comment-form textarea {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+  }
+  #comment-form button {
+    align-self: flex-end;
+    background: #ff4081;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+</style>

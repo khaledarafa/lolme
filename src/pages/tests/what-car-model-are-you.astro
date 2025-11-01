@@ -200,47 +200,69 @@ const desc = [...res.titles.slice(1), ...res.descs].join("<br>");
         const nextQuiz = randomPick(otherQuizzes);
 
         form.style.display = "none";
-        resultDiv.innerHTML = `
-            <h2>${title}</h2>
-            <p>${desc}</p>
-            <button id="retry" style="margin:0 0 10px 0">جرّب تاني 🔁</button>
-            
-<div class="share-buttons" style="margin:15px 0 15px 0; text-align:center;">
-  <p>شارك نتيجتك مع أصحابك! 🎯</p>
-  <div style="gap:10px; align-items:center; text-align:center;">
-    <a href="#" id="share-whatsapp" target="_blank" style="color: var(--accent); text-decoration: none !important;" class="share-btn whatsapp">📱 واتساب</a>
-    <a href="#" id="share-facebook" target="_blank" style="color: var(--accent); text-decoration: none !important;" class="share-btn facebook">📘 فيسبوك</a>
-    <a href="#" id="share-twitter" target="_blank" style="color: var(--accent); text-decoration: none !important;" class="share-btn twitter">🐦 تويتر</a>
+resultDiv.innerHTML = `
+  <h2>${title}</h2>
+  <p>${desc}</p>
+  <button id="retry" style="margin:0 0 10px 0">جرّب تاني 🔁</button>
+
+  <div class="share-section" style="text-align:center; margin:15px 0;">
+    <button id="share-result" class="share-btn" style="
+      background:#ff4081;
+      color:#fff;
+      border:none;
+      padding:10px 18px;
+      border-radius:6px;
+      font-size:1.1rem;
+      cursor:pointer;
+      box-shadow:0 2px 4px rgba(0,0,0,0.2);
+    ">📲 شارك نتيجتك</button>
   </div>
-</div>
 
-            <div class="next-quiz">
-                <h3 style="color: var(--accent); text-align:center;">🎯 جرب اختبار تاني!</h3>
+  <div class="next-quiz">
+    <h3 style="color: var(--accent); text-align:center;">🎯 جرب اختبار تاني!</h3>
+    <a href="/tests/${nextQuiz.slug}" class="quiz-card next-card">
+      <img class="img" src="${nextQuiz.img}" alt="${nextQuiz.title}" loading="lazy" />
+      <div class="content">
+        <h3 style="color: var(--accent)">${nextQuiz.title}</h3>
+        <p>اختبار جديد وممتع من لول مي 😍 <br>
+        اضغط وابدأ دلوقتي! lolme.cc
+        </p>
+      </div>
+    </a>
+  </div>
+`;
 
-                <a href="/tests/${nextQuiz.slug}" class="quiz-card next-card">
-                <img class="img" src="${nextQuiz.img}" alt="${nextQuiz.title}" loading="lazy" />
-                <div class="content">
-                    <h3 style="color: var(--accent)">${nextQuiz.title}</h3>
-                    <p>اختبار جديد وممتع من لول مي 😍 <br>
-                    اضغط وابدأ دلوقتي! lolme.cc
-                    </p>
-                </div>
-                </a>
-            </div>
-            `;
-  // بعد ما اضفنا المحتوى نعمل روابط الشير
-  const currentUrl = window.location.href;
-  const shareText = encodeURIComponent(`${title} - ${desc.replace(/<br>/g," ")} 😎 جرب الاختبار بنفسك!`);
-  document.querySelector("#share-whatsapp").href = `https://wa.me/?text=${shareText} ${currentUrl}`;
-  document.querySelector("#share-facebook").href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}&quote=${shareText}`;
-  document.querySelector("#share-twitter").href = `https://twitter.com/intent/tweet?text=${shareText}&url=${encodeURIComponent(currentUrl)}`;
+// 👇 السطرين اللي كانوا ناقصين
+resultDiv.classList.remove("hidden");
+resultDiv.scrollIntoView({ behavior: "smooth" });
 
-  resultDiv.classList.remove("hidden");
-  resultDiv.scrollIntoView({ behavior: "smooth" });
+const currentUrl = window.location.href;
 
-  document.querySelector("#retry").addEventListener("click", () => {
-    location.reload();
-  });
+// ✅ زرار المشاركة التلقائية
+document.querySelector("#share-result").addEventListener("click", async () => {
+  const text = `${title} 😎 من اختبار "نسبة الكسل عندك كام٪؟" على موقع لول مي 😂`;
+  const url = currentUrl;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: "اختبار لول مي 😆",
+        text,
+        url,
+      });
+      console.log("تمت المشاركة بنجاح 🎉");
+    } else {
+      alert("جهازك مش بيدعم المشاركة التلقائية. انسخ النتيجة يدويًا 😅");
+    }
+  } catch (err) {
+    console.log("تم إلغاء المشاركة أو حدث خطأ:", err);
+  }
+});
+
+document.querySelector("#retry").addEventListener("click", () => {
+  location.reload();
+});
+
       });
     });
   </script>

@@ -1,0 +1,176 @@
+---
+// src/pages/404.astro
+export const prerender = false; // لو حابب تبنيها ستاتيكياً
+---
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>الصفحة غير موجودة — 404</title>
+    <meta name="robots" content="noindex" />
+    <style>
+      :root{
+        --bg:#0f1724;
+        --card:#0b1220;
+        --accent:#06b6d4;
+        --muted:#94a3b8;
+        --glass: rgba(255,255,255,0.03);
+      }
+      *{box-sizing:border-box}
+      html,body{height:100%}
+      body{
+        margin:0;
+        font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial;
+        background:linear-gradient(180deg,var(--bg), #071028 120%);
+        color:#e6eef6;
+        -webkit-font-smoothing:antialiased;
+        -moz-osx-font-smoothing:grayscale;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:32px;
+      }
+
+      .card{
+        max-width:920px;
+        width:100%;
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+        border-radius:16px;
+        padding:28px;
+        box-shadow: 0 10px 30px rgba(2,6,23,0.7);
+        display:grid;
+        grid-template-columns: 1fr 360px;
+        gap:24px;
+        align-items:center;
+        border:1px solid rgba(255,255,255,0.03);
+      }
+
+      .left{
+        padding:8px 12px;
+      }
+      .eyebrow{
+        color:var(--muted);
+        font-size:13px;
+        margin-bottom:12px;
+      }
+      h1{
+        margin:0 0 12px 0;
+        font-size:42px;
+        line-height:1;
+        letter-spacing:-0.02em;
+      }
+      p{
+        margin:0 0 18px 0;
+        color:var(--muted);
+        font-size:16px;
+      }
+
+      .actions{
+        display:flex;
+        gap:12px;
+        flex-wrap:wrap;
+      }
+      .btn{
+        display:inline-flex;
+        align-items:center;
+        gap:10px;
+        padding:10px 14px;
+        border-radius:10px;
+        text-decoration:none;
+        font-weight:600;
+        cursor:pointer;
+        border:1px solid transparent;
+      }
+      .btn-primary{
+        background: linear-gradient(90deg,var(--accent), #7dd3fc);
+        color:#052025;
+        box-shadow: 0 6px 18px rgba(6,182,212,0.18);
+      }
+      .btn-ghost{
+        background:transparent;
+        color:var(--muted);
+        border:1px solid rgba(255,255,255,0.04);
+      }
+
+      .right{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        position:relative;
+      }
+
+      .illustration{
+        width:100%;
+        max-width:320px;
+        aspect-ratio:1/1;
+        background:
+          radial-gradient(60% 60% at 20% 20%, rgba(125,211,252,0.06), transparent 10%),
+          linear-gradient(180deg, rgba(255,255,255,0.02), transparent 40%);
+        border-radius:12px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:18px;
+        border:1px solid rgba(255,255,255,0.03);
+      }
+
+      .big-num{
+        font-size:96px;
+        font-weight:800;
+        letter-spacing:-0.02em;
+        color:rgba(230,238,246,0.95);
+      }
+      .small{
+        color:var(--muted);
+        font-size:14px;
+        margin-top:6px;
+      }
+
+      /* responsive */
+      @media (max-width:880px){
+        .card{grid-template-columns:1fr; padding:20px;}
+        .right{order:-1; margin-bottom:6px;}
+        h1{font-size:34px}
+        .big-num{font-size:72px}
+      }
+
+      /* subtle float animation for the illustration */
+      @keyframes floaty {
+        0%{transform:translateY(0px)}
+        50%{transform:translateY(-8px)}
+        100%{transform:translateY(0px)}
+      }
+      .illustration{animation: floaty 4.5s ease-in-out infinite;}
+    </style>
+  </head>
+
+  <body>
+    <main class="card" role="main" aria-labelledby="title-404">
+      <section class="left">
+        <div class="eyebrow">خطأ 404</div>
+        <h1 id="title-404">الصفحة المطلوبة مش موجودة</h1>
+        <p>يمكن الرابط اللي فتحته قديم، أو فيه خطأ في كتابة الرابط. ما تقلقش — إحنا هنا نرجعك للصفحة الصح بسرعة.</p>
+
+        <div class="actions" role="group" aria-label="خيارات">
+          <a class="btn btn-primary" href="/" title="الرجوع للصفحة الرئيسية">العودة للصفحة الرئيسية</a>
+          <!-- <a class="btn btn-ghost" href="/" title="خريطة الموقع">عرض خريطة الموقع</a> -->
+          <!-- <a class="btn btn-ghost" href="mailto:moncellence@gmail.com" title="الإبلاغ عن مشكلة">أبلغ عن رابط مكسور</a> -->
+          <a class="btn btn-ghost" href="https://mail.google.com/mail/?view=cm&fs=1&to=lolmonce.cce@gmail.com" title="الإبلاغ عن مشكلة">أبلغ عن رابط مكسور</a>
+          <!-- <a href="https://mail.google.com/mail/?view=cm&fs=1&to=moncellence@gmail.com" target="_blank"> <img src="/images/emailicon.webp" alt="Email" /> </a> -->
+        </div>
+
+        <p class="small" style="margin-top:16px">نصيحة: لو كنت متأكد إن العنوان صحيح، جرّب تحديث الصفحة أو امسح الكاش. لو المشكلة مستمرة، كلمني على الايميل فوق.</p>
+      </section>
+
+      <aside class="right" aria-hidden="false">
+        <div class="illustration" role="img" aria-label="404 illustration">
+          <div style="text-align:center">
+            <div class="big-num">404</div>
+            <div class="small">ما لقيناش الصفحة دي</div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </body>
+</html>

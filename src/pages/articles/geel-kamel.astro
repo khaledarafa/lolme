@@ -2,11 +2,16 @@
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 
-const title = "الميمز: المرآة اللي بتعكس جيل كامل 😂";
-const description = "تعرف إزاي الميمز بقت وسيلة تعبير لجيل كامل، وازاي كل صورة صغيرة ممكن تختصر ألف كلمة وموقف في لحظة واحدة.";
+export const frontmatter = {
+  title: "الميمز: المرآة اللي بتعكس جيل كامل 😂",
+  description: "تعرف إزاي الميمز بقت وسيلة تعبير لجيل كامل، وازاي كل صورة صغيرة ممكن تختصر ألف كلمة وموقف في لحظة واحدة.",
+  image: "/images/12.webp",
+  date: "2025-10-28"
+};
+
 ---
 
-<Layout {title} {description}>
+<Layout title={frontmatter.title} description={frontmatter.description}>
 
 <div style="text-align:start; margin:auto; max-width:1000px;">
 
@@ -23,7 +28,7 @@ const description = "تعرف إزاي الميمز بقت وسيلة تعبير
     وكل ميم ناجح هو في الحقيقة <strong>مشهد من حياتنا اليومية</strong>.
   </p>
 
-  <img class="img" src="/images/12.webp" alt="modern meme generation culture" />
+  <img class="img" src={frontmatter.image} alt="modern meme generation culture" />
 
   <h2>من جيل التسعينات لجيل الزوومرز</h2>
   <p>

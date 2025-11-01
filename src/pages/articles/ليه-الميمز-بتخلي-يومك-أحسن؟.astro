@@ -2,11 +2,15 @@
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 
-const title = "ليه الميمز بتخلي يومك أحسن؟";
-const description = "تعرف ليه الميمز مش مجرد صور مضحكة، لكنها جرعة طاقة وضحك يومية تخلي مزاجك أحسن في 2025.";
+export const frontmatter = {
+  title: "ليه الميمز بتخلي يومك أحسن؟",
+  description: "تعرف ليه الميمز مش مجرد صور مضحكة، لكنها جرعة طاقة وضحك يومية تخلي مزاجك أحسن في 2025.",
+  image: "/images/6.webp",
+  date: "2025-10-22"
+};
 ---
 
-<Layout {title} {description}>
+<Layout title={frontmatter.title} description={frontmatter.description}>
 
 <div style="text-align: start; margin:auto; max-width: 1000px;">
 
@@ -21,7 +25,7 @@ const description = "تعرف ليه الميمز مش مجرد صور مضحك�
     الميم بيختصر الكلام في ثانية، وده اللي خلاه ينتشر بين كل الأعمار، من أول المراهقين لحد الكبار اللي بيدخلوا الفيسبوك قبل النوم 😅.
   </p>
 
-  <img class="img" src="/images/6.webp" alt="people laughing at memes on phone" />
+  <img class="img" src={frontmatter.image} alt="people laughing at memes on phone" />
 
   <h2>الميمز بتفهمك من غير ما تتكلم</h2>
   <p>

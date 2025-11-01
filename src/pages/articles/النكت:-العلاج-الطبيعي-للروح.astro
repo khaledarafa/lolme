@@ -2,15 +2,19 @@
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 
-const title = "النكت: العلاج الطبيعي للروح 😄";
-const description = "النكت مش مجرد هزار… دي وسيلة تواصل وطاقة إيجابية بتفك الضغط وتخلي الروح تضحك.";
+export const frontmatter = {
+  title: "النكت: العلاج الطبيعي للروح 😄",
+  description: "النكت مش مجرد هزار… دي وسيلة تواصل وطاقة إيجابية بتفك الضغط وتخلي الروح تضحك.",
+  image: "/images/21.webp",
+  date: "2025-10-25"
+};
 ---
 
-<Layout {title} {description}>
+<Layout title={frontmatter.title} description={frontmatter.description}>
 
 <div style="text-align:start; margin:auto; max-width:1000px;">
 
-  <img class="img" src="/images/21.webp" alt="ضحك ومرح عبر النكت القديمة والحديثة" />
+  <img class="img" src={frontmatter.image} alt="ضحك ومرح عبر النكت القديمة والحديثة" />
 
   <p style="font-size:1.1rem; text-align:center; margin-top:10px;">
     الضحك مش رفاهية… ده علاج طبيعي بجد! 😄  

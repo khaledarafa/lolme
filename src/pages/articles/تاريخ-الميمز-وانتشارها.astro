@@ -2,15 +2,19 @@
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 
-const title = "تاريخ الميمز وانتشارها على الإنترنت";
-const description = "تعرف على تاريخ الميمز وكيف انتشرت على الإنترنت وأصبحت جزء من ثقافة الإنترنت الحديثة.";
+export const frontmatter = {
+  title: "تاريخ الميمز وانتشارها على الإنترنت",
+  description: "تعرف على تاريخ الميمز وكيف انتشرت على الإنترنت وأصبحت جزء من ثقافة الإنترنت الحديثة.",
+  image: "/images/memes-intro.webp",
+  date: "2025-10-24"
+};
 ---
 
-<Layout {title} {description}>
+<Layout title={frontmatter.title} description={frontmatter.description}>
 
   <div style="text-align: start; margin:auto; max-width: 1000px;">
 
-  <img class="img" src="/images/memes-intro.webp" alt="funny internet memes illustration showing various meme characters" />
+  <img class="img" src={frontmatter.image} alt="funny internet memes illustration showing various meme characters" />
 
   <p>
   الميمز أصبحت جزء لا يتجزأ من ثقافة الإنترنت، وكل يوم بنشوف صور وجمل مضحكة على السوشيال ميديا بتضحكنا أو تعكس واقعنا بطريقة ساخرة. 

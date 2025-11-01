@@ -1,0 +1,280 @@
+---
+export const prerender = false;
+import Layout from "../../layouts/Layout.astro";
+
+interface Option {
+  text: string;
+  value: "comedy" | "drama" | "action" | "romance";
+}
+
+interface Question {
+  question: string;
+  options: Option[];
+}
+
+function shuffle<T>(arr: T[]): T[] {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+const questions: Question[] = shuffle([
+  {
+    question: "أول مشهد في فيلم حياتك هيكون عامل إزاي؟",
+    options: shuffle([
+      { text: "أنا داخل متأخر ومتعصب 😤", value: "drama" },
+      { text: "بدخل أتزحلق وأضحك الناس 😂", value: "comedy" },
+      { text: "مطاردة في الشارع وأنا بهرب من حد 😎", value: "action" },
+      { text: "منظر غروب وأنا بتأمل الحياة 💞", value: "romance" },
+    ]),
+  },
+  {
+    question: "لو حياتك فيلم، مين الممثل اللي ممكن يلعب دورك؟",
+    options: shuffle([
+      { text: "أحمد حلمي – دم خفيف وطبيعي 😅", value: "comedy" },
+      { text: "منة شلبي – إحساس عالي وتمثيل جامد 🎭", value: "drama" },
+      { text: "محمد رمضان – أكشن وتحدي 🔥", value: "action" },
+      { text: "تارا عماد – رومانسي وراقي 💕", value: "romance" },
+    ]),
+  },
+  {
+    question: "المشهد اللي يتكرر في فيلم حياتك كتير هو؟",
+    options: shuffle([
+      { text: "مشهد بضحك وسط الزحمة 😄", value: "comedy" },
+      { text: "بكاء في المراية وأنا بفكر في الماضي 😢", value: "drama" },
+      { text: "مطاردة أو مغامرة جديدة 💥", value: "action" },
+      { text: "مشية على الكورنيش والمزيكا شغالة 🎶", value: "romance" },
+    ]),
+  },
+  {
+    question: "لو الفيلم ده ليه نهاية، تكون عاملة إزاي؟",
+    options: shuffle([
+      { text: "نهاية غير متوقعة والناس تضحك 😆", value: "comedy" },
+      { text: "نهاية حزينة بس مؤثرة 💔", value: "drama" },
+      { text: "نهاية فيها انتصار ومزيكا حماسية 🔥", value: "action" },
+      { text: "نهاية رومانسية تبكي العين 😍", value: "romance" },
+    ]),
+  },
+]);
+---
+
+<Layout title="شخصيتك تشبه مين من الكرتون؟ 🧸">
+  <section class="quiz">
+    <form id="quizForm">
+      {questions.map((q, i) => (
+        <div class="question">
+            <h3 style="color:var(--h3); font-weight:bolder; font-size:24px;">{q.question}</h3>
+          {q.options.map((opt) => (
+            <label>
+              <input type="radio" name={`q${i}`} value={opt.value} required />
+              {opt.text}
+            </label>
+          ))}
+        </div>
+      ))}
+      <button type="submit">شوف النتيجة 🔮</button>
+    </form>
+
+    <div id="result" class="hidden"></div>
+  </section>
+
+  <script is:inline lang="ts">
+    const otherQuizzes = [
+        {
+            slug: "if-you-were-food",
+            title: "اعرف نوعك لو كنت أكلة 😂",
+            desc: "اختبار مضحك وخفيف الدم! اكتشف لو كنت أكلة تكون بيتزا ولا كشري ولا بطانية 😅",
+            img: "/images/food.webp",
+        },
+        {
+            slug: "what-car-model-are-you",
+            title: "إنت موديل عربية إيه؟ 🚗",
+            desc: "جاوب بسرعة وشوف شخصيتك تمشي مع مرسيدس فخمة ولا كيا عملية ولا فيات مجنونة 😂",
+            img: "/images/car.webp",
+        },
+        {
+            slug: "which-cartoon-character",
+            title: "شخصيتك تشبه مين من الكرتون؟ 🧸",
+            desc: "جاوب على 6 أسئلة بسيطة وشوف إنت أقرب لمين من عالم الكرتون 😍",
+            img: "/images/cartoon.webp",
+        },
+        {
+            slug: "if-you-were-drink",
+            title: "لو كنت مشروب تكون إيه؟ 🥤",
+            desc: "شاي ولا قهوة ولا حاجة ساقعة؟ اعرف بنفسك في اختبار لول مي الجديد ☕️",
+            img: "/images/drink.webp",
+        },
+        {
+            slug: "what-kind-of-animal",
+            title: "إيه الحيوان اللي يمثلك أكتر؟ 🐯",
+            desc: "هل أنت أسد شجاع ولا باندا هادئة؟ 😎 جاوب وشوف النتيجة!",
+            img: "/images/animal.webp",
+        },
+        {
+            slug: "which-influencer-are-you",
+            title: "اعرف إنت مين من نجوم السوشيال ميديا 😂",
+            desc: "هل أنت زي بودي، ولا بتميل أكتر للطاقة الإيجابية زي إيناس؟ جاوب وشوف النتيجة 🤳",
+            img: "/images/influencer.webp",
+        },
+        {
+            slug: "if-your-life-was-a-movie",
+            title: "لو حياتك فيلم.. يكون اسمه إيه؟ 🎬",
+            desc: "جاوب على شوية أسئلة وشوف حياتك فيلم كوميدي ولا درامي ولا أكشن 😂",
+            img: "/images/movie.webp",
+        },
+        {
+            slug: "how-lazy-are-you",
+            title: "نسبة الكسل عندك كام٪؟ 😂",
+            desc: "اختبار خفيف ومضحك يعرفك أنت كسلان بنسبة قد إيه وبتحب السرير قد إيه 😴",
+            img: "/images/lazy.webp",
+        },
+        {
+            slug: "positive-or-negative-energy",
+            title: "إنت طاقتك إيجابية ولا سلبية؟ ⚡️",
+            desc: "اعرف نوع طاقتك وتأثيرك على اللي حواليك.. اختبار ممتع ومفيد 👀",
+            img: "/images/energy.webp",
+        },
+        {
+            slug: "which-planet-are-you",
+            title: "لو كنت كوكب تكون إيه؟ 🌍",
+            desc: "اعرف نفسك من منظور كوني 😄 اختبار خفيف يكشف عن شخصيتك من خلال الكواكب.",
+            img: "/images/planet.webp",
+        },
+    ];
+
+    const resultsData = {
+      comedy: {
+        titles: ["فيلم حياتك: (ضحك من القلب) 😂", "حياتك كلها مواقف مضحكة ودمك خفيف!"],
+        descs: [
+          "حتى لما بتزعل، بتضحك الناس حوالين منك.",
+          "بتحول أي موقف سخيف لقصة مضحكة تستحق السينما.",
+          "أنت النجم الكوميدي اللي محدش يقدر يزعل منه 😎",
+        ],
+      },
+      drama: {
+        titles: ["فيلم حياتك: (دموع وذكريات) 🎭", "إحساسك عالي ومشاعرك صادقة جدًا 💔"],
+        descs: [
+          "كل مشهد عندك له معنى ورسالة.",
+          "بتعيش المواقف بصدق وبتأثر في اللي حواليك.",
+          "لو الفيلم ده نزل السينما.. الناس كلها هتبكي 🥹",
+        ],
+      },
+      action: {
+        titles: ["فيلم حياتك: (لا وقت للراحة) 🔥", "أنت البطل اللي ما بيستسلمش أبدًا 💪"],
+        descs: [
+          "حياتك كلها مغامرات وتحديات بس بتكسب دايمًا.",
+          "بتحب المخاطرة وبتواجه اللي يخوف الناس التانية.",
+          "الفيلم بتاعك كله حماس وأدرينالين 💥",
+        ],
+      },
+      romance: {
+        titles: ["فيلم حياتك: (حب في كل مشهد) 💞", "رومانسي وبتعيش المشاعر على حقيقتها 💕"],
+        descs: [
+          "بتحب بصدق وبتدي اللي حواليك طاقة حب حلوة.",
+          "اللحظات الصغيرة عندك أهم من أي حاجة.",
+          "فيلمك كله دفء ومزيكا هادية ومشاعر جميلة 🎶",
+        ],
+      },
+    };
+
+    const randomPick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.querySelector("#quizForm");
+      const resultDiv = document.querySelector("#result");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const counts = {};
+        for (const [_, val] of formData.entries()) {
+          counts[val] = (counts[val] || 0) + 1;
+        }
+
+        const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+const res = resultsData[top] || resultsData["mickey"];
+        // const title = randomPick(res.titles);
+        const title = res.titles[0];
+        // const desc = randomPick(res.descs);
+const desc = [...res.titles.slice(1), ...res.descs].join("<br>");
+        const nextQuiz = randomPick(otherQuizzes);
+
+        form.style.display = "none";
+resultDiv.innerHTML = `
+  <h2>${title}</h2>
+  <p>${desc}</p>
+  <button id="retry" style="margin:0 0 10px 0">جرّب تاني 🔁</button>
+
+  <div class="share-section" style="text-align:center; margin:15px 0;">
+    <button id="share-result" class="share-btn" style="
+      background:#ff4081;
+      color:#fff;
+      border:none;
+      padding:10px 18px;
+      border-radius:6px;
+      font-size:1.1rem;
+      cursor:pointer;
+      box-shadow:0 2px 4px rgba(0,0,0,0.2);
+    ">📲 شارك نتيجتك</button>
+  </div>
+
+  <div class="next-quiz">
+    <h3 style="color: var(--accent); text-align:center;">🎯 جرب اختبار تاني!</h3>
+    <a href="/tests/${nextQuiz.slug}" class="quiz-card next-card">
+      <img class="img" src="${nextQuiz.img}" alt="${nextQuiz.title}" loading="lazy" />
+      <div class="content">
+        <h3 style="color: var(--accent)">${nextQuiz.title}</h3>
+        <p>اختبار جديد وممتع من لول مي 😍 <br>
+        اضغط وابدأ دلوقتي! lolme.cc
+        </p>
+      </div>
+    </a>
+  </div>
+`;
+
+// 👇 السطرين اللي كانوا ناقصين
+resultDiv.classList.remove("hidden");
+resultDiv.scrollIntoView({ behavior: "smooth" });
+
+const currentUrl = window.location.href;
+
+// ✅ زرار المشاركة التلقائية
+document.querySelector("#share-result").addEventListener("click", async () => {
+  const text = `${title} 😎 من اختبار "نسبة الكسل عندك كام٪؟" على موقع لول مي 😂`;
+  const url = currentUrl;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: "اختبار لول مي 😆",
+        text,
+        url,
+      });
+      console.log("تمت المشاركة بنجاح 🎉");
+    } else {
+      alert("جهازك مش بيدعم المشاركة التلقائية. انسخ النتيجة يدويًا 😅");
+    }
+  } catch (err) {
+    console.log("تم إلغاء المشاركة أو حدث خطأ:", err);
+  }
+});
+
+document.querySelector("#retry").addEventListener("click", () => {
+  location.reload();
+});
+
+      });
+    });
+  </script>
+
+  <style>
+    .quiz { max-width: 600px; margin: auto; text-align: center; }
+    label { display: block; margin: 8px 0; padding: 8px; border-radius: 6px; cursor: pointer; background: var(--bg-color); box-shadow: 0 1px 2px var(--shadow-color); }
+    label:hover { background: var(--header-link-hover); }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 1.2rem; border: none; background: #ff4081; color: var(--accent); border-radius: 6px; cursor: pointer; }
+    .hidden { display: none; }
+    #result { margin-top: 30px; padding: 20px; background: var(--bg-color); box-shadow: 0 2px 3px var(--shadow-color); border-radius: 8px; animation: fadeIn 0.5s ease-in-out; }
+    .next-quiz { margin-top: 20px; background: var(--bg-color); padding: 15px; border-radius: 8px; }
+    .quiz-card img { width: 100%; height: 180px; object-fit: cover; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</Layout>

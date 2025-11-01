@@ -1,10 +1,10 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel';
+import { defineConfig } from "astro/config";
+import vercel from "@astrojs/vercel/serverless"; // ✅ خليك على /serverless هنا
 
 export default defineConfig({
-  site: 'https://lolme.cc',
-  output: 'static',
+  site: "https://lolme.cc",
+  output: "server", // لازم عشان API تشتغل
   adapter: vercel({}),
 });
 
