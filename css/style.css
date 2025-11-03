@@ -441,7 +441,7 @@ p, h2 {
   line-height: 1.6;
   margin-bottom: 1rem;
   padding: 0px 10px;
-  /* color: var(--accent); */
+  color: var(--accent);
 }
 /* ======== img ======== */
 .img {
