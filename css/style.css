@@ -23,6 +23,7 @@
   --h3: greenyellow;
   --bg: #0f1723;
   --card: #1e293b;
+  --border-color: rgba(255,255,255,0.25);
   --accent: #e5e7eb;
   --muted: #9ca3af;
   --btn-bg: #555;
@@ -42,6 +43,7 @@ body.light-theme {
   --h3: black;
   --bg: #fefefe;
   --card: #fff;
+  --border-color: #999;
   --accent: #333;
   --muted: #888;
   --btn-bg: #555;
@@ -452,6 +454,7 @@ p, h2 {
   margin: 20px auto; /* صورة في النص مع مسافة فوق وتحت */
   border-radius: 8px; /* حواف خفيفة حلوة */
 }
+
 /* ======== container ======== */
 /* تعديل ال container للصفحات النصية */
 .text-container {
@@ -562,10 +565,10 @@ p, h2 {
 }
 
 /* ======== Responsive Ads ======== */
-.ad-space {
+/* .ad-space {
   width: 98%;
   max-width: 728px;
-  height: 90px; /* حجم إعلان قياسي */
+  height: 90px;
   margin: 20px auto;
   margin-bottom: 0px;
   background: #f1f1f1;
@@ -577,11 +580,11 @@ p, h2 {
   font-size: 14px;
   color: #555;
   text-align: center;
-}
+} */
 
 /* ======== JOKES ======== */
 .jokes-page {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 2rem auto;
   padding: 0 15px;
 }
@@ -705,4 +708,143 @@ p, h2 {
 
 .article-container p {
   margin-bottom: 1rem;
+}
+
+/* ======== ADS ======== */
+
+/* ——— TOP / BOTTOM AD ——— */
+.ad-top{
+  display: flex;
+  justify-content: center;
+  margin: 25px auto;
+}
+.ad-bottom {
+  margin: 40px auto 0;
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.ad-top img,
+.ad-bottom img,
+.ad-placeholder {
+  width: 100%;
+  max-width: 900px;
+  height: 130px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.page-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ——— SIDE ADS ——— */
+.ad-right, .ad-left {
+  position: fixed;
+  top: 180px;
+  width: 300px;
+  z-index: 900;
+}
+
+.ad-right {
+  right: max(5px, calc((90vw - 1100px) / 2 - 200px));
+}
+
+.ad-left {
+  left: max(5px, calc((90vw - 1100px) / 2 - 200px));
+}
+
+.ad-right img,
+.ad-left img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+/* ——— FLOATING ——— */
+.ad-floating {
+  position: fixed;
+  bottom: 90px;
+  right: 25px;
+  z-index: 1100;
+}
+
+.ad-floating img {
+  width: 180px;
+  border-radius: 12px;
+}
+
+/* ——— PLACEHOLDER ——— */
+.ad-placeholder {
+  background: var(--bg);
+  border: 2px dashed var(--border-color);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  font-size: .95rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* ——— IN-CONTENT ——— */
+.in-content-ad-box {
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+.grid-ad-box img {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.grid-ad-box {
+  width: 100%;
+  max-width: 350px;
+  margin: 15px auto;
+}
+
+.ad-tilt {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  border-radius: 15px;
+}
+
+.ad-tilt-inner {
+  border-radius: 14px;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  background: transparent;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.ad-tilt-inner video,
+.ad-tilt-inner img {
+  width: 100%;
+  height: auto;
+  max-height: 300px; /* عدّلها برحتك */
+  object-fit: cover;
+  display: block;
+}
+
+/* .grid-ad-box {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-color);
+  box-shadow: 0 6px 15px var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+} */
+
+/* إخفاء الإعلانات الجانبية والفلوت على الموبايل */
+@media (max-width: 900px) {
+  .ad-right,
+  .ad-left,
+  .ad-floating {
+    display: none !important;
+  }
 }

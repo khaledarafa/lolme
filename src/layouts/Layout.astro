@@ -1,8 +1,16 @@
 ---
 // src/layouts/Layout.astro
 import Footer from "../components/Footer.astro";
-const { title = "", description } = Astro.props;
+import AdsInjector from "../components/AdsInjector.astro";
+const { title = "", description, img, ogImage } = Astro.props;
 import "../../css/style.css";
+
+// لو مفيش ogImage → نستخدم img
+const makeAbsolute = (url: string = ""): string =>
+  url.startsWith("http") ? url : `https://lolme.cc${url}`;
+
+const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
+
 
 // تعريف الترجمة
 const translations = {
@@ -20,13 +28,30 @@ let lang: "ar" | "en" =
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- OG + TWITTER tags لازم يكونوا هنا -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description || "اختبارات شخصية مضحكة، ميمز يومية، نكت، أفشات، روست صاحبك، ألعاب أسئلة، ومحتوى ترفيهي سريع. لول مي – أكبر منصة عربية للضحك والتسلية واكتشاف شخصيتك! 😂🔥"} />
+    <!-- <meta property="og:image" content={Astro.props.ogImage || "https://lolme.cc/images/default-og.webp"} /> -->
+    <meta property="og:image" content={finalOg} />
+    <meta property="og:url" content={`https://lolme.cc${Astro.url.pathname}`} />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta property="og:description" content={description || "اختبارات شخصية مضحكة، ميمز يومية، نكت، أفشات، روست صاحبك، ألعاب أسئلة، ومحتوى ترفيهي سريع. لول مي – أكبر منصة عربية للضحك والتسلية واكتشاف شخصيتك! 😂🔥"} />
+    <!-- <meta name="twitter:image" content={Astro.props.ogImage || "https://lolme.cc/images/default-og.webp"} /> -->
+<meta name="twitter:image" content={finalOg} />
+<meta name="mylead-verification" content="71d6df0ab7b92b5fe986e8cae0205e5f">
+
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" type="image/png" href="/favicon64.png" />
     <meta name="theme-color" content="#1f8ef1" />
     <!-- ضروري HTTPS علشان يظهر زر التثبيت -->
+    <script src="/js/ad-close.js" defer></script>
 
     <script type="module" src="/js/register-sw.js"></script>
-    <script type="module" src="/js/lang.js"></script>
+    <!-- <script type="module" src="/js/lang.js"></script> -->
 
     <!-- خطوط جوجل -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal&display=swap" rel="stylesheet" />
@@ -47,14 +72,7 @@ let lang: "ar" | "en" =
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-98W71513M3"></script>
     <script type="module" src="/js/googletagmanager.js"></script>
-    <!-- <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
 
-      gtag('config', 'G-98W71513M3');
-    </script> -->
-    <!-- <link rel="stylesheet" href="/global.css" /> -->
   </head>
   <body>
 
@@ -87,22 +105,8 @@ let lang: "ar" | "en" =
 
           <span id="toggle-theme" style="cursor:pointer; font-size:1.5rem;">🌙</span>
 
-           <!-- <select id="lang-switch">
-            <option value="ar">العربية</option>
-            <option value="en">English</option>
-          </select>  -->
         </nav>
     
-      <!-- <nav class="header-nav"></nav>
-        <a href="/">🏠 الرئيسية</a>
-        <span class="divider">|</span>
-        <a href="/articles">📚 المقالات</a>
-      <span id="toggle-theme" style="cursor:pointer; font-size:1.5rem;">🌙</span> -->
-      <!-- <select id="lang-switch" style="margin-left:8px;">
-        <option value="ar">العربية</option>
-        <option value="en">English</option>
-      </select> -->
-      
     </nav>
     <div class="header-left">
       <img src="/favicon.png" alt="LOLME" class="logo" style="margin-bottom: -5px;"/>
@@ -118,10 +122,36 @@ let lang: "ar" | "en" =
       )}
     </div>
   )}
-      <!-- محتوى الصفحة/المقال -->
+
+{img && (
+  <div style="text-align:center; margin: 20px auto;">
+    <img 
+      src={img} 
+      alt={title} 
+      style="
+        max-width: 600px; 
+        width: 90%; 
+        border-radius: 14px; 
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+      "
+      class="tilt-card"
+    />
+  </div>
+)}
+
+    <!-- إعلان فوق -->
+    <!-- <AdsInjector showTop={true} showSide={true} showFloating={true} showBottom={false} /> -->
+
+    <!-- محتوى الصفحة -->
+    <div class="page-content article">
       <slot />
+    </div>
+
+    <!-- إعلان تحت -->
+    <!-- <AdsInjector showTop={false} showSide={false} showFloating={false} showBottom={true} /> -->
+
     </main>
-    <div class="ad-space">مساحتك الإعلانية هنا</div>
+    <!-- <div class="ad-space">مساحتك الإعلانية هنا</div> -->
 
     <Footer />
     <script type="module">
@@ -139,7 +169,7 @@ let lang: "ar" | "en" =
           }
         }
     
-        const savedTheme = localStorage.getItem("theme") || "light";
+        const savedTheme = localStorage.getItem("theme") || "dark";
         applyTheme(savedTheme);
     
         themeToggle.addEventListener("click", () => {

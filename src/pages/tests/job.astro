@@ -1,0 +1,247 @@
+---
+// src/pages/tests/Your-mental-age.astro
+export const prerender = false;
+import Layout from "../../layouts/Layout.astro";
+import { otherQuizzes } from "../../data/otherQuizzes.js";
+
+const title = "اختبر الوظيفة اللي هتنجح فيها 💼🔥";
+const img = "/images/job.webp";
+
+interface Option {
+  text: string;
+  value: "creator" | "leader" | "healer" | "analyst";
+}
+
+interface Question {
+  question: string;
+  options: Option[];
+}
+
+function shuffle<T>(arr: T[]): T[] {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+const questions: Question[] = shuffle([
+  {
+    question: "لو صحيْت يوم وإنت مودّك عالي… تعمل إيه؟",
+    options: shuffle([
+      { text: "أبتدي أعمل محتوى وأطلع اللي جوايا 🎬✨", value: "creator" },
+      { text: "أخطط لليوم وأدي أوامر للكون 😎📋", value: "leader" },
+      { text: "أتواصل مع حد محتاج دعم وأرفع طاقته 🤝💛", value: "healer" },
+      { text: "أقعد أحلل مستقبلي وأشوف الأفضل 💻📊", value: "analyst" },
+    ]),
+  },
+  {
+    question: "لو صاحبك طلب رأيك في مشروع مهم، ردّك يكون عامل إزاي؟",
+    options: shuffle([
+      { text: "أطلّع له أفكار كتير وابتكارات 🔥⚡", value: "creator" },
+      { text: "أمسك الموضوع من أوله لآخره بوضوح وانضباط 💼✨", value: "leader" },
+      { text: "أهديه وأدعمه نفسياً قبل القرار 🧘‍♂️🤍", value: "healer" },
+      { text: "أقوله الحل بالأرقام والمنطق 👓📊", value: "analyst" },
+    ]),
+  },
+  {
+    question: "لما تتوتر… إيه أكتر حاجة بتهديك؟",
+    options: shuffle([
+      { text: "أسمع موسيقى أو أعمل حاجة إبداعية 🎶🎨", value: "creator" },
+      { text: "أمسك ورقة وقلم وأحط نظام للدنيا ✍️📘", value: "leader" },
+      { text: "أتأمل أو أراجع روحي شوية 🧘‍♀️✨", value: "healer" },
+      { text: "أفصل وأحلل اللي بيحصل بهدوء 🧠🔍", value: "analyst" },
+    ]),
+  },
+  {
+    question: "لو فجأة معاك مليون جنيه… تعمل إيه؟",
+    options: shuffle([
+      { text: "أفتتح ستوديو أو قناة محتوى جامدة 😍🎥", value: "creator" },
+      { text: "أبني مشروع كبير يشتغل لوحده 💼💰", value: "leader" },
+      { text: "أعمل مركز علاج وتطوير نفسي 🌿🤲", value: "healer" },
+      { text: "أستثمر صح وأكبر الرقم أكتر 💹📈", value: "analyst" },
+    ]),
+  },
+]);
+---
+
+<Layout {title} {img}>
+      <!-- نخزن JSON آمن -->
+  <div id="otherQuizzesData" data-json={JSON.stringify(otherQuizzes)}></div>
+
+  <section class="quiz">
+    <form id="quizForm">
+      {questions.map((q, i) => (
+        <div class="question">
+            <h3 style="color:var(--h3); font-weight:bolder; font-size:24px;">{q.question}</h3>
+          {q.options.map((opt) => (
+            <label>
+              <input type="radio" name={`q${i}`} value={opt.value} required />
+              {opt.text}
+            </label>
+          ))}
+        </div>
+      ))}
+      <button type="submit">شوف النتيجة 🔮</button>
+    </form>
+
+    <div id="result" class="hidden"></div>
+  </section>
+
+  <script is:inline lang="ts">
+    // نقرأ الداتا من الـ div
+    const otherQuizzes = JSON.parse(
+      document.getElementById("otherQuizzesData").dataset.json
+    );
+
+
+    const resultsData = {
+      creator: {
+        titles: ["الوظيفة اللي هتنجح فيها: صانع محتوى / مبدع 🎨🔥"],
+        descs: [
+          "عندك شرارة الإبداع… دماغك بتولد أفكار بسهولة.",
+          "أنت من الناس اللي يحولوا أي لحظة لقيمة وفن.",
+          "شغفك الحقيقي في التعبير… ومجالك هو المحتوى أو أي شغل يعتمد على الخيال."
+        ],
+      },
+
+      leader: {
+        titles: ["الوظيفة اللي هتنجح فيها: مدير / رائد أعمال 💼👑"],
+        descs: [
+          "شخصيتك قيادية… عندك رؤية وتنظيم وحزم.",
+          "بتعرف تدير الناس والمهام وتربط كل حاجة ببعضها.",
+          "مجالك الطبيعي: البيزنس، الإدارة، المشاريع."
+        ],
+      },
+
+      healer: {
+        titles: ["الوظيفة اللي هتنجح فيها: معالج / كوتش / مرشد روحي 🌿🤍"],
+        descs: [
+          "قلبك حساس… وطاقتك عالية.",
+          "عندك القدرة تطمّن وتصلّح وتساعد غيرك.",
+          "مجالك: العلاج بالطاقة، الكوتشنج، الوعي، التنمية."
+        ],
+      },
+
+      analyst: {
+        titles: ["الوظيفة اللي هتنجح فيها: محلل / مبرمج / مفكر استراتيجي 💻📊"],
+        descs: [
+          "دماغك هندسية… بتحب تفهم وتربط وتحلل.",
+          "هادي ومنطقي ومش بتاخد قرار إلا لما تفككه حتة حتة.",
+          "مجالك: البرمجة، التحليل، الاستشارات."
+        ],
+      },
+    };
+
+    const randomPick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.querySelector("#quizForm");
+      const resultDiv = document.querySelector("#result");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const counts = {};
+        for (const [_, val] of formData.entries()) {
+          counts[val] = (counts[val] || 0) + 1;
+        }
+        const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+const res = resultsData[top] || resultsData["mickey"];
+        // const title = randomPick(res.titles);
+        const title = res.titles[0];
+        // const desc = randomPick(res.descs);
+const desc = [...res.titles.slice(1), ...res.descs].join("<br>");
+        const nextQuiz = randomPick(otherQuizzes);
+
+        form.style.display = "none";
+        resultDiv.innerHTML = `
+            <h2>${title}</h2>
+            <p>${desc}</p>
+
+          <a href="https://monce.cc/blog" 
+            target="blank" style=" display: block; margin: 10px auto; padding: 12px 10px; background: #ff4081; color: #fff; border-radius: 6px; font-size: 1.1rem; text-align: center; width: 90%; max-width: 350px; line-height: 1.5; word-wrap: break-word; white-space: normal;">
+            👈 عايز تعرف أكتر عن رسالتك في الحياة؟ خش على مونسيسي 😂✨
+          </a>
+
+          <button id="retry" style="margin:10px 0">جرّب تاني 🔁</button>
+          <div class="share-section" style="text-align:center; margin:15px 0;">
+            <button id="share-result" class="share-btn" style="
+              background:#ff4081;
+              color:#fff;
+              border:none;
+              padding:10px 18px;
+              border-radius:6px;
+              font-size:1.1rem;
+              cursor:pointer;
+              box-shadow:0 2px 4px rgba(0,0,0,0.2);
+            ">📲 شارك نتيجتك</button>
+          </div>
+
+          <div class="next-quiz">
+            <h3 style="color: var(--accent); text-align:center;">🎯 جرب اختبار تاني!</h3>
+            <a href="/tests/${nextQuiz.slug}" class="quiz-card next-card">
+              <img class="img" src="${nextQuiz.img}" alt="${nextQuiz.title}" loading="lazy" />
+              <div class="content">
+                <h3 style="color: var(--accent)">${nextQuiz.title}</h3>
+              </div>
+            </a>
+          </div>
+        `;
+
+        // 👇 السطرين اللي كانوا ناقصين
+        resultDiv.classList.remove("hidden");
+        resultDiv.scrollIntoView({ behavior: "smooth" });
+
+        const currentUrl = window.location.href;
+
+        // ✅ زرار المشاركة التلقائية
+        document.querySelector("#share-result").addEventListener("click", async () => {
+          const resultTitle = res.titles[0];
+
+          // 🔥 تنظيف الوصف من أي HTML كامل
+          const cleanDesc = res.descs
+            .map(d => d.replace(/<[^>]+>/g, "")) 
+            .join("\n");
+
+          const text =
+        `نتيجتك: ${resultTitle}
+
+        ${cleanDesc}
+
+        —
+        جرب نتيجتك على لول مي 😂🔥
+        ${currentUrl}`;
+
+          try {
+            if (navigator.share) {
+              await navigator.share({
+                title: resultTitle,
+                text: text,  // من غير URL هنا
+              });
+            } else {
+              alert("جهازك مش بيدعم المشاركة التلقائية. انسخ النتيجة يدويًا 😅");
+            }
+          } catch (err) {
+            console.log("تم إلغاء المشاركة أو حدث خطأ:", err);
+          }
+        });
+
+        document.querySelector("#retry").addEventListener("click", () => {
+          location.reload();
+        });
+
+      });
+    });
+  </script>
+
+<script type="module" src="/js/tilt-cards.js"></script>
+  <style>
+    .quiz { max-width: 650px; margin: auto; text-align: center; }
+    label { display: block; margin: 8px 0; padding: 8px; border-radius: 6px; cursor: pointer; background: var(--bg-color); box-shadow: 0 1px 2px var(--shadow-color); }
+    label:hover { background: var(--header-link-hover); }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 1.2rem; border: none; background: #ff4081; color: #fff; border-radius: 6px; cursor: pointer; }
+    .hidden { display: none; }
+    #result { margin-top: 30px; padding: 20px; background: var(--bg-color); box-shadow: 0 2px 3px var(--shadow-color); border-radius: 8px; animation: fadeIn 0.4s ease-in-out; }
+    .next-quiz { margin-top: 20px; background: var(--bg-color); padding: 15px; border-radius: 8px; }
+    .quiz-card img { width: 100%; height: 180px; object-fit: cover; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</Layout>

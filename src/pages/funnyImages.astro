@@ -12,12 +12,13 @@ const siteEmoji = "/images/site-emoji.png";
     <div class="memes-grid">
       {
         memes.animals.map((meme, index) => (
-          <div class="meme-card cards">
+          <div class="meme-card cards tilt-card">
             <span class="meme-number">{index + 1}</span>
             <img src={meme.src} alt={`Meme ${index + 1}`} />
             <>
               <p>{meme.caption}</p>
               <button class="download-btn">تحميل</button>
+              <button class="share-btn" onclick={`shareMeme('${meme.src}', '${meme.caption.replace(/'/g, "\\'")}')`}>شارك الصورة 📲</button>
             </>
           </div>
         ))
@@ -30,12 +31,13 @@ const siteEmoji = "/images/site-emoji.png";
     <div class="memes-grid">
       {
         memes.daily.map((meme, index) => (
-          <div class="meme-card cards">
+          <div class="meme-card cards tilt-card">
             <span class="meme-number">{index + 1}</span>
             <img src={meme.src} alt={`Meme ${index + 1}`} />
             <>
               <p>{meme.caption}</p>
               <button class="download-btn">تحميل</button>
+              <button class="share-btn" onclick={`shareMeme('${meme.src}', '${meme.caption.replace(/'/g, "\\'")}')`}>شارك الصورة 📲</button>
             </>
           </div>
         ))
@@ -48,12 +50,13 @@ const siteEmoji = "/images/site-emoji.png";
     <div class="memes-grid">
       {
         memes.friends.map((meme, index) => (
-          <div class="meme-card cards">
+          <div class="meme-card cards tilt-card">
             <span class="meme-number">{index + 1}</span>
             <img src={meme.src} alt={`Meme ${index + 1}`} />
             <>
               <p>{meme.caption}</p>
               <button class="download-btn">تحميل</button>
+              <button class="share-btn" onclick={`shareMeme('${meme.src}', '${meme.caption.replace(/'/g, "\\'")}')`}>شارك الصورة 📲</button>
             </>
           </div>
         ))
@@ -66,12 +69,13 @@ const siteEmoji = "/images/site-emoji.png";
     <div class="memes-grid">
       {
         memes.relations.map((meme, index) => (
-          <div class="meme-card cards">
+          <div class="meme-card cards tilt-card">
             <span class="meme-number">{index + 1}</span>
             <img src={meme.src} alt={`Meme ${index + 1}`} />
             <>
               <p>{meme.caption}</p>
               <button class="download-btn">تحميل</button>
+              <button class="share-btn" onclick={`shareMeme('${meme.src}', '${meme.caption.replace(/'/g, "\\'")}')`}>شارك الصورة 📲</button>
             </>
           </div>
         ))
@@ -98,7 +102,159 @@ const siteEmoji = "/images/site-emoji.png";
     });
   }
 </script>
+<!-- <script is:inline>
+  window.addEventListener("DOMContentLoaded", () => {
 
+    window.shareMeme = async (imgSrc, caption) => {
+      try {
+        const fullUrl = window.location.origin + imgSrc;
+
+        // 1) نجيب الصورة الأصلية
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = fullUrl;
+
+        img.onload = async () => {
+          
+          // 2) نعمل Canvas بنفس حجم الصورة
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+
+          // 3) نرسم الصورة الأصلية
+          ctx.drawImage(img, 0, 0);
+
+          // 4) العلامة المائية (لوجو الموقع)
+          ctx.font = "40px Cairo, sans-serif";
+          ctx.fillStyle = "rgba(255,255,255,0.75)";
+          ctx.textAlign = "right";
+          ctx.fillText("lolme.cc 😂🔥", canvas.width - 30, canvas.height - 30);
+
+          // 5) نحول الكانفس لبلوب
+          canvas.toBlob(async (blob) => {
+            const file = new File([blob], "meme.png", { type: "image/png" });
+
+            const shareData = {
+              title: "ميم مضحك 😂🔥",
+              text: caption + "\n— من لول مي",
+              files: [file],
+            };
+
+            if (navigator.canShare && navigator.canShare(shareData)) {
+              await navigator.share(shareData);
+            } else {
+              // fallback
+              await navigator.share({
+                title: "ميم مضحك",
+                text: caption + "\nشوف الصورة هنا: " + fullUrl,
+              });
+            }
+          }, "image/png");
+        };
+
+        img.onerror = () => alert("حصل خطأ في تحميل الصورة 💔");
+
+      } catch (err) {
+        console.log("❌ الشير اتلغى أو حصل خطأ:", err);
+      }
+    };
+
+  });
+</script> -->
+
+<script is:inline>
+  window.addEventListener("DOMContentLoaded", () => {
+
+    window.shareMeme = async (imgSrc, caption) => {
+      try {
+        const fullUrl = window.location.origin + imgSrc;
+        const logoUrl = "/favicon.png";
+
+        // نحمل الصورة
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = fullUrl;
+
+        // نحمل اللوجو (الإيموجي)
+        const logo = new Image();
+        logo.crossOrigin = "anonymous";
+        logo.src = logoUrl;
+
+        img.onload = () => {
+          logo.onload = async () => {
+
+            // نعمل كانفس بنفس حجم الصورة
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+
+            // نرسم الصورة الأصلية
+            ctx.drawImage(img, 0, 0);
+
+            const padding = 30;
+            const fontSize = Math.floor(canvas.width * 0.045); 
+            ctx.font = `${fontSize}px Arial`;
+            ctx.fillStyle = "white";
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 4;
+            ctx.textBaseline = "middle";
+
+            const text = "lolme.cc";
+            const textWidth = ctx.measureText(text).width;
+
+            // حجم اللوجو جنب النص
+            const logoSize = fontSize + 10;
+
+            // مكان الرسم (يمين تحت)
+            const x = canvas.width - textWidth - logoSize - padding - 20;
+            const y = canvas.height - padding;
+
+            // نرسم النص بظل بسيط
+            ctx.strokeText(text, x, y);
+            ctx.fillText(text, x, y);
+
+            // نرسم الصورة جنب النص
+            ctx.drawImage(
+              logo,
+              x + textWidth + 10,
+              y - logoSize / 2,
+              logoSize,
+              logoSize
+            );
+
+            // نحول الكانفس إلى صورة
+            canvas.toBlob(async (blob) => {
+              const file = new File([blob], "meme.png", { type: "image/png" });
+
+              const shareData = {
+                title: "ميم مضحك 😂🔥",
+                text: caption + "\n— من لول مي",
+                files: [file],
+              };
+
+              if (navigator.canShare && navigator.canShare(shareData)) {
+                await navigator.share(shareData);
+              } else {
+                await navigator.share({
+                  title: "ميم مضحك",
+                  text: caption + "\nشوف الميم هنا:\n" + fullUrl,
+                });
+              }
+            }, "image/png");
+          };
+        };
+
+      } catch (err) {
+        console.log("❌ الشير اتلغى أو حصل خطأ:", err);
+      }
+    };
+
+  });
+</script>
+
+<script type="module" src="/js/tilt-cards.js"></script>
 <style>
   .meme-number {
     font-weight: bold;
@@ -127,7 +283,7 @@ const siteEmoji = "/images/site-emoji.png";
 
   .funny-card {
     background: var(--card);
-    padding: 1rem;
+    padding: rem;
     border-radius: 10px;
     box-shadow: 0 2px 5px var(--shadow-color);
     text-align: center;
@@ -147,6 +303,7 @@ const siteEmoji = "/images/site-emoji.png";
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 1rem;
+    padding: 1rem;
   }
 
   .panel {

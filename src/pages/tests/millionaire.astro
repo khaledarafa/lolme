@@ -1,0 +1,246 @@
+---
+// src/pages/tests/Your-mental-age.astro
+export const prerender = false;
+import Layout from "../../layouts/Layout.astro";
+import { otherQuizzes } from "../../data/otherQuizzes.js";
+
+const title = "هتبقى مليونير ولا لأ؟ ✨💰😂";
+const img = "/images/millionaire.webp";
+
+interface Option {
+  text: string;
+  value: "millionaire" | "notyet";
+}
+
+interface Question {
+  question: string;
+  options: Option[];
+}
+
+function shuffle<T>(arr: T[]): T[] {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+const questions: Question[] = shuffle([
+  {
+    question: "لو لقيت فرصة مشروع صغيرة… تعمل إيه؟",
+    options: shuffle([
+      { text: "أحسبها بسرعة وأخش… الفرص ما بتستناش 💥💰", value: "millionaire" },
+      { text: "يا عم بلاش صداع… خليك في الأمان 😅", value: "notyet" },
+    ]),
+  },
+  {
+    question: "أكتر حاجة بتخليك توقف؟",
+    options: shuffle([
+      { text: "التفكير كتير؟ لأ… بجرب وأتعلم وأنا ماشي 🔥", value: "millionaire" },
+      { text: "الخوف من الغلط… مش عايز أخسر جنيه 😭", value: "notyet" },
+    ]),
+  },
+  {
+    question: "لما تفكر في الـ future… بتشوف نفسك إزاي؟",
+    options: shuffle([
+      { text: "بعمل مشروع، وبكبر… أنا رايح لفوق 💸🚀", value: "millionaire" },
+      { text: "معرفش… خلينا نعيش يوم بيوم 😅", value: "notyet" },
+    ]),
+  },
+  {
+    question: "لو عندك وقت فاضي… تعمل فيه إيه؟",
+    options: shuffle([
+      { text: "أتعلم حاجة تزود دخلي 📚💰", value: "millionaire" },
+      { text: "أقعد أقلب في السوشيال واهدّي دماغي 😭📱", value: "notyet" },
+    ]),
+  },
+  {
+    question: "لو خسرت فلوس في محاولة… تكمل ولا توقف؟",
+    options: shuffle([
+      { text: "أكمل طبعًا… دي ضريبة الطريق 💪🔥", value: "millionaire" },
+      { text: "لا لا… شكلي هاقعد في البيت أحسن 😅", value: "notyet" },
+    ]),
+  },
+  {
+    question: "رأيك في المخاطرة؟",
+    options: shuffle([
+      { text: "لازم… ومفيش غني بدون مخاطرة محسوبة 💼💥", value: "millionaire" },
+      { text: "مخاطرة إيه يا عم… ده أنا بخاف أطلب زيادة مرتب 😭", value: "notyet" },
+    ]),
+  },
+  {
+    question: "لو معاك مبلغ صغير…",
+    options: shuffle([
+      { text: "أشوف إزاي يكبر… حتى لو بنسبة بسيطة 💹", value: "millionaire" },
+      { text: "أسيبه في الدرج… الأيام مش مأمونة 😓", value: "notyet" },
+    ]),
+  },
+]);
+
+---
+
+<Layout {title} {img}>
+      <!-- نخزن JSON آمن -->
+  <div id="otherQuizzesData" data-json={JSON.stringify(otherQuizzes)}></div>
+
+  <section class="quiz">
+    <form id="quizForm">
+      {questions.map((q, i) => (
+        <div class="question">
+            <h3 style="color:var(--h3); font-weight:bolder; font-size:24px;">{q.question}</h3>
+          {q.options.map((opt) => (
+            <label>
+              <input type="radio" name={`q${i}`} value={opt.value} required />
+              {opt.text}
+            </label>
+          ))}
+        </div>
+      ))}
+      <button type="submit">شوف النتيجة 🔮</button>
+    </form>
+
+    <div id="result" class="hidden"></div>
+  </section>
+
+  <script is:inline lang="ts">
+    // نقرأ الداتا من الـ div
+    const otherQuizzes = JSON.parse(
+      document.getElementById("otherQuizzesData").dataset.json
+    );
+
+    const resultsData = {
+      millionaire: {
+        titles: ["مبروك يا معلم… أنت ماشي على سِكّة المليون 🔥💸"],
+        descs: [
+          "الإجابات بتقول إن دماغك رايحة ناحية النجاح الكبير.",
+          "عندك شجاعة، وبتجرب، ومش واقف مكانك… وده بالظبط اللي بيعمل القفزات في الحياة.",
+          "بلاش هزار… إنت شكلك هتطلع فوق أسرع مما أنت متخيل أصلاً 😎🔥",
+          "🔗 وبصراحة؟ كورس *فن الوفرة* مش معمول ليك… إنت أصلاً بتفكّر أكبر منه.",
+          "روح يا نجم… أشوف وشّك بخير 😂💸"
+        ],
+      },
+
+      notyet: {
+        titles: ["لسه الطريق قدامك… بس ولا يهمك 😅💔"],
+        descs: [
+          "إجاباتك بتقول إن الخوف لسه ماسكك من كتافك… وبتفكّر كتير قبل ما تخطي خطوة… وده طبيعي جدًا.",
+          "بس لو هنتكلم بصراحة؟ سكّة المليون لسه عايزة منك شَفطة جرأة كده على خفيف 🔥",
+          "🔗 والكورس؟ لأ… لأ… بلاش يا معلم.",
+          "كورس *فن الوفرة* تقيل عليك دلوقتي… روح ارتاح، واشربلك ينسون… أشوف وشّك بخير 😂🤣"
+        ],
+      },
+    };
+
+    const randomPick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.querySelector("#quizForm");
+      const resultDiv = document.querySelector("#result");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const counts = {};
+        for (const [_, val] of formData.entries()) {
+          counts[val] = (counts[val] || 0) + 1;
+        }
+
+const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+const res = resultsData[top] || resultsData["mickey"];
+// const title = randomPick(res.titles);
+const title = res.titles[0];
+// const desc = randomPick(res.descs);
+const desc = [...res.titles.slice(1), ...res.descs].join("<br>");
+const nextQuiz = randomPick(otherQuizzes);
+
+form.style.display = "none";
+  resultDiv.innerHTML = `
+    <h2>${title}</h2>
+    <p>${desc}</p>
+
+          <a href="https://monce.cc/wafra" 
+            target="blank" style=" display: block; margin: 10px auto; padding: 12px 10px; background: #ff4081; color: #fff; border-radius: 6px; font-size: 1.1rem; text-align: center; width: 90%; max-width: 350px; line-height: 1.5; word-wrap: break-word; white-space: normal;">
+            👈 كورس فن الوفرة 😂✨
+          </a>
+
+          <button id="retry" style="margin:10px 0">جرّب تاني 🔁</button>
+          <div class="share-section" style="text-align:center; margin:15px 0;">
+            <button id="share-result" class="share-btn" style="
+              background:#ff4081;
+              color:#fff;
+              border:none;
+              padding:10px 18px;
+              border-radius:6px;
+              font-size:1.1rem;
+              cursor:pointer;
+              box-shadow:0 2px 4px rgba(0,0,0,0.2);
+            ">📲 شارك نتيجتك</button>
+          </div>
+
+          <div class="next-quiz">
+            <h3 style="color: var(--accent); text-align:center;">🎯 جرب اختبار تاني!</h3>
+            <a href="/tests/${nextQuiz.slug}" class="quiz-card next-card">
+              <img class="img" src="${nextQuiz.img}" alt="${nextQuiz.title}" loading="lazy" />
+              <div class="content">
+                <h3 style="color: var(--accent)">${nextQuiz.title}</h3>
+              </div>
+            </a>
+          </div>
+        `;
+
+        // 👇 السطرين اللي كانوا ناقصين
+        resultDiv.classList.remove("hidden");
+        resultDiv.scrollIntoView({ behavior: "smooth" });
+
+        const currentUrl = window.location.href;
+
+        // ✅ زرار المشاركة التلقائية
+        document.querySelector("#share-result").addEventListener("click", async () => {
+          const resultTitle = res.titles[0];
+
+          // 🔥 تنظيف الوصف من أي HTML كامل
+          const cleanDesc = res.descs
+            .map(d => d.replace(/<[^>]+>/g, "")) 
+            .join("\n");
+
+          const text =
+        `نتيجتك: ${resultTitle}
+
+        ${cleanDesc}
+
+        —
+        جرب نتيجتك على لول مي 😂🔥
+        ${currentUrl}`;
+
+          try {
+            if (navigator.share) {
+              await navigator.share({
+                title: resultTitle,
+                text: text,  // من غير URL هنا
+              });
+            } else {
+              alert("جهازك مش بيدعم المشاركة التلقائية. انسخ النتيجة يدويًا 😅");
+            }
+          } catch (err) {
+            console.log("تم إلغاء المشاركة أو حدث خطأ:", err);
+          }
+        });
+
+        document.querySelector("#retry").addEventListener("click", () => {
+          location.reload();
+        });
+
+      });
+    });
+  </script>
+
+<script type="module" src="/js/tilt-cards.js"></script>
+  <style>
+    .quiz { max-width: 650px; margin: auto; text-align: center; }
+    label { display: block; margin: 8px 0; padding: 8px; border-radius: 6px; cursor: pointer; background: var(--bg-color); box-shadow: 0 1px 2px var(--shadow-color); }
+    label:hover { background: var(--header-link-hover); }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 1.2rem; border: none; background: #ff4081; color: #fff; border-radius: 6px; cursor: pointer; }
+    .hidden { display: none; }
+    #result { margin-top: 30px; padding: 20px; background: var(--bg-color); box-shadow: 0 2px 3px var(--shadow-color); border-radius: 8px; animation: fadeIn 0.4s ease-in-out; }
+    .next-quiz { margin-top: 20px; background: var(--bg-color); padding: 15px; border-radius: 8px; }
+    .quiz-card img { width: 100%; height: 180px; object-fit: cover; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</Layout>

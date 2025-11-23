@@ -2,6 +2,9 @@
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 
+const title = "لو حياتك فيلم.. يكون اسمه إيه؟ 🎬";
+const img = "/images/movie.webp";
+
 interface Option {
   text: string;
   value: "comedy" | "drama" | "action" | "romance";
@@ -56,7 +59,7 @@ const questions: Question[] = shuffle([
 ]);
 ---
 
-<Layout title="شخصيتك تشبه مين من الكرتون؟ 🧸">
+<Layout {title} {img}>
   <section class="quiz">
     <form id="quizForm">
       {questions.map((q, i) => (
@@ -239,17 +242,28 @@ const currentUrl = window.location.href;
 
 // ✅ زرار المشاركة التلقائية
 document.querySelector("#share-result").addEventListener("click", async () => {
-  const text = `${title} 😎 من اختبار "نسبة الكسل عندك كام٪؟" على موقع لول مي 😂`;
-  const url = currentUrl;
+  const resultTitle = res.titles[0];
+
+  // 🔥 تنظيف الوصف من أي HTML كامل
+  const cleanDesc = res.descs
+    .map(d => d.replace(/<[^>]+>/g, "")) 
+    .join("\n");
+
+  const text =
+`نتيجتك: ${resultTitle}
+
+${cleanDesc}
+
+—
+جرب نتيجتك على لول مي 😂🔥
+${currentUrl}`;
 
   try {
     if (navigator.share) {
       await navigator.share({
-        title: "اختبار لول مي 😆",
-        text,
-        url,
+        title: resultTitle,
+        text: text,  // من غير URL هنا
       });
-      console.log("تمت المشاركة بنجاح 🎉");
     } else {
       alert("جهازك مش بيدعم المشاركة التلقائية. انسخ النتيجة يدويًا 😅");
     }
@@ -266,6 +280,7 @@ document.querySelector("#retry").addEventListener("click", () => {
     });
   </script>
 
+<script type="module" src="/js/tilt-cards.js"></script>
   <style>
     .quiz { max-width: 600px; margin: auto; text-align: center; }
     label { display: block; margin: 8px 0; padding: 8px; border-radius: 6px; cursor: pointer; background: var(--bg-color); box-shadow: 0 1px 2px var(--shadow-color); }

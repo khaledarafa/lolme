@@ -1,4 +1,4 @@
-// sw.js
+// public/service-worker.js
 const CACHE_NAME = 'lolme-static-v1';
 const STATIC_ASSETS = [
   '/', // لو تحتاج

@@ -1,6 +1,10 @@
 ---
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
+import { otherQuizzes } from "../../data/otherQuizzes.js";
+
+const title = "اعرف إنت مين من نجوم السوشيال ميديا 😂";
+const img = "/images/influencer.webp";
 
 interface Option {
   text: string;
@@ -56,7 +60,10 @@ const questions: Question[] = shuffle([
 ]);
 ---
 
-<Layout title="اعرف إنت مين من نجوم السوشيال ميديا 😂">
+<Layout {title} {img}>
+  <!-- نخزن JSON آمن -->
+<div id="otherQuizzesData" data-json={JSON.stringify(otherQuizzes)}></div>
+
   <section class="quiz">
     <form id="quizForm">
       {questions.map((q, i) => (
@@ -77,68 +84,10 @@ const questions: Question[] = shuffle([
   </section>
 
   <script is:inline lang="ts">
-    const otherQuizzes = [
-        {
-            slug: "if-you-were-food",
-            title: "اعرف نوعك لو كنت أكلة 😂",
-            desc: "اختبار مضحك وخفيف الدم! اكتشف لو كنت أكلة تكون بيتزا ولا كشري ولا بطانية 😅",
-            img: "/images/food.webp",
-        },
-        {
-            slug: "what-car-model-are-you",
-            title: "إنت موديل عربية إيه؟ 🚗",
-            desc: "جاوب بسرعة وشوف شخصيتك تمشي مع مرسيدس فخمة ولا كيا عملية ولا فيات مجنونة 😂",
-            img: "/images/car.webp",
-        },
-        {
-            slug: "which-cartoon-character",
-            title: "شخصيتك تشبه مين من الكرتون؟ 🧸",
-            desc: "جاوب على 6 أسئلة بسيطة وشوف إنت أقرب لمين من عالم الكرتون 😍",
-            img: "/images/cartoon.webp",
-        },
-        {
-            slug: "if-you-were-drink",
-            title: "لو كنت مشروب تكون إيه؟ 🥤",
-            desc: "شاي ولا قهوة ولا حاجة ساقعة؟ اعرف بنفسك في اختبار لول مي الجديد ☕️",
-            img: "/images/drink.webp",
-        },
-        {
-            slug: "what-kind-of-animal",
-            title: "إيه الحيوان اللي يمثلك أكتر؟ 🐯",
-            desc: "هل أنت أسد شجاع ولا باندا هادئة؟ 😎 جاوب وشوف النتيجة!",
-            img: "/images/animal.webp",
-        },
-        {
-            slug: "which-influencer-are-you",
-            title: "اعرف إنت مين من نجوم السوشيال ميديا 😂",
-            desc: "هل أنت زي بودي، ولا بتميل أكتر للطاقة الإيجابية زي إيناس؟ جاوب وشوف النتيجة 🤳",
-            img: "/images/influencer.webp",
-        },
-        {
-            slug: "if-your-life-was-a-movie",
-            title: "لو حياتك فيلم.. يكون اسمه إيه؟ 🎬",
-            desc: "جاوب على شوية أسئلة وشوف حياتك فيلم كوميدي ولا درامي ولا أكشن 😂",
-            img: "/images/movie.webp",
-        },
-        {
-            slug: "how-lazy-are-you",
-            title: "نسبة الكسل عندك كام٪؟ 😂",
-            desc: "اختبار خفيف ومضحك يعرفك أنت كسلان بنسبة قد إيه وبتحب السرير قد إيه 😴",
-            img: "/images/lazy.webp",
-        },
-        {
-            slug: "positive-or-negative-energy",
-            title: "إنت طاقتك إيجابية ولا سلبية؟ ⚡️",
-            desc: "اعرف نوع طاقتك وتأثيرك على اللي حواليك.. اختبار ممتع ومفيد 👀",
-            img: "/images/energy.webp",
-        },
-        {
-            slug: "which-planet-are-you",
-            title: "لو كنت كوكب تكون إيه؟ 🌍",
-            desc: "اعرف نفسك من منظور كوني 😄 اختبار خفيف يكشف عن شخصيتك من خلال الكواكب.",
-            img: "/images/planet.webp",
-        },
-    ];
+    // نقرأ الداتا من الـ div
+    const otherQuizzes = JSON.parse(
+      document.getElementById("otherQuizzesData").dataset.json
+    );
 
     const resultsData = {
       bodi: {
@@ -239,17 +188,28 @@ const currentUrl = window.location.href;
 
 // ✅ زرار المشاركة التلقائية
 document.querySelector("#share-result").addEventListener("click", async () => {
-  const text = `${title} 😎 من اختبار "نسبة الكسل عندك كام٪؟" على موقع لول مي 😂`;
-  const url = currentUrl;
+  const resultTitle = res.titles[0];
+
+  // 🔥 تنظيف الوصف من أي HTML كامل
+  const cleanDesc = res.descs
+    .map(d => d.replace(/<[^>]+>/g, "")) 
+    .join("\n");
+
+  const text =
+`نتيجتك: ${resultTitle}
+
+${cleanDesc}
+
+—
+جرب نتيجتك على لول مي 😂🔥
+${currentUrl}`;
 
   try {
     if (navigator.share) {
       await navigator.share({
-        title: "اختبار لول مي 😆",
-        text,
-        url,
+        title: resultTitle,
+        text: text,  // من غير URL هنا
       });
-      console.log("تمت المشاركة بنجاح 🎉");
     } else {
       alert("جهازك مش بيدعم المشاركة التلقائية. انسخ النتيجة يدويًا 😅");
     }
@@ -266,6 +226,7 @@ document.querySelector("#retry").addEventListener("click", () => {
     });
   </script>
 
+<script type="module" src="/js/tilt-cards.js"></script>
 <style>
     .quiz { max-width: 600px; margin: auto; text-align: center; }
     label { display: block; margin: 8px 0; padding: 8px; border-radius: 6px; cursor: pointer; background: var(--bg-color); box-shadow: 0 1px 2px var(--shadow-color); }

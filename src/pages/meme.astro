@@ -3,6 +3,14 @@
 export const prerender = false;
 import Layout from "../layouts/Layout.astro";
 ---
+<script>
+  const ua = navigator.userAgent || '';
+  const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(ua);
+
+  if (isMobile) {
+    location.replace('/mememob');
+  }
+</script>
 
 <Layout title="مولد الميميز - LOLME">
 

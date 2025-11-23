@@ -1,0 +1,66 @@
+---
+// src/components/AdsInjector.astro
+import { adsConfig } from "../data/adsConfig.js";
+import AdBox from "./AdBox.astro";
+
+const ua = Astro.request.headers.get("user-agent") || "";
+const isMobile = /(Mobile|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop)/i.test(ua);
+
+const { showTop = true, showBottom = true, showSide = true, showFloating = true } = Astro.props;
+---
+
+{/* TOP */}
+{showTop && adsConfig.top?.length > 0 && (
+  <div class="ad-top">
+    {adsConfig.top.map(ad => <AdBox ad={ad} />)}
+  </div>
+)}
+
+{/* SIDE RIGHT */}
+{!isMobile && showSide && adsConfig.sideRight?.length > 0 && (
+  <div class="ad-right">
+    {adsConfig.sideRight.map(ad => <AdBox ad={ad} />)}
+  </div>
+)}
+
+{/* SIDE LEFT */}
+{!isMobile && showSide && adsConfig.sideLeft?.length > 0 && (
+  <div class="ad-left">
+    {adsConfig.sideLeft.map(ad => <AdBox ad={ad} />)}
+  </div>
+)}
+
+{/* FLOATING */}
+{!isMobile && showFloating && adsConfig.floating?.length > 0 && (
+  <div class="ad-floating">
+    {adsConfig.floating.map(ad => (
+      <div class="float-box">
+        {ad.closeable && (
+          <span class="close-btn" onclick="this.parentElement.style.display='none'">✖</span>
+        )}
+        <AdBox ad={ad} />
+      </div>
+    ))}
+  </div>
+)}
+
+{/* BOTTOM — نسخة واحدة فقط */}
+{showBottom && adsConfig.bottom?.length > 0 && (
+  <div class="ad-bottom">
+    {adsConfig.bottom.map(ad => <AdBox ad={ad} />)}
+  </div>
+)}
+
+{/* CONFIG + SCRIPTS */}
+<script
+  type="application/json"
+  id="ads-config"
+  set:html={JSON.stringify(adsConfig)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026")}
+></script>
+
+<script type="module" src="/js/ads.js"></script>
+<script type="module" src="/js/adsGrid.js"></script>
+<script type="module" src="/js/tilt-cards.js"></script>

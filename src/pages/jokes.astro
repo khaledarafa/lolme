@@ -139,7 +139,12 @@ const jokes10 = [
 
 ---
 
-<Layout>
+<Layout 
+  title="نكت مضحكة جديدة 😂🔥 – لول مي"
+  description="ضحك متواصل… نكت قصيرة جامدة ومناسبة للمشاركة على واتساب وفيس بوك. أدخل هشّ دماغك شويتين 😂🔥"
+  ogImage="https://lolme.cc/images/default-og.webp"
+>
+
     
   <script is:inline>
     window.addEventListener("DOMContentLoaded", () => {
@@ -166,10 +171,11 @@ const jokes10 = [
   </script>
   
   <div class="jokes-page card">
+
     <h1>نكت مضحكة جديدة <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h1>
     <h3> الضحك وسيلة رائعة لتخفيف الضغط اليومي وإخراج الطاقة السلبية. استمتع بمجموعة من أظرف النكت التي ستجعلك تبتسم بصوت عالي، أنت ومن حولك. كل نكتة هنا قصيرة وسهلة الهضم، مثالية لمشاركة المرح مع الأصدقاء أو العائلة. <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> </h3>
     <!-- <ul> {jokes.map((joke) => <li>{joke}</li>)} </ul> -->
-    <ul> {jokes.map((joke) => ( <li class="card"> {joke}
+    <ul> {jokes.map((joke) => ( <li class="card tilt-card"> {joke}
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button>
         </li>
@@ -181,7 +187,7 @@ const jokes10 = [
   <div class="jokes-page">
     <h1>نكت مضحكة جدا برضه <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h1>
     <h3> اجعل يومك مليء بالمرح مع هذه النكت الطريفة! هذه المجموعة تجمع بين الفكاهة اليومية والمواقف الغريبة التي تجعل الضحك لا يتوقف. مثالية لقضاء وقت ممتع مع الأصدقاء أو لرفع معنوياتك في أي لحظة. <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h3>
-    <ul> {jokes2.map((joke) => <li class="card">{joke}  <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
+    <ul> {jokes2.map((joke) => <li class="card tilt-card">{joke}  <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
       <br />
       <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li>)} </ul>
   </div>
@@ -189,7 +195,7 @@ const jokes10 = [
   <div class="jokes-page card">
     <h1>نكت إوعى وشك <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h1>
     <h3> هنا تجد النكت الغريبة والمفاجئة التي تخطف الأنفاس وتجبرك على الضحك فورًا! هذه النكت قصيرة لكنها مؤثرة، ستجعل مزاجك أفضل بسرعة، سواء كنت بمفردك أو مع من تحب من العائلة والأصدقاء. <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> </h3>
-    <ul> {jokes3.map((joke) => ( <li class="card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+    <ul> {jokes3.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
   </div>
@@ -197,7 +203,7 @@ const jokes10 = [
   <div class="jokes-page">
     <h1>نكت جامدااااا <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h1>
     <h3> طب اسمع دي <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> </h3>
-    <ul> {jokes4.map((joke) => ( <li class="card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+    <ul> {jokes4.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
   </div>
@@ -209,7 +215,7 @@ const jokes10 = [
       نكت سريعة ومفاجئة، ترفع المود في ثواني، سواء كنت قاعد لوحدك أو مع أصحابك وعيلتك.  
       استعد لجرعة ضحك محترمة من نكت مفيش زيها! <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
     </h3>
-    <ul> {jokes5.map((joke) => ( <li class="card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+    <ul> {jokes5.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
   </div>
@@ -222,7 +228,7 @@ const jokes10 = [
       سواء بتقضي وقت راحة أو عايز ترفع المود شوية.  
       اضمنلك جرعة ضحك من العيار التقيل! <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
     </h3>
-    <ul> {jokes6.map((joke) => ( <li class="card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+    <ul> {jokes6.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
   </div>
@@ -233,7 +239,7 @@ const jokes10 = [
       "اشتهر الشعب المصري بحس الدعابة وخفة الدم ودائمًا ما يحبوا الضحك وإلقاء النكات من حين لآخر. وفي المقال ده جمعنالك أكبر عدد من النكت المصرية المضحكة جدًا من موقع نكت، اللي يعتبر أكبر مكتبة نكت على الإطلاق ومحدثة باستمرار 🤣.",
       <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
     </h3>
-    <ul> {jokes7.map((joke) => ( <li class="card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+    <ul> {jokes7.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
   </div>
@@ -243,7 +249,7 @@ const jokes10 = [
     <h3>
       مجموعة جديدة من أجمد النكت المصرية اللي هتخليك تضحك لحد ما دموعك تنزل. خفة دم المصريين مالهاش حدود، وتعليقاتهم مش ممكن تتكرر! <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
     </h3>
-    <ul> {jokes8.map((joke) => ( <li class="card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+    <ul> {jokes8.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
   </div>
@@ -254,7 +260,7 @@ const jokes10 = [
       مجموعة نكت خفيفة دم وغريبة جدًا من الحياة اليومية، 🤣.,
       <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
     </h3>
-    <ul> {jokes9.map((joke) => ( <li class="card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+    <ul> {jokes9.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
   </div>
@@ -264,11 +270,12 @@ const jokes10 = [
     <h3>
       مجموعة نكت مصرية قصيرة من النوع اللي يخليك تضحك حتى وانت مش ناوي 😅  <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
     </h3>
-    <ul> {jokes10.map((joke) => ( <li class="card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+    <ul> {jokes10.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
   </div>
 
+  <script type="module" src="/js/tilt-cards.js"></script>
   <style>
     .share-btn {
       background: #ff4081;

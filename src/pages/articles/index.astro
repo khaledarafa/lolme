@@ -10,52 +10,52 @@ const articles = [
   {
     title: "تاريخ الميمز وانتشارها",
     slug: "/articles/تاريخ-الميمز-وانتشارها",
-    img: "/images/meme-origin.webp",
+    img: "/images/meme-origin-350.webp",
   },
   {
     title: "ثقافة الميمز: ليه بقت لغة العالم الجديد؟",
     slug: "/articles/ثقافة-الميمز",
-    img: "/images/1.webp",
+    img: "/images/1-350.webp",
   },
   {
     title: "ليه الميمز بتخلي يومك أحسن؟",
     slug: "/articles/ليه-الميمز-بتخلي-يومك-أحسن؟",
-    img: "/images/6.webp",
+    img: "/images/6-350.webp",
   },
   {
     title: "الميمز: المرآة اللي بتعكس جيل كامل 😂",
     slug: "/articles/geel-kamel",
-    img: "/images/12.webp",
+    img: "/images/12-350.webp",
   },
   {
     title: "النكت: العلاج الطبيعي للروح 😄",
     slug: "/articles/النكت:-العلاج-الطبيعي-للروح",
-    img: "/images/21.webp",
+    img: "/images/21-350.webp",
   },
   {
     title: "أغرب طرق الناس لكسب الفلوس من الإنترنت (الطريقة رقم 3 هتضحكك 😂)",
     slug: "/articles/tiktok-funny-money",
-    img: "/images/tiktok-funny-money.webp",
+    img: "/images/tiktok-funny-money-350.webp",
   },
   {
     title: "الذكاء الاصطناعي دخل السوشيال ميديا... وبدأ يقلدنا 😂",
     slug: "/articles/ai-social-media-funny",
-    img: "/images/ai-social-media-funny.webp",
+    img: "/images/ai-social-media-funny-350.webp",
   },
   {
     title: "أفكار محتوى مجنونة للتيك توك هتخليك تريند وانت نايم 😎",
     slug: "/articles/tiktok-crazy-ideas",
-    img: "/images/tiktok-crazy-ideas.webp",
+    img: "/images/tiktok-crazy-ideas-350.webp",
   },
   {
     title: "المشاهير اللي قلبوا السوشيال ميديا ميمز بدون قصد 😂",
     slug: "/articles/funny-celebs-ai",
-    img: "/images/funny-celebs-ai.webp",
+    img: "/images/funny-celebs-ai-350.webp",
   },
   {
     title: "نكت 2025: الذكاء الاصطناعي بيهزر هو كمان 🤖😂",
     slug: "/articles/ai-jokes-2025",
-    img: "/images/ai-jokes-2025.webp",
+    img: "/images/ai-jokes-2025-350.webp",
   },
 ];
 ---
@@ -68,7 +68,7 @@ const articles = [
 
   <main class="articles-grid">
     {articles.map((article) => (
-      <a href={article.slug} class="article-card">
+      <a href={article.slug} class="article-card tilt-card">
         <img src={article.img} alt={article.title} loading="lazy" />
         <div class="content">
           <h3>{article.title}</h3>
@@ -76,6 +76,7 @@ const articles = [
       </a>
     ))}
   </main>
+  <script type="module" src="/js/tilt-cards.js"></script>
 </Layout>
 
 <style>
@@ -85,7 +86,7 @@ const articles = [
     gap: 25px;
     max-width: 1000px;
     margin: auto;
-    padding: 40px 20px;
+    padding: 40px 8px;
   }
 
   .article-card {
@@ -123,25 +124,3 @@ const articles = [
     color: var(--accent);
   }
 </style>
-
-
-<!-- ---
-// src/pages/articles/index.astro
-export const prerender = false;
-import Layout from "../../layouts/Layout.astro";
-const title = "المقالات";
-const description = "أحدث مقالات الميمز والترفيه";
----
-
-<Layout {title} {description}>
-    <ul class="articles-list">
-      <li><a href="/articles/تاريخ-الميمز-وانتشارها">تاريخ الميمز وانتشارها</a></li>
-      <li><a href="/articles/ثقافة-الميمز">ثقافة الميمز: ليه بقت لغة العالم الجديد؟</a></li>
-      <li><a href="/articles/ليه-الميمز-بتخلي-يومك-أحسن؟">ليه الميمز بتخلي يومك أحسن؟</a></li>
-      <li><a href="/articles/geel-kamel">الميمز: المرآة اللي بتعكس جيل كامل 😂</a></li>
-      <li><a href="/articles/النكت:-العلاج-الطبيعي-للروح">النكت: العلاج الطبيعي للروح 😄</a></li>
-      <li><a href="/articles/tiktok-funny-money">أغرب طرق الناس لكسب الفلوس من الإنترنت (الطريقة رقم 3 هتضحكك 😂)</a></li>
-      <li><a href="/articles/ai-social-media-funny">الذكاء الاصطناعي دخل السوشيال ميديا... وبدأ يقلدنا 😂</a></li>
-      <li><a href="/articles/tiktok-crazy-ideas">أفكار محتوى مجنونة للتيك توك هتخليك تريند وانت نايم 😎</a></li>
-    </ul>
-  </Layout> -->

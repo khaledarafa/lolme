@@ -55,24 +55,24 @@ const articles: ArticleWithSlug[] = Object.entries(articlesModules)
 
 const homeButtons = [
   {
-    title: "📸 اعمل ميميز دلوقتي",
-    slug: "/meme",
-    img: "/images/meme.webp",
-  },
-  {
     title: "🔮 إختبارات مضحكة",
     slug: "/tests",
     img: "/images/tests.webp",
   },
   {
-    title: "🔥 روّست صاحبك",
-    slug: "/roast",
-    img: "/images/roast.webp",
-  },
-  {
     title: "🤣 نكت مضحكة",
     slug: "/jokes",
     img: "/images/jokes.webp",
+  },
+  {
+    title: "📸 اعمل ميميز دلوقتي",
+    slug: "/meme",
+    img: "/images/meme.webp",
+  },
+  {
+    title: "🔥 روّست صاحبك",
+    slug: "/roast",
+    img: "/images/roast.webp",
   },
   {
     title: "🤣 صور مضحكة",
@@ -108,7 +108,7 @@ const homeButtons = [
   </div>
   <main class="home-grid">
     {homeButtons.map((btn) => (
-      <a href={btn.slug} class="home-card">
+      <a href={btn.slug} class="home-card tilt-card">
         <img src={btn.img} alt={btn.title} loading="lazy" />
         <div class="content">
           <h3>{btn.title}</h3>
@@ -121,7 +121,7 @@ const homeButtons = [
     <h2>📰 أحدث المقالات</h2>
     <div class="articles-grid">
       {articles.map(article => (
-        <a href={`/articles/${article.slug}`} class="article-card">
+        <a href={`/articles/${article.slug}`} class="article-card tilt-card">
           <img src={article.image ? article.image : '/images/default-article.webp'} alt={article.title} />
           <h3>{article.title}</h3>
           <p>{article.description}</p>
@@ -132,6 +132,7 @@ const homeButtons = [
 
   <script type="module" src="/js/install-btn.js"></script>
   <script type="module" src="/js/open-meme.js"></script>
+  <script type="module" src="/js/tilt-cards.js"></script>
 
 </Layout>
 <style>
@@ -141,7 +142,7 @@ const homeButtons = [
     gap: 25px;
     max-width: 1000px;
     margin: auto;
-    padding: 40px 20px;
+    padding: 40px 8px;
   }
 
   .home-card {

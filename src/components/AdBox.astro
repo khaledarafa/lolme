@@ -1,0 +1,50 @@
+---
+// src/components/AdBox.astro
+type AdItem = { id: string; img?: string; video?: string; link: string; closeable?: boolean; desktop?: boolean; every?: number; };
+
+const { ad } = Astro.props as { ad: AdItem };
+---
+
+<div class="ad-wrapper ad-tilt" data-ad-id={ad.id} data-closeable={ad.closeable ? "1" : "0"} style="position:relative;" >
+  {ad.closeable && (
+    <button 
+      class="ad-close-btn" 
+      onclick="sessionStorage.setItem('ad_closed_${ad.id}', '1'); this.parentElement.remove()"
+      style="
+      position:absolute; 
+      top:5px; 
+      right:5px; 
+      background:#0008; 
+      border:none; 
+      color:#fff; 
+      font-size:14px; 
+      padding:3px 6px; 
+      border-radius:4px; 
+      cursor:pointer;
+      z-index:10;
+      "
+    >✕</button>
+  )}
+
+<div class="ad-tilt-inner">
+  {ad.video ? (
+    <a href={ad.link} onclick={`event.preventDefault(); window.open('${ad.link}', '_blank');`}>
+      <video 
+        src={ad.video}
+        autoplay 
+        loop 
+        muted 
+        playsinline
+        style="width:100%; max-height:180px; object-fit:cover; border-radius:10px;"
+      ></video>
+    </a>
+  ) : ad.img ? (
+    <a href={ad.link} onclick={`event.preventDefault(); window.open('${ad.link}', '_blank');`}>
+      <img src={ad.img} alt="Ad" style="width:100%; border-radius:10px;" />
+    </a>
+  ) : (
+    <div class="ad-placeholder">مساحتك الإعلانية هنا 😂🔥</div>
+  )}
+</div>
+</div>
+
