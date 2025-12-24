@@ -1,5 +1,5 @@
 ---
-// src/layouts/Layout.astro
+// src/layouts/Layout.astro lolme.cc
 import Footer from "../components/Footer.astro";
 import AdsInjector from "../components/AdsInjector.astro";
 const { title = "", description, img, ogImage } = Astro.props;
@@ -10,79 +10,92 @@ const makeAbsolute = (url: string = ""): string =>
   url.startsWith("http") ? url : `https://lolme.cc${url}`;
 
 const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
-
-
-// تعريف الترجمة
-const translations = {
-  ar: { home: "🏠 الرئيسية", articles: "📚 المقالات" },
-  en: { home: "🏠 Home", articles: "📚 Articles" },
-} as const;
-
-// قراءة اللغة من الكوكيز (لو موجودة)
-let lang: "ar" | "en" =
-  (Astro.cookies.get("lang")?.value as "ar" | "en") || "ar";
 ---
 
-<html lang={lang} dir={lang === "ar" ? "rtl" : "ltr"}>
-<!-- <html > -->
+<html lang="ar" dir="rtl">
   <head>
+    <!-- BASIC -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Fix Status Bar Color (PWA) -->
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0F1723" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fefefe" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-    <!-- OG + TWITTER tags لازم يكونوا هنا -->
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description || "اختبارات شخصية مضحكة، ميمز يومية، نكت، أفشات، روست صاحبك، ألعاب أسئلة، ومحتوى ترفيهي سريع. لول مي – أكبر منصة عربية للضحك والتسلية واكتشاف شخصيتك! 😂🔥"} />
-    <!-- <meta property="og:image" content={Astro.props.ogImage || "https://lolme.cc/images/default-og.webp"} /> -->
+    <slot name="head"></slot>
+
+    <!-- SEO DESCRIPTION -->
+    <meta 
+      name="description" content={description || "محتوى مضحك وميمز يومية وأفشات، اختبارات شخصية مضحكة، وتحويل صور ومحتوى ترفيهي سريع على موقع LOLME"} />
+
+    <!-- TITLE -->
+    <title>{title || "LOLME - اختبارات مضحكة وميمز وروست صاحبك"}</title>
+
+    <!-- CANONICAL -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">    
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="canonical" href={`https://lolme.cc${Astro.url.pathname}`} />
+    <link rel="preload" href="/favicon.webp" as="image">
+
+    <!-- OG TAGS -->
+    <meta property="og:title" content={title || "LOLME - اختبارات مضحكة وميمز"} />
+    <meta property="og:description" content={description || "اختبارات مضحكة، ميمز يومية، صور مضحكة، أفشات، وتقنيات ترفيهية هايفة وجامدة في LOLME 😂🔥"} />
     <meta property="og:image" content={finalOg} />
-    <meta property="og:url" content={`https://lolme.cc${Astro.url.pathname}`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:type" content="website" />
-
+    <meta property="og:url" content={`https://lolme.cc${Astro.url.pathname}`} />
+    
+    <!-- bing.com/webmasters -->
+    <meta name="msvalidate.01" content="2AFF695811779AE6FD6B606480E183D0" />
+    <meta name="yandex-verification" content="fc837038f6a4dcdd" />
+    <!-- TWITTER TAGS -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta property="og:description" content={description || "اختبارات شخصية مضحكة، ميمز يومية، نكت، أفشات، روست صاحبك، ألعاب أسئلة، ومحتوى ترفيهي سريع. لول مي – أكبر منصة عربية للضحك والتسلية واكتشاف شخصيتك! 😂🔥"} />
-    <!-- <meta name="twitter:image" content={Astro.props.ogImage || "https://lolme.cc/images/default-og.webp"} /> -->
-<meta name="twitter:image" content={finalOg} />
-<meta name="mylead-verification" content="71d6df0ab7b92b5fe986e8cae0205e5f">
+    <meta name="twitter:title" content={title || "LOLME - ميمز ونكت"} />
+    <meta name="twitter:description" content={description || "اختبارات وميمز ونكت وصور مضحكة وروستات جاهزة على LOLME"} />
+    <meta name="twitter:image" content={finalOg} />
 
+    <!-- EXTRA VERIFICATION -->
+    <meta name="mylead-verification" content="71d6df0ab7b92b5fe986e8cae0205e5f" />
+
+    <!-- FAVICON + MANIFEST -->
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" type="image/png" href="/favicon64.png" />
     <meta name="theme-color" content="#1f8ef1" />
-    <!-- ضروري HTTPS علشان يظهر زر التثبيت -->
-    <script src="/js/ad-close.js" defer></script>
 
-    <script type="module" src="/js/register-sw.js"></script>
-    <!-- <script type="module" src="/js/lang.js"></script> -->
-
-    <!-- خطوط جوجل -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Changa&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Marhey&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Impact&display=swap" rel="stylesheet" />
-
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <!-- ADS + ANALYTICS -->
+    <script>
+      window.addEventListener("load", () => {
+        const s1 = document.createElement("script");
+        s1.src = "https://www.googletagmanager.com/gtag/js?id=G-98W71513M3";
+        s1.async = true;
+        document.body.appendChild(s1);
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9947408531248001"
-    crossorigin="anonymous"></script>
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-98W71513M3"></script>
-    <script type="module" src="/js/googletagmanager.js"></script>
-
+        const s2 = document.createElement("script");
+        s2.src = "/js/googletagmanager.js";
+        s2.type = "module";
+        document.body.appendChild(s2);
+      });
+    </script>
+    
+    <!-- PWAs + EXTRA -->
+    <script src="/js/ad-close.js" defer></script>
+    <!-- <script type="module" src="/js/register-sw.js"></script> -->
+    <script>
+      window.addEventListener("load", () => {
+        const s = document.createElement("script");
+        s.src = "/js/register-sw.js";
+        document.body.appendChild(s);
+      });
+    </script>
+    
   </head>
+
   <body>
 
     <script>
-      (function () {
-        const saved = localStorage.getItem("lang") || "ar";
-        document.documentElement.lang = saved;
-        document.documentElement.dir = saved === "ar" ? "rtl" : "ltr";
-      })();
-
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker
@@ -93,25 +106,25 @@ let lang: "ar" | "en" =
       }
     </script>
     
-
-    <!-- <slot /> -->
     <main>
   <!-- الهيدر الثابت -->
-  <header class="page-header" style="display:flex;justify-content:space-around;align-items:center;width:94%;padding:0rem 1rem;background:#0000;">     
-        <nav class="header-nav">
-          <a id="nav-home" href="/">{translations[lang].home}</a>
-          <span class="divider">|</span>
-          <a id="nav-articles" href="/articles">{translations[lang].articles}</a>
-
-          <span id="toggle-theme" style="cursor:pointer; font-size:1.5rem;">🌙</span>
-
-        </nav>
-    
+  <!-- <header class="page-header" style=" display:flex; justify-content:space-between; align-items:center; width:100%; max-width:1000px; margin:0 auto; padding:0.5rem 1rem; background:transparent; " > -->
+    <header class="page-header" style="display:flex;justify-content:space-around;align-items:center;width:94%;padding:0rem 1rem;background:#0000;">     
+    <!-- اليمين: اللينكات -->
+    <nav class="header-nav" style="display:flex; gap:10px; align-items:center;">
+      <a id="nav-home" href="/">🏠 الرئيسية</a>
+      <span class="divider">|</span>
+      <a id="nav-articles" href="/articles">📚 المقالات</a>
+  
+      <span id="toggle-theme" style="cursor:pointer; font-size:1.5rem;" > 🌙 </span>
     </nav>
-    <div class="header-left">
-      <img src="/favicon.png" alt="LOLME" class="logo" style="margin-bottom: -5px;"/>
-    </div>
-  </header>
+    
+  <!-- اليسار: اللوجو -->
+  <div class="header-left" style="display:flex; align-items:center;">
+    <img src="/favicon.webp" alt="LOLME" width="40" height="40" class="logo" />
+  </div>
+
+</header>
 
   <!-- العنوان الرئيسي -->
   {Astro.props.title && (
@@ -132,7 +145,7 @@ let lang: "ar" | "en" =
         max-width: 600px; 
         width: 90%; 
         border-radius: 14px; 
-        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
       "
       class="tilt-card"
     />
@@ -179,7 +192,12 @@ let lang: "ar" | "en" =
         });
       });
     </script>
-    
+    <!-- <script>
+      setTimeout(() => {
+        document.dispatchEvent(new Event("load-ads"));
+      }, 700);
+    </script>
+     -->
   </body>
 </html>
 
@@ -200,6 +218,10 @@ let lang: "ar" | "en" =
     font-size: 1.1rem;
     color: var(--accent-color);
     line-height: 1.6;
+  }
+
+  .logo {
+    vertical-align: middle;
   }
 
 </style>

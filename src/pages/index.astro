@@ -1,30 +1,7 @@
 ---
-// scripts/generate-memes-json.js
-// node scripts/generate-memes-json.js
-// node scripts/generate-sitemap.js
-
-// firebase deploy --only functions
-// npx astro dev --host
-// npm run build 
-
-// rm -rf dist
-// npx astro build
-// vercel deploy
-// vercel --prod
-
-// mkdir -p dist
-// npx astro build
-
-// git add .
-// git commit -m ""
-// git push
-
 // src/pages/index.astro
 export const prerender = false;
 import Layout from "../layouts/Layout.astro";
-
-// نجمع كل المقالات
-const articlesModules = import.meta.glob('./articles/*.astro', { eager: true });
 
 interface ArticleFrontmatter {
   title: string;
@@ -37,79 +14,79 @@ interface ArticleWithSlug extends ArticleFrontmatter {
   slug: string;
 }
 
-const articles: ArticleWithSlug[] = Object.entries(articlesModules)
-  .filter(([path]) => !path.endsWith('index.astro'))
-  .map(([path, module]) => {
-    const mod = module as { frontmatter?: ArticleFrontmatter };
-    const fm = mod.frontmatter as ArticleFrontmatter; // نجبر TypeScript يعرف النوع
-    return {
-      slug: path.replace('./articles/', '').replace('.astro', ''),
-      title: fm.title,
-      description: fm.description ?? '',
-      image: fm.image ?? '/images/default-article.webp',
-      date: fm.date ?? '2000-01-01',
-    };
-  })
-  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // الأحدث فوق
-  .slice(0, 5);
+// load *frontmatter only* without eager or loading images/components
+const modules = import.meta.glob("./articles/*.astro", {
+  import: "frontmatter",
+});
 
+const articles: ArticleWithSlug[] = [];
+
+for (const [path, loader] of Object.entries(modules)) {
+  const fm = await loader() as ArticleFrontmatter;
+
+  if (path.endsWith("index.astro")) continue;
+
+  articles.push({
+    slug: path.replace("./articles/", "").replace(".astro", ""),
+    title: fm.title,
+    description: fm.description ?? "",
+    image: fm.image ?? "/images/default-article.webp",
+    date: fm.date ?? "2000-01-01",
+  });
+}
+
+articles.sort((a, b) => {
+  const da = new Date(a.date ?? "2000-01-01").getTime();
+  const db = new Date(b.date ?? "2000-01-01").getTime();
+  return db - da;
+});
+
+const latestArticles: ArticleWithSlug[] = articles.slice(0, 5);
+
+// home buttons
 const homeButtons = [
-  {
-    title: "🔮 إختبارات مضحكة",
-    slug: "/tests",
-    img: "/images/tests.webp",
-  },
-  {
-    title: "🤣 نكت مضحكة",
-    slug: "/jokes",
-    img: "/images/jokes.webp",
-  },
-  {
-    title: "📸 اعمل ميميز دلوقتي",
-    slug: "/meme",
-    img: "/images/meme.webp",
-  },
-  {
-    title: "🔥 روّست صاحبك",
-    slug: "/roast",
-    img: "/images/roast.webp",
-  },
-  {
-    title: "🤣 صور مضحكة",
-    slug: "/funnyImages",
-    img: "/images/funny.webp",
-  },
-  {
-    title: "حوّل PDF إلى صور 🤯",
-    slug: "/pdf-to-images",
-    img: "/images/pdf2imgs.webp",
-  },
+  { title: "🔮 إختبارات مضحكة", slug: "/tests", img: "/images/tests.webp" },
+  { title: "🤣 نكت مضحكة", slug: "/jokes", img: "/images/jokes.webp" },
+  { title: "📸 اعمل ميميز دلوقتي", slug: "/meme", img: "/images/meme.webp" },
+  { title: "🔥 روّست صاحبك", slug: "/roast", img: "/images/roast.webp" },
+  { title: "🤣 صور مضحكة", slug: "/funnyImages", img: "/images/funny.webp" },
+  { title: "حوّل PDF إلى صور 🤯", slug: "/pdf-to-images", img: "/images/pdf2imgs.webp" },
 ];
-
 ---
 
 <Layout title="🤣 LOLME">
-  <section style="text-align:center; padding: 0px 0.1rem ;">
-    <!-- <h1>🤣 LOLME</h1> -->
+
+  <section style="text-align:center; padding: 0px 0.1rem;">
     <p style="margin: 0px;"> أدوات ترفيهية هايفة ومجنونة 🕺🔥</p>
     <p> LOLME هو مكانك للضحك والهزار! ارفع صورة، اكتب ميمز، وروّست أصحابك بطريقة مرحة 😎 </p>
-    <button id="install-btn" class="appbtn" style="background:#f39c12;">⬇️ حمّل LOLME كتطبيق</button>
-
+    <button id="install-btn" class="appbtn">⬇️ حمّل LOLME كتطبيق</button>
   </section>
 
   <div class="imojidiv">
-    <div class="emoji" style=" font-size:2rem;">🤣</div>
+    <div class="emoji" style="font-size:2rem;">🤣</div>
     <div class="emoji" style="left:20%;">🤣</div>
     <div class="emoji" style="left:35%;">😂</div>
     <div class="emoji" style="left:50%;">😎</div>
     <div class="emoji" style="left:65%;">🥳</div>
     <div class="emoji" style="left:80%;">🤪</div>
-    <div class="emoji" style=" font-size:2rem;">🥳</div>
+    <div class="emoji" style="font-size:2rem;">🥳</div>
   </div>
+
+  <!-- ⭐ العنوان اللي بيحل المشكلة -->
+  <h2 style="text-align:center; margin:25px 0;">🔮 أدوات لول مي</h2>
+
   <main class="home-grid">
-    {homeButtons.map((btn) => (
+    {homeButtons.map((btn, i) => (
       <a href={btn.slug} class="home-card tilt-card">
-        <img src={btn.img} alt={btn.title} loading="lazy" />
+        <img 
+          src={btn.img} 
+          alt={btn.title}
+          width="350"
+          height="200"
+          loading={i === 0 ? "eager" : "lazy"}
+          fetchpriority={i === 0 ? "high" : "auto"}
+          style="object-fit:cover;"
+        />    
         <div class="content">
           <h3>{btn.title}</h3>
         </div>
@@ -120,9 +97,16 @@ const homeButtons = [
   <section>
     <h2>📰 أحدث المقالات</h2>
     <div class="articles-grid">
-      {articles.map(article => (
+      {latestArticles.map(article => (
         <a href={`/articles/${article.slug}`} class="article-card tilt-card">
-          <img src={article.image ? article.image : '/images/default-article.webp'} alt={article.title} />
+          <img 
+            src={article.image} 
+            alt={article.title} 
+            width="350" 
+            height="200" 
+            loading="lazy" 
+            style="object-fit:cover;" 
+          />
           <h3>{article.title}</h3>
           <p>{article.description}</p>
         </a>
@@ -130,11 +114,12 @@ const homeButtons = [
     </div>
   </section>
 
-  <script type="module" src="/js/install-btn.js"></script>
-  <script type="module" src="/js/open-meme.js"></script>
-  <script type="module" src="/js/tilt-cards.js"></script>
+  <script src="/js/install-btn.js" defer></script>
+  <script src="/js/open-meme.js"   defer></script>
+  <script src="/js/tilt-cards.js"  defer></script>
 
 </Layout>
+
 <style>
   .home-grid {
     display: grid;
@@ -151,7 +136,7 @@ const homeButtons = [
     background: var(--bg-color);
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 6px 15px var(--shadow-color);
+    box-shadow: 0 4px 10px var(--shadow-color);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: flex;
     flex-direction: column;
@@ -160,7 +145,7 @@ const homeButtons = [
 
   .home-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 15px rgb(241, 249, 16);
+    box-shadow: 0 4px 10px rgb(241, 249, 16);
   }
 
   .home-card img {
@@ -178,6 +163,21 @@ const homeButtons = [
     font-size: 1.1rem;
     margin: 0;
     color: var(--accent);
+  }
+
+  .appbtn {
+    background: transparent;
+    color: var(--accent);
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .tilt-card, .tilt-card .product-card-inner {
+    will-change: transform, box-shadow;
+    transform-origin: center;
   }
 
 /* =============== articles =============== */

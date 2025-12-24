@@ -67,16 +67,23 @@ const articles = [
   </section>
 
   <main class="articles-grid">
-    {articles.map((article) => (
+    {articles.map((article, i) => (
       <a href={article.slug} class="article-card tilt-card">
-        <img src={article.img} alt={article.title} loading="lazy" />
+        <img
+          src={article.img}
+          alt={article.title}
+          width="350"
+          height="180"
+          loading={i === 0 ? "eager" : "lazy"}
+          fetchpriority={i === 0 ? "high" : "auto"}
+        />    
         <div class="content">
-          <h3>{article.title}</h3>
+          <h2>{article.title}</h2>
         </div>
       </a>
     ))}
   </main>
-  <script type="module" src="/js/tilt-cards.js"></script>
+    <script src="/js/tilt-cards.js" defer></script>
 </Layout>
 
 <style>

@@ -1,11 +1,16 @@
 // @ts-check
 import { defineConfig } from "astro/config";
-import vercel from "@astrojs/vercel/serverless"; // ✅ خليك على /serverless هنا
+import vercel from "@astrojs/vercel/serverless";
 
 export default defineConfig({
   site: "https://lolme.cc",
-  output: "server", // لازم عشان API تشتغل
+  output: "server",
   adapter: vercel({}),
+
+  // ⭐ تحسين الأداء — منع CSS chunks الصغيرة
+  build: {
+    inlineStylesheets: "never", // دمج CSS بدل chunking
+  },
 });
 
 

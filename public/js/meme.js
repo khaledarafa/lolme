@@ -1,6 +1,21 @@
 // public/js/meme.js
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => Array.from(document.querySelectorAll(s));
+// Safe storage wrapper
+const safeStorage = {
+  get(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  set(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch {}
+  },
+};
 
 let applyOverlay = false;
 let applyBlur = false;
@@ -51,7 +66,7 @@ function setupCategoryButtons() {
   });
 
   // ✅ بعد ما نرسم الأزرار كلها نعمل استرجاع
-  const savedGallery = localStorage.getItem("lastGallery");
+  const savedGallery = safeStorage.get("lastGallery");
   if (savedGallery && memesData[savedGallery]?.length) {
     showGallery(savedGallery);
 
@@ -82,15 +97,18 @@ function showGallery(cat) {
   const gallery = $("#meme-gallery");
   gallery.innerHTML = "";
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const img = entry.target;
-        img.src = img.dataset.src; // لما تدخل الشاشة يتحمل
-        observer.unobserve(img);
-      }
-    });
-  }, { rootMargin: "200px" }); // يبدأ التحميل قبل ما تظهر الصورة بشوية
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          img.src = img.dataset.src; // لما تدخل الشاشة يتحمل
+          observer.unobserve(img);
+        }
+      });
+    },
+    { rootMargin: "200px" }
+  ); // يبدأ التحميل قبل ما تظهر الصورة بشوية
 
   memesData[cat].forEach((src) => {
     const imgEl = document.createElement("img");
@@ -109,28 +127,6 @@ function showGallery(cat) {
   });
 }
 
-// function showGallery(cat) {
-//   localStorage.setItem("lastGallery", cat);
-
-//   const gallery = $("#meme-gallery");
-//   gallery.innerHTML = "";
-
-//   memesData[cat].forEach((src) => {
-//     const imgEl = document.createElement("img");
-//     imgEl.src = src;
-//     imgEl.style.width = "120px";
-//     imgEl.style.height = "120px";
-//     imgEl.style.objectFit = "cover";
-//     imgEl.style.cursor = "pointer";
-
-//     imgEl.addEventListener("click", () => {
-//       loadImage(src, false);
-//     });
-
-//     gallery.appendChild(imgEl);
-//   });
-// }
-
 // CANVAS SETUP
 const canvas = $("#memeCanvas"),
   ctx = canvas.getContext("2d");
@@ -147,7 +143,7 @@ const DEFAULTS = {
   strokeWidth: 4,
   align: "center",
   rtl: true,
-  bold: true, 
+  bold: true,
 };
 
 function fitCanvas() {
@@ -383,14 +379,13 @@ function rebuildLayersUI() {
     const boldBtn = div.querySelector(".toggle-bold");
     // حدّد لون الزر حسب حالة الطبقة
     boldBtn.style.background = layer.bold ? "#1abc9c" : "#3498db";
-    
+
     boldBtn.addEventListener("click", () => {
       layer.bold = !layer.bold;
       boldBtn.style.background = layer.bold ? "#1abc9c" : "#3498db";
       draw();
       saveState();
     });
-    
   });
 }
 
@@ -488,7 +483,7 @@ function saveState() {
 }
 
 function loadState() {
-  const stateStr = localStorage.getItem("memeState");
+  const stateStr = safeStorage.get("memeState");
   if (!stateStr) return false;
   try {
     const state = JSON.parse(stateStr);
@@ -532,7 +527,7 @@ function loadState() {
       useShadow = state.useShadow;
       const shadowCheckbox = $("#shadow-toggle");
       if (shadowCheckbox) shadowCheckbox.checked = useShadow;
-    }    
+    }
 
     if (state.applyOverlay !== undefined) {
       applyOverlay = state.applyOverlay;
@@ -553,8 +548,8 @@ const shadowToggle = $("#shadow-toggle");
 if (shadowToggle) {
   shadowToggle.addEventListener("change", (e) => {
     useShadow = e.target.checked;
-    draw();        // نرسم النصوص بالـ shadow لو مفعل
-    saveState();   // نحفظ الحالة الجديدة فورًا
+    draw(); // نرسم النصوص بالـ shadow لو مفعل
+    saveState(); // نحفظ الحالة الجديدة فورًا
   });
 }
 window.addEventListener("load", () => {
@@ -666,21 +661,41 @@ uploadInput.addEventListener("change", (e) => {
 
 // FONT BUTTONS
 $$(".font-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-        // لو مفيش طبقة محددة، خلي آخر طبقة مضافة تتحدد تلقائي
-        if (selectedIndex === null && layers.length) {
-          selectedIndex = layers.length - 1;
-        }
-    
-    if (selectedIndex !== null) {
-      layers[selectedIndex].fontFamily = btn.dataset.font;
-      draw();
-      saveState();
+  btn.addEventListener("click", async () => {
+
+    if (selectedIndex === null && layers.length) {
+      selectedIndex = layers.length - 1;
     }
+
+    const font = btn.dataset.font;
+
+    // ⭐ warm up قبل الاستخدام
+    await warmFont(font);
+
+    if (selectedIndex !== null) {
+      layers[selectedIndex].fontFamily = font;
+    }
+
+    draw();
+    saveState();
+
     $$(".font-btn").forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
   });
 });
+
+function warmFont(fontFamily) {
+  return new Promise((resolve) => {
+    const testCanvas = document.createElement("canvas");
+    const tctx = testCanvas.getContext("2d");
+
+    tctx.font = `50px ${fontFamily}, sans-serif`;
+    tctx.fillText("Hello", 10, 50);
+
+    resolve();
+  });
+}
+
 // بتخلي الكانفس يتغير حجمه لا الكيبورد يظهر
 // window.addEventListener("resize", () => {
 //   fitCanvas();
@@ -769,7 +784,7 @@ function getDrawImageParams(img, canvas) {
 const canvasSizeButtons = $$("#canvas-size-buttons button");
 
 // استرجاع آخر اختيار من localStorage لو موجود
-let savedChoice = localStorage.getItem("canvasSizeChoice");
+let savedChoice = safeStorage.get("canvasSizeChoice");
 if (savedChoice) {
   currentCanvasChoice = savedChoice;
   resizeCanvasByChoice(savedChoice);
@@ -800,37 +815,3 @@ canvasSizeButtons.forEach((btn) => {
 canvasSizeButtons.forEach((b) => {
   if (b.dataset.size === currentCanvasChoice) b.classList.add("active");
 });
-
-// CANVAS DRAG بيخلى الكانفس يتحرك مع السحب
-// canvas.style.touchAction = "pan-y"; // خلي السحب العمودي للصفحة طبيعي
-
-// canvas.addEventListener("pointerdown", (e) => {
-//   const pos = toCanvasPos(e);
-//   selectedIndex = null;
-//   for (let i = layers.length - 1; i >= 0; i--) {
-//     if (isPointInLayer(pos, layers[i])) {
-//       selectedIndex = i;
-//       break;
-//     }
-//   }
-//   if (selectedIndex !== null) {
-//     isDragging = true;
-//     dragOffset = {
-//       x: pos.x - layers[selectedIndex].x,
-//       y: pos.y - layers[selectedIndex].y,
-//     };
-//     canvas.setPointerCapture(e.pointerId);
-//   }
-// });
-
-// canvas.addEventListener("pointermove", (e) => {
-//   if (!isDragging || selectedIndex === null) return;
-//   const pos = toCanvasPos(e);
-//   const layer = layers[selectedIndex];
-//   layer.x = pos.x - dragOffset.x;
-//   layer.y = pos.y - dragOffset.y;
-//   draw(); // فقط إعادة رسم الطبقة
-// });
-
-// canvas.addEventListener("pointerup", () => (isDragging = false));
-// canvas.addEventListener("pointercancel", () => (isDragging = false));

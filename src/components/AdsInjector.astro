@@ -61,6 +61,13 @@ const { showTop = true, showBottom = true, showSide = true, showFloating = true 
     .replace(/&/g, "\\u0026")}
 ></script>
 
+<!-- <script type="module">
+  document.addEventListener("load-ads", () => {
+    import("/js/ads.js");
+    import("/js/adsGrid.js");
+  });
+</script> -->
+
 <script type="module" src="/js/ads.js"></script>
 <script type="module" src="/js/adsGrid.js"></script>
-<script type="module" src="/js/tilt-cards.js"></script>
+  <script src="/js/tilt-cards.js" defer></script>

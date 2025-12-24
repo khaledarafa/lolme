@@ -63,7 +63,7 @@ html {
   scroll-behavior: smooth;
 }
 body {
-  font-family: "Tajawal", system-ui, sans-serif;
+  font-family: "Tajawal", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background: var(--bg);
   color: var(--text-color);
   /* margin: auto; */
@@ -732,6 +732,8 @@ p, h2 {
   width: 100%;
   max-width: 900px;
   height: 130px;
+  min-height: 150px;
+  background: #111; 
   border-radius: 14px;
   object-fit: cover;
 }
@@ -790,9 +792,25 @@ p, h2 {
 }
 
 /* ——— IN-CONTENT ——— */
+/* .in-content-ad-box {
+  margin: 30px auto;
+  max-width: 800px;
+} */
 .in-content-ad-box {
   margin: 30px auto;
   max-width: 800px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.in-content-ad-box img,
+.in-content-ad-box iframe,
+.in-content-ad-box video {
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  object-fit: contain;
 }
 
 .grid-ad-box img {
@@ -825,7 +843,7 @@ p, h2 {
 .ad-tilt-inner img {
   width: 100%;
   height: auto;
-  max-height: 300px; /* عدّلها برحتك */
+  /* max-height: 300px; */
   object-fit: cover;
   display: block;
 }
@@ -847,4 +865,11 @@ p, h2 {
   .ad-floating {
     display: none !important;
   }
+}
+
+.question-title {
+  color: var(--h3);
+  font-weight: bolder;
+  font-size: 24px;
+  margin-bottom: 10px;
 }

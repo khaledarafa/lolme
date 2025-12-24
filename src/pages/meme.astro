@@ -14,6 +14,21 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout title="مولد الميميز - LOLME">
 
+  <!-- ⭐ الخطوط تتحط هنا في الـ HEAD الخاص بالـ Layout -->
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Changa&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Marhey&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Impact&display=swap" rel="stylesheet" />
+  </Fragment>
+
   <div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:0.5rem; padding: 0 0.5rem; align-items:flex-start;" >
     <!-- الأدوات -->
     <div id="controls-container" style="flex:1 1 400px; min-width:320px; padding: 0 5px;">

@@ -169,7 +169,7 @@ const siteEmoji = "/images/site-emoji.png";
     window.shareMeme = async (imgSrc, caption) => {
       try {
         const fullUrl = window.location.origin + imgSrc;
-        const logoUrl = "/favicon.png";
+        const logoUrl = "/favicon.webp";
 
         // نحمل الصورة
         const img = new Image();
@@ -254,7 +254,7 @@ const siteEmoji = "/images/site-emoji.png";
   });
 </script>
 
-<script type="module" src="/js/tilt-cards.js"></script>
+  <script src="/js/tilt-cards.js" defer></script>
 <style>
   .meme-number {
     font-weight: bold;

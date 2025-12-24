@@ -86,7 +86,7 @@ const questions: Question[] = shuffle([
       {
         questions.map((q, i) => (
           <div class="question">
-            <h3 style="color:var(--h3); font-weight:bolder; font-size:24px;">{q.question}</h3>
+            <h2 class="question-title">{q.question}</h2>
             {q.options.map((opt) => (
               <label>
                 <input type="radio" name={`q${i}`} value={opt.value} required />
@@ -238,7 +238,7 @@ ${currentUrl}`;
     });
   </script>
 
-<script type="module" src="/js/tilt-cards.js"></script>
+  <script src="/js/tilt-cards.js" defer></script>
   <style>
     .quiz {
       max-width: 600px;
