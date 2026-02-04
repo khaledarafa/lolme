@@ -1,6 +1,7 @@
 ---
 // src/layouts/Layout.astro lolme.cc
 import Footer from "../components/Footer.astro";
+import Analytics from '@vercel/analytics/astro'
 import AdsInjector from "../components/AdsInjector.astro";
 const { title = "", description, img, ogImage } = Astro.props;
 import "../../css/style.css";
@@ -198,6 +199,8 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
       }, 700);
     </script>
      -->
+
+  <Analytics />
   </body>
 </html>
 
