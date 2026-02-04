@@ -1,0 +1,250 @@
+---
+export const prerender = false;
+
+import Layout from "../../layouts/Layout.astro";
+import { quizzes } from "../../data/quizzes/index.js";
+
+interface Option {
+  text: string;
+  value: string;
+}
+
+interface Question {
+  question: string;
+  options: Option[];
+}
+
+interface QuizResult {
+  titles: string[];
+  descs: string[];
+}
+
+interface Quiz {
+  title: string;
+  img: string;
+  questions: Question[];
+  results: Record<string, QuizResult>;
+}
+
+const { slug } = Astro.params;
+
+const otherQuizzes = quizzes.filter(q => q.slug !== slug);
+
+let quiz: Quiz;
+try {
+  quiz = (await import(`../../data/quizzes/${slug}.json`)).default;
+} catch {
+  throw new Error("Quiz not found");
+}
+
+const { title, img, questions, results } = quiz;
+---
+
+<Layout title={title} img={img}>
+
+<div id="otherQuizzesData" data-json={JSON.stringify(otherQuizzes)}></div>
+
+<section class="quiz">
+
+  <form id="quizForm">
+    {questions.map((q, i) => (
+      <div class="question">
+        <h2 class="question-title">{q.question}</h2>
+        {q.options.map(opt => (
+          <label>
+            <input type="radio" name={`q${i}`} value={opt.value} required />
+            {opt.text}
+          </label>
+        ))}
+      </div>
+    ))}
+
+    <button type="submit">شوف النتيجة 🔮</button>
+  </form>
+
+  <div id="result" class="hidden"></div>
+</section>
+  <script is:inline define:vars={{ results }}>
+    const resultsData = results;
+
+    const otherQuizzes = JSON.parse(
+      document.getElementById("otherQuizzesData").dataset.json
+    );
+
+    const randomPick = arr =>
+      arr[Math.floor(Math.random() * arr.length)];
+
+    function renderNextQuiz(q) {
+      if (!q) return "";
+
+      return `
+        <div class="next-quiz">
+          <h3 style="text-align:center;">🎯 جرب اختبار تاني!</h3>
+          <a href="/tests/${q.slug}" class="quiz-card tilt-card">
+            <img class="img" src="${q.img}" alt="${q.title}" />
+            <div class="content">
+              <p class="card-title">${q.title}</p>
+              <p>${q.desc}</p>
+            </div>
+          </a>
+        </div>
+      `;
+    }
+
+    function renderAdvertiseCTA() {
+      try {
+        if (sessionStorage.getItem("ad_cta_seen")) {
+          return "";
+        }
+        sessionStorage.setItem("ad_cta_seen", "1");
+      } catch (e) {
+        canUseStorage = false;
+      }
+
+      // لو التخزين مش شغال → اعرض الإعلان عادي
+      return `
+        <div class="advertise-section">
+          <div class="advertise-cta-card">
+            <p class="cta-title">👀 عندك بيزنس أو صفحة؟</p>
+            <p class="cta-desc">إعلانك ممكن يظهر هنا</p>
+
+            <button
+              class="cta-btn"
+              onclick="window.open('https://wa.me/201002008305', '_blank')"
+            >
+              📲 راسلنا على واتساب
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderResult(res, nextQuiz) {
+      const title =
+        res.titles?.[0] || res.title || "نتيجتك";
+
+      const desc =
+        res.descs?.join("<br>") || "";
+
+      return `
+        <h2>${title}</h2>
+        <p>${desc}</p>
+
+
+              <button id="retry" style="margin:10px 0">جرّب تاني 🔁</button>
+              <div class="share-section" style="text-align:center; margin:15px 0;">
+                <button id="share-result" class="share-btn" style="
+                  background:#ff4081;
+                  color:#fff;
+                  border:none;
+                  padding:10px 18px;
+                  border-radius:6px;
+                  font-size:1.1rem;
+                  cursor:pointer;
+                  box-shadow:0 2px 4px rgba(0,0,0,0.2);
+                ">📲 شارك نتيجتك</button>
+              </div>
+
+        ${renderNextQuiz(nextQuiz)}
+        ${renderAdvertiseCTA()}
+      `;
+    }
+
+    document
+      .querySelector("#quizForm")
+      .addEventListener("submit", e => {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const counts = {};
+
+        for (const [, val] of formData.entries()) {
+          counts[val] = (counts[val] || 0) + 1;
+        }
+
+        const top = Object.entries(counts)
+          .sort((a, b) => b[1] - a[1])[0]?.[0];
+
+        if (!top || !resultsData[top]) {
+          alert("حصلت لخبطة بسيطة 😅 جرّب تاني");
+          return;
+        }
+
+        const res = resultsData[top];
+        const nextQuiz = otherQuizzes.length
+          ? randomPick(otherQuizzes)
+          : null;
+
+        const resultDiv = document.querySelector("#result");
+
+        form.style.display = "none";
+        resultDiv.innerHTML = renderResult(res, nextQuiz);
+        resultDiv.classList.remove("hidden");
+        // resultDiv.scrollIntoView({ behavior: "smooth" });
+        const yOffset = -250; // عدل الرقم حسب ارتفاع الإعلان
+        const y =
+        resultDiv.getBoundingClientRect().top +
+        window.pageYOffset +
+        yOffset;
+
+        window.scrollTo({
+        top: y,
+        behavior: "smooth",
+        });
+
+        document
+          .querySelector("#retry")
+          .addEventListener("click", () => {
+            location.reload();
+          });
+
+          const shareBtn = document.querySelector("#share-result");
+
+        if (shareBtn) {
+        shareBtn.addEventListener("click", async () => {
+            const title =
+            res.titles?.[0] || res.title || "نتيجتك";
+
+            const cleanDesc =
+            res.descs?.join("\n") || "";
+
+            const text = `نتيجتك: ${title}
+
+        ${cleanDesc}
+
+        —
+        جرب نتيجتك على لول مي 😂🔥
+        ${window.location.href}`;
+
+            try {
+            if (navigator.share) {
+                await navigator.share({
+                title,
+                text,
+                });
+            } else {
+                alert("المشاركة مش مدعومة على جهازك 😅");
+            }
+            } catch (err) {
+            console.log("share cancelled", err);
+            }
+        });
+        }
+      });
+  </script>
+
+  <script src="/js/tilt-cards.js" defer></script>
+  <style>
+    .quiz { max-width: 600px; margin: auto; text-align: center; }
+    label { display: block; margin: 8px 0; padding: 8px; border-radius: 6px; cursor: pointer; background: var(--bg-color); box-shadow: 0 1px 2px var(--shadow-color); }
+    label:hover { background: var(--header-link-hover); }
+    button { margin-top: 20px; 
+        margin: 5px; padding: 10px 20px; font-size: 1.2rem; border: none; background: #ff4081; color: var(--accent); border-radius: 6px; cursor: pointer; }
+    .hidden { display: none; }
+    #result { margin-top: 30px; padding: 20px; background: var(--bg-color); box-shadow: 0 2px 3px var(--shadow-color); border-radius: 8px; animation: fadeIn 0.5s ease-in-out; }
+    .next-quiz { margin-top: 20px; background: var(--bg-color); padding: 15px; border-radius: 8px; }
+    .quiz-card img { width: 100%; height: 180px; object-fit: cover; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</Layout>

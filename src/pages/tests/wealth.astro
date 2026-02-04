@@ -153,6 +153,34 @@ const questions: Question[] = shuffle([
           counts[val] = (counts[val] || 0) + 1;
         }
 
+        function renderAdvertiseCTA() {
+          try {
+            if (sessionStorage.getItem("ad_cta_seen")) {
+              return "";
+            }
+            sessionStorage.setItem("ad_cta_seen", "1");
+          } catch (e) {
+            canUseStorage = false;
+          }
+
+          // لو التخزين مش شغال → اعرض الإعلان عادي
+          return `
+            <div class="advertise-section">
+              <div class="advertise-cta-card">
+                <p class="cta-title">👀 عندك بيزنس أو صفحة؟</p>
+                <p class="cta-desc">إعلانك ممكن يظهر هنا</p>
+
+                <button
+                  class="cta-btn"
+                  onclick="window.open('https://wa.me/201002008305', '_blank')"
+                >
+                  📲 راسلنا على واتساب
+                </button>
+              </div>
+            </div>
+          `;
+        }
+
 const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
 const res = resultsData[top] || resultsData["mickey"];
 // const title = randomPick(res.titles);
@@ -194,11 +222,24 @@ form.style.display = "none";
               </div>
             </a>
           </div>
+
+  ${renderAdvertiseCTA()}
         `;
 
         // 👇 السطرين اللي كانوا ناقصين
         resultDiv.classList.remove("hidden");
-        resultDiv.scrollIntoView({ behavior: "smooth" });
+                // resultDiv.scrollIntoView({ behavior: "smooth" });
+        const yOffset = -250; // عدل الرقم حسب ارتفاع الإعلان
+        const y =
+        resultDiv.getBoundingClientRect().top +
+        window.pageYOffset +
+        yOffset;
+
+        window.scrollTo({
+        top: y,
+        behavior: "smooth",
+        });
+
 
         const currentUrl = window.location.href;
 

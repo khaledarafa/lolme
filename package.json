@@ -6,13 +6,16 @@
     "dev": "astro dev",
     "build": "astro build && node scripts/generate-sitemap.js",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "gen:quiz": "node scripts/generate-quiz.js"
   },
   "dependencies": {
     "@astrojs/vercel": "^9.0.0",
     "astro": "^5.15.3",
+    "dotenv": "^17.2.3",
     "glob": "^11.0.3",
     "jspdf": "^3.0.3",
+    "openai": "^6.17.0",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^5.4.296",
     "react": "^19.2.0",

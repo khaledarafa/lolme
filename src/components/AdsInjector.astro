@@ -18,17 +18,45 @@ const { showTop = true, showBottom = true, showSide = true, showFloating = true 
 
 {/* SIDE RIGHT */}
 {!isMobile && showSide && adsConfig.sideRight?.length > 0 && (
-  <div class="ad-right">
-    {adsConfig.sideRight.map(ad => <AdBox ad={ad} />)}
+  <div class="ad-right ad-side">
+
+    <span class="side-close-btn" onclick=" event.stopPropagation(); const sideRight = this.closest('.ad-right'); if (sideRight) sideRight.remove(); " > ✖ </span>
+
+    {adsConfig.sideRight.map(ad => (
+      <div class="side-box">
+        <AdBox ad={ad} />
+      </div>
+    ))}
+
   </div>
 )}
 
+<!-- {!isMobile && showSide && adsConfig.sideRight?.length > 0 && (
+  <div class="ad-right">
+    {adsConfig.sideRight.map(ad => <AdBox ad={ad} />)}
+  </div>
+)} -->
+
 {/* SIDE LEFT */}
 {!isMobile && showSide && adsConfig.sideLeft?.length > 0 && (
+  <div class="ad-left ad-side">
+
+    <span class="side-close-btn" onclick=" event.stopPropagation(); const sideLeft = this.closest('.ad-left'); if (sideLeft) sideLeft.remove(); " > ✖ </span>
+
+    {adsConfig.sideLeft.map(ad => (
+      <div class="side-box">
+        <AdBox ad={ad} />
+      </div>
+    ))}
+
+  </div>
+)}
+
+<!-- {!isMobile && showSide && adsConfig.sideLeft?.length > 0 && (
   <div class="ad-left">
     {adsConfig.sideLeft.map(ad => <AdBox ad={ad} />)}
   </div>
-)}
+)} -->
 
 {/* FLOATING */}
 {!isMobile && showFloating && adsConfig.floating?.length > 0 && (

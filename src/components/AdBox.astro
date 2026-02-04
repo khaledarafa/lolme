@@ -6,7 +6,7 @@ const { ad } = Astro.props as { ad: AdItem };
 ---
 
 <div class="ad-wrapper ad-tilt" data-ad-id={ad.id} data-closeable={ad.closeable ? "1" : "0"} style="position:relative;" >
-  {ad.closeable && (
+  <!-- {ad.closeable && (
     <button 
       class="ad-close-btn" 
       onclick="sessionStorage.setItem('ad_closed_${ad.id}', '1'); this.parentElement.remove()"
@@ -24,9 +24,9 @@ const { ad } = Astro.props as { ad: AdItem };
       z-index:10;
       "
     >✕</button>
-  )}
+  )} -->
 
-<div class="ad-tilt-inner">
+<div >
   {ad.video ? (
     <a href={ad.link} onclick={`event.preventDefault(); window.open('${ad.link}', '_blank');`}>
       <video 

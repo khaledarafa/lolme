@@ -565,7 +565,7 @@ p, h2 {
 }
 
 /* ======== Responsive Ads ======== */
-/* .ad-space {
+.ad-space {
   width: 98%;
   max-width: 728px;
   height: 90px;
@@ -580,7 +580,7 @@ p, h2 {
   font-size: 14px;
   color: #555;
   text-align: center;
-} */
+}
 
 /* ======== JOKES ======== */
 .jokes-page {
@@ -764,6 +764,30 @@ p, h2 {
   width: 100%;
   border-radius: 12px;
 }
+.ad-side {
+  position: fixed;
+  z-index: 1100;
+}
+
+.side-close-btn {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 26px;
+  height: 26px;
+  background: #000c;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 16px;
+  line-height: 26px;
+  text-align: center;
+  cursor: pointer;
+  z-index: 9999;
+}
+
+.side-close-btn:hover {
+  background: #ff3b3b;
+}
 
 /* ——— FLOATING ——— */
 .ad-floating {
@@ -872,4 +896,57 @@ p, h2 {
   font-weight: bolder;
   font-size: 24px;
   margin-bottom: 10px;
+}
+
+.footer-ads {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px dashed #333;
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.footer-ads a {
+  display: inline-block;
+  margin-top: 6px;
+  color: #25D366;
+  font-weight: bold;
+}
+
+
+.advertise-cta-card {
+  margin-top: 35px;
+  padding: 22px 18px;
+  border-radius: 14px;
+  background: var(--bg-color);
+  box-shadow: 0 0 0 1px var(--border-color), 0 6px 20px rgba(0,0,0,0.25);
+  text-align: center;
+}
+
+.advertise-cta-card .cta-title {
+  font-size: 1.05rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.advertise-cta-card .cta-desc {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  margin-bottom: 14px;
+}
+
+.advertise-cta-card .cta-btn {
+  background: #25D366;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1.05rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.advertise-cta-card .cta-btn:hover {
+  opacity: 0.9;
 }

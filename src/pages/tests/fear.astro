@@ -143,6 +143,34 @@ const questions: Question[] = shuffle([
           counts[val] = (counts[val] || 0) + 1;
         }
 
+        function renderAdvertiseCTA() {
+          try {
+            if (sessionStorage.getItem("ad_cta_seen")) {
+              return "";
+            }
+            sessionStorage.setItem("ad_cta_seen", "1");
+          } catch (e) {
+            canUseStorage = false;
+          }
+
+          // لو التخزين مش شغال → اعرض الإعلان عادي
+          return `
+            <div class="advertise-section">
+              <div class="advertise-cta-card">
+                <p class="cta-title">👀 عندك بيزنس أو صفحة؟</p>
+                <p class="cta-desc">إعلانك ممكن يظهر هنا</p>
+
+                <button
+                  class="cta-btn"
+                  onclick="window.open('https://wa.me/201002008305', '_blank')"
+                >
+                  📲 راسلنا على واتساب
+                </button>
+              </div>
+            </div>
+          `;
+        }
+
 const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
 const res = resultsData[top] || resultsData["mickey"];
 // const title = randomPick(res.titles);
@@ -156,7 +184,7 @@ form.style.display = "none";
     <h2>${title}</h2>
     <p>${desc}</p>
 
-          <a href="https://monce.cc/blog/tshafi/%D8%A7%D9%84%D8%AA%D8%AD%D8%B1%D8%B1-%D9%85%D9%86-%D8%A7%D9%84%D8%AE%D9%88%D9%81/" 
+          <a href="https://monce.cc/blog/tshafi/fear-release" 
             target="blank" style=" display: block; margin: 10px auto; padding: 12px 10px; background: #ff4081; color: #fff; border-radius: 6px; font-size: 1.1rem; text-align: center; width: 90%; max-width: 350px; line-height: 1.5; word-wrap: break-word; white-space: normal;">
             👈 شوف أفضل طريقة للتحرر من الخوف الآن
           </a>
@@ -184,12 +212,24 @@ form.style.display = "none";
               </div>
             </a>
           </div>
+
+  ${renderAdvertiseCTA()}
         `;
 
 
         // 👇 السطرين اللي كانوا ناقصين
         resultDiv.classList.remove("hidden");
-        resultDiv.scrollIntoView({ behavior: "smooth" });
+        // resultDiv.scrollIntoView({ behavior: "smooth" });
+        const yOffset = -250; // عدل الرقم حسب ارتفاع الإعلان
+        const y =
+        resultDiv.getBoundingClientRect().top +
+        window.pageYOffset +
+        yOffset;
+
+        window.scrollTo({
+        top: y,
+        behavior: "smooth",
+        });
 
         const currentUrl = window.location.href;
 
