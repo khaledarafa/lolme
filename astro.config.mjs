@@ -1,17 +1,28 @@
 // @ts-check
 import { defineConfig } from "astro/config";
-import vercel from "@astrojs/vercel/serverless";
 
 export default defineConfig({
   site: "https://lolme.cc",
-  output: "server",
-  adapter: vercel({}),
+  output: "static",
 
-  // ⭐ تحسين الأداء — منع CSS chunks الصغيرة
   build: {
-    inlineStylesheets: "never", // دمج CSS بدل chunking
+    inlineStylesheets: "never",
   },
 });
+
+// import { defineConfig } from "astro/config";
+// import vercel from "@astrojs/vercel/serverless";
+
+// export default defineConfig({
+//   site: "https://lolme.cc",
+//   output: "server",
+//   adapter: vercel({}),
+
+//   // ⭐ تحسين الأداء — منع CSS chunks الصغيرة
+//   build: {
+//     inlineStylesheets: "never", // دمج CSS بدل chunking
+//   },
+// });
 
 
 // https://astro.build/config
