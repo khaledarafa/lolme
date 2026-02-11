@@ -521,11 +521,11 @@ p, h2 {
 .imojidiv {
   display: flex;
   justify-content: center;
-  gap: 15px; /* مسافة بين الإيموجيات */
+  /* gap: 15px; */
   height: 150px;
   align-items: center;
-  margin-top: -50px;
-  /* margin-bottom: -60px; */
+  margin-top: -30px;
+  margin-bottom: -60px;
   overflow: hidden;
   position: relative;
 }

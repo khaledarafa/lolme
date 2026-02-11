@@ -3,19 +3,18 @@
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 import { quizzes } from "../../data/quizzes/index.js";
+import AdsInjector from "../../components/AdsInjector.astro";
 ---
 
 <Layout>
 <!-- title="اختبارات مضحكة وشخصيات | لول مي 😂" 
 description="مجموعة من الاختبارات المضحكة والمسلية من لول مي. اكتشف شخصيتك لو كنت أكلة أو فيلم أو حيوان أو مشروب، بطريقة خفيفة ومرحة!" -->
   <main class="tests-page">
+
+    <!-- <AdsInjector showTop={true} showSide={true} showFloating={true} showBottom={false} /> -->
     <section class="intro">
-      <h1>اختبارات مضحكة وشخصيات 🔮</h1>
-      <p>
-        عايز تضحك وتعرف أكتر عن شخصيتك؟ 😄  
-        هنا هتلاقي اختبارات ممتعة وخفيفة الدم من <strong>لول مي</strong>!  
-        جاوب على شوية أسئلة بسيطة وشوف إنت مين لو كنت أكلة، مشروب، فيلم أو حتى حيوان! 🧠✨
-      </p>
+      <h1>اختبارات خفيفة ومسلية 🔮</h1>
+      <h2 class="cta-line">خلينا نلعب شوية 😎 👇</h2>
     </section>
 
     <section class="grid">
@@ -34,6 +33,8 @@ description="مجموعة من الاختبارات المضحكة والمسل�
         </a>
       ))}      
     </section>
+    <AdsInjector showTop={false} showSide={false} showFloating={false} showBottom={true} />
+
   </main>
   <!-- <script src="/js/tilt-cards.js" defer></script> -->
   

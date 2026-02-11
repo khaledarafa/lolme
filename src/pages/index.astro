@@ -45,21 +45,25 @@ const latestArticles: ArticleWithSlug[] = articles.slice(0, 5);
 
 // home buttons
 const homeButtons = [
-  { title: "🔮 إختبارات LOLME", slug: "/tests", img: "/images/tests.webp" },
+  { title: "✨ جرب وشوف هيطلع لك إيه", slug: "/tests", img: "/images/tests.webp" },
   { title: "🤣 نكت مضحكة", slug: "/jokes", img: "/images/jokes.webp" },
   // { title: "📸 اعمل ميميز دلوقتي", slug: "/meme", img: "/images/meme.webp" },
-  { title: "🔥 روّست صاحبك", slug: "/roast", img: "/images/roast.webp" },
-  { title: "🤣 صور مضحكة", slug: "/funnyImages", img: "/images/funny.webp" },
+  // { title: "🔥 روّست صاحبك", slug: "/roast", img: "/images/roast.webp" },
+  // { title: "🤣 صور مضحكة", slug: "/funnyImages", img: "/images/funny.webp" },
   // { title: "حوّل PDF إلى صور 🤯", slug: "/pdf-to-images", img: "/images/pdf2imgs.webp" },
 ];
 ---
 
 <Layout title="🤣 LOLME">
 
-  <section style="text-align:center; padding: 0px 0.1rem;">
+  <!-- <section style="text-align:center; padding: 0px 0.1rem;">
     <p style="margin: 0px;"> أدوات ترفيهية هايفة ومجنونة 🕺🔥</p>
     <p> LOLME هو مكانك للضحك والهزار! ارفع صورة، اكتب ميمز، وروّست أصحابك بطريقة مرحة 😎 </p>
     <button id="install-btn" class="appbtn">⬇️ حمّل LOLME كتطبيق</button>
+  </section> -->
+
+  <section style="text-align:center; padding: 0px 0.1rem;">
+    <p> جرعة خفيفة من المرح اليومي 😌 </p>
   </section>
 
   <div class="imojidiv">
@@ -73,8 +77,8 @@ const homeButtons = [
   </div>
 
   <!-- ⭐ العنوان اللي بيحل المشكلة -->
-  <h2 style="text-align:center; margin:25px 0;">🔮 أدوات لول مي</h2>
-
+  
+  <!-- <h2 style="text-align:center; margin:0px;">اختار حاجة تضحكك حالًا 👇</h2> -->
   <main class="home-grid">
     {homeButtons.map((btn, i) => (
       <a href={btn.slug} class="home-card tilt-card">
@@ -114,8 +118,8 @@ const homeButtons = [
     </div>
   </section>
 
-  <script src="/js/install-btn.js" defer></script>
-  <script src="/js/open-meme.js"   defer></script>
+  <!-- <script src="/js/install-btn.js" defer></script> -->
+  <!-- <script src="/js/open-meme.js"   defer></script> -->
   <script src="/js/tilt-cards.js"  defer></script>
 
 </Layout>
