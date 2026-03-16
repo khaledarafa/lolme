@@ -1,0 +1,159 @@
+---
+export const prerender = false;
+import Layout from "../../layouts/Layout.astro";
+import Comments from "../../components/Comments.astro";
+
+export const frontmatter = {
+title: "تجربتي مع Logitech Driving Force Shifter في Euro Truck Simulator 2",
+description: "مراجعة وتجربة فتيس Logitech Driving Force Shifter مع لعبة Euro Truck Simulator 2 وهل يستحق الشراء لمحاكاة القيادة.",
+image: "/images/logitech-shifter.jpg",
+keywords: [
+"Logitech shifter",
+"فتيس لوجيتك",
+"Logitech Driving Force Shifter",
+"Euro Truck Simulator 2 shifter",
+"فتيس Euro Truck",
+"ETS2 gear shifter"
+],
+date: "2026-03-16",
+slug: "logitech-shifter-euro-truck"
+}
+---
+
+<Layout
+title={frontmatter.title}
+description={frontmatter.description}
+keywords={frontmatter.keywords}
+img={frontmatter.image}
+>
+
+<article class="article-page">
+
+<h1>تجربتي مع Logitech Driving Force Shifter في Euro Truck Simulator 2</h1>
+
+<p>
+لو كنت تستخدم طارة Logitech G29 مع لعبة Euro Truck Simulator 2 فغالبًا
+تساءلت هل إضافة الفتيس Logitech Driving Force Shifter تستحق الشراء أم لا.
+</p>
+
+<p>
+في الحقيقة الفتيس يضيف مستوى جديد تمامًا من الواقعية لمحاكاة القيادة،
+خصوصًا في ألعاب الشاحنات مثل Euro Truck Simulator 2 و American Truck Simulator.
+</p>
+
+<img src="/images/logitech-shifter-2.webp" alt="Logitech Driving Force Shifter" class="article-image">
+
+<h2>ما هو Logitech Driving Force Shifter</h2>
+
+<p>
+Logitech Driving Force Shifter هو فتيس يدوي مصمم ليعمل مع طارات Logitech
+مثل G29 و G923 ويقدم تجربة تغيير سرعات واقعية أثناء القيادة.
+</p>
+
+<ul>
+<li>فتيس يدوي 6 سرعات</li>
+<li>إمكانية الضغط للأسفل للحصول على الغيار السابع</li>
+<li>تصميم معدني قوي</li>
+<li>إحساس قريب من الفتيس الحقيقي</li>
+</ul>
+
+<h2>كيف يغير الفتيس تجربة Euro Truck</h2>
+
+<p>
+استخدام الفتيس في Euro Truck Simulator 2 يجعل تجربة القيادة
+أكثر واقعية بكثير مقارنة باستخدام الأزرار أو الكيبورد.
+</p>
+
+<ul>
+<li>تغيير سرعات يدوي واقعي</li>
+<li>تحكم أفضل في الشاحنة</li>
+<li>إحساس قيادة أقرب للشاحنات الحقيقية</li>
+</ul>
+
+<h2>إعداد الفتيس في اللعبة</h2>
+
+<p>
+بعد توصيل الفتيس بالطارة سيظهر تلقائيًا في إعدادات اللعبة.
+يمكنك ضبط نوع الفتيس من داخل إعدادات التحكم في Euro Truck Simulator 2.
+</p>
+
+<p>
+بعض اللاعبين يفضلون استخدام نمط:
+</p>
+
+<ul>
+<li>Range Splitter</li>
+<li>18 Speed Transmission</li>
+</ul>
+
+وهو ما يعطي تجربة قيادة أقرب للشاحنات الأمريكية.
+</ul>
+
+<h2>هل يستحق Logitech Shifter الشراء؟</h2>
+
+<p>
+إذا كنت تلعب Euro Truck Simulator 2 بشكل متكرر وتحب
+محاكاة القيادة الواقعية فالإجابة غالبًا نعم.
+</p>
+
+<ul>
+<li>يزيد الواقعية في القيادة</li>
+<li>ممتع جدًا مع الطارة</li>
+<li>جودة تصنيع جيدة</li>
+</ul>
+
+<p>
+لكن إذا كنت تلعب اللعبة بشكل بسيط أو باستخدام الكيبورد
+فربما لا يكون ضروريًا.
+</p>
+
+<h2>الخلاصة</h2>
+
+<p>
+Logitech Driving Force Shifter يعتبر إضافة ممتازة
+لأي لاعب يستخدم طارة Logitech ويريد تجربة قيادة
+أكثر واقعية في ألعاب مثل Euro Truck Simulator 2.
+</p>
+
+</article>
+
+<Comments />
+
+</Layout>
+
+<style>
+
+.article-page{
+max-width:800px;
+margin:auto;
+padding:40px 20px;
+line-height:1.9;
+font-size:1.05rem;
+}
+
+.article-page h1{
+font-size:2rem;
+margin-bottom:20px;
+}
+
+.article-page h2{
+margin-top:40px;
+color:var(--highlight-color);
+}
+
+.article-image{
+width:100%;
+border-radius:12px;
+margin:25px 0;
+}
+
+.article-page ul{
+margin:15px 0;
+padding-right:20px;
+}
+
+.article-page li{
+margin-bottom:8px;
+}
+
+</style>
