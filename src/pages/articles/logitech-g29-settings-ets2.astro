@@ -1,0 +1,190 @@
+---
+export const prerender = false;
+import Layout from "../../layouts/Layout.astro";
+import Comments from "../../components/Comments.astro";
+
+export const frontmatter = {
+    title: "أفضل إعدادات Logitech G29 في Euro Truck Simulator 2 🎮",
+    description:
+        "أفضل إعدادات Logitech G29 في Euro Truck Simulator 2 للحصول على تجربة قيادة واقعية مع ضبط Force Feedback وحساسية الدركسيون.",
+    image: "/images/g29-settings.png",
+    keywords: [
+        "logitech g29 settings ets2",
+        "إعدادات g29 euro truck",
+        "g29 euro truck settings",
+        "force feedback ets2",
+        "ets2 steering settings",
+    ],
+    date: "2026-03-21",
+    slug: "logitech-g29-settings-ets2",
+};
+---
+
+<Layout
+    title={frontmatter.title}
+    description={frontmatter.description}
+    keywords={frontmatter.keywords}
+    img={frontmatter.image}
+>
+    <article class="article-page">
+        <h1>أفضل إعدادات Logitech G29 في Euro Truck Simulator 2 🎮</h1>
+
+        <p>
+            لو عندك طارة Logitech G29 وبتلعب Euro Truck Simulator 2، فالإعدادات
+            هي أهم حاجة تحدد إحساسك بالقيادة.
+        </p>
+
+        <p>
+            في المقال ده هديك أفضل إعدادات مجربة تخلي السواقة واقعية ومريحة جدًا
+            سواء على الطرق السريعة أو داخل المدن.
+        </p>
+
+        <img
+            src="/images/g29-settings.png"
+            alt="Logitech G29 settings ETS2"
+            class="article-image"
+        />
+
+        <h2>ليه الإعدادات مهمة؟</h2>
+
+        <p>
+            الطارة بدون إعدادات صح ممكن تحس إنها تقيلة أو خفيفة زيادة، لكن مع
+            الضبط الصح هتحس:
+        </p>
+
+        <ul>
+            <li>تحكم أدق</li>
+            <li>إحساس حقيقي بالطريق</li>
+            <li>سواقة مريحة</li>
+        </ul>
+
+        ---
+
+        <h2>أفضل إعدادات داخل اللعبة</h2>
+
+        <ul>
+            <li><strong>Steering Sensitivity:</strong> 50% - 60%</li>
+            <li><strong>Steering Non-Linearity:</strong> 0%</li>
+            <li><strong>Steering Rotation:</strong> 900°</li>
+            <li><strong>Deadzone:</strong> 0%</li>
+        </ul>
+
+        ---
+
+        <h2>إعدادات Force Feedback</h2>
+
+        <ul>
+            <li><strong>Overall Gain:</strong> 70% - 80%</li>
+            <li><strong>Centering:</strong> منخفض</li>
+            <li><strong>Terrain:</strong> متوسط</li>
+            <li><strong>Engine:</strong> خفيف</li>
+        </ul>
+
+        ---
+
+        <h2>إعدادات Logitech G Hub</h2>
+
+        <p>برنامج Logitech G Hub مهم جدًا لضبط الطارة بشكل احترافي.</p>
+
+        <ul>
+            <li>Rotation: 900°</li>
+            <li>Force Feedback Strength: 75%</li>
+            <li>Centering Spring: Off</li>
+        </ul>
+
+        ---
+
+        <h2>نصائح مهمة</h2>
+
+        <ul>
+            <li>جرب الإعدادات وعدل حسب راحتك</li>
+            <li>قلل الحساسية لو الشاحنة بتتهز</li>
+            <li>زود الفيدباك لو عايز إحساس أقوى</li>
+        </ul>
+
+        ---
+
+        <h2>تحميل برنامج Logitech G Hub</h2>
+
+        <p>
+            برنامج Logitech G Hub مهم جدًا عشان تتحكم في إعدادات الطارة وتظبط
+            Force Feedback بشكل احترافي.
+        </p>
+
+        <div class="download-box">
+            <a
+                href="https://www.logitechg.com/en-eu/innovation/g-hub.html"
+                target="_blank"
+                class="download-btn"
+            >
+                تحميل Logitech G Hub 🎮
+            </a>
+        </div>
+<p style="text-align:center; font-size:0.9rem;">
+⚠️ يفضل التحميل من الموقع الرسمي فقط
+</p>
+        <h2>الخلاصة</h2>
+
+        <p>
+            أفضل إعدادات Logitech G29 بتفرق جدًا في تجربة Euro Truck. ومع الضبط
+            الصح هتحس إنك بتسوق شاحنة حقيقية مش لعبة.
+        </p>
+    </article>
+
+    <Comments />
+</Layout>
+
+<style>
+    .article-page {
+        max-width: 800px;
+        margin: auto;
+        padding: 40px 20px;
+        line-height: 1.9;
+        font-size: 1.05rem;
+    }
+
+    .article-page h1 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    .article-page h2 {
+        margin-top: 40px;
+        color: var(--highlight-color);
+    }
+
+    .article-image {
+        width: 100%;
+        border-radius: 12px;
+        margin: 25px 0;
+    }
+
+    .article-page ul {
+        margin: 15px 0;
+        padding-right: 20px;
+    }
+
+    .article-page li {
+        margin-bottom: 8px;
+    }
+    .download-box {
+        text-align: center;
+        margin: 25px 0;
+    }
+
+    .download-btn {
+        display: inline-block;
+        background: #00c3ff;
+        color: #000;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .download-btn:hover {
+        background: #00a8e0;
+        transform: scale(1.05);
+    }
+</style>

@@ -9,7 +9,7 @@ export const mods = [
     {
         slug: "passenger-mod",
         title: "🧍‍♂️ Passenger Mod (نقل ركاب)",
-        desc: "نظام مرايات ديجيتال لشاحنات Renault T Range مع كاميرا رجوع للخلف لتحسين الرؤية أثناء القيادة.",
+        desc: "مود يضيف ركاب داخل الشركات بدل البضائع ويحول اللعبة لتجربة نقل ركاب بالباص.",
         img: "/images/mods/passenger.webp",
         link: "https://steamcommunity.com/sharedfiles/filedetails/?id=2869291062"
     },
