@@ -1,0 +1,187 @@
+---
+export const prerender = false;
+import Layout from "../../layouts/Layout.astro";
+import Comments from "../../components/Comments.astro";
+
+export const frontmatter = {
+    title: "ازاي تخلي Euro Truck لعبة نقل ركاب (Bus + Passenger Mod) 🚌",
+    description:
+        "شرح كامل لتحويل Euro Truck Simulator 2 إلى لعبة نقل ركاب باستخدام مودات الباصات والركاب مع أفضل إعدادات للواقعية.",
+    image: "/images/mods/bus2.webp",
+    keywords: [
+        "bus ets2",
+        "passenger mod ets2",
+        "مود باص Euro Truck",
+        "نقل ركاب euro truck",
+        "bus mod euro truck simulator 2",
+        "ETS2 passenger mod",
+    ],
+    date: "2026-03-21",
+    slug: "bus-passenger-euro-truck",
+};
+---
+
+<Layout
+    title={frontmatter.title}
+    description={frontmatter.description}
+    keywords={frontmatter.keywords}
+    img={frontmatter.image}
+>
+    <article class="article-page">
+        <h1>ازاي تخلي Euro Truck لعبة نقل ركاب 🚌</h1>
+
+        <p>
+            لو أنت زهقت من نقل البضائع في Euro Truck Simulator 2، فخليني أقولك
+            على حركة هتخلي اللعبة تتحول لحاجة تانية خالص…
+        </p>
+
+        <p>
+            تقدر تخلي اللعبة لعبة <strong>نقل ركاب بالباص</strong> بدل الشاحنات، وتعيش
+            تجربة مختلفة تمامًا.
+        </p>
+
+        <img
+            src="/images/bus-passenger.webp"
+            alt="Bus mod Euro Truck"
+            class="article-image"
+        />
+
+        <h2>الفكرة ببساطة</h2>
+
+        <p>
+            بدل ما تنقل بضائع، هتنقل <strong>ركاب</strong> باستخدام باصات، وده بيتم
+            عن طريق مودات معينة.
+        </p>
+
+        <p>
+            بس خلي بالك: لازم تستخدم أكتر من مود مع بعض عشان التجربة تشتغل صح.
+        </p>
+
+        <h2>المودات اللي هتحتاجها</h2>
+
+        <h3>1- مود الباص 🚌</h3>
+
+        <p>
+            ده المود الأساسي اللي بيضيف الباصات للعبة، وبدونه مش هتعرف تلعب كنقل
+            ركاب أصلاً.
+        </p>
+
+        <p>
+            🔗 <a
+                href="https://steamcommunity.com/sharedfiles/filedetails/?id=2869291062"
+                target="_blank"
+            >
+                تحميل مود الباص من Steam
+            </a>
+        </p>
+        <h3>2- Passenger Mod 🧍‍♂️</h3>
+
+        <p>ده أهم مود، لأنه بيحول الشحنات إلى ركاب بدل البضائع.</p>
+
+        <ul>
+            <li>يضيف ركاب في الشركات</li>
+            <li>يخليك تنقل ناس بدل شحن</li>
+            <li>تجربة قريبة من الباصات</li>
+        </ul>
+
+        <h3>3- Urban Bus Add-on 💡</h3>
+
+        <p>ده مود تحسين واقعية الباصات.</p>
+
+        <ul>
+            <li>أصوات فرامل</li>
+            <li>اهتزازات</li>
+            <li>تفاصيل داخلية</li>
+        </ul>
+
+        <p>⚠️ هذا المود لا يضيف باصات، فقط تحسين.</p>
+
+        <h2>خطوات التشغيل</h2>
+
+        <ol>
+            <li>ثبت مود الباص</li>
+            <li>ثبت Passenger Mod</li>
+            <li>ثبت Urban Bus Add-on</li>
+            <li>فعلهم من Mod Manager</li>
+        </ol>
+
+        <p>بعد كده ادخل اللعبة واختار:</p>
+
+        <ul>
+            <li>Quick Jobs</li>
+            <li>أو Freight Market</li>
+        </ul>
+
+        <p>ولو الركاب مش ظهروا:</p>
+
+        <ul>
+            <li>اعمل Sleep</li>
+            <li>أو F7 + Enter</li>
+        </ul>
+
+        <h2>نصائح مهمة</h2>
+
+        <ul>
+            <li>اقفل Advanced Trailer Coupling</li>
+            <li>استخدم Easy Parking</li>
+            <li>خلي كل المودات نفس النسخة لو بتلعب Multiplayer</li>
+        </ul>
+
+        <h2>هل التجربة تستحق؟</h2>
+
+        <p>بصراحة؟ آه جدًا 😄</p>
+
+        <p>هتحس إنك بتلعب لعبة جديدة خالص، خصوصًا لو استخدمت:</p>
+
+        <ul>
+            <li>طارة Logitech G29</li>
+            <li>فتيس Logitech Shifter</li>
+            <li>مودات واقعية</li>
+        </ul>
+
+        <h2>الخلاصة</h2>
+
+        <p>
+            باستخدام مودات الباصات والركاب، تقدر تحول Euro Truck Simulator 2 من
+            لعبة نقل بضائع إلى تجربة نقل ركاب واقعية وممتعة جدًا.
+        </p>
+    </article>
+
+    <Comments />
+</Layout>
+
+<style>
+    .article-page {
+        max-width: 800px;
+        margin: auto;
+        padding: 40px 20px;
+        line-height: 1.9;
+        font-size: 1.05rem;
+    }
+
+    .article-page h1 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    .article-page h2 {
+        margin-top: 40px;
+        color: var(--highlight-color);
+    }
+
+    .article-image {
+        width: 100%;
+        border-radius: 12px;
+        margin: 25px 0;
+    }
+
+    .article-page ul,
+    .article-page ol {
+        margin: 15px 0;
+        padding-right: 20px;
+    }
+
+    .article-page li {
+        margin-bottom: 8px;
+    }
+</style>

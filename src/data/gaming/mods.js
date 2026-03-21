@@ -1,5 +1,26 @@
 export const mods = [
     {
+        slug: "bus-mod",
+        title: "🚌 Bus Mod for Euro Truck Simulator 2",
+        desc: "مود يضيف أتوبيسات يمكنك قيادتها داخل Euro Truck Simulator 2 بدل الشاحنات.",
+        img: "/images/mods/bus.webp",
+        link: "https://steamcommunity.com/sharedfiles/filedetails/?id=2869291062"
+    },
+    {
+        slug: "passenger-mod",
+        title: "🧍‍♂️ Passenger Mod (نقل ركاب)",
+        desc: "نظام مرايات ديجيتال لشاحنات Renault T Range مع كاميرا رجوع للخلف لتحسين الرؤية أثناء القيادة.",
+        img: "/images/mods/passenger.webp",
+        link: "https://steamcommunity.com/sharedfiles/filedetails/?id=2869291062"
+    },
+    {
+        slug: "urban-bus-addon",
+        title: "🚌 Urban Bus Add-on (واقعية الباصات)",
+        desc: "إضافة لتحسين واقعية الباصات في Euro Truck بإضافة أصوات وتفاصيل داخلية مثل الفرامل والاهتزازات. ⚠️ لا يضيف باصات ويعمل فقط مع مودات الباص.",
+        img: "/images/mods/urban-bus-addon.webp",
+        link: "https://steamcommunity.com/sharedfiles/filedetails/?id=2416700155"
+    },
+    {
         slug: "digital-mirrors-scania",
         title: "🪞 Digital Mirrors Camera System",
         desc: "نظام مرايات ديجيتال لشاحنات Scania R و S 2016 يستبدل المرايات التقليدية بكاميرات وشاشات داخل الكابينة.",

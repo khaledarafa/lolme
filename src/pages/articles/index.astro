@@ -8,15 +8,20 @@ const description = "أحدث مقالات الميمز والترفيه";
 
 const articles = [
   {
-  title: "تجربتي مع طارة Logitech G29 في Euro Truck Simulator 2",
-  slug: "/articles/logitech-g29-euro-truck",
-  img: "/images/logitech-g29.webp",
-},
-{
-  title: "تجربتي مع Logitech Driving Force Shifter في Euro Truck",
-  slug: "/articles/logitech-shifter-euro-truck",
-  img: "/images/logitech-shifter-2.webp",
-},
+    title: "ازاي تخلي Euro Truck لعبة نقل ركاب (Bus + Passenger Mod)",
+    slug: "/articles/bus-passenger-euro-truck",
+    img: "/images/mods/bus2.webp",
+  },
+  {
+    title: "تجربتي مع طارة Logitech G29 في Euro Truck Simulator 2",
+    slug: "/articles/logitech-g29-euro-truck",
+    img: "/images/logitech-g29.webp",
+  },
+  {
+    title: "تجربتي مع Logitech Driving Force Shifter في Euro Truck",
+    slug: "/articles/logitech-shifter-euro-truck",
+    img: "/images/logitech-shifter-2.webp",
+  },
   {
     title: "تاريخ الميمز وانتشارها",
     slug: "/articles/تاريخ-الميمز-وانتشارها",
@@ -77,23 +82,25 @@ const articles = [
   </section>
 
   <main class="articles-grid">
-    {articles.map((article, i) => (
-      <a href={article.slug} class="article-card tilt-card">
-        <img
-          src={article.img}
-          alt={article.title}
-          width="350"
-          height="180"
-          loading={i === 0 ? "eager" : "lazy"}
-          fetchpriority={i === 0 ? "high" : "auto"}
-        />    
-        <div class="content">
-          <h2>{article.title}</h2>
-        </div>
-      </a>
-    ))}
+    {
+      articles.map((article, i) => (
+        <a href={article.slug} class="article-card tilt-card">
+          <img
+            src={article.img}
+            alt={article.title}
+            width="350"
+            height="180"
+            loading={i === 0 ? "eager" : "lazy"}
+            fetchpriority={i === 0 ? "high" : "auto"}
+          />
+          <div class="content">
+            <h2>{article.title}</h2>
+          </div>
+        </a>
+      ))
+    }
   </main>
-    <script src="/js/tilt-cards.js" defer></script>
+  <script src="/js/tilt-cards.js" defer></script>
 </Layout>
 
 <style>
@@ -113,7 +120,9 @@ const articles = [
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 6px 15px var(--shadow-color);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
     display: flex;
     flex-direction: column;
     height: 100%;
