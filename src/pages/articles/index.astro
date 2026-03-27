@@ -4,85 +4,104 @@ export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 
 const title = "المقالات";
-const description = "أحدث مقالات الميمز والترفيه";
+const description = "أحدث مقالات الميمز والترفيه والالعاب";
 
 const articles = [
   {
     title: "أفضل مودات Euro Truck للواقعية (2026)",
     slug: "/articles/best-ets2-realism-mods-2026",
     img: "/images/mods/modat.webp",
+    category: "gaming",
   },
   {
     title: "ازاي تخلي Euro Truck لعبة نقل ركاب (Bus + Passenger Mod)",
     slug: "/articles/bus-passenger-euro-truck",
     img: "/images/mods/bus2.webp",
+    category: "gaming",
   },
   {
     title: "تجربتي مع طارة Logitech G29 في Euro Truck Simulator 2",
     slug: "/articles/logitech-g29-euro-truck",
     img: "/images/logitech-g29.webp",
+    category: "gaming",
   },
   {
     title: "أفضل إعدادات Logitech G29 في Euro Truck",
     slug: "/articles/logitech-g29-settings-ets2",
     img: "/images/g29-settings.png",
+    category: "gaming",
   },
   {
     title: "تجربتي مع Logitech Driving Force Shifter في Euro Truck",
     slug: "/articles/logitech-shifter-euro-truck",
     img: "/images/logitech-shifter-2.webp",
+    category: "gaming",
   },
   {
     title: "تاريخ الميمز وانتشارها",
     slug: "/articles/تاريخ-الميمز-وانتشارها",
     img: "/images/meme-origin-350.webp",
+    category: "memes",
   },
   {
     title: "ثقافة الميمز: ليه بقت لغة العالم الجديد؟",
     slug: "/articles/ثقافة-الميمز",
     img: "/images/1-350.webp",
+    category: "memes",
   },
   {
     title: "ليه الميمز بتخلي يومك أحسن؟",
     slug: "/articles/ليه-الميمز-بتخلي-يومك-أحسن؟",
     img: "/images/6-350.webp",
+    category: "memes",
   },
   {
     title: "الميمز: المرآة اللي بتعكس جيل كامل 😂",
     slug: "/articles/geel-kamel",
     img: "/images/12-350.webp",
+    category: "memes",
   },
   {
     title: "النكت هى العلاج الطبيعي للروح 😄",
     slug: "/articles/النكت-هى-العلاج-الطبيعي-للروح",
     img: "/images/21-350.webp",
+    category: "funny",
   },
   {
     title: "أغرب طرق الناس لكسب الفلوس من الإنترنت (الطريقة رقم 3 هتضحكك 😂)",
     slug: "/articles/tiktok-funny-money",
     img: "/images/tiktok-funny-money-350.webp",
+    category: "funny",
   },
   {
     title: "الذكاء الاصطناعي دخل السوشيال ميديا... وبدأ يقلدنا 😂",
     slug: "/articles/ai-social-media-funny",
     img: "/images/ai-social-media-funny-350.webp",
+    category: "funny",
   },
   {
     title: "أفكار محتوى مجنونة للتيك توك هتخليك تريند وانت نايم 😎",
     slug: "/articles/tiktok-crazy-ideas",
     img: "/images/tiktok-crazy-ideas-350.webp",
+    category: "funny",
   },
   {
     title: "المشاهير اللي قلبوا السوشيال ميديا ميمز بدون قصد 😂",
     slug: "/articles/funny-celebs-ai",
     img: "/images/funny-celebs-ai-350.webp",
+    category: "funny",
   },
   {
     title: "نكت 2025: الذكاء الاصطناعي بيهزر هو كمان 🤖😂",
     slug: "/articles/ai-jokes-2025",
     img: "/images/ai-jokes-2025-350.webp",
+    category: "funny",
   },
 ];
+const selectedCategory = Astro.url.searchParams.get("cat");
+const filteredArticles = selectedCategory
+  ? articles.filter(a => a.category === selectedCategory)
+  : articles;
 ---
 
 <Layout {title} {description}>
@@ -90,26 +109,42 @@ const articles = [
     <h1>📰 أحدث مقالات LOLME</h1>
     <p>اضحك وتعلم عن عالم الميمز والضحك بطريقة خفيفة ومجنونة 😎</p>
   </section>
+<div class="categories">
 
-  <main class="articles-grid">
-    {
-      articles.map((article, i) => (
-        <a href={article.slug} class="article-card tilt-card">
-          <img
-            src={article.img}
-            alt={article.title}
-            width="350"
-            height="180"
-            loading={i === 0 ? "eager" : "lazy"}
-            fetchpriority={i === 0 ? "high" : "auto"}
-          />
-          <div class="content">
-            <h2>{article.title}</h2>
-          </div>
-        </a>
-      ))
-    }
-  </main>
+<a href="/articles" class={!selectedCategory ? "active" : ""}>الكل</a>
+
+<a href="/articles?cat=gaming" class={selectedCategory === "gaming" ? "active" : ""}>
+🎮 جيمنج
+</a>
+
+<a href="/articles?cat=memes" class={selectedCategory === "memes" ? "active" : ""}>
+😂 ميمز
+</a>
+
+<a href="/articles?cat=funny" class={selectedCategory === "funny" ? "active" : ""}>
+🤣 نكت
+</a>
+
+</div>
+<main class="articles-grid">
+  {
+    filteredArticles.map((article, i) => (
+      <a href={article.slug} class="article-card tilt-card">
+        <img
+          src={article.img}
+          alt={article.title}
+          width="350"
+          height="180"
+          loading={i === 0 ? "eager" : "lazy"}
+          fetchpriority={i === 0 ? "high" : "auto"}
+        />
+        <div class="content">
+          <h2>{article.title}</h2>
+        </div>
+      </a>
+    ))
+  }
+</main>
   <script src="/js/tilt-cards.js" defer></script>
 </Layout>
 
@@ -159,4 +194,25 @@ const articles = [
     margin: 0;
     color: var(--accent);
   }
+
+  .categories {
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin-bottom:20px;
+}
+
+.categories a {
+  padding:8px 15px;
+  border-radius:20px;
+  background:#0f1723;
+  color:#fff;
+  text-decoration:none;
+  border:1px solid #ffffff22;
+}
+
+.categories a:hover {
+  background:#00ffcc;
+  color:#000;
+}
 </style>

@@ -1,31 +1,82 @@
+export interface Mod {
+    slug: string;
+    title: string;
+    desc: string;
+    img: string;
+    link: string;
+    subCategory?: string; // 👈 دي المهمة
+}
 export const mods = [
+    {
+        slug: "mercedes-gls-63",
+        title: "🚙 Mercedes-Benz GLS 63 AMG",
+        desc: "مود يضيف سيارة Mercedes GLS 63 AMG الفخمة داخل Euro Truck Simulator 2 بتفاصيل عالية وقيادة سريعة وممتعة.",
+        img: "/images/mods/Mercedes-Benz-GLS-63.webp",
+        link: "https://modsfire.com/G4RDbY7XO4ad7T0",
+        subCategory: "cars"
+    },
+    {
+        slug: "mercedes-w124-250d",
+        title: "🚙 Mercedes-Benz 250D W124 (Classic)",
+        desc: "مود يضيف السيارة الكلاسيك Mercedes W124 250D داخل Euro Truck Simulator 2 بتصميم قديم فاخر وتجربة قيادة هادية وممتعة.",
+        img: "/images/mods/mercedes-w124.webp",
+        link: "https://ets2.lt/en/mercedes-benz-250d-w124-1998-1-6-1-58x/",
+        subCategory: "cars"
+    },
+    {
+        slug: "mercedes-maybach-s400d",
+        title: "🚙 Mercedes-Maybach S400d (2021)",
+        desc: "مود يضيف سيارة Mercedes-Maybach S400d الفاخرة جداً داخل Euro Truck Simulator 2 بتجربة قيادة ناعمة وتصميم داخلي راقي لمحبي الفخامة.",
+        img: "/images/mods/maybach-s400d.webp",
+        link: "https://ets2.lt/en/2021-mercedes-benz-maybach-s-400d-1-0-1-58x/",
+        subCategory: "cars"
+    },
     {
         slug: "bus-mod",
         title: "🚌 Bus Mod for Euro Truck Simulator 2",
         desc: "مود يضيف أتوبيسات يمكنك قيادتها داخل Euro Truck Simulator 2 بدل الشاحنات.",
         img: "/images/mods/bus.webp",
-        link: "https://steamcommunity.com/sharedfiles/filedetails/?id=2869291062"
+        link: "https://steamcommunity.com/sharedfiles/filedetails/?id=2869291062",
+        subCategory: "bus"
+    },
+    {
+        slug: "marcopolo-g7-1800",
+        title: "🚌 MarcoPolo G7 1800 Bus",
+        desc: "مود يضيف باص MarcoPolo G7 1800 بتصميم واقعي جداً وتجربة قيادة ممتازة داخل Euro Truck Simulator 2. مناسب لمحبي مودات الباصات والسفر الطويل.",
+        img: "/images/mods/marcopolo-g7.jpg",
+        link: "https://ets2.lt/en/marcopolo-new-g7-1800-v1-58/",
+        subCategory: "bus"
+    },
+    {
+        slug: "setra-s516-hd2",
+        title: "🚌 Setra S516 HDH Bus",
+        desc: "مود يضيف باص Setra S516 HDH الفخم داخل Euro Truck Simulator 2 مع تصميم داخلي وخارجي واقعي جداً وتجربة قيادة مريحة للسفر الطويل.",
+        img: "/images/mods/setra-s516.jpg",
+        link: "https://ets2.lt/en/setra-s516-hd2-v1-58/",
+        subCategory: "bus"
     },
     {
         slug: "passenger-mod",
         title: "🧍‍♂️ Passenger Mod (نقل ركاب)",
         desc: "مود يضيف ركاب داخل الشركات بدل البضائع ويحول اللعبة لتجربة نقل ركاب بالباص.",
         img: "/images/mods/passenger.webp",
-        link: "https://steamcommunity.com/sharedfiles/filedetails/?id=2869291062"
+        link: "https://steamcommunity.com/sharedfiles/filedetails/?id=2869291062",
+        subCategory: "bus"
     },
     {
         slug: "urban-bus-addon",
         title: "🚌 Urban Bus Add-on (واقعية الباصات)",
         desc: "إضافة لتحسين واقعية الباصات في Euro Truck بإضافة أصوات وتفاصيل داخلية مثل الفرامل والاهتزازات. ⚠️ لا يضيف باصات ويعمل فقط مع مودات الباص.",
         img: "/images/mods/urban-bus-addon.webp",
-        link: "https://steamcommunity.com/sharedfiles/filedetails/?id=2416700155"
+        link: "https://steamcommunity.com/sharedfiles/filedetails/?id=2416700155",
+        subCategory: "bus"
     },
     {
         slug: "digital-mirrors-scania",
         title: "🪞 Digital Mirrors Camera System",
         desc: "نظام مرايات ديجيتال لشاحنات Scania R و S 2016 يستبدل المرايات التقليدية بكاميرات وشاشات داخل الكابينة.",
         img: "/images/mods/Digital-Mirrors.webp",
-        link: "https://steamcommunity.com/sharedfiles/filedetails/?id=2784601482"
+        link: "https://steamcommunity.com/sharedfiles/filedetails/?id=2784601482",
     },
     {
         slug: "digital-mirrors-volvo-fh16",
