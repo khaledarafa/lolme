@@ -71,6 +71,13 @@ export const mods = [
         link: "https://steamcommunity.com/sharedfiles/filedetails/?id=2416700155",
         subCategory: "bus"
     },
+{
+  slug: "realistic-truck-physics",
+  title: "🛞 Realistic Truck Physics",
+  desc: "مود يحسن فيزياء الشاحنات في Euro Truck Simulator 2 ويجعل القيادة أكثر واقعية من حيث الوزن والفرامل والتحكم.",
+  img: "/images/mods/truck-physics.webp",
+  link: "https://steamcommunity.com/sharedfiles/filedetails/?id=713338424",
+},
     {
         slug: "digital-mirrors-scania",
         title: "🪞 Digital Mirrors Camera System",
