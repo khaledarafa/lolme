@@ -1,23 +1,5 @@
 /* url(style.css) */
-/* :root {
-  --bg: #0f1723;
-  --card: #111827;
-  --accent: #e5e7eb;
-  --muted: #9ca3af;
-} */
-/* ======== Base ======== */
-/* body {
-  font-family: "Tajawal", system-ui, sans-serif;
-  background: linear-gradient(180deg, #0b1220, #071127);
-  color: var(--accent);
-  margin: 0;
-  padding: 24px;
 
-
-  height: 100%;
-  background: #fefefe;
-  color: #333;
-} */
 :root {
   /* ===== Dark Theme (افتراضي) ===== */
   --h3: greenyellow;
@@ -63,18 +45,18 @@ html {
   scroll-behavior: smooth;
 }
 body {
-  font-family: "Tajawal", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: "Tajawal", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
   background: var(--bg);
   color: var(--text-color);
   /* margin: auto; */
   padding: 8px;
   height: 100%;
 }
-/* button, .btn, .appbtn {
-  background: var(--btn-bg);
-  color: var(--accent);
-} */
-
+button,
+input,
+textarea {
+  font-family: inherit;
+}
 .btn-primary { background: var(--btn-primary); }
 
 .header-nav a { color: var(--header-link); }
@@ -949,4 +931,128 @@ p, h2 {
 
 .advertise-cta-card .cta-btn:hover {
   opacity: 0.9;
+}
+
+/* ===================================== games ===================================== */
+.host-box {
+  background: linear-gradient(135deg, #1e293b, #020617);
+  padding: 15px;
+  border-radius: 15px;
+  border: 1px solid #22c55e;
+  margin-top: 15px;
+}
+.question-card {
+  background: #0f172a;
+  padding: 20px;
+  border-radius: 15px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.answer-btn {
+  margin: 5px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  border: none;
+  background: #1e293b;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.me-card {
+  background: #020617;
+  border: 1px solid #22c55e;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+.answer-btn:hover {
+  background: #22c55e;
+}
+
+.correct-player {
+  background: #22c55e22;
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.wrong-player {
+  background: #ef444422;
+  color: #ef4444;
+  font-weight: bold;
+}
+
+.first-player.correct-player {
+  background: #22c55e33;
+}
+
+.first-player.wrong-player {
+  background: #ef444433;
+}
+
+.feedback {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.feedback.correct {
+  background: #22c55e33;
+  color: #22c55e;
+}
+
+.feedback.wrong {
+  background: #ef444433;
+  color: #ef4444;
+}
+
+.results-card {
+  background: #111827;
+  padding: 15px;
+  border-radius: 15px;
+  margin-top: 20px;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  border-bottom: 1px solid #333;
+}
+
+
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #020617;
+  color: white;
+}
+
+.results-table th,
+.results-table td {
+  border: 1px solid #333;
+  padding: 10px;
+  text-align: center;
+}
+
+.results-table th {
+  background: #111827;
+}
+
+.results-table tr:hover {
+  background: #1e293b;
+}
+
+.correct-answer {
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.wrong-answer {
+  color: #ef4444;
+  font-weight: bold;
 }

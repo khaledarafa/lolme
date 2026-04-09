@@ -4,7 +4,7 @@ const STATIC_ASSETS = [
   '/', // لو تحتاج
   '/index.html',
   '/css/style.css',
-  '/js/meme-editor.js',
+  // '/js/meme-editor.js',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   // ضيف هنا ملفات ثابتة اللي عايز تخزنها

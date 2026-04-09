@@ -1,0 +1,91 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="play-section">
+    <h2>🎮 العب مع صحابك الآن</h2>
+
+    <div class="play-box">
+      
+      <button id="host-start" class="play-btn">
+        🎯 ابدأ لعبة
+      </button>
+
+      <div class="divider">أو</div>
+
+      <input 
+        id="room-code" 
+        type="text" 
+        placeholder="اكتب الكود"
+        maxlength="4"
+        class="code-input"
+      />
+
+      <input 
+        id="player-name" 
+        type="text" 
+        placeholder="اكتب اسمك 😏"
+        class="code-input"
+      />
+
+      <button id="join-game" class="play-btn secondary">
+        دخول اللعبة
+      </button>
+
+    </div>
+  </section>
+
+  <!-- مهم جداً -->
+  <script type="module" src="/js/codes.js"></script>
+</Layout>
+
+<style>
+    
+.play-section {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.play-box {
+  background: #0f172a;
+  border-radius: 16px;
+  padding: 20px;
+  max-width: 400px;
+  margin: auto;
+  box-shadow: 0 0 20px #00ffcc33;
+}
+
+.play-btn {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: none;
+  background: #00ffcc;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.play-btn.secondary {
+  background: #1e293b;
+  color: #fff;
+}
+
+.code-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  text-align: center;
+  font-size: 1.2rem;
+  box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.divider {
+  margin: 10px 0;
+  opacity: 0.6;
+}
+</style>

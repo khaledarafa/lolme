@@ -1,0 +1,94 @@
+---
+const { code } = Astro.params;
+import Layout from "../../../layouts/Layout.astro";
+---
+
+<Layout>
+    <h1>📊 نتائج اللعبة</h1>
+    <p>الكود: {code}</p>
+
+    <div id="results-table" data-code={code}></div>
+
+    <script type="module">
+        import { db } from "/js/firebase.js";
+        import {
+            doc,
+            onSnapshot,
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { questions } from "/data/questions.js";
+        const container = document.getElementById("results-table");
+        const roomCode = container.dataset.code;
+        const roomRef = doc(db, "rooms", roomCode);
+
+        onSnapshot(roomRef, (snap) => {
+            const data = snap.data();
+
+            if (!data) {
+                container.innerHTML = "الروم اتقفلت 👋";
+                return;
+            }
+
+            let allResults = [];
+
+            const answers = data.answers || {};
+            const players = data.players || {};
+
+            Object.entries(answers).forEach(([qIndex, qAnswers]) => {
+                const startTime = data.questionStartTimes?.[Number(qIndex)];
+
+                Object.entries(qAnswers).forEach(([playerId, ans]) => {
+                    const diff = (ans.time - startTime) / 1000;
+const q = questions[Number(qIndex) % questions.length];
+
+const normalize = (str) =>
+  str?.trim().replace(/\s+/g, " ");
+
+const isCorrect =
+  normalize(ans.answer) === normalize(q.correct);
+                    allResults.push({
+                        playerId,
+                        name: players[playerId]?.name || "لاعب",
+                        question: qIndex,
+                        time: diff,
+                        answer: ans.answer,
+  correct: isCorrect,
+                    });
+                });
+            });
+            // 🔥 ترتيب حسب السرعة
+            allResults.sort((a, b) => a.time - b.time);
+
+            // 🧾 جدول
+            container.innerHTML = `
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>اللاعب</th>
+              <th>السؤال</th>
+              <th>الوقت (ث)</th>
+              <th>الإجابة</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${allResults
+                .map(
+                    (r, i) => `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td>${r.name}</td>
+                        <td>سؤال ${Number(r.question) + 1}</td>
+                        <td class="${r.correct ? "correct-answer" : "wrong-answer"}">
+  ${r.answer}
+</td>
+                        <td>${r.time.toFixed(2)}s</td>
+                    </tr>
+                    `,
+                )
+                .join("")}
+          </tbody>
+        </table>
+      `;
+        });
+    </script>
+</Layout>
