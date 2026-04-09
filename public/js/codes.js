@@ -41,42 +41,14 @@ window.addEventListener("DOMContentLoaded", () => {
     return playerId;
   }
 
-  // 🎯 CREATE ROOM (مع منع التكرار)
-  // startBtn?.addEventListener("click", async () => {
-
-  //   let roomCode;
-  //   let roomRef;
-  //   let snap;
-
-  //   // 🔁 نتأكد إن الكود مش موجود
-  //   do {
-  //     roomCode = generateCode();
-  //     roomRef = doc(db, "rooms", roomCode);
-  //     snap = await getDoc(roomRef);
-  //   } while (snap.exists());
-
-  //   const playerId = getPlayerId(roomCode);
-
-  //   await setDoc(roomRef, {
-  //     hostId: playerId,
-  //     status: "waiting",
-  //     players: {
-  //       [playerId]: {
-  //         name: getPlayerName() + " 👑",
-  //         score: 0
-  //       }
-  //     },
-  //     currentQuestion: 0,
-  //     createdAt: Date.now()
-  //   });
-
-  //   console.log("✅ روم جديدة:", roomCode);
-
-  //   window.location.href = `/room/${roomCode}`;
-  // });
 startBtn?.addEventListener("click", async (e) => {
-  e.preventDefault(); // 🔥 مهم
+  const password = prompt("🔒 اكتب كلمة السر:");
 
+  if (password !== "123456") {
+    alert("❌ كلمة السر غلط يا نجم 😏");
+    return;
+  }
+  e.preventDefault(); // 🔥 مهم
   let roomCode;
   let roomRef;
   let snap;
