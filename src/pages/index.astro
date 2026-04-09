@@ -78,16 +78,16 @@ const homeButtons = [
   </div>
 
   <!-- ⭐ العنوان اللي بيحل المشكلة -->
-  <!-- <section class="play-section">
+  <section class="play-section">
   <h2>🎮 العب مع صحابك الآن</h2>
 
   <div class="play-box">
     
-    <button id="host-start" class="play-btn">
+    <!-- <button id="host-start" class="play-btn">
       🎯 ابدأ لعبة
-    </button>
+    </button> -->
 
-    <div class="divider">أو</div>
+    <!-- <div class="divider">أو</div> -->
 
     <input 
       id="room-code" 
@@ -103,11 +103,11 @@ const homeButtons = [
   class="code-input"
 />
     <button id="join-game" class="play-btn secondary">
-      دخول اللعبة
+   ادخل اللعبه 
     </button>
 
   </div>
-</section> -->
+</section>
   <!-- <h2 style="text-align:center; margin:0px;">اختار حاجة تضحكك حالًا 👇</h2> -->
   <main class="home-grid">
     {homeButtons.map((btn, i) => (
@@ -245,12 +245,12 @@ const homeButtons = [
 }
 
 .play-box {
-  background: #0f172a;
+    background: var(--bg-color);
   border-radius: 16px;
   padding: 20px;
   max-width: 400px;
   margin: auto;
-  box-shadow: 0 0 20px #00ffcc33;
+  box-shadow: 0 4px 10px var(--shadow-color);
 }
 
 .play-btn {

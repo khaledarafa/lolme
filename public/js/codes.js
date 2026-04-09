@@ -42,39 +42,68 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   // 🎯 CREATE ROOM (مع منع التكرار)
-  startBtn?.addEventListener("click", async () => {
+  // startBtn?.addEventListener("click", async () => {
 
-    let roomCode;
-    let roomRef;
-    let snap;
+  //   let roomCode;
+  //   let roomRef;
+  //   let snap;
 
-    // 🔁 نتأكد إن الكود مش موجود
-    do {
-      roomCode = generateCode();
-      roomRef = doc(db, "rooms", roomCode);
-      snap = await getDoc(roomRef);
-    } while (snap.exists());
+  //   // 🔁 نتأكد إن الكود مش موجود
+  //   do {
+  //     roomCode = generateCode();
+  //     roomRef = doc(db, "rooms", roomCode);
+  //     snap = await getDoc(roomRef);
+  //   } while (snap.exists());
 
-    const playerId = getPlayerId(roomCode);
+  //   const playerId = getPlayerId(roomCode);
 
-    await setDoc(roomRef, {
-      hostId: playerId,
-      status: "waiting",
-      players: {
-        [playerId]: {
-          name: getPlayerName() + " 👑",
-          score: 0
-        }
-      },
-      currentQuestion: 0,
-      createdAt: Date.now()
-    });
+  //   await setDoc(roomRef, {
+  //     hostId: playerId,
+  //     status: "waiting",
+  //     players: {
+  //       [playerId]: {
+  //         name: getPlayerName() + " 👑",
+  //         score: 0
+  //       }
+  //     },
+  //     currentQuestion: 0,
+  //     createdAt: Date.now()
+  //   });
 
-    console.log("✅ روم جديدة:", roomCode);
+  //   console.log("✅ روم جديدة:", roomCode);
 
-    window.location.href = `/room/${roomCode}`;
+  //   window.location.href = `/room/${roomCode}`;
+  // });
+startBtn?.addEventListener("click", async (e) => {
+  e.preventDefault(); // 🔥 مهم
+
+  let roomCode;
+  let roomRef;
+  let snap;
+
+  do {
+    roomCode = generateCode();
+    roomRef = doc(db, "rooms", roomCode);
+    snap = await getDoc(roomRef);
+  } while (snap.exists());
+
+  const playerId = getPlayerId(roomCode);
+
+  await setDoc(roomRef, {
+    hostId: playerId,
+    status: "waiting",
+    players: {
+      [playerId]: {
+        name: getPlayerName() + " 👑",
+        score: 0
+      }
+    },
+    currentQuestion: 0,
+    createdAt: Date.now()
   });
 
+  window.location.href = `/room/${roomCode}`;
+});
   // 🚪 JOIN ROOM
   joinBtn?.addEventListener("click", async () => {
 
