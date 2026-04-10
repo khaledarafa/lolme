@@ -46,12 +46,12 @@ function getPlayerName() {
   }
 
   startBtn?.addEventListener("click", async (e) => {
-    const password = prompt("🔒 اكتب كلمة السر:");
+    // const password = prompt("🔒 اكتب كلمة السر:");
 
-    if (password !== "123456") {
-      alert("❌ كلمة السر غلط يا نجم 😏");
-      return;
-    }
+    // if (password !== "123456") {
+    //   alert("❌ كلمة السر غلط يا نجم 😏");
+    //   return;
+    // }
 
     e.preventDefault(); // 🔥 مهم
     let roomCode;
