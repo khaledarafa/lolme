@@ -4,12 +4,22 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout>
     <main class="home-grid single-card">
-        <a id="host-start" class="home-card tilt-card start-card">
+        <!-- <a id="host-start" class="home-card tilt-card start-card">
             <img src="/images/default-og.webp" alt="ابدأ لعبة" />
             <div class="content">
                 <h3>🎯 ابدأ لعبة خاصة 🔥</h3>
             </div>
-        </a>
+        </a> -->
+
+        <div class="home-card tilt-card start-card">
+    <img src="/images/default-og.webp" alt="ابدأ لعبة" />
+    
+    <div class="content">
+        <h3>🎯 ابدأ لعبة خاصة 🔥</h3>
+        <input type="text" id="player-name" placeholder="اكتب اسمك يا نجم 😎" />
+        <button id="host-start">ابدأ 🚀</button>
+    </div>
+</div>
     </main>
     <!-- مهم جداً -->
     <script type="module" src="/js/codes.js"></script>
@@ -17,6 +27,7 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <style>
+ 
     .home-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -24,7 +35,7 @@ import Layout from "../layouts/Layout.astro";
         max-width: 1000px;
         margin: auto;
         padding: 40px 8px;
-    }
+    }   
     .single-card {
         display: flex;
         justify-content: center;

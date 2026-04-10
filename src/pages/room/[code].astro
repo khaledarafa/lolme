@@ -13,18 +13,18 @@ import Layout from "../../layouts/Layout.astro";
     <div id="me-box"></div>
 
     <!-- host controls -->
-    
-        <div id="category-buttons" class="category-buttons">
-            <button class="cat-btn" data-cat="funny">😂 مضحك</button>
-            <button class="cat-btn" data-cat="truth">😏 صراحة</button>
-            <button class="cat-btn" data-cat="deep">🧠 عميق</button>
-            <button class="cat-btn" data-cat="friends">👯 صحاب</button>
-            <button class="cat-btn" data-cat="love">❤️ حب</button>
-            <button class="cat-btn" data-cat="challenge">🔥 تحدي</button>
-            <button class="cat-btn" data-cat="embarrassing">😳 إحراج</button>
-        </div>
-        
-    <div id="host-controls" class="host-box">
+
+    <div id="category-buttons" class="category-buttons">
+        <button class="cat-btn" data-cat="funny">😂 مضحك</button>
+        <button class="cat-btn" data-cat="truth">😏 صراحة</button>
+        <button class="cat-btn" data-cat="deep">🧠 عميق</button>
+        <button class="cat-btn" data-cat="friends">👯 صحاب</button>
+        <button class="cat-btn" data-cat="love">❤️ حب</button>
+        <button class="cat-btn" data-cat="challenge">🔥 تحدي</button>
+        <button class="cat-btn" data-cat="embarrassing">😳 إحراج</button>
+    </div>
+
+    <div id="host-controls" class="host-box card">
         <h3>👑 تحكم الهوست</h3>
         <button id="start-game">🚀 ابدأ اللعبة</button>
         <button id="end-game">❌ اقفل الروم</button>
@@ -37,17 +37,7 @@ import Layout from "../../layouts/Layout.astro";
 
     <script type="module">
         import { db } from "/js/firebase.js";
-        import {
-            doc,
-            onSnapshot,
-            updateDoc,
-            deleteDoc,
-            collection,
-            query,
-            where,
-            getDocs,
-            getDoc,
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { doc, onSnapshot, updateDoc, deleteDoc, collection, query, where, getDocs, getDoc, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         async function calculateScores(data) {
             const category = data.questionCategory;
@@ -57,9 +47,9 @@ import Layout from "../../layouts/Layout.astro";
                 data.answers?.[category]?.[currentIndex] || {};
 
             const startTime =
-  data.questionStartTimes?.[`${category}_${currentIndex}`];
+                data.questionStartTimes?.[`${category}_${currentIndex}`];
             const isCorrect =
-  normalize(ans.answer) === normalize(ans.correctAnswer);
+                normalize(ans.answer) === normalize(ans.correctAnswer);
 
             // ❌ امسح currentQuestion من هنا
             if (data.scoredQuestions?.[`${category}_${currentIndex}`]) {
@@ -127,13 +117,13 @@ import Layout from "../../layouts/Layout.astro";
                 }
 
                 const q = list[nextIndex];
-await updateDoc(roomRef, {
-    [`currentIndex.${category}`]: nextIndex,
-    question: q,
-    [`answers.${category}.${nextIndex}`]: {},
+                await updateDoc(roomRef, {
+                    [`currentIndex.${category}`]: nextIndex,
+                    question: q,
+                    [`answers.${category}.${nextIndex}`]: {},
 
-    [`questionStartTimes.${category}_${nextIndex}`]: Date.now(), // 👈 المهم
-});
+                    [`questionStartTimes.${category}_${nextIndex}`]: Date.now(), // 👈 المهم
+                });
             });
         const container = document.getElementById("players");
         const controls = document.getElementById("host-controls");
@@ -190,31 +180,31 @@ await updateDoc(roomRef, {
 
         const catButtons = document.querySelectorAll(".cat-btn");
 
-catButtons.forEach((btn) => {
-    btn.addEventListener("click", async () => {
-        const snap = await getDoc(roomRef);
-        const data = snap.data();
+        catButtons.forEach((btn) => {
+            btn.addEventListener("click", async () => {
+                const snap = await getDoc(roomRef);
+                const data = snap.data();
 
-        if (playerId !== data.hostId) return;
+                if (playerId !== data.hostId) return;
 
-        // UI
-        catButtons.forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
+                // UI
+                catButtons.forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
 
-        const category = btn.dataset.cat;
+                const category = btn.dataset.cat;
 
-        await updateDoc(roomRef, {
-            questionCategory: category,
+                await updateDoc(roomRef, {
+                    questionCategory: category,
 
-            // 👇 مهم جدًا
-            question: null,
-            questionsList: [],
+                    // 👇 مهم جدًا
+                    question: null,
+                    questionsList: [],
 
-            // 👇 نبدأ الفئة دي من الأول
-            [`currentIndex.${category}`]: -1,
+                    // 👇 نبدأ الفئة دي من الأول
+                    [`currentIndex.${category}`]: -1,
+                });
+            });
         });
-    });
-});
 
         // 🔥 هنا تحط الكود ده
         (async () => {
@@ -280,9 +270,6 @@ catButtons.forEach((btn) => {
                     <span>${player.name}</span>
                     ${id === data.hostId ? "👑" : ""}
                 `;
-                if (id === data.hostId) {
-                    div.textContent += " 👑";
-                }
 
                 container.appendChild(div);
             });
@@ -351,31 +338,34 @@ catButtons.forEach((btn) => {
                         }
                     }
 
-btn.addEventListener("click", async () => {
-    if (myAnswer) return;
+                    btn.addEventListener("click", async () => {
+                        if (myAnswer) return;
 
-    const snap = await getDoc(roomRef);
-    const data = snap.data();
+                        const snap = await getDoc(roomRef);
+                        const data = snap.data();
 
-    const startTime =
-      data.questionStartTimes?.[`${category}_${currentIndex}`];
+                        const startTime =
+                            data.questionStartTimes?.[
+                                `${category}_${currentIndex}`
+                            ];
 
-    // 🚫 لو لسه مفيش startTime
-    if (!startTime) {
-        console.log("⏳ لسه السؤال ما بدأش");
-        return;
-    }
+                        // 🚫 لو لسه مفيش startTime
+                        if (!startTime) {
+                            console.log("⏳ لسه السؤال ما بدأش");
+                            return;
+                        }
 
-    await updateDoc(roomRef, {
-        [`answers.${category}.${currentIndex}.${playerId}`]: {
-            answer,
-            correctAnswer,
-            category,
-            questionIndex: currentIndex,
-            time: Date.now(),
-        },
-    });
-});
+                        await updateDoc(roomRef, {
+                            [`answers.${category}.${currentIndex}.${playerId}`]:
+                                {
+                                    answer,
+                                    correctAnswer,
+                                    category,
+                                    questionIndex: currentIndex,
+                                    time: Date.now(),
+                                },
+                        });
+                    });
                 });
             }
 
@@ -399,7 +389,7 @@ btn.addEventListener("click", async () => {
             const resultBox = document.getElementById("results-box");
 
             const startTime =
-  data.questionStartTimes?.[`${category}_${currentIndex}`];
+                data.questionStartTimes?.[`${category}_${currentIndex}`];
 
             let results = [];
 
@@ -428,7 +418,7 @@ btn.addEventListener("click", async () => {
                 </div>
                 `;
             resultBox.innerHTML =
-                "<div class='results-card'><h3>⚡ أسرع اللاعبين:</h3></div>";
+                "<div class='results-card card'><h3>⚡ أسرع اللاعبين:</h3></div>";
 
             results.forEach((r, index) => {
                 const name = data.players[r.id]?.name || "لاعب";
@@ -474,7 +464,7 @@ btn.addEventListener("click", async () => {
             // 🎮 حالة اللعبة
             if (data.status === "playing") {
                 console.log("🔥 اللعبة بدأت!");
-                document.body.style.background = "#111";
+                // document.body.style.background = "#111";
             }
         });
 
@@ -524,7 +514,7 @@ btn.addEventListener("click", async () => {
                     [`answers.${category}`]: {},
                     [`currentIndex.${category}`]: 0,
 
-[`questionStartTimes.${category}_0`]: Date.now()
+                    [`questionStartTimes.${category}_0`]: Date.now(),
                 });
             });
         // ❌ end game

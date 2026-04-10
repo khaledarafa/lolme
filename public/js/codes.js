@@ -13,17 +13,26 @@ window.addEventListener("DOMContentLoaded", () => {
     return Math.floor(1000 + Math.random() * 9000).toString();
   }
 
-  function getPlayerName() {
-    let name = localStorage.getItem("player_name");
+  // function getPlayerName() {
+  //   let name = localStorage.getItem("player_name");
 
-    if (!name) {
-      name = document.getElementById("player-name")?.value || "لاعب 😂";
-      localStorage.setItem("player_name", name);
-    }
+  //   if (!name) {
+  //     name = document.getElementById("player-name")?.value || "لاعب 😂";
+  //     localStorage.setItem("player_name", name);
+  //   }
 
-    return name;
+  //   return name;
+  // }
+function getPlayerName() {
+  const inputName = document.getElementById("player-name")?.value.trim();
+
+  if (inputName) {
+    localStorage.setItem("player_name", inputName);
+    return inputName;
   }
 
+  return localStorage.getItem("player_name") || "ادمن 😂";
+}
   // 🎯 نجيب playerId ثابت لكل روم
   function getPlayerId(code) {
     let playerId = localStorage.getItem("player_" + code);
@@ -37,12 +46,12 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   startBtn?.addEventListener("click", async (e) => {
-    // const password = prompt("🔒 اكتب كلمة السر:");
+    const password = prompt("🔒 اكتب كلمة السر:");
 
-    // if (password !== "123456") {
-    //   alert("❌ كلمة السر غلط يا نجم 😏");
-    //   return;
-    // }
+    if (password !== "123456") {
+      alert("❌ كلمة السر غلط يا نجم 😏");
+      return;
+    }
 
     e.preventDefault(); // 🔥 مهم
     let roomCode;
@@ -62,7 +71,7 @@ window.addEventListener("DOMContentLoaded", () => {
       status: "waiting",
       players: {
         [playerId]: {
-          name: getPlayerName() + " 👑",
+          name: getPlayerName(),
           score: 0
         }
       },
