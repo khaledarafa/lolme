@@ -1,0 +1,140 @@
+---
+// src/pages/addq.astro
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="إضافة سؤال">
+
+    <div id="category-buttons" class="category-buttons">
+    
+      <button class="cat-btn" data-cat="funny">😂 مضحك</button>
+      <button class="cat-btn" data-cat="truth">😏 صراحة</button>
+      <button class="cat-btn" data-cat="deep">🧠 عميق</button>
+      <button class="cat-btn" data-cat="friends">👯 صحاب</button>
+      <button class="cat-btn" data-cat="love">❤️ حب</button>
+      <button class="cat-btn" data-cat="challenge">🔥 تحدي</button>
+      <button class="cat-btn" data-cat="embarrassing">😳 إحراج</button>
+    
+    </div>
+  <section class="add-q-section">
+    <!-- <h2>➕ أضف سؤال جديد</h2> -->
+    <div class="add-q-box">
+
+      <input id="q-text" placeholder="اكتب السؤال 😏" />
+
+      <input id="opt1" placeholder="اختيار 1" />
+      <input id="opt2" placeholder="اختيار 2" />
+      <input id="opt3" placeholder="اختيار 3" />
+      <input id="opt4" placeholder="اختيار 4" />
+
+      <input id="correct" placeholder="الإجابة الصح (لازم تكون زي اختيار)" />
+
+      <button id="add-q-btn">🔥 إضافة السؤال</button>
+
+      <div id="msg"></div>
+
+    </div>
+  </section>
+
+  <script type="module" src="/js/addq.js"></script>
+
+</Layout>
+
+<style>
+.add-q-section {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.add-q-box {
+  background: var(--card);
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-q-box input {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #020617;
+  color: white;
+  text-align: center;
+}
+
+.add-q-box button {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #22c55e;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-q-box button:hover {
+  opacity: 0.8;
+}
+
+#msg {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.category-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.cat-btn {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--bg);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cat-btn:hover {
+  background: #22c55e;
+  color: black;
+}
+
+.cat-btn.active {
+  background: #22c55e;
+  color: black;
+  font-weight: bold;
+}
+
+.cat-btn {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  background: #020617;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cat-btn:hover {
+  background: #1e293b;
+}
+
+/* 🔥 دي أهم سطر */
+.cat-btn.active {
+  background: #22c55e;
+  color: #000;
+  border-color: #22c55e;
+  box-shadow: 0 0 10px #22c55e;
+}
+</style>

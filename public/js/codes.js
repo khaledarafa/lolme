@@ -1,12 +1,7 @@
 // public/js/codes.js
 
 import { db } from "/js/firebase.js";
-import {
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 window.addEventListener("DOMContentLoaded", () => {
 
@@ -41,41 +36,42 @@ window.addEventListener("DOMContentLoaded", () => {
     return playerId;
   }
 
-startBtn?.addEventListener("click", async (e) => {
-  const password = prompt("🔒 اكتب كلمة السر:");
+  startBtn?.addEventListener("click", async (e) => {
+    // const password = prompt("🔒 اكتب كلمة السر:");
 
-  if (password !== "123456") {
-    alert("❌ كلمة السر غلط يا نجم 😏");
-    return;
-  }
-  e.preventDefault(); // 🔥 مهم
-  let roomCode;
-  let roomRef;
-  let snap;
+    // if (password !== "123456") {
+    //   alert("❌ كلمة السر غلط يا نجم 😏");
+    //   return;
+    // }
 
-  do {
-    roomCode = generateCode();
-    roomRef = doc(db, "rooms", roomCode);
-    snap = await getDoc(roomRef);
-  } while (snap.exists());
+    e.preventDefault(); // 🔥 مهم
+    let roomCode;
+    let roomRef;
+    let snap;
 
-  const playerId = getPlayerId(roomCode);
+    do {
+      roomCode = generateCode();
+      roomRef = doc(db, "rooms", roomCode);
+      snap = await getDoc(roomRef);
+    } while (snap.exists());
 
-  await setDoc(roomRef, {
-    hostId: playerId,
-    status: "waiting",
-    players: {
-      [playerId]: {
-        name: getPlayerName() + " 👑",
-        score: 0
-      }
-    },
-    currentQuestion: 0,
-    createdAt: Date.now()
+    const playerId = getPlayerId(roomCode);
+
+    await setDoc(roomRef, {
+      hostId: playerId,
+      status: "waiting",
+      players: {
+        [playerId]: {
+          name: getPlayerName() + " 👑",
+          score: 0
+        }
+      },
+      currentQuestion: 0,
+      createdAt: Date.now()
+    });
+
+    window.location.href = `/room/${roomCode}`;
   });
-
-  window.location.href = `/room/${roomCode}`;
-});
   // 🚪 JOIN ROOM
   joinBtn?.addEventListener("click", async () => {
 

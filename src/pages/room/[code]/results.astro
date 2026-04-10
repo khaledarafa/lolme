@@ -7,15 +7,17 @@ import Layout from "../../../layouts/Layout.astro";
     <h1>📊 نتائج اللعبة</h1>
     <p>الكود: {code}</p>
 
-    <div id="results-table" data-code={code}></div>
-
+    <!-- <div id="results-table" data-code={code}></div> -->
+<div class="table-wrapper">
+  <div id="results-table" data-code={code}></div>
+</div>
     <script type="module">
         import { db } from "/js/firebase.js";
         import {
             doc,
             onSnapshot,
         } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { questions } from "/data/questions.js";
+
         const container = document.getElementById("results-table");
         const roomCode = container.dataset.code;
         const roomRef = doc(db, "rooms", roomCode);
@@ -33,27 +35,36 @@ import { questions } from "/data/questions.js";
             const answers = data.answers || {};
             const players = data.players || {};
 
-            Object.entries(answers).forEach(([qIndex, qAnswers]) => {
-                const startTime = data.questionStartTimes?.[Number(qIndex)];
+            Object.entries(answers).forEach(([category, categoryAnswers]) => {
+                Object.entries(categoryAnswers).forEach(
+                    ([qIndex, qAnswers]) => {
+                        const startTime =
+                            data.questionStartTimes?.[`${category}_${qIndex}`];
 
-                Object.entries(qAnswers).forEach(([playerId, ans]) => {
-                    const diff = (ans.time - startTime) / 1000;
-const q = questions[Number(qIndex) % questions.length];
+                        Object.entries(qAnswers).forEach(([playerId, ans]) => {
+                            const diff = startTime
+                                ? Math.max((ans.time - startTime) / 1000, 0) // 👈 fix السالب
+                                : 0;
 
-const normalize = (str) =>
-  str?.trim().replace(/\s+/g, " ");
+                            const normalize = (str) =>
+                                str?.trim().replace(/\s+/g, " ");
 
-const isCorrect =
-  normalize(ans.answer) === normalize(q.correct);
-                    allResults.push({
-                        playerId,
-                        name: players[playerId]?.name || "لاعب",
-                        question: qIndex,
-                        time: diff,
-                        answer: ans.answer,
-  correct: isCorrect,
-                    });
-                });
+                            const isCorrect =
+                                normalize(ans.answer) ===
+                                normalize(ans.correctAnswer);
+
+                            allResults.push({
+                                playerId,
+                                name: players[playerId]?.name || "لاعب",
+                                category,
+                                question: Number(qIndex),
+                                time: diff,
+                                answer: ans.answer,
+                                correct: isCorrect,
+                            });
+                        });
+                    },
+                );
             });
             // 🔥 ترتيب حسب السرعة
             allResults.sort((a, b) => a.time - b.time);
@@ -65,7 +76,8 @@ const isCorrect =
             <tr>
               <th>#</th>
               <th>اللاعب</th>
-              <th>السؤال</th>
+              <th>الفئة</th>
+                <th>السؤال</th> 
               <th>الوقت (ث)</th>
               <th>الإجابة</th>
             </tr>
@@ -75,13 +87,18 @@ const isCorrect =
                 .map(
                     (r, i) => `
                     <tr>
-                        <td>${i + 1}</td>
+                       <td>
+                        ${i === 0 ? "💎 أسطورة" : i === 1 ? "🔶 محترف" : i === 2 ? "🥉 جامد" : i + 1}
+                        </td>
                         <td>${r.name}</td>
-                        <td>سؤال ${Number(r.question) + 1}</td>
+                        <td>${r.category}</td>
+                        <td>سؤال ${r.question + 1}</td>
+                        <td>
+                        ${r.time !== null && r.time !== undefined ? r.time.toFixed(2) + "s" : "--"}
+                        </td>
                         <td class="${r.correct ? "correct-answer" : "wrong-answer"}">
-  ${r.answer}
-</td>
-                        <td>${r.time.toFixed(2)}s</td>
+                        ${r.answer}
+                        </td>
                     </tr>
                     `,
                 )
