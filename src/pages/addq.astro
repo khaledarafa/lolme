@@ -14,21 +14,27 @@ import Layout from "../layouts/Layout.astro";
       <button class="cat-btn" data-cat="love">❤️ حب</button>
       <button class="cat-btn" data-cat="challenge">🔥 تحدي</button>
       <button class="cat-btn" data-cat="embarrassing">😳 إحراج</button>
-    <button class="cat-btn" data-cat="songs">🎵 أغاني</button>
-<button class="cat-btn" data-cat="football">⚽ كورة</button>
-<button class="cat-btn" data-cat="hazoom">💣 اسئلة حزوم</button>
+      <button class="cat-btn" data-cat="songs">🎵 أغاني</button>
+      <button class="cat-btn" data-cat="football">⚽ كورة</button>
+      <button class="cat-btn" data-cat="hazoom">💣 اسئلة حزوم</button>
     </div>
+
+
   <section class="add-q-section">
     <!-- <h2>➕ أضف سؤال جديد</h2> -->
     <div class="add-q-box">
+    <select id="q-type">
+  <option value="choice">اختيارات</option>
+  <option value="text">إجابة كتابة</option>
+</select>
 
       <input id="q-text" placeholder="اكتب السؤال 😏" />
-
+<div id="options-box">
       <input id="opt1" placeholder="اختيار 1" />
       <input id="opt2" placeholder="اختيار 2" />
       <input id="opt3" placeholder="اختيار 3" />
       <input id="opt4" placeholder="اختيار 4" />
-
+</div>
       <input id="correct" placeholder="الإجابة الصح (لازم تكون زي اختيار)" />
 
       <button id="add-q-btn">🔥 إضافة السؤال</button>

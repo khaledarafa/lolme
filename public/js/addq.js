@@ -3,10 +3,21 @@ import { db } from "/js/firebase.js";
 import { addDoc, collection, query, where, getDocs  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const btn = document.getElementById("add-q-btn");
+const typeSelect = document.getElementById("q-type");
+const optionsBox = document.getElementById("options-box");
+
+typeSelect.addEventListener("change", () => {
+    if (typeSelect.value === "text") {
+        optionsBox.style.display = "none";
+    } else {
+        optionsBox.style.display = "block";
+    }
+});
 const msg = document.getElementById("msg");
 let selectedCategory = localStorage.getItem("selected_category") || "";
 
 btn.onclick = async () => {
+    const type = document.getElementById("q-type").value;
     const text = document.getElementById("q-text").value.trim();
 
     const options = [
@@ -19,17 +30,31 @@ btn.onclick = async () => {
     const correct = document.getElementById("correct").value.trim();
 
     // ✅ validation بسيط
-    if (!text || options.some(o => !o) || !correct || !selectedCategory) {
-        msg.innerText = "❌ املى كل الحقول يا نجم";
-        msg.style.color = "red";
-        return;
-    }
+if (!text) {
+    msg.innerText = "❌ اكتب السؤال";
+    return;
+}
 
-    if (!options.includes(correct)) {
-        msg.innerText = "❌ الإجابة الصح لازم تكون من الاختيارات";
-        msg.style.color = "red";
-        return;
-    }
+if (!correct) {
+    msg.innerText = "❌ اكتب الإجابة الصح";
+    return;
+}
+
+if (!selectedCategory) {
+    msg.innerText = "❌ اختار فئة الأول 👆";
+    return;
+}
+if (type === "choice" && options.some(o => !o)) {
+    msg.innerText = "❌ لازم تملى كل الاختيارات";
+    msg.style.color = "red";
+    return;
+}
+
+if (type === "choice" && !options.includes(correct)) {
+    msg.innerText = "❌ الإجابة لازم تكون من الاختيارات";
+    msg.style.color = "red";
+    return;
+}
 
     if (!selectedCategory) {
         msg.innerText = "❌ اختار فئة الأول يا نجم 😏";
@@ -52,12 +77,13 @@ if (!snapCheck.empty) {
     try {
 await addDoc(collection(db, "questions"), {
   text,
-  options,
+  options: type === "choice" ? options : [],
   correct,
+  type, // 👈 الجديد
   category: selectedCategory,
   approved: false,
   createdAt: Date.now(),
-  createdBy: localStorage.getItem("player_name") || "unknown" // 🔥 دي مهمة
+  createdBy: localStorage.getItem("player_name") || "unknown"
 });
         msg.innerText = "✅ السؤال اتضاف وهيتراجع";
         msg.style.color = "#22c55e";
@@ -93,6 +119,8 @@ catButtons.forEach(btn => {
     btn.addEventListener("click", () => {
         selectedCategory = btn.dataset.cat;
 
+        console.log("🔥 category:", selectedCategory); // 👈 مهم
+        
         localStorage.setItem("selected_category", selectedCategory);
 
         catButtons.forEach(b => b.classList.remove("active"));
