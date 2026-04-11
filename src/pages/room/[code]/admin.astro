@@ -5,61 +5,113 @@ import Layout from "../../../layouts/Layout.astro";
 ---
 
 <Layout>
-    <h1>🎮 غرفة اللعبة</h1>
-    <p>الكود: {code}</p>
-    <div id="role-box"></div>
-    <!-- players -->
-    <div id="players" data-code={code}></div>
-    <div id="me-box"></div>
+    <div class="room-container">
+        <div style="font-size: x-large; text-align: center; 
+    margin-top: 16px;">🎮 كود الغرفه : {code} </div>
+        
+        <div class="room-header">
+            <div class="category-dropdown">
+                    <button id="open-admin">👑 شاشة الأدمن</button>
+                <button class="dropdown-btn">🎯 الفئات ▼</button>
 
-    <!-- host controls -->
+                <div class="dropdown-menu">
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="funny"
+                        style="background-image:url('/images/funny.webp')"
+                    >
+                        <span>😂 مضحك</span>
+                    </div>
 
-    <div id="category-buttons" class="category-buttons">
-        <button class="cat-btn" data-cat="funny">😂 مضحك</button>
-        <button class="cat-btn" data-cat="truth">😏 صراحة</button>
-        <button class="cat-btn" data-cat="deep">🧠 عميق</button>
-        <button class="cat-btn" data-cat="friends">👯 صحاب</button>
-        <button class="cat-btn" data-cat="love">❤️ حب</button>
-        <button class="cat-btn" data-cat="challenge">🔥 تحدي</button>
-        <button class="cat-btn" data-cat="embarrassing">😳 إحراج</button>
-        <button class="cat-btn" data-cat="songs">🎵 أغاني</button>
-        <button class="cat-btn" data-cat="football">⚽ كورة</button>
-        <button class="cat-btn" data-cat="hazoom">💣 اسئلة حزوم</button>
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="truth"
+                        style="background-image:url('/images/truth.webp')"
+                    >
+                        <span>😏 صراحة</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="deep"
+                        style="background-image:url('/images/deep.jpg')"
+                    >
+                        <span>🧠 عميق</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="friends"
+                        style="background-image:url('/images/friends.jpg')"
+                    >
+                        <span>👯 صحاب</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="love"
+                        style="background-image:url('/images/love.jpg')"
+                    >
+                        <span>❤️ حب</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="challenge"
+                        style="background-image:url('/images/challenge.jpg')"
+                    >
+                        <span>🔥 تحدي</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="embarrassing"
+                        style="background-image:url('/images/embarrassing.jpg')"
+                    >
+                        <span>😳 إحراج</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="songs"
+                        style="background-image:url('/images/songs.jpg')"
+                    >
+                        <span>🎵 أغاني</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="football"
+                        style="background-image:url('/images/football.jpg')"
+                    >
+                        <span>⚽ كورة</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="hazoom"
+                        style="background-image:url('/images/hazoom.jpg')"
+                    >
+                        <span>💣 حزوم</span>
+                    </div>
+                </div>
+            </div>
+            
+                    <button id="start-game">🚀 ابدأ اللعبة</button>
+                    <button id="next-question">➡️ السؤال اللي بعده</button>
+                    <button id="show-results">📊 عرض النتائج</button>
+                    <button id="end-game">❌ اقفل الروم</button>
+        </div>
+<div id="players-section" data-code={code}></div>
+
+                <div id="question-box"></div>
+                <div id="results-box"></div>
+
     </div>
-
-    <div id="host-controls" class="host-box card">
-        <button id="open-admin">👑 شاشة الأدمن</button>
-        <h3>👑 تحكم الهوست</h3>
-        <button id="start-game">🚀 ابدأ اللعبة</button>
-        <button id="end-game">❌ اقفل الروم</button>
-        <button id="next-question">➡️ السؤال اللي بعده</button>
-        <button id="show-results">📊 عرض النتائج</button>
-    </div>
-
-    <div id="question-box"></div>
-    <div id="results-box"></div>
-
     <script type="module">
         import { db } from "/js/firebase.js";
-        import {
-            doc,
-            onSnapshot,
-            updateDoc,
-            deleteDoc,
-            collection,
-            query,
-            where,
-            getDocs,
-            getDoc,
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        const normalize = (str) =>
-            str
-                ?.toLowerCase()
-                .trim()
-                .replace(/[أإآ]/g, "ا") // كل الألف زي بعض
-                .replace(/ة/g, "ه")
-                .replace(/ى/g, "ي")
-                .replace(/\s+/g, " ");
+        import { doc, onSnapshot, updateDoc, deleteDoc, collection, query, where, getDocs, getDoc, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        const normalize = (str) => str ?.toLowerCase() .trim() .replace(/[أإآ]/g, "ا") // كل الألف زي بعض .replace(/ة/g, "ه") .replace(/ى/g, "ي") .replace(/\s+/g, " ");
         async function calculateScores(data) {
             const category = data.questionCategory;
             const currentIndex = data.currentIndex?.[category] ?? 0;
@@ -125,7 +177,7 @@ import Layout from "../../../layouts/Layout.astro";
             ?.addEventListener("click", async () => {
                 const snap = await getDoc(roomRef);
                 const data = snap.data();
-                
+
                 await calculateScores(data);
                 const category = data.questionCategory;
                 const currentIndex = data.currentIndex?.[category] ?? -1;
@@ -151,25 +203,48 @@ import Layout from "../../../layouts/Layout.astro";
                     [`questionStartTimes.${category}_${nextIndex}`]: Date.now(), // 👈 المهم
                 });
             });
-        const container = document.getElementById("players");
+        // const container = document.getElementById("players");
+        const container = document.getElementById("players-section");
         const controls = document.getElementById("host-controls");
 
         const roomCode = container.dataset.code;
         let playerId;
-document.getElementById("open-admin")?.addEventListener("click", () => {
-    window.open(`/room/${roomCode}/admin`, "_blank");
-});
+        document.getElementById("open-admin")?.addEventListener("click", () => {
+            window.open(`/room/${roomCode}/admin`, "_blank");
+        });
         function loadPlayerId() {
             playerId = localStorage.getItem("player_" + roomCode);
             console.log("🧠 playerId:", playerId);
         }
 
-        const meBox = document.getElementById("me-box");
+        // const meBox = document.getElementById("me-box");
         const roomRef = doc(db, "rooms", roomCode);
 
         loadPlayerId();
+
+        // sessionStorage → بيتمسح لما تعمل refresh أو تقفل التاب ✅
         async function loadCategoryCounts() {
             const catButtons = document.querySelectorAll(".cat-btn");
+
+            // 🧠 كاش السيشن
+            const cached = sessionStorage.getItem("categoryCounts");
+
+            if (cached) {
+                const counts = JSON.parse(cached);
+
+                catButtons.forEach((btn) => {
+                    const category = btn.dataset.cat;
+                    if (counts[category] !== undefined) {
+                        btn.innerHTML += ` (${counts[category]})`;
+                    }
+                });
+
+                console.log("⚡ من السيشن");
+                return;
+            }
+
+            // 🔥 أول مرة في السيشن
+            const counts = {};
 
             for (const btn of catButtons) {
                 const category = btn.dataset.cat;
@@ -183,28 +258,18 @@ document.getElementById("open-admin")?.addEventListener("click", () => {
                 const snap = await getDocs(q);
 
                 const count = snap.size;
+                counts[category] = count;
 
-                // 👇 نضيف العدد على الزرار
                 btn.innerHTML += ` (${count})`;
             }
+
+            // 💾 خزّن في السيشن
+            sessionStorage.setItem("categoryCounts", JSON.stringify(counts));
+
+            console.log("💾 اتحفظ في السيشن");
         }
+
         loadCategoryCounts();
-
-        async function getRandomQuestionFromCategory(category) {
-            const q = query(
-                collection(db, "questions"),
-                where("approved", "==", true),
-                where("category", "==", category),
-            );
-
-            const snap = await getDocs(q);
-
-            const list = snap.docs.map((doc) => doc.data());
-
-            if (list.length === 0) return null;
-
-            return list[Math.floor(Math.random() * list.length)];
-        }
 
         const catButtons = document.querySelectorAll(".cat-btn");
 
@@ -259,9 +324,9 @@ document.getElementById("open-admin")?.addEventListener("click", () => {
             const data = snap.data();
             const isHost = playerId && playerId === data.hostId;
             if (playerId !== data.hostId) {
-    document.body.innerHTML = "🚫 مش مسموح";
-    return;
-}
+                document.body.innerHTML = "🚫 مش مسموح";
+                return;
+            }
             if (!data) {
                 container.innerHTML = "الروم اتقفلت 👋";
                 return;
@@ -272,48 +337,44 @@ document.getElementById("open-admin")?.addEventListener("click", () => {
             console.log("🎯 isHost:", playerId === data.hostId);
 
             console.log("🔥 room:", data);
-            const roleBox = document.getElementById("role-box");
-            const now = Date.now();
+            const section = document.getElementById("players-section");
 
-            const activePlayers = Object.entries(data.players || {}).filter(
-                ([id, player]) => now - (player.lastSeen || 0) < 4000,
-            );
+const now = Date.now();
 
-            const playersCount = activePlayers.length;
-            if (playerId === data.hostId) {
-                roleBox.innerHTML = `
-                👑 انت الهوست - انت اللي بتتحكم
-                <br>👥 عدد اللاعبين: ${playersCount}
-                `;
-            } else {
-                roleBox.innerHTML = "🎮 انت لاعب";
-            }
-            // 👥 players
-            container.innerHTML = "<h3>👥 اللاعبين:</h3>";
+const activePlayers = Object.entries(data.players || {}).filter(
+  ([id, player]) => now - (player.lastSeen || 0) < 4000,
+);
 
-            Object.entries(data.players || {}).forEach(([id, player]) => {
-                const div = document.createElement("div");
-                // div.textContent = player.name + " (" + id.slice(-4) + ")";
-                div.className = "player-card";
-                if (id === playerId) {
-                    div.style.border = "2px solid #22c55e";
-                }
-                div.innerHTML = `
-                    <span>${player.name}</span>
-                    ${id === data.hostId ? "👑" : ""}
-                `;
+const playersCount = activePlayers.length;
 
-                container.appendChild(div);
-            });
-            const myName = data.players?.[playerId]?.name;
+// const myName = data.players?.[playerId]?.name;
 
-            if (myName) {
-                meBox.innerHTML = `
-                    <div class="me-card">
-                        🎯 انت: ${myName} ${playerId === data.hostId ? "👑 (هوست)" : ""}
-                    </div>
-                `;
-            }
+section.innerHTML = `
+  <div class="players-card compact">
+
+    <div class="players-header">
+      👥 ${playersCount}
+      ${
+        playerId === data.hostId
+          ? " | 👑 هوست"
+          : " | 🎮 لاعب"
+      }
+    </div>
+
+    <div class="players-list">
+      ${Object.entries(data.players || {})
+        .map(
+          ([id, player]) => `
+        <span class="player-chip ${id === playerId ? "me" : ""}">
+          ${player.name} ${id === data.hostId ? "👑" : ""}
+        </span>
+      `,
+        )
+        .join("")}
+    </div>
+
+  </div>
+`;
             const questionBox = document.getElementById("question-box");
             const category = data.questionCategory;
             const currentIndex = data.currentIndex?.[category] ?? 0;
@@ -354,7 +415,7 @@ document.getElementById("open-admin")?.addEventListener("click", () => {
     color:#22c55e;
     font-size:14px;
 ">
-    👑 الإجابة: ${Array.isArray(correctAnswer) ? correctAnswer.join(" / ") : correctAnswer}
+     الإجابة: ${Array.isArray(correctAnswer) ? correctAnswer.join(" / ") : correctAnswer}
 </div>
                             <div class="answers">
                                 ${q.options
@@ -565,9 +626,9 @@ document.getElementById("open-admin")?.addEventListener("click", () => {
             });
 
             // 👑 تحديد الهوست
-            
-            controls.style.display = isHost ? "block" : "none";
-
+if (controls) {
+  controls.style.display = isHost ? "block" : "none";
+}
             // 🎮 حالة اللعبة
             if (data.status === "playing") {
                 console.log("🔥 اللعبة بدأت!");
@@ -637,5 +698,17 @@ document.getElementById("open-admin")?.addEventListener("click", () => {
             ?.addEventListener("click", () => {
                 window.location.href = `/room/${roomCode}/results`;
             });
+const dropdown = document.querySelector(".category-dropdown");
+
+document.querySelectorAll(".cat-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    dropdown.classList.remove("open");
+  });
+});
+const btn = document.querySelector(".dropdown-btn");
+
+btn.addEventListener("click", () => {
+  dropdown.classList.toggle("open");
+});
     </script>
 </Layout>

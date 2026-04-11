@@ -401,6 +401,7 @@ button {
   cursor: pointer;
   background: var(--bg);
   color: var(--text-color);
+  font-size: large;
   box-shadow: 0 1px 1px var(--shadow-color);
 }
 
@@ -800,7 +801,7 @@ h2 {
 .page-content {
   position: relative;
   z-index: 1;
-    /* text-align: -webkit-center; */
+  /* text-align: -webkit-center; */
 }
 
 /* ——— SIDE ADS ——— */
@@ -1025,33 +1026,36 @@ h2 {
   box-shadow: 0 1px 2px var(--shadow-color);
 }
 
-.question-card {
-  background: var(--bg);
-  padding: 20px;
-  border-radius: 15px;
-  margin-top: 20px;
-  text-align: center;
-}
-
 .answer-btn {
   margin: 5px;
   padding: 10px 15px;
   border-radius: 10px;
   border: none;
-  background: #1e293b;
-  color: white;
+  background: linear-gradient(135deg, #1e293b, #020617);
+  color: var(--btn-active-text);
   cursor: pointer;
   transition: 0.2s;
-    font-size: larger;
+  font-size: larger;
 }
 
-.me-card {
+.answers {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.answer-btn {
+  padding: 15px;
+  border-radius: 12px;
+}
+
+/* .me-card {
   background: var(--bg);
-  /* border: 1px solid #22c55e; */
   padding: 10px;
   border-radius: 10px;
   margin-top: 10px;
-}
+} */
 
 .answer-btn:hover {
   background: #22c55e;
@@ -1110,15 +1114,6 @@ h2 {
   border-bottom: 1px solid #333;
 }
 
-.cat-btn {
-  font-size: large;
-}
-.cat-btn.active {
-  font-size: large;
-  background: #22c55e;
-  color: white;
-  transform: scale(1.05);
-}
 
 
 
@@ -1158,6 +1153,7 @@ h2 {
   color: #ef4444;
   font-weight: bold;
 }
+
 .table-wrapper {
   width: 100%;
   overflow-x: auto;
@@ -1166,6 +1162,7 @@ h2 {
 .results-table {
   min-width: 600px;
 }
+
 .table-wrapper::-webkit-scrollbar {
   height: 6px;
 }
@@ -1194,16 +1191,6 @@ h2 {
   padding: 6px;
   border-radius: 8px;
   text-align: center;
-}
-
-.question-card {
-  max-width: 600px;
-  margin: 15px auto;
-  background: #111827;
-  padding: 15px;
-  border-radius: 15px;
-    font-size: large;
-  box-shadow: 0 1px 2px var(--shadow-color);
 }
 
 .edit-form {
@@ -1243,4 +1230,546 @@ h2 {
 
 .edit-form button {
   grid-column: span 2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===================================== code.astro ===================================== */
+.room-container {
+  max-width: 800px;
+  margin: auto;
+}
+
+/* 🧠 العناوين */
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+#role-box {
+  text-align: center;
+  margin-bottom: 15px;
+  opacity: 0.8;
+}
+
+/* 👥 اللاعبين */
+#players {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+/* 🎯 الأزرار (الفئات) */
+.category-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* 📱 موبايل */
+@media (max-width: 600px) {
+  .category-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 💻 تابلت */
+@media (min-width: 601px) {
+  .category-buttons {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 🖥️ كمبيوتر */
+@media (min-width: 1024px) {
+  .category-buttons {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .room-container {
+    max-width: 1200px;
+  }
+}
+
+
+/* 👑 الهوست */
+.host-box {
+  /* background: rgba(255, 255, 255, 0.05); */
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* أزرار التحكم */
+.host-box button {
+  margin: 5px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: var(--bg);
+  transition: 0.2s;
+}
+
+.host-box button:hover {
+  background: #22c55e;
+  color: black;
+}
+
+/* ❓ السؤال */
+#question-box {
+  margin-top: 20px;
+}
+
+/* 📊 النتائج */
+#results-box {
+  margin-top: 20px;
+}
+
+.question-card {
+  max-width: 600px;
+  margin: 15px auto;
+  background: var(--bg);
+  padding: 20px;
+  border-radius: 15px;
+  font-size: large;
+  box-shadow: 0 1px 2px var(--shadow-color);
+  text-align: center;
+}
+
+/* 🧠 كارد السؤال */
+/* .question-card {
+  background: rgba(255,255,255,0.05);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+} */
+
+/* 📥 input */
+#text-answer {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  border: 1px solid #22c55e;
+  /* background: #0f172a; */
+  /* color: white; */
+  outline: none;
+  margin-top: 15px;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+#text-answer::placeholder {
+  color: #9ca3af;
+}
+
+/* ✨ لما تدوس عليه */
+#text-answer:focus {
+  border-color: #4ade80;
+  box-shadow: 0 0 10px #22c55e55;
+}
+
+/* 🚀 زرار الإرسال */
+#send-answer {
+  margin-top: 12px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* hover */
+#send-answer:hover {
+  background: #4ade80;
+  transform: scale(1.05);
+}
+
+
+
+
+
+
+.room-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 25px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  background: var(--bg);
+  padding: 10px 0;
+}
+
+.category-dropdown {
+  position: relative;
+}
+
+.dropdown-btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #22c55e33;
+  cursor: pointer;
+  background: var(--card);
+}
+
+.dropdown-btn:hover {
+  background: #22c55e22;
+}
+
+@media (max-width: 768px) {
+  .room-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* 👈 اتنين في الصف */
+    gap: 10px;
+  }
+
+  .room-header button,
+  .dropdown-btn,
+  #open-admin {
+    width: 100%;
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  /* 👑 نخلي زرار الفئات ياخد صف كامل (اختياري) */
+  .category-dropdown {
+    position: relative;
+    grid-column: span 2;
+  }
+
+  .category-dropdown.open .dropdown-menu {
+    position: absolute;
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+    /* transform: translateX(-50%); */
+    pointer-events: auto;
+  }
+}
+
+@media (min-width: 769px) {
+  .category-dropdown.open .dropdown-menu {
+    position: absolute;
+    top: 50px;
+    left: -50%;
+    opacity: 1;
+    visibility: visible;
+    /* transform: translateX(-50%) translateY(0); */
+    transform: translateX(-50%);
+    pointer-events: auto;
+  }
+}
+
+.dropdown-menu {
+  position: fixed;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 1200px;
+  max-width: 90vw;
+
+  background: var(--card);
+  border-radius: 15px;
+  padding: 20px;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition: 0.25s;
+  z-index: 999;
+}
+
+.dropdown-menu.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* تظهر */
+/* .category-dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+} */
+/* .category-dropdown.open .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+} */
+
+.category-dropdown::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 20px;
+}
+
+/* الكروت */
+.cat-card {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  /* 👈 أهم سطر */
+
+  border-radius: 14px;
+  overflow: hidden;
+
+  background-size: cover;
+  background-position: center;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.cat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+  z-index: 1;
+}
+
+.cat-card span {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 2;
+
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.cat-card.active {
+  outline: 3px solid #22c55e;
+  box-shadow: 0 0 30px #22c55e88;
+  transform: scale(1.05);
+}
+
+.cat-card.active::after {
+  content: "✔";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #22c55e;
+  color: black;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+/* hover 🔥 */
+.cat-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #22c55e55;
+}
+
+#role-box,
+#players {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* الكارت كله */
+.players-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #22c55e22;
+}
+
+/* ليست اللاعبين */
+.players-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* كل لاعب */
+.player-item {
+  background: #111827;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  border: 1px solid #22c55e22;
+  transition: 0.2s;
+}
+
+/* أنا مميز */
+.player-item.me {
+  border: 1px solid #22c55e;
+  background: #22c55e22;
+}
+
+/* hover لطيف */
+.player-item:hover {
+  transform: translateY(-2px);
+}
+
+.players-card.compact {
+  background: transparent;
+  /* 👈 أهم حاجة */
+  border: 1px solid #22c55e22;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 15px;
+}
+
+/* الهيدر */
+.players-header {
+  font-size: 13px;
+  margin-bottom: 8px;
+  opacity: 0.7;
+}
+
+/* اللاعبين */
+.players-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* كل لاعب */
+.player-chip {
+  background: #111827;
+  padding: 4px 8px;
+  border-radius: 999px;
+  /* 👈 pill شكل */
+  font-size: 12px;
+  border: 1px solid #22c55e22;
+}
+
+/* أنا */
+.player-chip.me {
+  background: #22c55e22;
+  border: 1px solid #22c55e;
+}
+
+.suggest-box {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.suggest-box input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: #0f172a;
+  color: #fff;
+}
+
+.suggest-box button {
+  padding: 10px 15px;
+  border-radius: 10px;
+  border: none;
+  background: #22c55e;
+  color: white;
+  cursor: pointer;
+}
+
+.suggestions-list {
+  margin-top: 15px;
+}
+
+.suggest-item {
+  background: linear-gradient(135deg, #0f172a, #020617);
+  border: 1px solid #22c55e33;
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.suggest-item .name {
+  font-size: 12px;
+  color: #22c55e;
+  margin-bottom: 4px;
+}
+
+.suggest-item .text {
+  font-size: 14px;
+  color: #fff;
+}
+
+.suggestions-wrapper {
+  margin-top: 15px;
+  height: 200px; /* 👈 انت تتحكم */
+  overflow-y: auto;
+  border: 1px solid #22c55e33;
+  border-radius: 12px;
+  padding: 10px;
+  background: #020617;
+}
+
+.suggestions-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.suggestions-wrapper::-webkit-scrollbar-thumb {
+  background: #22c55e;
+  border-radius: 10px;
+}
+
+
+
+
+
+.player-categories {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.cat-suggest {
+  padding: 8px;
+  border-radius: 10px;
+  border: none;
+  background: #0f172a;
+  color: #fff;
+  cursor: pointer;
 }

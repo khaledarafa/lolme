@@ -114,7 +114,7 @@ function getPlayerName() {
 
     console.log("✅ دخل الروم:", playerId);
 
-    window.location.href = `/room/${code}`;
+    window.location.href = `/room/${code}/player`;
   });
 
 });
