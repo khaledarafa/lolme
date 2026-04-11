@@ -1,27 +1,18 @@
----
+<!-- ---
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout>
     <main class="home-grid single-card">
-        <!-- <a id="host-start" class="home-card tilt-card start-card">
-            <img src="/images/default-og.webp" alt="ابدأ لعبة" />
-            <div class="content">
-                <h3>🎯 ابدأ لعبة خاصة 🔥</h3>
-            </div>
-        </a> -->
-
         <div class="home-card tilt-card start-card">
     <img src="/images/default-og.webp" alt="ابدأ لعبة" />
     
     <div class="content">
-        <!-- <h3>🎯 ابدأ لعبة جديده 🔥</h3> -->
         <input type="text" id="player-name" placeholder="اكتب اسمك يا نجم 😎" />
         <button id="host-start">ابدأ 🚀</button>
     </div>
 </div>
     </main>
-    <!-- مهم جداً -->
     <script type="module" src="/js/codes.js"></script>
     <script src="/js/tilt-cards.js" defer></script>
 </Layout>
@@ -78,7 +69,6 @@ import Layout from "../layouts/Layout.astro";
         color: var(--accent);
     }
 
-    /* input */
 #player-name {
     width: 100%;
     padding: 12px 14px;
@@ -102,7 +92,6 @@ import Layout from "../layouts/Layout.astro";
     background: #0f0f0f;
 }
 
-/* button */
 #host-start {
     width: 100%;
     padding: 12px;
@@ -116,17 +105,15 @@ import Layout from "../layouts/Layout.astro";
     transition: all 0.2s ease;
 }
 
-/* hover */
 #host-start:hover {
     transform: translateY(-2px) scale(1.02);
     box-shadow: 0 5px 15px rgba(0, 255, 153, 0.4);
 }
 
-/* click */
 #host-start:active {
     transform: scale(0.97);
 }
 #player-name {
     box-sizing: border-box;
 }
-</style>
+</style> -->
