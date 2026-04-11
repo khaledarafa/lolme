@@ -79,50 +79,67 @@ import Layout from "../../../layouts/Layout.astro";
             if (q) {
                 if (q.type === "choice" || !q.type) {
                     questionBox.innerHTML = `
-      <div class="question-card card">
-        <h2>${q.text}</h2>
+                        <div class="question-card card">
+                            <h2>${q.text}</h2>
 
-        <div class="answers">
-          ${q.options
-              .map(
-                  (opt) => `
-            <button class="answer-btn" data-answer="${opt}">
-              ${opt}
-            </button>
-          `,
-              )
-              .join("")}
-        </div>
+                            <div class="answers">
+                            ${q.options
+                                .map(
+                                    (opt) => `
+                                <button class="answer-btn" data-answer="${opt}">
+                                ${opt}
+                                </button>
+                            `,
+                                )
+                                .join("")}
+                            </div>
 
-        ${feedbackHTML}
-      </div>
-    `;
-                } else {
-                    questionBox.innerHTML = `
-      <div class="question-card card">
-        <h2>${q.text}</h2>
+                            ${feedbackHTML}
+                        </div>
+                        `;
+                                    } else {
+                                        questionBox.innerHTML = `
+                        <div class="question-card card">
+                            <h2>${q.text}</h2>
 
-        <input id="text-answer" placeholder="اكتب إجابتك 😏" />
-        <button id="send-answer">إرسال</button>
+                            <input id="text-answer" placeholder="اكتب إجابتك 😏" />
+                            <button id="send-answer">إرسال</button>
 
-        ${feedbackHTML}
-      </div>
-    `;
-                }
-            } else {
-                questionBox.innerHTML = `
-    <div class="question-card">
-      <h2>⏳ مستنيين الهوست...</h2>
-    </div>
-  `;
+                            ${feedbackHTML}
+                        </div>
+                        `;
+                                    }
+                                } else {
+                                    questionBox.innerHTML = `
+                        <div class="question-card">
+                        <h2>⏳ مستنيين الهوست...</h2>
+                        </div>
+                    `;
             }
             document.querySelectorAll(".answer-btn").forEach((btn) => {
                 const answer = btn.dataset.answer;
 
-                if (myAnswer) {
-                    btn.disabled = true;
-                }
+                // بيكشف الإجابة الصح حتى لو اللاعب غلط
+// if (myAnswer) {
+//   btn.disabled = true;
 
+//   if (answer === correctAnswer) {
+//     btn.style.background = "#22c55e"; // صح
+//   } else if (answer === myAnswer) {
+//     btn.style.background = "#ef4444"; // غلط
+//   }
+// }
+if (myAnswer) {
+  btn.disabled = true;
+
+  if (answer === myAnswer) {
+    const isCorrect = myAnswer === correctAnswer;
+
+    btn.style.background = isCorrect
+      ? "#22c55e" // صح
+      : "#ef4444"; // غلط
+  }
+}
                 btn.addEventListener("click", async () => {
                     if (myAnswer) return;
 
@@ -198,25 +215,25 @@ import Layout from "../../../layouts/Layout.astro";
                     .join("");
             }
         });
-document.querySelectorAll(".cat-suggest").forEach(btn => {
-  btn.addEventListener("click", async () => {
-    const category = btn.dataset.cat;
+        document.querySelectorAll(".cat-suggest").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+                const category = btn.dataset.cat;
 
-    const snap = await getDoc(roomRef);
-    const data = snap.data();
+                const snap = await getDoc(roomRef);
+                const data = snap.data();
 
-    const newSuggestion = {
-      text: "نلعب " + category,
-      player: playerId,
-      playerName: data.players?.[playerId]?.name || "لاعب 😏",
-      time: Date.now(),
-    };
+                const newSuggestion = {
+                    text: "نلعب " + category,
+                    player: playerId,
+                    playerName: data.players?.[playerId]?.name || "لاعب 😏",
+                    time: Date.now(),
+                };
 
-    await updateDoc(roomRef, {
-      suggestions: [...(data.suggestions || []), newSuggestion],
-    });
-  });
-});
+                await updateDoc(roomRef, {
+                    suggestions: [...(data.suggestions || []), newSuggestion],
+                });
+            });
+        });
         document
             .getElementById("send-suggest")
             ?.addEventListener("click", async () => {

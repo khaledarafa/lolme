@@ -1570,7 +1570,7 @@ h1 {
 
   color: white;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 1.5rem;
 }
 
 .cat-card.active {
@@ -1671,7 +1671,7 @@ h1 {
 
 /* كل لاعب */
 .player-chip {
-  background: #111827;
+  background: var(--bg);
   padding: 4px 8px;
   border-radius: 999px;
   /* 👈 pill شكل */

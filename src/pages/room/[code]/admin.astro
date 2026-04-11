@@ -6,12 +6,16 @@ import Layout from "../../../layouts/Layout.astro";
 
 <Layout>
     <div class="room-container">
-        <div style="font-size: x-large; text-align: center; 
-    margin-top: 16px;">🎮 كود الغرفه : {code} </div>
-        
+        <div
+            style="font-size: x-large; text-align: center; 
+    margin-top: 16px;"
+        >
+            🎮 كود الغرفه : {code}
+        </div>
+
         <div class="room-header">
             <div class="category-dropdown">
-                    <button id="open-admin">👑 شاشة الأدمن</button>
+                <button id="open-admin">👑 شاشة الأدمن</button>
                 <button class="dropdown-btn">🎯 الفئات ▼</button>
 
                 <div class="dropdown-menu">
@@ -34,7 +38,7 @@ import Layout from "../../../layouts/Layout.astro";
                     <div
                         class="cat-card cat-btn"
                         data-cat="deep"
-                        style="background-image:url('/images/deep.jpg')"
+                        style="background-image:url('/images/deep.webp')"
                     >
                         <span>🧠 عميق</span>
                     </div>
@@ -42,7 +46,7 @@ import Layout from "../../../layouts/Layout.astro";
                     <div
                         class="cat-card cat-btn"
                         data-cat="friends"
-                        style="background-image:url('/images/friends.jpg')"
+                        style="background-image:url('/images/friends.webp')"
                     >
                         <span>👯 صحاب</span>
                     </div>
@@ -50,7 +54,7 @@ import Layout from "../../../layouts/Layout.astro";
                     <div
                         class="cat-card cat-btn"
                         data-cat="love"
-                        style="background-image:url('/images/love.jpg')"
+                        style="background-image:url('/images/love.webp')"
                     >
                         <span>❤️ حب</span>
                     </div>
@@ -58,7 +62,7 @@ import Layout from "../../../layouts/Layout.astro";
                     <div
                         class="cat-card cat-btn"
                         data-cat="challenge"
-                        style="background-image:url('/images/challenge.jpg')"
+                        style="background-image:url('/images/challenge.webp')"
                     >
                         <span>🔥 تحدي</span>
                     </div>
@@ -66,7 +70,7 @@ import Layout from "../../../layouts/Layout.astro";
                     <div
                         class="cat-card cat-btn"
                         data-cat="embarrassing"
-                        style="background-image:url('/images/embarrassing.jpg')"
+                        style="background-image:url('/images/embarrassing.webp')"
                     >
                         <span>😳 إحراج</span>
                     </div>
@@ -74,7 +78,7 @@ import Layout from "../../../layouts/Layout.astro";
                     <div
                         class="cat-card cat-btn"
                         data-cat="songs"
-                        style="background-image:url('/images/songs.jpg')"
+                        style="background-image:url('/images/songs.webp')"
                     >
                         <span>🎵 أغاني</span>
                     </div>
@@ -82,7 +86,7 @@ import Layout from "../../../layouts/Layout.astro";
                     <div
                         class="cat-card cat-btn"
                         data-cat="football"
-                        style="background-image:url('/images/football.jpg')"
+                        style="background-image:url('/images/football.webp')"
                     >
                         <span>⚽ كورة</span>
                     </div>
@@ -90,23 +94,31 @@ import Layout from "../../../layouts/Layout.astro";
                     <div
                         class="cat-card cat-btn"
                         data-cat="hazoom"
-                        style="background-image:url('/images/hazoom.jpg')"
+                        style="background-image:url('/images/hazooma.jpeg')"
                     >
                         <span>💣 حزوم</span>
                     </div>
                 </div>
             </div>
-            
-                    <button id="start-game">🚀 ابدأ اللعبة</button>
-                    <button id="next-question">➡️ السؤال اللي بعده</button>
-                    <button id="show-results">📊 عرض النتائج</button>
-                    <button id="end-game">❌ اقفل الروم</button>
+
+            <button id="start-game">🚀 ابدأ اللعبة</button>
+            <button id="next-question">➡️ السؤال اللي بعده</button>
+            <button id="show-results">📊 عرض النتائج</button>
+            <button id="end-game">❌ اقفل الروم</button>
         </div>
-<div id="players-section" data-code={code}></div>
+        <div id="players-section" data-code={code}></div>
 
-                <div id="question-box"></div>
-                <div id="results-box"></div>
+        <div id="question-box"></div>
+        <div id="results-box"></div>
 
+        <div class="suggest-box">
+            <button id="send-suggest-admin">إرسال</button>
+            <input id="suggest-input-admin" placeholder="اقترح فئة 😏" />
+        </div>
+
+        <div class="suggestions-wrapper">
+            <div id="suggestions-list" class="suggestions-list"></div>
+        </div>
     </div>
     <script type="module">
         import { db } from "/js/firebase.js";
