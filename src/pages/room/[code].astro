@@ -657,27 +657,30 @@ import Layout from "../../layouts/Layout.astro";
                 // document.body.style.background = "#111";
             }
         });
-document.getElementById("send-suggest-admin")?.addEventListener("click", async () => {
-  const input = document.getElementById("suggest-input-admin");
-  const text = input.value.trim();
-  if (!text) return;
+        
+        document
+            .getElementById("send-suggest-admin")
+            ?.addEventListener("click", async () => {
+                const input = document.getElementById("suggest-input-admin");
+                const text = input.value.trim();
+                if (!text) return;
 
-  const snap = await getDoc(roomRef);
-  const data = snap.data();
+                const snap = await getDoc(roomRef);
+                const data = snap.data();
 
-  const newSuggestion = {
-    text,
-    player: playerId,
-    playerName: data.players?.[playerId]?.name || "👑 الأدمن",
-    time: Date.now(),
-  };
+                const newSuggestion = {
+                    text,
+                    player: playerId,
+                    playerName: data.players?.[playerId]?.name || "👑 الأدمن",
+                    time: Date.now(),
+                };
 
-  await updateDoc(roomRef, {
-    suggestions: [...(data.suggestions || []), newSuggestion],
-  });
+                await updateDoc(roomRef, {
+                    suggestions: [...(data.suggestions || []), newSuggestion],
+                });
 
-  input.value = "";
-});
+                input.value = "";
+            });
         // 🚀 start game
         document
             .getElementById("start-game")
@@ -731,8 +734,9 @@ document.getElementById("send-suggest-admin")?.addEventListener("click", async (
         document
             .getElementById("end-game")
             ?.addEventListener("click", async () => {
+                if (!confirm("متأكد إنك عايز تقفل الروم؟ 😏")) return;
                 await deleteDoc(roomRef);
-                alert("الروم اتقفلت 👋");
+                // alert("الروم اتقفلت 👋");
                 window.location.href = "/";
             });
         document
