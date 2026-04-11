@@ -1,0 +1,285 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+    <div class="how-container">
+        <h1>🎮 ازاي تلعب LOLME؟</h1>
+
+        <p class="intro">
+            لعبة جماعية سريعة ومضحكة 😏 ينفع تلعب لوحدك أو مع أصحابك
+        </p>
+
+        <!-- 👑 الجزء الأول -->
+        <div class="step">
+            <h3>1️⃣ اعمل روم</h3>
+            <div class="fake-code">
+  🔑 كود الغرفة:
+  <span>****</span>
+  <larg> ( الكود بيتغير مع كل غرفة )</larg>
+</div>
+            <p>
+                لما تبدأ اللعبة هيظهر لك كود في اول الصفحة 👆 الكود ده تديه لأصحابك عشان
+                يدخلوا معاك
+            </p>
+        </div>
+<div class="step">
+
+  <h3>1️⃣ دي الصفحة الرئيسية</h3>
+
+  <p> لو هتدحل لاعب مش ادمن
+    صاحبك هيديك كود اللعبة 👇  
+    هتكتبه هنا + تكتب اسمك وتدخل
+  </p>
+
+  <div class="real-preview">
+    <img src="/images/how-to-play2.png" alt="الصفحة الرئيسية" />
+    
+    <!-- <div class="overlay-text">
+      ✍️ اكتب الكود هنا وادخل اللعبة
+    </div> -->
+  </div>
+
+</div>
+        <!-- 👥 الجزء الثاني -->
+        <div class="step">
+            <h3>2️⃣ أصحابك يدخلوا بالكود</h3>
+            <p>كل واحد يكتب الكود + اسمه ويدخلوا اللعبة على طول 🎮</p>
+        </div>
+
+        <!-- 🎯 الجزء الثالث -->
+        <div class="step">
+            <h3>3️⃣ اختار فئة</h3>
+            <p>زي 😂 مضحك – 😏 صراحة – 🎵 أغاني وانت تتحكم في اللعب 👑</p>
+        </div>
+
+        <!-- 🚀 الجزء الرابع -->
+        <div class="step">
+            <h3>4️⃣ ابدأ اللعبة</h3>
+            <p>السؤال يظهر → الكل يجاوب وبعدها تضغط "السؤال اللي بعده"</p>
+        </div>
+
+        <!-- 🔁 الجزء الخامس -->
+        <div class="step">
+            <h3>5️⃣ كمل أو غيّر الفئة</h3>
+            <p>تقدر تكمل في نفس الفئة أو تغيّر وتبدأ من جديد 🔄</p>
+        </div>
+
+        <!-- 🎮 لعب لوحدك -->
+        <div class="solo">
+            <h3>🔥 ينفع تلعب لوحدك</h3>
+            <p>
+                عادي تبدأ روم وتلعب لوحدك جاوب الأسئلة وشوف نفسك قد إيه سريع 😏
+            </p>
+        </div>
+
+        <!-- 🚀 زرار البداية -->
+        <!-- <a href="/play" class="start-btn"> 🚀 ابدأ لعبة جديدة </a> -->
+    </div>
+
+    <style>
+        .how-container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .intro {
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .image-placeholder {
+            height: 180px;
+            border: 2px dashed #22c55e;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: #888;
+        }
+
+        .step {
+            background: #020617;
+            border: 1px solid #22c55e33;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .solo {
+            margin-top: 20px;
+            padding: 15px;
+            background: #111827;
+            border-radius: 12px;
+        }
+
+        .start-btn {
+            display: block;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            background: #22c55e;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+.fake-code span {
+  font-weight: bold;
+  color: #22c55e;
+  font-size: 18px;
+}
+
+.fake-code small {
+  display: block;
+  opacity: 0.7;
+  font-size: 12px;
+}
+
+.real-preview {
+  position: relative;
+  margin-top: 15px;
+}
+
+.real-preview img {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 12px;
+  border: 1px solid #22c55e33;
+}
+
+/* .overlay-text {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.6);
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 13px;
+} */
+
+
+
+
+
+    .home-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        max-width: 1000px;
+        margin: auto;
+        padding: 40px 8px;
+    }   
+    .single-card {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .home-card {
+        text-decoration: none;
+        color: inherit;
+        background: var(--bg-color);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px var(--shadow-color);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .home-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 10px rgb(241, 249, 16);
+    }
+
+    .home-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .home-card .content {
+        padding: 10px;
+        text-align: center;
+    }
+
+    .home-card h3 {
+        font-size: 1.1rem;
+        margin: 0;
+        color: var(--accent);
+    }
+
+    /* input */
+#player-name {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    outline: none;
+    background: #111;
+    color: #fff;
+    font-size: 0.95rem;
+    margin: 10px 0;
+    transition: all 0.2s ease;
+}
+
+#player-name::placeholder {
+    color: #888;
+}
+
+#player-name:focus {
+    border-color: #00ff99;
+    box-shadow: 0 0 8px rgba(0, 255, 153, 0.4);
+    background: #0f0f0f;
+}
+
+/* button */
+#host-start {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #00ff99, #00ccff);
+    color: #000;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* hover */
+#host-start:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 255, 153, 0.4);
+}
+
+/* click */
+#host-start:active {
+    transform: scale(0.97);
+}
+#player-name {
+    box-sizing: border-box;
+}
+    </style>
+    <main class="home-grid single-card">
+        <div class="home-card tilt-card start-card">
+    <img src="/images/default-og.webp" alt="ابدأ لعبة" />
+    
+    <div class="content">
+        <!-- <h3>🎯 ابدأ لعبة جديده 🔥</h3> -->
+        <input type="text" id="player-name" placeholder="اكتب اسمك يا نجم 😎" />
+        <button id="host-start">ابدأ 🚀</button>
+    </div>
+</div>
+    </main>
+    <!-- مهم جداً -->
+    <script type="module" src="/js/codes.js"></script>
+    <script src="/js/tilt-cards.js" defer></script>
+</Layout>

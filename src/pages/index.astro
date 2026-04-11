@@ -83,12 +83,14 @@ const homeButtons = [
 
   <div class="play-box">
     
-    <button id="host-start" class="play-btn">
+    <!-- <button id="host-start" class="play-btn">
       🎯 ابدأ لعبة
-    </button>
+    </button> -->
 
     <!-- <div class="divider">أو</div> -->
-
+<a href="/how-to-play" class="play-btn secondary">
+🚀 ابدأ لعبة جديدة 
+</a>
     <input 
       id="room-code" 
       type="text" 
@@ -105,7 +107,9 @@ const homeButtons = [
     <button id="join-game" class="play-btn secondary">
    ادخل اللعبه 
     </button>
-
+<!-- <a href="/how-to-play" class="play-btn secondary">
+  شرح اللعب
+</a> -->
   </div>
 </section>
   <!-- <h2 style="text-align:center; margin:0px;">اختار حاجة تضحكك حالًا 👇</h2> -->
@@ -284,5 +288,32 @@ const homeButtons = [
 .divider {
   margin: 10px 0;
   opacity: 0.6;
+}
+
+
+.play-btn {
+  display: block;
+  width: 100%;
+
+  box-sizing: border-box;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #22c55e55;
+
+  background: var(--card);
+  color: white;
+  text-align: center;
+
+  font-size: 16px;
+  cursor: pointer;
+
+  transition: 0.2s;
+  text-decoration: none; /* 👈 مهم لو <a> */
+}
+
+.play-btn:hover {
+  background: #22c55e;
+  color: black;
+  transform: translateY(-2px);
 }
 </style>
