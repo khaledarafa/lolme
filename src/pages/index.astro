@@ -61,9 +61,11 @@ const homeButtons = [
     <p style="margin: 0px;"> أدوات ترفيهية هايفة ومجنونة 🕺🔥</p>
     <p> LOLME هو مكانك للضحك والهزار! ارفع صورة، اكتب ميمز، وروّست أصحابك بطريقة مرحة 😎 </p>
   </section> -->
+
   <section style="text-align:center; padding: 0px 0.1rem;">
-  <button id="install-btn" class="appbtn">⬇️ حمّل LOLME كتطبيق</button>
+  <button id="install-btn" class="install-btn appbtn">📲 ثبت التطبيق</button>
 </section>
+
   <section style="text-align:center; padding: 0px 0.1rem;">
     <p> جرعة خفيفة من المرح اليومي 😌 </p>
   </section>
@@ -152,7 +154,7 @@ const homeButtons = [
       ))}
     </div>
   </section>
-
+<script type="module" src="/js/install-btn.js"></script> 
   <!-- <script src="/js/install-btn.js" defer></script> -->
   <!-- <script src="/js/open-meme.js"   defer></script> -->
   <script src="/js/tilt-cards.js"  defer></script>
@@ -205,7 +207,7 @@ const homeButtons = [
     color: var(--accent);
   }
 
-  .appbtn {
+  /* .appbtn {
     background: transparent;
     color: var(--accent);
     padding: 10px 20px;
@@ -213,7 +215,7 @@ const homeButtons = [
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
-  }
+  } */
 
   .tilt-card, .tilt-card .product-card-inner {
     will-change: transform, box-shadow;

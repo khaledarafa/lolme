@@ -1,5 +1,5 @@
 {
-    "name": "LOLME - مولد ميمز",
+    "name": "LOLME - Game",
     "short_name": "LOLME",
     "start_url": "/",
     "display": "standalone",
@@ -19,8 +19,8 @@
     ],
     "shortcuts": [
       {
-        "name": "مولد ميمز",
-        "url": "/meme",
+        "name": "LOLME",
+        "url": "/",
         "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
       }
     ]

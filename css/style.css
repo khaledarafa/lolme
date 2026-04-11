@@ -179,9 +179,10 @@ textarea {
 
 /* ======== Buttons ======== */
 .appbtn {
-  display: inline-block;
+  display: block;
   padding: 10px;
-  margin-bottom: 50px;
+  margin: 20px auto;
+  /* margin-bottom: 50px; */
   /* background: var(--bg); */
   color: white;
   border: none;
