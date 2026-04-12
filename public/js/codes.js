@@ -79,7 +79,7 @@ function getPlayerName() {
       createdAt: Date.now()
     });
 
-    window.location.href = `/room/${roomCode}`;
+    window.location.href = `/room/${roomCode}/setup`;
   });
   // 🚪 JOIN ROOM
   joinBtn?.addEventListener("click", async () => {

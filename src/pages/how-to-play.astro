@@ -14,33 +14,27 @@ import Layout from "../layouts/Layout.astro";
         <div class="step">
             <h3>1️⃣ اعمل روم</h3>
             <div class="fake-code">
-  🔑 كود الغرفة:
-  <span>****</span>
-  <larg> ( الكود بيتغير مع كل غرفة )</larg>
-</div>
+                🔑 كود الغرفة:
+                <span>****</span>
+                <larg> ( الكود بيتغير مع كل غرفة )</larg>
+            </div>
             <p>
-                لما تبدأ اللعبة هيظهر لك كود في اول الصفحة 👆 الكود ده تديه لأصحابك عشان
-                يدخلوا معاك
+                لما تبدأ اللعبة هيظهر لك كود في اول الصفحة 👆 الكود ده تديه
+                لأصحابك عشان يدخلوا معاك
             </p>
         </div>
-<div class="step">
+        <div class="step">
+            <h3>1️⃣ دي الصفحة الرئيسية</h3>
 
-  <h3>1️⃣ دي الصفحة الرئيسية</h3>
+            <p>
+                لو هتدحل لاعب مش ادمن صاحبك هيديك كود اللعبة 👇 هتكتبه هنا +
+                تكتب اسمك وتدخل
+            </p>
 
-  <p> لو هتدحل لاعب مش ادمن
-    صاحبك هيديك كود اللعبة 👇  
-    هتكتبه هنا + تكتب اسمك وتدخل
-  </p>
-
-  <div class="real-preview">
-    <img src="/images/how-to-play2.png" alt="الصفحة الرئيسية" />
-    
-    <!-- <div class="overlay-text">
-      ✍️ اكتب الكود هنا وادخل اللعبة
-    </div> -->
-  </div>
-
-</div>
+            <div class="real-preview">
+                <img src="/images/how-to-play2.png" alt="الصفحة الرئيسية" />
+            </div>
+        </div>
         <!-- 👥 الجزء الثاني -->
         <div class="step">
             <h3>2️⃣ أصحابك يدخلوا بالكود</h3>
@@ -127,157 +121,145 @@ import Layout from "../layouts/Layout.astro";
             font-size: 18px;
         }
 
-.fake-code span {
-  font-weight: bold;
-  color: #22c55e;
-  font-size: 18px;
-}
+        .fake-code span {
+            font-weight: bold;
+            color: #22c55e;
+            font-size: 18px;
+        }
 
-.fake-code small {
-  display: block;
-  opacity: 0.7;
-  font-size: 12px;
-}
+        .fake-code small {
+            display: block;
+            opacity: 0.7;
+            font-size: 12px;
+        }
 
-.real-preview {
-  position: relative;
-  margin-top: 15px;
-}
+        .real-preview {
+            position: relative;
+            margin-top: 15px;
+        }
 
-.real-preview img {
-  width: 100%;
-  max-width: 600px;
-  border-radius: 12px;
-  border: 1px solid #22c55e33;
-}
+        .real-preview img {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 12px;
+            border: 1px solid #22c55e33;
+        }
+        .home-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            max-width: 1000px;
+            margin: auto;
+            padding: 40px 8px;
+        }
+        .single-card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .home-card {
+            text-decoration: none;
+            color: inherit;
+            background: var(--bg-color);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
 
-/* .overlay-text {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  right: 10px;
-  background: rgba(0,0,0,0.6);
-  padding: 8px;
-  border-radius: 8px;
-  font-size: 13px;
-} */
+        .home-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 10px rgb(241, 249, 16);
+        }
 
+        .home-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
 
+        .home-card .content {
+            padding: 10px;
+            text-align: center;
+        }
 
+        .home-card h3 {
+            font-size: 1.1rem;
+            margin: 0;
+            color: var(--accent);
+        }
 
+        /* input */
+        #player-name {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            outline: none;
+            background: #111;
+            color: #fff;
+            font-size: 0.95rem;
+            margin: 10px 0;
+            transition: all 0.2s ease;
+        }
 
-    .home-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 25px;
-        max-width: 1000px;
-        margin: auto;
-        padding: 40px 8px;
-    }   
-    .single-card {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .home-card {
-        text-decoration: none;
-        color: inherit;
-        background: var(--bg-color);
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 4px 10px var(--shadow-color);
-        transition:
-            transform 0.2s ease,
-            box-shadow 0.2s ease;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
+        #player-name::placeholder {
+            color: #888;
+        }
 
-    .home-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 4px 10px rgb(241, 249, 16);
-    }
+        #player-name:focus {
+            border-color: #00ff99;
+            box-shadow: 0 0 8px rgba(0, 255, 153, 0.4);
+            background: #0f0f0f;
+        }
 
-    .home-card img {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
-    }
+        /* button */
+        #host-start {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #00ff99, #00ccff);
+            color: #000;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-    .home-card .content {
-        padding: 10px;
-        text-align: center;
-    }
+        /* hover */
+        #host-start:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 255, 153, 0.4);
+        }
 
-    .home-card h3 {
-        font-size: 1.1rem;
-        margin: 0;
-        color: var(--accent);
-    }
-
-    /* input */
-#player-name {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    outline: none;
-    background: #111;
-    color: #fff;
-    font-size: 0.95rem;
-    margin: 10px 0;
-    transition: all 0.2s ease;
-}
-
-#player-name::placeholder {
-    color: #888;
-}
-
-#player-name:focus {
-    border-color: #00ff99;
-    box-shadow: 0 0 8px rgba(0, 255, 153, 0.4);
-    background: #0f0f0f;
-}
-
-/* button */
-#host-start {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #00ff99, #00ccff);
-    color: #000;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-/* hover */
-#host-start:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 5px 15px rgba(0, 255, 153, 0.4);
-}
-
-/* click */
-#host-start:active {
-    transform: scale(0.97);
-}
-#player-name {
-    box-sizing: border-box;
-}
+        /* click */
+        #host-start:active {
+            transform: scale(0.97);
+        }
+        #player-name {
+            box-sizing: border-box;
+        }
     </style>
     <main class="home-grid single-card">
         <div class="home-card tilt-card start-card">
-    <img src="/images/default-og.webp" alt="ابدأ لعبة" />
-    
-    <div class="content">
-        <!-- <h3>🎯 ابدأ لعبة جديده 🔥</h3> -->
-        <input type="text" id="player-name" placeholder="اكتب اسمك يا نجم 😎" />
-        <button id="host-start">ابدأ 🚀</button>
-    </div>
-</div>
+            <img src="/images/default-og.webp" alt="ابدأ لعبة" />
+
+            <div class="content">
+                <!-- <h3>🎯 ابدأ لعبة جديده 🔥</h3> -->
+                <input
+                    type="text"
+                    id="player-name"
+                    placeholder="اكتب اسمك يا نجم 😎"
+                />
+                <button id="host-start">ابدأ 🚀</button>
+            </div>
+        </div>
     </main>
     <!-- مهم جداً -->
     <script type="module" src="/js/codes.js"></script>

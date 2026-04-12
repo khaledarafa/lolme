@@ -6,12 +6,7 @@ import Layout from "../../layouts/Layout.astro";
 
 <Layout>
     <div class="room-container">
-        <div
-            style="font-size: x-large; text-align: center; 
-    margin-top: 16px;"
-        >
-            🎮 كود الغرفه : {code}
-        </div>
+        <div style="font-size: x-large; text-align: center; margin-top: 16px;" > 🎮 كود الغرفه : {code} </div>
 
         <div class="room-header">
             <div class="category-dropdown">
@@ -122,22 +117,12 @@ import Layout from "../../layouts/Layout.astro";
     </div>
     <script type="module">
         import { db } from "/js/firebase.js";
-        import {
-            doc,
-            onSnapshot,
-            updateDoc,
-            deleteDoc,
-            collection,
-            query,
-            where,
-            getDocs,
-            getDoc,
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { doc, onSnapshot, updateDoc, deleteDoc, collection, query, where, getDocs, getDoc, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         const normalize = (str) =>
             str?.toLowerCase().trim().replace(/[أإآ]/g, "ا"); // كل الألف زي بعض .replace(/ة/g, "ه") .replace(/ى/g, "ي") .replace(/\s+/g, " ");
         async function calculateScores(data) {
-            const category = data.questionCategory;
-            const currentIndex = data.currentIndex?.[category] ?? 0;
+            // const category = data.questionCategory;
+            // const currentIndex = data.currentIndex?.[category] ?? 0;
 
             const currentAnswers =
                 data.answers?.[category]?.[currentIndex] || {};
@@ -195,37 +180,42 @@ import Layout from "../../layouts/Layout.astro";
                 [`scoredQuestions.${category}_${currentIndex}`]: true,
             });
         }
-        document
-            .getElementById("next-question")
-            ?.addEventListener("click", async () => {
-                const snap = await getDoc(roomRef);
-                const data = snap.data();
+document.getElementById("next-question")?.addEventListener("click", async () => {
+  const snap = await getDoc(roomRef);
+  const data = snap.data();
 
-                await calculateScores(data);
-                const category = data.questionCategory;
-                const currentIndex = data.currentIndex?.[category] ?? -1;
-                const nextIndex = currentIndex + 1;
+  let catIndex = data.currentCategoryIndex ?? 0;
+  let qIndex = data.currentQuestionIndex ?? 0;
 
-                const list = data.questionsList || [];
+  const gamePlan = data.gamePlan || [];
+  const currentCategory = gamePlan[catIndex];
 
-                if (nextIndex >= list.length) {
-                    document.getElementById("question-box").innerHTML = `
-                        <div class="question-card">
-                            <h2>🏁 خلصت الأسئلة في الفئة دي</h2>
-                        </div>
-                    `;
-                    return;
-                }
+  if (!currentCategory) return;
 
-                const q = list[nextIndex];
-                await updateDoc(roomRef, {
-                    [`currentIndex.${category}`]: nextIndex,
-                    question: q,
-                    [`answers.${category}.${nextIndex}`]: {},
+  const questions = currentCategory.questions || [];
 
-                    [`questionStartTimes.${category}_${nextIndex}`]: Date.now(), // 👈 المهم
-                });
-            });
+  // 👇 لو لسه في أسئلة
+  if (qIndex + 1 < questions.length) {
+    await updateDoc(roomRef, {
+      currentQuestionIndex: qIndex + 1,
+    });
+  } else {
+    // 👇 خلص الفئة → نروح للي بعدها
+    if (catIndex + 1 < gamePlan.length) {
+      await updateDoc(roomRef, {
+        currentCategoryIndex: catIndex + 1,
+        currentQuestionIndex: 0,
+      });
+    } else {
+      // 👇 خلصت اللعبة كلها
+      document.getElementById("question-box").innerHTML = `
+        <div class="question-card">
+          <h2>🏁 خلصت الجولة يا نجم!</h2>
+        </div>
+      `;
+    }
+  }
+});
         // const container = document.getElementById("players");
         const container = document.getElementById("players-section");
         const controls = document.getElementById("host-controls");
@@ -369,7 +359,15 @@ import Layout from "../../layouts/Layout.astro";
             );
 
             const playersCount = activePlayers.length;
+            const gamePlan = data.gamePlan || [];
 
+            const catIndex = data.currentCategoryIndex ?? 0;
+            const qIndex = data.currentQuestionIndex ?? 0;
+
+            const currentCategory = gamePlan[catIndex];
+            const q = currentCategory?.questions?.[qIndex];
+
+            const category = currentCategory?.category;
             // const myName = data.players?.[playerId]?.name;
 
             section.innerHTML = `
@@ -395,13 +393,13 @@ import Layout from "../../layouts/Layout.astro";
                 </div>
                 `;
             const questionBox = document.getElementById("question-box");
-            const category = data.questionCategory;
-            const currentIndex = data.currentIndex?.[category] ?? 0;
+            // const category = data.questionCategory;
+            // const currentIndex = data.currentIndex?.[category] ?? 0;
 
             const myAnswer =
                 data.answers?.[category]?.[currentIndex]?.[playerId]?.answer;
 
-            const q = data.question;
+            // const q = data.question;
             const correctAnswer = data.question?.correct;
 
             console.log("🧠 السؤال الحالي:", data.question);
@@ -484,7 +482,7 @@ import Layout from "../../layouts/Layout.astro";
                         }
 
                         await updateDoc(roomRef, {
-                            [`answers.${category}.${currentIndex}.${playerId}`]:
+                            [`answers.${catIndex}_${qIndex}.${playerId}`]:
                                 {
                                     answer,
                                     correctAnswer,
@@ -518,7 +516,7 @@ import Layout from "../../layouts/Layout.astro";
                         if (!startTime) return;
 
                         await updateDoc(roomRef, {
-                            [`answers.${category}.${currentIndex}.${playerId}`]:
+                            [`answers.${catIndex}_${qIndex}.${playerId}`]:
                                 {
                                     answer,
                                     correctAnswer,
@@ -657,7 +655,7 @@ import Layout from "../../layouts/Layout.astro";
                 // document.body.style.background = "#111";
             }
         });
-        
+
         document
             .getElementById("send-suggest-admin")
             ?.addEventListener("click", async () => {
@@ -681,55 +679,7 @@ import Layout from "../../layouts/Layout.astro";
 
                 input.value = "";
             });
-        // 🚀 start game
-        document
-            .getElementById("start-game")
-            ?.addEventListener("click", async () => {
-                const snap = await getDoc(roomRef);
-                const data = snap.data();
 
-                const category = data.questionCategory;
-
-                if (!category) {
-                    alert("اختار فئة الأول يا نجم 😏");
-                    return;
-                }
-
-                const qSnap = await getDocs(
-                    query(
-                        collection(db, "questions"),
-                        where("approved", "==", true),
-                        where("category", "==", category),
-                    ),
-                );
-
-                const list = qSnap.docs.map((doc) => doc.data());
-
-                // shuffle
-                list.sort(() => Math.random() - 0.5);
-
-                if (list.length === 0) {
-                    document.getElementById("question-box").innerHTML = `
-                        <div class="question-card">
-                            <h2>😅 مفيش أسئلة في الفئة دي</h2>
-                        </div>
-                    `;
-                    return;
-                }
-
-                await updateDoc(roomRef, {
-                    status: "playing",
-
-                    questionsList: list,
-                    question: list[0],
-
-                    // 👇 مهم
-                    [`answers.${category}`]: {},
-                    [`currentIndex.${category}`]: 0,
-
-                    [`questionStartTimes.${category}_0`]: Date.now(),
-                });
-            });
         // ❌ end game
         document
             .getElementById("end-game")

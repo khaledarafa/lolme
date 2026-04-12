@@ -1,0 +1,301 @@
+---
+// src/pages/room/[code]/setup.astro
+const { code } = Astro.params;
+import Layout from "../../../layouts/Layout.astro";
+---
+
+<Layout>
+    <div class="setup-container">
+        <h1>🎯 إعداد الجولة</h1>
+        <p class="sub">اختار الفئات وحدد عدد الأسئلة 👇</p>
+
+        <!-- ⚙️ عدد الأسئلة -->
+        <div class="questions-count">
+            <button class="q-btn active" data-count="3">3 أسئلة</button>
+            <button class="q-btn" data-count="5">5 أسئلة</button>
+            <button class="q-btn" data-count="7">7 أسئلة</button>
+        </div>
+        <div id="setup-root" data-code={code}></div>
+        <!-- 🎴 الفئات -->
+        <div class="categories-grid">
+            <div
+                class="cat-card"
+                data-cat="funny"
+                style="background-image:url('/images/funny.webp')"
+            >
+                <span>😂 مضحك</span>
+            </div>
+
+            <div
+                class="cat-card"
+                data-cat="truth"
+                style="background-image:url('/images/truth.webp')"
+            >
+                <span>😏 صراحة</span>
+            </div>
+
+            <div
+                class="cat-card"
+                data-cat="deep"
+                style="background-image:url('/images/deep.webp')"
+            >
+                <span>🧠 عميق</span>
+            </div>
+
+            <div
+                class="cat-card"
+                data-cat="friends"
+                style="background-image:url('/images/friends.webp')"
+            >
+                <span>👯 صحاب</span>
+            </div>
+
+            <div
+                class="cat-card"
+                data-cat="love"
+                style="background-image:url('/images/love.webp')"
+            >
+                <span>❤️ حب</span>
+            </div>
+
+            <div
+                class="cat-card"
+                data-cat="challenge"
+                style="background-image:url('/images/challenge.webp')"
+            >
+                <span>🔥 تحدي</span>
+            </div>
+
+            <div
+                class="cat-card"
+                data-cat="embarrassing"
+                style="background-image:url('/images/embarrassing.webp')"
+            >
+                <span>😳 إحراج</span>
+            </div>
+
+            <div
+                class="cat-card"
+                data-cat="songs"
+                style="background-image:url('/images/songs.webp')"
+            >
+                <span>🎵 أغاني</span>
+            </div>
+
+            <div
+                class="cat-card"
+                data-cat="football"
+                style="background-image:url('/images/football.webp')"
+            >
+                <span>⚽ كورة</span>
+            </div>
+
+            <div
+                class="cat-card"
+                data-cat="hazoom"
+                style="background-image:url('/images/hazooma.jpeg')"
+            >
+                <span>💣 حزوم</span>
+            </div>
+        </div>
+        <p id="summary"></p>
+        <!-- 🚀 زرار البداية -->
+        <button id="start-round" class="start-btn"> 🚀 ابدأ الجولة </button>
+    </div>
+
+    <style>
+        .setup-container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .sub {
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+
+        .questions-count {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .q-btn {
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            background: #222;
+            color: #fff;
+        }
+
+        .q-btn.active {
+            background: #3b82f6;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        /* .cat-card {
+      height: 100px;
+      border-radius: 15px;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: flex-end;
+      padding: 10px;
+      cursor: pointer;
+      position: relative;
+      border: 2px solid transparent;
+    } */
+
+        /* .cat-card span {
+      background: rgba(0,0,0,0.5);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+    } */
+
+        /* .cat-card.active {
+      border: 2px solid #3b82f6;
+      transform: scale(1.05);
+    } */
+
+        .start-btn {
+            margin-top: 25px;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 12px;
+            background: #10b981;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+
+    <script type="module">
+        import { db } from "/js/firebase.js";
+        import { doc, updateDoc, collection, query, where, getDocs, setDoc, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        async function buildGamePlan(selectedCategories, questionsCount) {
+            const gamePlan = [];
+
+            for (const cat of selectedCategories) {
+                const q = query(
+                    collection(db, "questions"),
+                    where("approved", "==", true),
+                    where("category", "==", cat),
+                );
+
+                const snap = await getDocs(q);
+
+                let list = snap.docs.map((d) => d.data());
+
+                // shuffle
+                list.sort(() => Math.random() - 0.5);
+
+                list = list.slice(0, questionsCount);
+
+                gamePlan.push({
+                    category: cat,
+                    questions: list,
+                });
+            }
+
+            return gamePlan;
+        }
+        async function validateCategories() {
+            for (const cat of selectedCategories) {
+                const q = query(
+                    collection(db, "questions"),
+                    where("approved", "==", true),
+                    where("category", "==", cat),
+                );
+
+                const snap = await getDocs(q);
+
+                if (snap.size < questionsCount) {
+                    alert(`❌ الفئة (${cat}) فيها ${snap.size} سؤال بس`);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        const roomCode = document.getElementById("setup-root").dataset.code;
+        const roomRef = doc(db, "rooms", roomCode);
+
+        let selectedCategories = [];
+        let questionsCount = 3;
+
+        // 🎯 اختيار عدد الأسئلة
+        document.querySelectorAll(".q-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                document
+                    .querySelectorAll(".q-btn")
+                    .forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+                questionsCount = Number(btn.dataset.count);
+            });
+        });
+
+        // 🎴 اختيار الفئات
+        document.querySelectorAll(".cat-card").forEach((card) => {
+            card.addEventListener("click", () => {
+                const cat = card.dataset.cat;
+
+                if (selectedCategories.includes(cat)) {
+                    selectedCategories = selectedCategories.filter(
+                        (c) => c !== cat,
+                    );
+                    card.classList.remove("active");
+                } else {
+                    selectedCategories.push(cat);
+                    card.classList.add("active");
+                }
+            });
+        });
+
+        document.addEventListener("click", () => {
+            const total = selectedCategories.length * questionsCount;
+            document.getElementById("summary").innerText =
+                `🎯 ${selectedCategories.length} فئات = ${total} سؤال`;
+        });
+
+        // 🚀 بدء الجولة
+        document
+            .getElementById("start-round")
+            .addEventListener("click", async () => {
+                if (selectedCategories.length === 0) {
+                    alert("اختار فئة 😏");
+                    return;
+                }
+
+                const gamePlan = await buildGamePlan(
+                    selectedCategories,
+                    questionsCount,
+                );
+
+                await setDoc(
+                    roomRef,
+                    {
+                        gamePlan,
+                        currentCategoryIndex: 0,
+                        currentQuestionIndex: 0,
+                        status: "playing",
+                    },
+                    { merge: true },
+                );
+
+                // 👇 روح للعبة
+                window.location.href = `/room/${roomCode}/board`;
+            });
+    </script>
+</Layout>

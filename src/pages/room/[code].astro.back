@@ -3,54 +3,138 @@
 const { code } = Astro.params;
 import Layout from "../../layouts/Layout.astro";
 ---
-
+<!-- الصفحه دي قبل تغيير نظام الفئات والغاء الدروب داون  -->
 <Layout>
     <div class="room-container">
-        <h1>🎮 غرفة اللعبة</h1>
-        <p>الكود: {code}</p>
-        <div id="role-box"></div>
-        <!-- players -->
-        <div id="players" data-code={code}></div>
-        <div id="me-box"></div>
-
-        <!-- host controls -->
-
-        <div id="category-buttons" class="category-buttons">
-            <button class="cat-btn" data-cat="funny">😂 مضحك</button>
-            <button class="cat-btn" data-cat="truth">😏 صراحة</button>
-            <button class="cat-btn" data-cat="deep">🧠 عميق</button>
-            <button class="cat-btn" data-cat="friends">👯 صحاب</button>
-            <button class="cat-btn" data-cat="love">❤️ حب</button>
-            <button class="cat-btn" data-cat="challenge">🔥 تحدي</button>
-            <button class="cat-btn" data-cat="embarrassing">😳 إحراج</button>
-            <button class="cat-btn" data-cat="songs">🎵 أغاني</button>
-            <button class="cat-btn" data-cat="football">⚽ كورة</button>
-            <button class="cat-btn" data-cat="hazoom">💣 اسئلة حزوم</button>
+        <div
+            style="font-size: x-large; text-align: center; 
+    margin-top: 16px;"
+        >
+            🎮 كود الغرفه : {code}
         </div>
 
-        <div id="host-controls" class="host-box card">
-            <button id="open-admin">👑 شاشة الأدمن</button>
-            <h3>👑 تحكم الهوست</h3>
+        <div class="room-header">
+            <div class="category-dropdown">
+                <button id="open-admin">👑 شاشة الأدمن</button>
+                <button class="dropdown-btn">🎯 الفئات ▼</button>
+
+                <div class="dropdown-menu">
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="funny"
+                        style="background-image:url('/images/funny.webp')"
+                    >
+                        <span>😂 مضحك</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="truth"
+                        style="background-image:url('/images/truth.webp')"
+                    >
+                        <span>😏 صراحة</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="deep"
+                        style="background-image:url('/images/deep.webp')"
+                    >
+                        <span>🧠 عميق</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="friends"
+                        style="background-image:url('/images/friends.webp')"
+                    >
+                        <span>👯 صحاب</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="love"
+                        style="background-image:url('/images/love.webp')"
+                    >
+                        <span>❤️ حب</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="challenge"
+                        style="background-image:url('/images/challenge.webp')"
+                    >
+                        <span>🔥 تحدي</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="embarrassing"
+                        style="background-image:url('/images/embarrassing.webp')"
+                    >
+                        <span>😳 إحراج</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="songs"
+                        style="background-image:url('/images/songs.webp')"
+                    >
+                        <span>🎵 أغاني</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="football"
+                        style="background-image:url('/images/football.webp')"
+                    >
+                        <span>⚽ كورة</span>
+                    </div>
+
+                    <div
+                        class="cat-card cat-btn"
+                        data-cat="hazoom"
+                        style="background-image:url('/images/hazooma.jpeg')"
+                    >
+                        <span>💣 حزوم</span>
+                    </div>
+                </div>
+            </div>
+
             <button id="start-game">🚀 ابدأ اللعبة</button>
             <button id="next-question">➡️ السؤال اللي بعده</button>
             <button id="show-results">📊 عرض النتائج</button>
             <button id="end-game">❌ اقفل الروم</button>
         </div>
+        <div id="players-section" data-code={code}></div>
 
         <div id="question-box"></div>
         <div id="results-box"></div>
+
+        <div class="suggest-box">
+            <button id="send-suggest-admin">إرسال</button>
+            <input id="suggest-input-admin" placeholder="اقترح فئة 😏" />
+        </div>
+
+        <div class="suggestions-wrapper">
+            <div id="suggestions-list" class="suggestions-list"></div>
+        </div>
     </div>
     <script type="module">
         import { db } from "/js/firebase.js";
-        import { doc, onSnapshot, updateDoc, deleteDoc, collection, query, where, getDocs, getDoc, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import {
+            doc,
+            onSnapshot,
+            updateDoc,
+            deleteDoc,
+            collection,
+            query,
+            where,
+            getDocs,
+            getDoc,
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         const normalize = (str) =>
-            str
-                ?.toLowerCase()
-                .trim()
-                .replace(/[أإآ]/g, "ا") // كل الألف زي بعض
-                .replace(/ة/g, "ه")
-                .replace(/ى/g, "ي")
-                .replace(/\s+/g, " ");
+            str?.toLowerCase().trim().replace(/[أإآ]/g, "ا"); // كل الألف زي بعض .replace(/ة/g, "ه") .replace(/ى/g, "ي") .replace(/\s+/g, " ");
         async function calculateScores(data) {
             const category = data.questionCategory;
             const currentIndex = data.currentIndex?.[category] ?? 0;
@@ -142,7 +226,8 @@ import Layout from "../../layouts/Layout.astro";
                     [`questionStartTimes.${category}_${nextIndex}`]: Date.now(), // 👈 المهم
                 });
             });
-        const container = document.getElementById("players");
+        // const container = document.getElementById("players");
+        const container = document.getElementById("players-section");
         const controls = document.getElementById("host-controls");
 
         const roomCode = container.dataset.code;
@@ -155,57 +240,10 @@ import Layout from "../../layouts/Layout.astro";
             console.log("🧠 playerId:", playerId);
         }
 
-        const meBox = document.getElementById("me-box");
+        // const meBox = document.getElementById("me-box");
         const roomRef = doc(db, "rooms", roomCode);
 
         loadPlayerId();
-
-        //         localStorage → بيعيش حتى بعد الريفريش ❌
-        // async function loadCategoryCounts() {
-        //     const catButtons = document.querySelectorAll(".cat-btn");
-
-        //     // 🧠 شوف لو في كاش
-        //     const cached = localStorage.getItem("categoryCounts");
-
-        //     if (cached) {
-        //         const counts = JSON.parse(cached);
-
-        //         catButtons.forEach((btn) => {
-        //             const category = btn.dataset.cat;
-        //             if (counts[category] !== undefined) {
-        //                 btn.innerHTML += ` (${counts[category]})`;
-        //             }
-        //         });
-
-        //         console.log("⚡ جاب من الكاش");
-        //         return;
-        //     }
-
-        //     // 🔥 أول مرة بس
-        //     const counts = {};
-
-        //     for (const btn of catButtons) {
-        //         const category = btn.dataset.cat;
-
-        //         const q = query(
-        //             collection(db, "questions"),
-        //             where("approved", "==", true),
-        //             where("category", "==", category),
-        //         );
-
-        //         const snap = await getDocs(q);
-
-        //         const count = snap.size;
-        //         counts[category] = count;
-
-        //         btn.innerHTML += ` (${count})`;
-        //     }
-
-        //     // 💾 خزّن
-        //     localStorage.setItem("categoryCounts", JSON.stringify(counts));
-
-        //     console.log("💾 اتحفظ في الكاش");
-        // }
 
         // sessionStorage → بيتمسح لما تعمل refresh أو تقفل التاب ✅
         async function loadCategoryCounts() {
@@ -255,22 +293,6 @@ import Layout from "../../layouts/Layout.astro";
         }
 
         loadCategoryCounts();
-
-        async function getRandomQuestionFromCategory(category) {
-            const q = query(
-                collection(db, "questions"),
-                where("approved", "==", true),
-                where("category", "==", category),
-            );
-
-            const snap = await getDocs(q);
-
-            const list = snap.docs.map((doc) => doc.data());
-
-            if (list.length === 0) return null;
-
-            return list[Math.floor(Math.random() * list.length)];
-        }
 
         const catButtons = document.querySelectorAll(".cat-btn");
 
@@ -338,7 +360,8 @@ import Layout from "../../layouts/Layout.astro";
             console.log("🎯 isHost:", playerId === data.hostId);
 
             console.log("🔥 room:", data);
-            const roleBox = document.getElementById("role-box");
+            const section = document.getElementById("players-section");
+
             const now = Date.now();
 
             const activePlayers = Object.entries(data.players || {}).filter(
@@ -346,40 +369,31 @@ import Layout from "../../layouts/Layout.astro";
             );
 
             const playersCount = activePlayers.length;
-            if (playerId === data.hostId) {
-                roleBox.innerHTML = `
-                👑 انت الهوست - انت اللي بتتحكم
-                <br>👥 عدد اللاعبين: ${playersCount}
-                `;
-            } else {
-                roleBox.innerHTML = "🎮 انت لاعب";
-            }
-            // 👥 players
-            container.innerHTML = "<h3>👥 اللاعبين:</h3>";
 
-            Object.entries(data.players || {}).forEach(([id, player]) => {
-                const div = document.createElement("div");
-                
-                div.className = "player-card";
-                // if (id === playerId) {
-                //     div.style.border = "2px solid #22c55e";
-                // }
-                div.innerHTML = `
-                    <span>${player.name}</span>
-                    ${id === data.hostId ? "👑" : ""}
-                `;
+            // const myName = data.players?.[playerId]?.name;
 
-                container.appendChild(div);
-            });
-            const myName = data.players?.[playerId]?.name;
+            section.innerHTML = `
+                <div class="players-card compact">
 
-            if (myName) {
-                meBox.innerHTML = `
-                    <div class="me-card">
-                        🎯 انت: ${myName} ${playerId === data.hostId ? "👑 (هوست)" : ""}
+                    <div class="players-header">
+                    👥 ${playersCount}
+                    ${playerId === data.hostId ? " | 👑 هوست" : " | 🎮 لاعب"}
                     </div>
+
+                    <div class="players-list">
+                    ${Object.entries(data.players || {})
+                        .map(
+                            ([id, player]) => `
+                        <span class="player-chip ${id === playerId ? "me" : ""}">
+                        ${player.name} ${id === data.hostId ? "👑" : ""}
+                        </span>
+                    `,
+                        )
+                        .join("")}
+                    </div>
+
+                </div>
                 `;
-            }
             const questionBox = document.getElementById("question-box");
             const category = data.questionCategory;
             const currentIndex = data.currentIndex?.[category] ?? 0;
@@ -564,6 +578,7 @@ import Layout from "../../layouts/Layout.astro";
                     correct: isCorrect,
                 });
             });
+
             results.sort((a, b) => a.time - b.time);
             resultBox.innerHTML = `
                 <div class='results-card'>
@@ -610,17 +625,62 @@ import Layout from "../../layouts/Layout.astro";
                 resultBox.querySelector(".results-card").appendChild(div);
             });
 
+            const suggestions = data.suggestions || [];
+            const list = document.getElementById("suggestions-list");
+
+            if (list) {
+                list.innerHTML = suggestions
+                    .map((s) => {
+                        const name =
+                            s.playerName ||
+                            data.players?.[s.player]?.name ||
+                            "لاعب 😏";
+
+                        return `
+                            <div class="suggest-item">
+                                <span class="name">${name}</span>
+                                <span class="text">${s.text}</span>
+                            </div>
+                            `;
+                    })
+                    .join("");
+
+                list.scrollTop = list.scrollHeight; // 👈 auto scroll
+            }
             // 👑 تحديد الهوست
-
-            controls.style.display = isHost ? "block" : "none";
-
+            if (controls) {
+                controls.style.display = isHost ? "block" : "none";
+            }
             // 🎮 حالة اللعبة
             if (data.status === "playing") {
                 console.log("🔥 اللعبة بدأت!");
                 // document.body.style.background = "#111";
             }
         });
+        
+        document
+            .getElementById("send-suggest-admin")
+            ?.addEventListener("click", async () => {
+                const input = document.getElementById("suggest-input-admin");
+                const text = input.value.trim();
+                if (!text) return;
 
+                const snap = await getDoc(roomRef);
+                const data = snap.data();
+
+                const newSuggestion = {
+                    text,
+                    player: playerId,
+                    playerName: data.players?.[playerId]?.name || "👑 الأدمن",
+                    time: Date.now(),
+                };
+
+                await updateDoc(roomRef, {
+                    suggestions: [...(data.suggestions || []), newSuggestion],
+                });
+
+                input.value = "";
+            });
         // 🚀 start game
         document
             .getElementById("start-game")
@@ -674,8 +734,9 @@ import Layout from "../../layouts/Layout.astro";
         document
             .getElementById("end-game")
             ?.addEventListener("click", async () => {
+                if (!confirm("متأكد إنك عايز تقفل الروم؟ 😏")) return;
                 await deleteDoc(roomRef);
-                alert("الروم اتقفلت 👋");
+                // alert("الروم اتقفلت 👋");
                 window.location.href = "/";
             });
         document
@@ -683,5 +744,18 @@ import Layout from "../../layouts/Layout.astro";
             ?.addEventListener("click", () => {
                 window.location.href = `/room/${roomCode}/results`;
             });
+
+        const dropdown = document.querySelector(".category-dropdown");
+
+        document.querySelectorAll(".cat-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                dropdown.classList.remove("open");
+            });
+        });
+        const btn = document.querySelector(".dropdown-btn");
+
+        btn.addEventListener("click", () => {
+            dropdown.classList.toggle("open");
+        });
     </script>
 </Layout>

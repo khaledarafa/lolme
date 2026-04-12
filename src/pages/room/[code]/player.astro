@@ -4,257 +4,180 @@ import Layout from "../../../layouts/Layout.astro";
 ---
 
 <Layout>
-    <div class="room-container">
-        <div class="player-categories">
-            <button class="cat-suggest" data-cat="funny">😂 مضحك</button>
-            <button class="cat-suggest" data-cat="truth">😏 صراحة</button>
-            <button class="cat-suggest" data-cat="deep">🧠 عميق</button>
-            <button class="cat-suggest" data-cat="friends">👯 صحاب</button>
-            <button class="cat-suggest" data-cat="love">❤️ حب</button>
-            <button class="cat-suggest" data-cat="challenge">🔥 تحدي</button>
-            <button class="cat-suggest" data-cat="embarrassing">😳 إحراج</button
-            >
-            <button class="cat-suggest" data-cat="songs">🎵 أغاني</button>
-            <button class="cat-suggest" data-cat="football">⚽ كورة</button>
-            <button class="cat-suggest" data-cat="hazoom">💣 حزوم</button>
+    <div class="player-container">
+        <h2 id="question">⏳ مستني السؤال...</h2>
+
+        <div id="answers"></div>
+
+        <div id="text-box" style="display:none;">
+            <input id="text-answer" placeholder="اكتب إجابتك 😏" />
+            <button id="send-answer">إرسال</button>
         </div>
 
-        <div id="question-box" data-code={code}></div>
-
-        <div class="suggest-box">
-            <button id="send-suggest">إرسال</button>
-            <input id="suggest-input" placeholder="اقترح نلعب ايه 😏" />
-        </div>
-
-        <div class="suggestions-wrapper">
-            <div id="suggestions-list" class="suggestions-list"></div>
-        </div>
+        <div id="feedback"></div>
     </div>
-
-    <script type="module">
-        import { db } from "/js/firebase.js";
-        import {
-            doc,
-            onSnapshot,
-            updateDoc,
-            getDoc,
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        const roomCode = document.getElementById("question-box").dataset.code;
-        const roomRef = doc(db, "rooms", roomCode);
-
-        let playerId = localStorage.getItem("player_" + roomCode);
-
-        const normalize = (str) =>
-            str?.toLowerCase().trim().replace(/[أإآ]/g, "ا");
-
-        const questionBox = document.getElementById("question-box");
-
-        onSnapshot(roomRef, (snap) => {
-            const data = snap.data();
-            if (!data) return;
-
-            const category = data.questionCategory;
-            const currentIndex = data.currentIndex?.[category] ?? 0;
-
-            const myAnswer =
-                data.answers?.[category]?.[currentIndex]?.[playerId]?.answer;
-
-            const q = data.question;
-            const correctAnswer = data.question?.correct;
-
-            let feedbackHTML = "";
-
-            if (myAnswer) {
-                const isCorrect =
-                    normalize(myAnswer) === normalize(correctAnswer);
-
-                feedbackHTML = `
-          <div class="feedback ${isCorrect ? "correct" : "wrong"}">
-            ${isCorrect ? "✅ صح!" : "❌ غلط 😏"}
-          </div>
-        `;
-            }
-
-            if (q) {
-                if (q.type === "choice" || !q.type) {
-                    questionBox.innerHTML = `
-                        <div class="question-card card">
-                            <h2>${q.text}</h2>
-
-                            <div class="answers">
-                            ${q.options
-                                .map(
-                                    (opt) => `
-                                <button class="answer-btn" data-answer="${opt}">
-                                ${opt}
-                                </button>
-                            `,
-                                )
-                                .join("")}
-                            </div>
-
-                            ${feedbackHTML}
-                        </div>
-                        `;
-                                    } else {
-                                        questionBox.innerHTML = `
-                        <div class="question-card card">
-                            <h2>${q.text}</h2>
-
-                            <input id="text-answer" placeholder="اكتب إجابتك 😏" />
-                            <button id="send-answer">إرسال</button>
-
-                            ${feedbackHTML}
-                        </div>
-                        `;
-                                    }
-                                } else {
-                                    questionBox.innerHTML = `
-                        <div class="question-card">
-                        <h2>⏳ مستنيين الهوست...</h2>
-                        </div>
-                    `;
-            }
-            document.querySelectorAll(".answer-btn").forEach((btn) => {
-                const answer = btn.dataset.answer;
-
-                // بيكشف الإجابة الصح حتى لو اللاعب غلط
-// if (myAnswer) {
-//   btn.disabled = true;
-
-//   if (answer === correctAnswer) {
-//     btn.style.background = "#22c55e"; // صح
-//   } else if (answer === myAnswer) {
-//     btn.style.background = "#ef4444"; // غلط
-//   }
-// }
-if (myAnswer) {
-  btn.disabled = true;
-
-  if (answer === myAnswer) {
-    const isCorrect = myAnswer === correctAnswer;
-
-    btn.style.background = isCorrect
-      ? "#22c55e" // صح
-      : "#ef4444"; // غلط
-  }
-}
-                btn.addEventListener("click", async () => {
-                    if (myAnswer) return;
-
-                    const snap = await getDoc(roomRef);
-                    const data = snap.data();
-
-                    const startTime =
-                        data.questionStartTimes?.[
-                            `${category}_${currentIndex}`
-                        ];
-
-                    if (!startTime) return;
-
-                    await updateDoc(roomRef, {
-                        [`answers.${category}.${currentIndex}.${playerId}`]: {
-                            answer,
-                            correctAnswer,
-                            time: Date.now(),
-                        },
-                    });
-                });
-            });
-
-            const sendBtn = document.getElementById("send-answer");
-
-            if (sendBtn) {
-                sendBtn.addEventListener("click", async () => {
-                    if (myAnswer) return;
-
-                    const input = document.getElementById("text-answer");
-                    const answer = input.value.trim();
-
-                    if (!answer) return;
-
-                    const snap = await getDoc(roomRef);
-                    const data = snap.data();
-
-                    const startTime =
-                        data.questionStartTimes?.[
-                            `${category}_${currentIndex}`
-                        ];
-
-                    if (!startTime) return;
-
-                    await updateDoc(roomRef, {
-                        [`answers.${category}.${currentIndex}.${playerId}`]: {
-                            answer,
-                            correctAnswer,
-                            time: Date.now(),
-                        },
-                    });
-                });
-            }
-
-            const suggestions = data.suggestions || [];
-            const list = document.getElementById("suggestions-list");
-
-            if (list) {
-                list.innerHTML = suggestions
-                    .map((s) => {
-                        const name =
-                            s.playerName ||
-                            data.players?.[s.player]?.name ||
-                            "لاعب 😏";
-
-                        return `
-                    <div class="suggest-item">
-                    <span class="name">${name}</span>
-                    <span class="text">${s.text}</span>
-                    </div>
-                `;
-                    })
-                    .join("");
-            }
-        });
-        document.querySelectorAll(".cat-suggest").forEach((btn) => {
-            btn.addEventListener("click", async () => {
-                const category = btn.dataset.cat;
-
-                const snap = await getDoc(roomRef);
-                const data = snap.data();
-
-                const newSuggestion = {
-                    text: "نلعب " + category,
-                    player: playerId,
-                    playerName: data.players?.[playerId]?.name || "لاعب 😏",
-                    time: Date.now(),
-                };
-
-                await updateDoc(roomRef, {
-                    suggestions: [...(data.suggestions || []), newSuggestion],
-                });
-            });
-        });
-        document
-            .getElementById("send-suggest")
-            ?.addEventListener("click", async () => {
-                const input = document.getElementById("suggest-input");
-                const text = input.value.trim();
-                if (!text) return;
-
-                const snap = await getDoc(roomRef);
-                const data = snap.data();
-
-                const newSuggestion = {
-                    text,
-                    player: playerId, // 👈 مهم
-                    playerName: data.players?.[playerId]?.name || "لاعب 😏",
-                    time: Date.now(),
-                };
-                await updateDoc(roomRef, {
-                    suggestions: [...(data.suggestions || []), newSuggestion],
-                });
-
-                input.value = "";
-            });
-    </script>
 </Layout>
+<script
+    src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
+></script>
+<script type="module">
+    import { db } from "/js/firebase.js";
+    import {
+        doc,
+        onSnapshot,
+        updateDoc,
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const roomCode = window.location.pathname.split("/")[2];
+    const roomRef = doc(db, "rooms", roomCode);
+    const playerId = localStorage.getItem("player_" + roomCode);
+
+    const qEl = document.getElementById("question");
+    const answersEl = document.getElementById("answers");
+    const textBox = document.getElementById("text-box");
+    const feedback = document.getElementById("feedback");
+
+    let answered = false;
+    let currentQ = null;
+    const winSound = new Audio("/sounds/win.mp3");
+    const loseSound = new Audio("/sounds/lose.mp3");
+
+    function playWinEffect() {
+        winSound.currentTime = 0;
+        winSound.play().catch(() => {});
+
+        // 💥 من النص
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+        });
+
+        // 👉 من اليمين
+        confetti({
+            particleCount: 40,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+        });
+
+        // 👈 من الشمال
+        confetti({
+            particleCount: 40,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+        });
+    }
+    function playLoseEffect() {
+        loseSound.currentTime = 0;
+        loseSound.play().catch(() => {});
+    }
+    onSnapshot(roomRef, (snap) => {
+        const data = snap.data();
+        const q = data.currentQuestion;
+
+        if (!q) return;
+
+        currentQ = q;
+        const newKey = `${q.category}_${q.questionIndex}`;
+
+        if (window.lastQuestionKey !== newKey) {
+            answered = false;
+            window.lastQuestionKey = newKey;
+        }
+        qEl.innerText = q.text;
+        answersEl.innerHTML = "";
+        feedback.innerHTML = "";
+
+        if (q.type !== "text") {
+            textBox.style.display = "none";
+
+            q.options.forEach((opt) => {
+                const btn = document.createElement("button");
+                btn.className = "answer-btn";
+                btn.innerText = opt;
+
+                btn.onclick = async () => {
+                    if (answered) return;
+                    answered = true;
+
+                    const answeredKey = `${q.category}_${q.questionIndex}`;
+
+                    await updateDoc(roomRef, {
+                        [`answers.${answeredKey}.${playerId}`]: {
+                            answer: opt,
+                            correctAnswer: q.correct,
+                            category: q.category,
+                            questionIndex: q.questionIndex,
+                            time: Date.now(),
+                        },
+                    });
+
+                    if (opt === q.correct) {
+                        playWinEffect();
+                        feedback.innerText = "✅ صح 🔥";
+                    } else {
+                        playLoseEffect();
+                        feedback.innerText = "❌ غلط 😏";
+                    }
+
+                    // 🎨 تلوين الأزرار
+                    document.querySelectorAll(".answer-btn").forEach((b) => {
+                        b.disabled = true;
+
+                        // لو هو اختار زرار
+                        if (b.innerText === opt) {
+                            if (opt === q.correct) {
+                                b.style.background = "#22c55e"; // صح
+                            } else {
+                                b.style.background = "#ef4444"; // غلط
+                            }
+                        } else {
+                            b.style.opacity = "0.3"; // باقي الأزرار
+                        }
+                    });
+                };
+
+                answersEl.appendChild(btn);
+            });
+        } else {
+            answersEl.innerHTML = "";
+            textBox.style.display = "block";
+        }
+    });
+
+    document.getElementById("send-answer").onclick = async () => {
+        if (answered) return;
+        answered = true;
+
+        const input = document.getElementById("text-answer");
+        const answer = input.value.trim();
+
+        if (!answer || !currentQ) return;
+
+        const answeredKey = `${currentQ.category}_${currentQ.questionIndex}`;
+
+        await updateDoc(roomRef, {
+            [`answers.${answeredKey}.${playerId}`]: {
+                answer,
+                correctAnswer: currentQ.correct,
+                category: currentQ.category,
+                questionIndex: currentQ.questionIndex,
+                time: Date.now(),
+            },
+        });
+
+        if (answer === currentQ.correct) {
+            playWinEffect();
+            feedback.innerText = "✅ صح 🔥";
+        } else {
+            playLoseEffect();
+            feedback.innerText = "❌ غلط 😏";
+        }
+
+        // 🔒 قفل الإدخال
+        input.disabled = true;
+        document.getElementById("send-answer").disabled = true;
+    };
+</script>
