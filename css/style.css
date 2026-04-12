@@ -1819,6 +1819,7 @@ h1 {
   margin-bottom: 8px;
   display: flex;
   flex-direction: column;
+  text-align: right
 }
 
 .suggest-item .name {
@@ -1852,7 +1853,37 @@ h1 {
   border-radius: 10px;
 }
 
+/* .new-msg {
+  animation: pop 0.4s ease;
+  border: 1px solid #22c55e;
+}
 
+@keyframes pop {
+  0% {
+    transform: scale(0.95);
+    background: #022c22;
+  }
+  100% {
+    transform: scale(1);
+  }
+} */
+
+
+
+
+        .group-content {
+    display: none;
+}
+
+.group-content.open {
+    display: grid;
+}
+
+.group-title {
+    cursor: pointer;
+    margin: 15px 0 5px;
+    font-size: 18px;
+}
 
 
 
@@ -1879,6 +1910,239 @@ h1 {
 
 
 
+
+
+
+
+
+/* ============================================addq.astro================================= */
+
+
+.add-q-section {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.add-q-box {
+  background: var(--card);
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-q-box input {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #020617;
+  color: white;
+  text-align: center;
+}
+
+.add-q-box button {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #22c55e;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-q-box button:hover {
+  opacity: 0.8;
+}
+
+#msg {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.category-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+
+.cat-btn:hover {
+  background: #22c55e;
+  color: black;
+}
+
+
+
+.cat-btn:hover {
+  background: #1e293b;
+}
+
+.cat-btn.active {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: black;
+  border: 2px solid #22c55e;
+
+  box-shadow:
+    0 0 10px #22c55e,
+    0 0 20px #22c55e,
+    0 0 40px #22c55e;
+
+  transform: scale(1.08);
+  opacity: 1;
+}
+
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 5px #22c55e;
+  }
+  to {
+    box-shadow: 0 0 20px #22c55e;
+  }
+}
+/* 🔥 بوكس إضافة الفئة */
+.add-category-box {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 20px;
+  background: linear-gradient(145deg, #020617, #0f172a);
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* العنوان */
+.add-category-box h3 {
+  text-align: center;
+  color: #22c55e;
+  margin-bottom: 10px;
+}
+
+/* inputs */
+.add-category-box input,
+.add-category-box select {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: white;
+  outline: none;
+  transition: 0.2s;
+}
+
+.add-category-box input:focus,
+.add-category-box select:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 8px #22c55e55;
+}
+
+/* file input */
+.add-category-box input[type="file"] {
+  background: #020617;
+  padding: 10px;
+  cursor: pointer;
+}
+
+/* زرار */
+#add-cat-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: black;
+  font-weight: bold;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#add-cat-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 15px #22c55e;
+}
+
+/* رسالة */
+#cat-msg {
+  text-align: center;
+  font-weight: bold;
+}
+
+/* 🔥 الفئات */
+.category-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin: 25px auto;
+  max-width: 900px;
+}
+
+.cat-btn {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: white;
+  cursor: pointer;
+  transition: 0.25s;
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.cat-btn:hover {
+  background: #1e293b;
+  transform: translateY(-2px);
+  opacity: 1;
+}
+
+/* 🔥 بوكس السؤال */
+.add-q-box {
+  background: linear-gradient(145deg, #020617, #0f172a);
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(34, 197, 94, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* inputs */
+.add-q-box input,
+.add-q-box select {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: white;
+  text-align: center;
+}
+
+/* زرار السؤال */
+#add-q-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: black;
+  font-weight: bold;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#add-q-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #22c55e;
+}
 
 
 

@@ -5,7 +5,32 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout title="إضافة سؤال">
 
-    <div id="category-buttons" class="category-buttons">
+  <div class="add-category-box">
+
+    <h3>➕ إضافة فئة جديدة</h3>
+
+    <input id="new-cat-name" placeholder="اسم الفئة" />
+    <input id="new-cat-slug" style="display:none" />
+
+    <select id="new-cat-group">
+        <option value="football">⚽ كورة</option>
+        <option value="songs">🎵 أغاني</option>
+        <option value="brain">🧠 ذكاء</option>
+        <option value="movies">🎬 ترفيه</option>
+        <option value="products">🛍️ منتجات</option>
+        <option value="mix">🌍 منوعات</option>
+    </select>
+
+    <input type="file" id="new-cat-image" />
+
+    <button id="add-cat-btn">➕ إضافة الفئة</button>
+
+    <p id="cat-msg"></p>
+
+</div>
+
+<div id="category-buttons" class="category-buttons"></div>
+    <!-- <div id="category-buttons" class="category-buttons">
     
       <button class="cat-btn" data-cat="funny">😂 مضحك</button>
       <button class="cat-btn" data-cat="truth">😏 صراحة</button>
@@ -17,7 +42,7 @@ import Layout from "../layouts/Layout.astro";
       <button class="cat-btn" data-cat="songs">🎵 أغاني</button>
       <button class="cat-btn" data-cat="football">⚽ كورة</button>
       <button class="cat-btn" data-cat="hazoom">💣 اسئلة حزوم</button>
-    </div>
+    </div> -->
 
 
   <section class="add-q-section">
@@ -47,102 +72,3 @@ import Layout from "../layouts/Layout.astro";
   <script type="module" src="/js/addq.js"></script>
 
 </Layout>
-
-<style>
-.add-q-section {
-  text-align: center;
-  margin-top: 40px;
-}
-
-.add-q-box {
-  background: var(--card);
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 0 20px var(--shadow-color);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.add-q-box input {
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  background: #020617;
-  color: white;
-  text-align: center;
-}
-
-.add-q-box button {
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: #22c55e;
-  color: black;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.add-q-box button:hover {
-  opacity: 0.8;
-}
-
-#msg {
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-.category-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.cat-btn {
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
-  background: var(--bg);
-  color: var(--text-color);
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.cat-btn:hover {
-  background: #22c55e;
-  color: black;
-}
-
-.cat-btn.active {
-  background: #22c55e;
-  color: black;
-  font-weight: bold;
-}
-
-.cat-btn {
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid #333;
-  background: #020617;
-  color: white;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.cat-btn:hover {
-  background: #1e293b;
-}
-
-/* 🔥 دي أهم سطر */
-.cat-btn.active {
-  background: #22c55e;
-  color: #000;
-  border-color: #22c55e;
-  box-shadow: 0 0 10px #22c55e;
-}
-</style>

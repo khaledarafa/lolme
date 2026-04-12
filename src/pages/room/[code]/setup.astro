@@ -16,172 +16,25 @@ import Layout from "../../../layouts/Layout.astro";
             <button class="q-btn" data-count="7">7 أسئلة</button>
         </div>
         <div id="setup-root" data-code={code}></div>
+
         <!-- 🎴 الفئات -->
-        <div class="categories-grid">
-            <div
-                class="cat-card"
-                data-cat="funny"
-                style="background-image:url('/images/funny.webp')"
-            >
-                <span>😂 مضحك</span>
-            </div>
-
-            <div
-                class="cat-card"
-                data-cat="truth"
-                style="background-image:url('/images/truth.webp')"
-            >
-                <span>😏 صراحة</span>
-            </div>
-
-            <div
-                class="cat-card"
-                data-cat="deep"
-                style="background-image:url('/images/deep.webp')"
-            >
-                <span>🧠 عميق</span>
-            </div>
-
-            <div
-                class="cat-card"
-                data-cat="friends"
-                style="background-image:url('/images/friends.webp')"
-            >
-                <span>👯 صحاب</span>
-            </div>
-
-            <div
-                class="cat-card"
-                data-cat="love"
-                style="background-image:url('/images/love.webp')"
-            >
-                <span>❤️ حب</span>
-            </div>
-
-            <div
-                class="cat-card"
-                data-cat="challenge"
-                style="background-image:url('/images/challenge.webp')"
-            >
-                <span>🔥 تحدي</span>
-            </div>
-
-            <div
-                class="cat-card"
-                data-cat="embarrassing"
-                style="background-image:url('/images/embarrassing.webp')"
-            >
-                <span>😳 إحراج</span>
-            </div>
-
-            <div
-                class="cat-card"
-                data-cat="songs"
-                style="background-image:url('/images/songs.webp')"
-            >
-                <span>🎵 أغاني</span>
-            </div>
-
-            <div
-                class="cat-card"
-                data-cat="football"
-                style="background-image:url('/images/football.webp')"
-            >
-                <span>⚽ كورة</span>
-            </div>
-
-            <div
-                class="cat-card"
-                data-cat="hazoom"
-                style="background-image:url('/images/hazooma.jpeg')"
-            >
-                <span>💣 حزوم</span>
-            </div>
-        </div>
+        <div id="categories-grid" class="categories-grid"></div>
         <p id="summary"></p>
         <!-- 🚀 زرار البداية -->
         <button id="start-round" class="start-btn"> 🚀 ابدأ الجولة </button>
     </div>
 
-    <style>
-        .setup-container {
-            max-width: 900px;
-            margin: auto;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .sub {
-            opacity: 0.7;
-            margin-bottom: 20px;
-        }
-
-        .questions-count {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-
-        .q-btn {
-            padding: 10px 16px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            background: #222;
-            color: #fff;
-        }
-
-        .q-btn.active {
-            background: #3b82f6;
-        }
-
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-        }
-
-        /* .cat-card {
-      height: 100px;
-      border-radius: 15px;
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      align-items: flex-end;
-      padding: 10px;
-      cursor: pointer;
-      position: relative;
-      border: 2px solid transparent;
-    } */
-
-        /* .cat-card span {
-      background: rgba(0,0,0,0.5);
-      padding: 5px 10px;
-      border-radius: 8px;
-      font-size: 14px;
-    } */
-
-        /* .cat-card.active {
-      border: 2px solid #3b82f6;
-      transform: scale(1.05);
-    } */
-
-        .start-btn {
-            margin-top: 25px;
-            padding: 14px 25px;
-            border: none;
-            border-radius: 12px;
-            background: #10b981;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
-
     <script type="module">
         import { db } from "/js/firebase.js";
-        import { doc, updateDoc, collection, query, where, getDocs, setDoc, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import {
+            doc,
+            collection,
+            query,
+            where,
+            getDocs,
+            setDoc,
+            increment,
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         async function buildGamePlan(selectedCategories, questionsCount) {
             const gamePlan = [];
@@ -241,8 +94,11 @@ import Layout from "../../../layouts/Layout.astro";
                 document
                     .querySelectorAll(".q-btn")
                     .forEach((b) => b.classList.remove("active"));
+
                 btn.classList.add("active");
                 questionsCount = Number(btn.dataset.count);
+
+                updateSummary(); // 👈 ضيف دي هنا
             });
         });
 
@@ -263,11 +119,57 @@ import Layout from "../../../layouts/Layout.astro";
             });
         });
 
-        document.addEventListener("click", () => {
+        function updateSummary() {
             const total = selectedCategories.length * questionsCount;
+
             document.getElementById("summary").innerText =
                 `🎯 ${selectedCategories.length} فئات = ${total} سؤال`;
-        });
+        }
+
+        const grid = document.getElementById("categories-grid");
+
+        async function loadCategories() {
+            const snap = await getDocs(collection(db, "categories"));
+
+            grid.innerHTML = "";
+
+            snap.forEach((doc) => {
+                const cat = doc.data();
+
+                const div = document.createElement("div");
+                div.className = "cat-card";
+                div.dataset.cat = cat.slug;
+
+                // 🖼️ الصورة من Firebase
+                div.style.backgroundImage = `url(${cat.image})`;
+
+                const span = document.createElement("span");
+                span.innerText = cat.name;
+
+                div.appendChild(span);
+
+                // 🎯 اختيار الفئة
+                div.addEventListener("click", () => {
+                    const catSlug = cat.slug;
+
+                    if (selectedCategories.includes(catSlug)) {
+                        selectedCategories = selectedCategories.filter(
+                            (c) => c !== catSlug,
+                        );
+                        div.classList.remove("active");
+                    } else {
+                        selectedCategories.push(catSlug);
+                        div.classList.add("active");
+                    }
+
+                    updateSummary();
+                });
+
+                grid.appendChild(div);
+            });
+        }
+
+        loadCategories();
 
         // 🚀 بدء الجولة
         document
@@ -293,9 +195,97 @@ import Layout from "../../../layouts/Layout.astro";
                     },
                     { merge: true },
                 );
+                if (!localStorage.getItem("counted_room")) {
+                    const today = new Date().toISOString().slice(0, 10);
 
+                    await setDoc(
+                        doc(db, "stats", today),
+                        {
+                            rooms: increment(1),
+                        },
+                        { merge: true },
+                    );
+
+                    localStorage.setItem("counted_room", "1");
+                }
                 // 👇 روح للعبة
                 window.location.href = `/room/${roomCode}/board`;
             });
     </script>
 </Layout>
+
+<style>
+    .setup-container {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .sub {
+        opacity: 0.7;
+        margin-bottom: 20px;
+    }
+
+    .questions-count {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 25px;
+    }
+
+    .q-btn {
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        background: #222;
+        color: #fff;
+    }
+
+    .q-btn.active {
+        background: #3b82f6;
+    }
+
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+    }
+
+    /* .cat-card {
+      height: 100px;
+      border-radius: 15px;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: flex-end;
+      padding: 10px;
+      cursor: pointer;
+      position: relative;
+      border: 2px solid transparent;
+    } */
+
+    /* .cat-card span {
+      background: rgba(0,0,0,0.5);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+    } */
+
+    /* .cat-card.active {
+      border: 2px solid #3b82f6;
+      transform: scale(1.05);
+    } */
+
+    .start-btn {
+        margin-top: 25px;
+        padding: 14px 25px;
+        border: none;
+        border-radius: 12px;
+        background: #10b981;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+</style>

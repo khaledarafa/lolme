@@ -8,70 +8,69 @@ import Layout from "../../../layouts/Layout.astro";
 
     <div id="results"></div>
 
-<script type="module">
-    import { db } from "/js/firebase.js";
-    import {
-        doc,
-        getDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    <script type="module">
+        import { db } from "/js/firebase.js";
+        import {
+            doc,
+            getDoc,
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const roomCode =
-        window.location.pathname.split("/")[2];
+        const roomCode = window.location.pathname.split("/")[2];
 
-    const roomRef = doc(db, "rooms", roomCode);
+        const roomRef = doc(db, "rooms", roomCode);
 
-    const container = document.getElementById("results");
-const counted = {};
-    async function loadResults() {
-        const snap = await getDoc(roomRef);
-        const data = snap.data();
+        const container = document.getElementById("results");
+        const counted = {};
+        async function loadResults() {
+            const snap = await getDoc(roomRef);
+            const data = snap.data();
 
-        if (!data) {
-            container.innerHTML = "<p>❌ مفيش بيانات</p>";
-            return;
-        }
+            if (!data) {
+                container.innerHTML = "<p>❌ مفيش بيانات</p>";
+                return;
+            }
 
-        const answers = data.answers || {};
-        const players = data.players || {};
+            const answers = data.answers || {};
+            const players = data.players || {};
 
-let html = `
-<div class="table-wrapper">
-<table class="results-table">
-    <thead>
-        <tr>
-            <th>👤 اللاعب</th>
-            <th>📂 الفئة</th>
-            <th>❓ السؤال</th>
-            <th>✍️ إجابته</th>
-            <th>✅ الصح</th>
-            <th>🏁 النتيجة</th>
-        </tr>
-    </thead>
-    <tbody>
-`;
+            let html = `
+                <div class="table-wrapper">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>👤 اللاعب</th>
+                            <th>📂 الفئة</th>
+                            <th>❓ السؤال</th>
+                            <th>✍️ إجابته</th>
+                            <th>✅ الصح</th>
+                            <th>🏁 النتيجة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
 
-        const scores = {};
+            const scores = {};
 
-        for (let questionKey in answers) {
-            const question = answers[questionKey];
+            for (let questionKey in answers) {
+                const question = answers[questionKey];
 
-            for (let playerId in question) {
-                const ans = question[playerId];
+                for (let playerId in question) {
+                    const ans = question[playerId];
 
-                const playerName = players[playerId]?.name || "لاعب";
+                    const playerName = players[playerId]?.name || "لاعب";
 
-                const isCorrect = ans.answer === ans.correctAnswer;
+                    const isCorrect = ans.answer === ans.correctAnswer;
 
-if (!counted[playerId]) counted[playerId] = new Set();
+                    if (!counted[playerId]) counted[playerId] = new Set();
 
-const uniqueKey = questionKey; // السؤال نفسه
+                    const uniqueKey = questionKey; // السؤال نفسه
 
-if (isCorrect && !counted[playerId].has(uniqueKey)) {
-    scores[playerId] = (scores[playerId] || 0) + 1;
-    counted[playerId].add(uniqueKey);
-}
+                    if (isCorrect && !counted[playerId].has(uniqueKey)) {
+                        scores[playerId] = (scores[playerId] || 0) + 1;
+                        counted[playerId].add(uniqueKey);
+                    }
 
-                html += `
+                    html += `
                 <tr>
                     <td><strong>${playerName}</strong></td>
                     <td style="opacity:0.8">${ans.category}</td>
@@ -83,39 +82,38 @@ if (isCorrect && !counted[playerId].has(uniqueKey)) {
                     </td>
                 </tr>
                 `;
+                }
             }
+
+            html += `</tbody></table>`;
+
+            // 🔥 leaderboard
+
+            const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+            const winner = sorted[0];
+            const winnerName = players[winner[0]]?.name || "لاعب";
+            const winnerScore = winner[1];
+            let leaderboard = `
+                <div class="winner-container">
+
+                    <div class="trophy">🏆</div>
+
+                    <div class="winner-name">
+                        ${winnerName}
+                    </div>
+
+                    <div class="winner-score">
+                        ${winnerScore} نقطة
+                    </div>
+
+                </div>
+                `;
+            container.innerHTML = html + leaderboard;
         }
-
-        html += `</tbody></table>`;
-
-        // 🔥 leaderboard
-
-        const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-const winner = sorted[0];
-const winnerName = players[winner[0]]?.name || "لاعب";
-const winnerScore = winner[1];
-let leaderboard = `
-<div class="winner-container">
-
-    <div class="trophy">🏆</div>
-
-    <div class="winner-name">
-        ${winnerName}
-    </div>
-
-    <div class="winner-score">
-        ${winnerScore} نقطة
-    </div>
-
-</div>
-`;
-        container.innerHTML = html + leaderboard;
-    }
-
-    loadResults();
-</script>
+        
+        loadResults();
+    </script>
 </Layout>
-
 
 <!-- ---
 const { code } = Astro.params;

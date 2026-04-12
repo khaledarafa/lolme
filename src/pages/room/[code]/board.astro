@@ -10,6 +10,16 @@ import Layout from "../../../layouts/Layout.astro";
         <button id="end-game">❌ اقفل الروم</button>
     </div>
     <div id="players-section" data-code={code}></div>
+
+    <div class="suggest-box">
+        <button id="send-suggest-admin">إرسال</button>
+        <input id="suggest-input-admin" placeholder="اقترح فئة 😏" />
+    </div>
+
+    <div class="suggestions-wrapper">
+        <div id="suggestions-list" class="suggestions-list"></div>
+    </div>
+
     <div class="board" id="board"></div>
 
     <div id="question-sheet" class="sheet hidden">
@@ -28,19 +38,10 @@ import Layout from "../../../layouts/Layout.astro";
         updateDoc,
         getDoc,
         deleteDoc,
+        getDocs,
+        collection,
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    const categoryImages = {
-        funny: "/images/funny.webp",
-        deep: "/images/deep.webp",
-        songs: "/images/songs.webp",
-        love: "/images/love.webp",
-        challenge: "/images/challenge.webp",
-        truth: "/images/truth.webp",
-        friends: "/images/friends.webp",
-        embarrassing: "/images/embarrassing.webp",
-        football: "/images/football.webp",
-        hazoom: "/images/hazooma.jpeg",
-    };
+
     const roomCode =
         document.querySelector(".board").dataset?.code ||
         window.location.pathname.split("/")[2];
@@ -48,6 +49,20 @@ import Layout from "../../../layouts/Layout.astro";
     const roomRef = doc(db, "rooms", roomCode);
     const winSound = new Audio("/sounds/win.mp3");
     const loseSound = new Audio("/sounds/lose.mp3");
+
+    let categoriesMap = {};
+
+    async function loadCategoriesMap() {
+        const snap = await getDocs(collection(db, "categories"));
+
+        snap.forEach((doc) => {
+            const cat = doc.data();
+            categoriesMap[cat.slug] = { image: cat.image, name: cat.name };
+        });
+    }
+
+    await loadCategoriesMap();
+
     function playWinEffect() {
         winSound.currentTime = 0;
         winSound.play();
@@ -152,8 +167,46 @@ import Layout from "../../../layouts/Layout.astro";
         });
     })();
 
+    let lastCount = 0;
+    const msgSound = new Audio("/sounds/msg.mp3");
+
     onSnapshot(roomRef, (snap) => {
         const data = snap.data();
+
+        const messages = data.suggestions || [];
+        const list = document.getElementById("suggestions-list");
+
+        if (list) {
+            list.innerHTML = messages
+                .map((m) => {
+                    const name =
+                        m.playerName ||
+                        data.players?.[m.player]?.name ||
+                        "لاعب 😏";
+
+                    return `
+                <div class="suggest-item">
+                    <span class="name">${name}</span>
+                    <span class="text">${m.text}</span>
+                </div>
+            `;
+                })
+                .join("");
+
+            list.scrollTop = list.scrollHeight;
+        }
+
+        // 🔊 صوت
+        if (lastCount !== 0 && messages.length > lastCount) {
+            const lastMsg = messages[messages.length - 1];
+
+            if (lastMsg.player !== playerId) {
+                msgSound.currentTime = 0;
+                msgSound.play().catch(() => {});
+            }
+        }
+
+        lastCount = messages.length;
 
         const gamePlan = data.gamePlan || [];
         if (playerId !== data.hostId) {
@@ -206,8 +259,8 @@ import Layout from "../../../layouts/Layout.astro";
             });
             if (!question) return;
 
-if (question.type === "text") {
-    content.innerHTML = `
+            if (question.type === "text") {
+                content.innerHTML = `
         <div class="question-box">
 
             <h2>${question.text}</h2>
@@ -225,8 +278,8 @@ if (question.type === "text") {
             <button id="close-sheet">❌ قفل</button>
         </div>
     `;
-} else {
-    content.innerHTML = `
+            } else {
+                content.innerHTML = `
         <div class="question-box">
 
             <h2>${question.text}</h2>
@@ -251,7 +304,7 @@ if (question.type === "text") {
             <button id="close-sheet">❌ قفل</button>
         </div>
     `;
-}
+            }
 
             let answered = false;
 
@@ -382,10 +435,10 @@ if (question.type === "text") {
             // title.style.backgroundImage = `url(${categoryImages[cat.category]})`;
 
             title.innerHTML = `
-            <img src="${categoryImages[cat.category]}" />
-            <div class="overlay">
-                ${cat.category}
-            </div>
+                <img src="${categoriesMap[cat.category]?.image}" />
+                <div class="overlay">
+                    ${categoriesMap[cat.category]?.name || cat.category}
+                </div>
             `;
             col.appendChild(title);
 
@@ -418,10 +471,38 @@ if (question.type === "text") {
             window.open(`/room/${roomCode}/admin`, "_blank");
         });
     });
+
+    // إرسال
+    document
+        .getElementById("send-suggest-admin")
+        ?.addEventListener("click", async () => {
+            const input = document.getElementById("suggest-input-admin");
+            const text = input.value.trim();
+            if (!text) return;
+
+            const snap = await getDoc(roomRef);
+            const data = snap.data();
+
+            const newSuggestion = {
+                text,
+                player: playerId,
+                playerName: data.players?.[playerId]?.name || "لاعب 😏",
+                time: Date.now(),
+            };
+
+            await updateDoc(roomRef, {
+                suggestions: [...(data.suggestions || []), newSuggestion],
+            });
+
+            input.value = "";
+        });
     const endBtn = document.getElementById("end-game");
 
     endBtn?.addEventListener("click", async () => {
         if (!confirm("متأكد إنك عايز تقفل الروم؟ 😏")) return;
+
+        // 👇 ده الجديد
+        localStorage.removeItem("counted_room");
 
         await deleteDoc(roomRef);
         window.location.href = "/";

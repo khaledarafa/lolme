@@ -15,6 +15,15 @@ import Layout from "../../../layouts/Layout.astro";
         </div>
 
         <div id="feedback"></div>
+
+        <div class="suggest-box">
+            <button id="send-chat">إرسال</button>
+            <input id="chat-input" placeholder="اكتب رسالة 😏" />
+        </div>
+
+        <div class="suggestions-wrapper">
+            <div id="chat-list" class="suggestions-list"></div>
+        </div>
     </div>
 </Layout>
 <script
@@ -26,6 +35,7 @@ import Layout from "../../../layouts/Layout.astro";
         doc,
         onSnapshot,
         updateDoc,
+        getDoc,
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const roomCode = window.location.pathname.split("/")[2];
@@ -73,8 +83,42 @@ import Layout from "../../../layouts/Layout.astro";
         loseSound.currentTime = 0;
         loseSound.play().catch(() => {});
     }
-    onSnapshot(roomRef, (snap) => {
-        const data = snap.data();
+let lastCount = 0;
+const msgSound = new Audio("/sounds/msg.mp3");
+
+onSnapshot(roomRef, (snap) => {
+    const data = snap.data();
+
+    const messages = data.suggestions || [];
+    const list = document.getElementById("chat-list");
+
+    if (list) {
+        list.innerHTML = messages.map((m) => {
+            const isMe = m.player === playerId;
+
+            return `
+                <div class="suggest-item ${isMe ? "me" : ""}">
+                    <span class="name">${m.playerName}</span>
+                    <span class="text">${m.text}</span>
+                </div>
+            `;
+        }).join("");
+
+        list.scrollTop = list.scrollHeight;
+    }
+
+    // 🔊 صوت
+    if (lastCount !== 0 && messages.length > lastCount) {
+        const lastMsg = messages[messages.length - 1];
+
+        if (lastMsg.player !== playerId) {
+            msgSound.currentTime = 0;
+            msgSound.play().catch(() => {});
+        }
+    }
+
+    lastCount = messages.length;
+
         const q = data.currentQuestion;
 
         if (!q) return;
@@ -145,6 +189,7 @@ import Layout from "../../../layouts/Layout.astro";
             answersEl.innerHTML = "";
             textBox.style.display = "block";
         }
+
     });
 
     document.getElementById("send-answer").onclick = async () => {
@@ -180,4 +225,28 @@ import Layout from "../../../layouts/Layout.astro";
         input.disabled = true;
         document.getElementById("send-answer").disabled = true;
     };
+
+    document
+        .getElementById("send-chat")
+        ?.addEventListener("click", async () => {
+            const input = document.getElementById("chat-input");
+            const text = input.value.trim();
+            if (!text) return;
+
+            const snap = await getDoc(roomRef);
+            const data = snap.data();
+
+            const newMsg = {
+                text,
+                player: playerId,
+                playerName: data.players?.[playerId]?.name || "لاعب 😏",
+                time: Date.now(),
+            };
+
+            await updateDoc(roomRef, {
+                suggestions: [...(data.suggestions || []), newMsg],
+            });
+
+            input.value = "";
+        });
 </script>

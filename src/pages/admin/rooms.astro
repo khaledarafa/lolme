@@ -8,15 +8,16 @@ import Layout from "../../layouts/Layout.astro";
 
     <div id="rooms-list" class="rooms-grid"></div>
   </div>
-
+  <div id="stats-box" style="margin-top:20px;"></div>
+  <button
+    id="delete-all"
+    style="margin-top:10px;background:#dc2626;color:#fff;padding:10px;border:none;border-radius:8px;"
+  >
+    🧨 حذف كل الغرف
+  </button>
   <script type="module">
     import { db } from "/js/firebase.js";
-    import {
-      collection,
-      getDocs,
-      deleteDoc,
-      doc,
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { collection, getDocs, deleteDoc, doc, writeBatch, getDoc, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const ADMIN_PASS = "lolo";
 
@@ -111,6 +112,52 @@ import Layout from "../../layouts/Layout.astro";
       }
       loadRooms();
     }
+    document.getElementById("delete-all").onclick = async () => {
+      if (!confirm("هتمسح كل الرومات يا وحش 😏 متأكد؟")) return;
+
+      const snap = await getDocs(collection(db, "rooms"));
+
+      if (snap.empty) {
+        alert("مفيش حاجة تتمسح 😅");
+        return;
+      }
+
+      let batch = writeBatch(db);
+      let count = 0;
+
+      for (const docItem of snap.docs) {
+        batch.delete(doc(db, "rooms", docItem.id));
+        count++;
+
+        // Firestore limit = 500
+        if (count === 500) {
+          await batch.commit();
+          batch = writeBatch(db);
+          count = 0;
+        }
+      }
+
+      if (count > 0) {
+        await batch.commit();
+      }
+
+      alert("🔥 تم مسح كل الرومات");
+      location.reload();
+    };
+    async function loadStats() {
+      const today = new Date().toISOString().slice(0, 10);
+
+      const snap = await getDoc(doc(db, "stats", today));
+
+      const data = snap.data();
+
+      document.getElementById("stats-box").innerHTML = `
+        <h3>📊 النهارده</h3>
+        <p>🎮 عدد الغرف: ${data?.rooms || 0}</p>
+      `;
+        }
+
+    loadStats();
   </script>
 
   <style>

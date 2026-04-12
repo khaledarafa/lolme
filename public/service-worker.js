@@ -52,7 +52,7 @@ function isAdRequest(request) {
   try {
     const url = new URL(request.url);
     return AD_HOSTS.some((h) => url.hostname.includes(h)) ||
-           /adsbygoogle|doubleclick|googlesyndication|pagead|adservice/i.test(url.href);
+      /adsbygoogle|doubleclick|googlesyndication|pagead|adservice/i.test(url.href);
   } catch (err) {
     return false;
   }
@@ -68,10 +68,12 @@ self.addEventListener('fetch', (event) => {
   if (isAdRequest(req)) {
     event.respondWith(
       fetch(req)
-        .catch(() => {
-          // If ad request fails, return a small transparent 1x1 PNG from cache if you want,
-          // but better to return a generic Response so layout doesn't break:
-          return new Response('', { status: 204, statusText: 'No Content' });
+        .then((res) => {
+          if (res.status === 200) {
+            const copy = res.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+          }
+          return res;
         })
     );
     return;
@@ -100,12 +102,14 @@ self.addEventListener('fetch', (event) => {
       if (cached) return cached;
       return fetch(req)
         .then((res) => {
-          // Put in cache for future (only same-origin/static)
           const url = new URL(req.url);
-          if (url.origin === location.origin) {
+
+          // ✅ خزن بس لو response كامل
+          if (url.origin === location.origin && res.status === 200) {
             const copy = res.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
           }
+
           return res;
         })
         .catch(() => {

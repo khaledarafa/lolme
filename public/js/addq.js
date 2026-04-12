@@ -1,6 +1,10 @@
 // public/js/addq.js
-import { db } from "/js/firebase.js";
-import { addDoc, collection, query, where, getDocs  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { db, storage } from "/js/firebase.js";
+import { addDoc, collection, query, where, getDocs }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import { ref, uploadBytes, getDownloadURL }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const btn = document.getElementById("add-q-btn");
 const typeSelect = document.getElementById("q-type");
@@ -13,6 +17,7 @@ typeSelect.addEventListener("change", () => {
         optionsBox.style.display = "block";
     }
 });
+
 const msg = document.getElementById("msg");
 let selectedCategory = localStorage.getItem("selected_category") || "";
 
@@ -30,31 +35,31 @@ btn.onclick = async () => {
     const correct = document.getElementById("correct").value.trim();
 
     // ✅ validation بسيط
-if (!text) {
-    msg.innerText = "❌ اكتب السؤال";
-    return;
-}
+    if (!text) {
+        msg.innerText = "❌ اكتب السؤال";
+        return;
+    }
 
-if (!correct) {
-    msg.innerText = "❌ اكتب الإجابة الصح";
-    return;
-}
+    if (!correct) {
+        msg.innerText = "❌ اكتب الإجابة الصح";
+        return;
+    }
 
-if (!selectedCategory) {
-    msg.innerText = "❌ اختار فئة الأول 👆";
-    return;
-}
-if (type === "choice" && options.some(o => !o)) {
-    msg.innerText = "❌ لازم تملى كل الاختيارات";
-    msg.style.color = "red";
-    return;
-}
+    if (!selectedCategory) {
+        msg.innerText = "❌ اختار فئة الأول 👆";
+        return;
+    }
+    if (type === "choice" && options.some(o => !o)) {
+        msg.innerText = "❌ لازم تملى كل الاختيارات";
+        msg.style.color = "red";
+        return;
+    }
 
-if (type === "choice" && !options.includes(correct)) {
-    msg.innerText = "❌ الإجابة لازم تكون من الاختيارات";
-    msg.style.color = "red";
-    return;
-}
+    if (type === "choice" && !options.includes(correct)) {
+        msg.innerText = "❌ الإجابة لازم تكون من الاختيارات";
+        msg.style.color = "red";
+        return;
+    }
 
     if (!selectedCategory) {
         msg.innerText = "❌ اختار فئة الأول يا نجم 😏";
@@ -62,32 +67,32 @@ if (type === "choice" && !options.includes(correct)) {
         return;
     }
 
-const qCheck = query(
-  collection(db, "questions"),
-  where("text", "==", text)
-);
+    const qCheck = query(
+        collection(db, "questions"),
+        where("text", "==", text)
+    );
 
-const snapCheck = await getDocs(qCheck);
+    const snapCheck = await getDocs(qCheck);
 
-if (!snapCheck.empty) {
-  msg.innerText = "⚠️ السؤال ده موجود قبل كده يا نجم 😏";
-  msg.style.color = "orange";
-  return;
-}
+    if (!snapCheck.empty) {
+        msg.innerText = "⚠️ السؤال ده موجود قبل كده يا نجم 😏";
+        msg.style.color = "orange";
+        return;
+    }
     try {
-await addDoc(collection(db, "questions"), {
-  text,
-  options: type === "choice" ? options : [],
-  correct,
-  type, // 👈 الجديد
-  category: selectedCategory,
-  approved: false,
-  createdAt: Date.now(),
-  createdBy: localStorage.getItem("player_name") || "unknown"
-});
+        await addDoc(collection(db, "questions"), {
+            text,
+            options: type === "choice" ? options : [],
+            correct,
+            type, // 👈 الجديد
+            category: selectedCategory,
+            approved: false,
+            createdAt: Date.now(),
+            createdBy: localStorage.getItem("player_name") || "unknown"
+        });
         msg.innerText = "✅ السؤال اتضاف وهيتراجع";
         msg.style.color = "#22c55e";
-window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: "smooth" });
         // reset
         document.getElementById("q-text").value = "";
         document.getElementById("opt1").value = "";
@@ -103,27 +108,102 @@ window.scrollTo({ top: 0, behavior: "smooth" });
     }
 };
 
-const catButtons = document.querySelectorAll(".cat-btn");
+// الخطوة 2: JS (رفع الصورة + حفظ الفئة)
+const addCatBtn = document.getElementById("add-cat-btn");
+const catMsg = document.getElementById("cat-msg");
 
-// لما يفتح الصفحة يرجع الاختيار القديم
-if (selectedCategory) {
-    catButtons.forEach(btn => {
-        if (btn.dataset.cat === selectedCategory) {
+addCatBtn.onclick = async () => {
+
+    const name = document.getElementById("new-cat-name").value.trim();
+    const slug = name
+        .toLowerCase()
+        .replace(/[^a-z0-9\u0600-\u06FF ]/g, "")
+        .replace(/\s+/g, "-") || "cat-" + Date.now();
+
+    const group = document.getElementById("new-cat-group").value;
+    const file = document.getElementById("new-cat-image").files[0];
+
+    if (!name || !file) {
+        catMsg.innerText = "❌ املى كل البيانات";
+        return;
+    }
+
+    try {
+        // 📸 رفع الصورة
+        const storageRef = ref(storage, "categories/" + slug);
+        await uploadBytes(storageRef, file);
+
+        const imageUrl = await getDownloadURL(storageRef);
+
+        const q = query(
+            collection(db, "categories"),
+            where("slug", "==", slug)
+        );
+
+        const snap = await getDocs(q);
+
+        if (!snap.empty) {
+            catMsg.innerText = "❌ الفئة موجودة بالفعل";
+            return;
+        }
+
+        // 💾 حفظ في فايرستور
+        await addDoc(collection(db, "categories"), {
+            name,
+            slug,
+            group,
+            image: imageUrl,
+            createdAt: Date.now()
+        });
+
+        catMsg.innerText = "✅ الفئة اتضافت بنجاح";
+        catMsg.style.color = "green";
+
+        // 🔄 إعادة تحميل الفئات
+        if (typeof loadCategories === "function") {
+            loadCategories();
+        }
+
+    } catch (err) {
+        console.error(err);
+        catMsg.innerText = "❌ حصل خطأ";
+    }
+};
+
+const catContainer = document.getElementById("category-buttons");
+
+async function loadCategories() {
+    const snap = await getDocs(collection(db, "categories"));
+
+    catContainer.innerHTML = "";
+
+    snap.forEach(doc => {
+        const cat = doc.data();
+
+        const btn = document.createElement("button");
+        btn.className = "cat-btn";
+        btn.dataset.cat = cat.slug;
+        btn.innerText = cat.name;
+
+        // ✅ لو دي الفئة المختارة رجعها active
+        if (cat.slug === selectedCategory) {
             btn.classList.add("active");
         }
+
+        btn.onclick = () => {
+    console.log("clicked", cat.slug);
+            selectedCategory = cat.slug;
+            localStorage.setItem("selected_category", selectedCategory);
+
+            document.querySelectorAll(".cat-btn").forEach(b => {
+                b.classList.remove("active");
+            });
+
+            btn.classList.add("active");
+        };
+
+        catContainer.appendChild(btn);
     });
 }
 
-// لما يدوس على زرار
-catButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-        selectedCategory = btn.dataset.cat;
-
-        console.log("🔥 category:", selectedCategory); // 👈 مهم
-        
-        localStorage.setItem("selected_category", selectedCategory);
-
-        catButtons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-    });
-});
+loadCategories();
