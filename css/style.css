@@ -1122,8 +1122,19 @@ h2 {
 
 
 
+.wrong-text {
+  color: #ef4444;
+  font-weight: bold;
+  font-size: 24px;
+  /* text-shadow: 0 0 2px #ef4444; */
+}
 
-
+.correct-text {
+  color: #22c55e;
+  font-weight: bold;
+  font-size: 24px;
+  /* text-shadow: 0 0 2px #22c55e; */
+}
 
 .player-container {
   max-width: 500px;

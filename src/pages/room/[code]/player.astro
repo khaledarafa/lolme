@@ -168,19 +168,27 @@ onSnapshot(roomRef, (snap) => {
 
                     // 🎨 تلوين الأزرار
                     document.querySelectorAll(".answer-btn").forEach((b) => {
-                        b.disabled = true;
+    b.disabled = true;
 
-                        // لو هو اختار زرار
-                        if (b.innerText === opt) {
-                            if (opt === q.correct) {
-                                b.style.background = "#22c55e"; // صح
-                            } else {
-                                b.style.background = "#ef4444"; // غلط
-                            }
-                        } else {
-                            b.style.opacity = "0.3"; // باقي الأزرار
-                        }
-                    });
+    const btnAnswer = b.innerText;
+
+    // ✅ لو ده الصح
+    if (btnAnswer === q.correct) {
+        b.style.background = "#22c55e"; // أخضر
+        b.style.color = "#000";
+    }
+
+    // ❌ لو ده اللي اللاعب اختاره وكان غلط
+    else if (btnAnswer === opt) {
+        b.style.background = "#ef4444"; // أحمر
+        b.style.color = "#fff";
+    }
+
+    // 👇 الباقي باهت
+    else {
+        b.style.opacity = "0.4";
+    }
+});
                 };
 
                 answersEl.appendChild(btn);
@@ -213,13 +221,13 @@ onSnapshot(roomRef, (snap) => {
             },
         });
 
-        if (answer === currentQ.correct) {
-            playWinEffect();
-            feedback.innerText = "✅ صح 🔥";
-        } else {
-            playLoseEffect();
-            feedback.innerText = "❌ غلط 😏";
-        }
+if (answer === currentQ.correct) {
+    playWinEffect();
+    feedback.innerText = "✅ صح 🔥";
+} else {
+    playLoseEffect();
+    feedback.innerText = `❌ غلط 😏 \n\n✅ الإجابة الصحيحة: ${currentQ.correct}`;
+}
 
         // 🔒 قفل الإدخال
         input.disabled = true;

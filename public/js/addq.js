@@ -130,7 +130,7 @@ btn.onclick = async () => {
     try {
         await addDoc(collection(db, "questions"), {
             text,
-            options: type === "choice" ? options : [],
+            options: type === "choice" ? options : null,
             correct,
             type, // 👈 الجديد
             category: selectedCategory,

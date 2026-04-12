@@ -3,14 +3,14 @@ import { db } from "/js/firebase.js";
 import { collection, query, where, getDocs, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const password = "lolo"; // غيرها براحتك
+// const password = "lolo"; // غيرها براحتك
 
-const userPass = prompt("ادخل كلمة مرور الأدمن:");
+// const userPass = prompt("ادخل كلمة مرور الأدمن:");
 
-if (userPass !== password) {
-  document.body.innerHTML = "<h1>🚫 مش مسموح يا نجم</h1>";
-  throw new Error("Unauthorized");
-}
+// if (userPass !== password) {
+//   document.body.innerHTML = "<h1>🚫 مش مسموح يا نجم</h1>";
+//   throw new Error("Unauthorized");
+// }
 const box = document.getElementById("questions-box");
 
 async function loadQuestions() {
@@ -37,21 +37,34 @@ async function loadQuestions() {
       border-radius:10px;
     `;
 
-        div.innerHTML = `
-      <h3>${data.text}</h3>
-      <p>📂 ${data.category}</p>
-<div class="options-grid">
-  <span>1️⃣ ${data.options[0]}</span>
-  <span>2️⃣ ${data.options[1]}</span>
-  <span>3️⃣ ${data.options[2]}</span>
-  <span>4️⃣ ${data.options[3]}</span>
-</div>
-      <p>✅ الصح: ${data.correct}</p>
+let optionsHTML = "";
 
-      <button data-id="${id}" class="approve">✅ موافقة</button>
-      <button data-id="${id}" class="delete">❌ حذف</button>
-      <button data-id="${id}" class="edit">✏️ تعديل</button>
-    `;
+if (data.type === "choice" && data.options) {
+  optionsHTML = `
+    <div class="options-grid">
+      <span>1️⃣ ${data.options[0] || ""}</span>
+      <span>2️⃣ ${data.options[1] || ""}</span>
+      <span>3️⃣ ${data.options[2] || ""}</span>
+      <span>4️⃣ ${data.options[3] || ""}</span>
+    </div>
+  `;
+}
+
+div.innerHTML = `
+  <h3>${data.text}</h3>
+
+  <p>🧠 النوع: ${data.type === "choice" ? "اختيارات" : "كتابة"}</p>
+
+  <p>📂 ${data.category}</p>
+
+  ${optionsHTML}
+
+  <p>✅ الصح: ${data.correct}</p>
+
+  <button data-id="${id}" class="approve">✅ موافقة</button>
+  <button data-id="${id}" class="delete">❌ حذف</button>
+  <button data-id="${id}" class="edit">✏️ تعديل</button>
+`;
 
         box.appendChild(div);
     });
@@ -122,10 +135,15 @@ function addEvents() {
 form.querySelector(".edit-text").value = text;
 
 const inputs = form.querySelectorAll(".edit-opt");
-inputs[0].value = options[0];
-inputs[1].value = options[1];
-inputs[2].value = options[2];
-inputs[3].value = options[3];
+
+if (data.type === "choice" && options) {
+  inputs[0].value = options[0] || "";
+  inputs[1].value = options[1] || "";
+  inputs[2].value = options[2] || "";
+  inputs[3].value = options[3] || "";
+} else {
+  inputs.forEach(inp => inp.style.display = "none");
+}
 
 form.querySelector(".edit-correct").value = correct;
             parent.appendChild(form);

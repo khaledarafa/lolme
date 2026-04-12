@@ -344,8 +344,11 @@ import Layout from "../../../layouts/Layout.astro";
                         feedback.style.color = "#22c55e";
                     } else {
                         playLoseEffect();
-                        feedback.innerHTML = "❌ غلط يا نجم 😏";
-                        feedback.style.color = "#ef4444";
+                        feedback.innerHTML = `
+<span class="wrong-text">❌ غلط يا نجم</span>
+<br><br>
+<span class="correct-text">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+`;
                     }
                 });
             }
@@ -383,21 +386,23 @@ import Layout from "../../../layouts/Layout.astro";
                     document.querySelectorAll(".answer-btn").forEach((b) => {
                         b.disabled = true;
 
-                        // لو جاوب صح
-                        if (answer === correctAnswer) {
-                            if (b.dataset.answer === correctAnswer) {
-                                b.style.background = "#22c55e";
-                            } else {
-                                b.style.opacity = "0.5";
-                            }
+                        const btnAnswer = b.dataset.answer;
+
+                        // ✅ الإجابة الصح دايمًا أخضر
+                        if (btnAnswer === correctAnswer) {
+                            b.style.background = "#22c55e";
+                            b.style.color = "#000";
                         }
-                        // لو جاوب غلط
+
+                        // ❌ اللي الأدمن اختاره وكان غلط
+                        else if (btnAnswer === answer) {
+                            b.style.background = "#ef4444";
+                            b.style.color = "#fff";
+                        }
+
+                        // 👇 باقي الاختيارات باهتة
                         else {
-                            if (b === btn) {
-                                b.style.background = "#ef4444";
-                            } else {
-                                b.style.opacity = "0.5";
-                            }
+                            b.style.opacity = "0.4";
                         }
                     });
 
@@ -407,9 +412,13 @@ import Layout from "../../../layouts/Layout.astro";
                         feedback.innerHTML = "✅ إجابة صح يا بطل!";
                         feedback.style.color = "#22c55e";
                     } else {
-                        playLoseEffect();
-                        feedback.innerHTML = "❌ غلط يا نجم 😏";
-                        feedback.style.color = "#ef4444";
+                            playLoseEffect();
+
+                            feedback.innerHTML = `
+                            <span class="wrong-text">❌ غلط يا نجم 😏</span>
+                            <br><br>
+                            <span class="correct-text">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+                            `;
                     }
 
                     feedback.style.textAlign = "center";
