@@ -10,6 +10,37 @@ const btn = document.getElementById("add-q-btn");
 const typeSelect = document.getElementById("q-type");
 const optionsBox = document.getElementById("options-box");
 
+
+function compressImage(file) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            img.src = e.target.result;
+        };
+
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+
+            const maxWidth = 400; // 👈 صغرنا الحجم
+            const scale = maxWidth / img.width;
+
+            canvas.width = maxWidth;
+            canvas.height = img.height * scale;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // 👇 الجودة هنا السر
+            canvas.toBlob((blob) => {
+                resolve(blob);
+            }, "image/webp", 0.5); // 👈 قللنا الجودة
+        };
+
+        reader.readAsDataURL(file);
+    });
+}
 typeSelect.addEventListener("change", () => {
     if (typeSelect.value === "text") {
         optionsBox.style.display = "none";
@@ -17,7 +48,24 @@ typeSelect.addEventListener("change", () => {
         optionsBox.style.display = "block";
     }
 });
+const fileInput = document.getElementById("new-cat-image");
+const preview = document.getElementById("preview");
 
+fileInput.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 👇 لو عندك compress استخدمه
+    const compressed = await compressImage(file);
+
+    preview.src = URL.createObjectURL(compressed);
+    preview.style.display = "block";
+});
+const label = document.querySelector(".upload-box");
+
+fileInput.addEventListener("change", () => {
+    label.innerText = "✅ تم اختيار الصورة";
+});
 const msg = document.getElementById("msg");
 let selectedCategory = localStorage.getItem("selected_category") || "";
 
@@ -123,6 +171,20 @@ addCatBtn.onclick = async () => {
     const group = document.getElementById("new-cat-group").value;
     const file = document.getElementById("new-cat-image").files[0];
 
+    const maxSize = 2 * 1024 * 1024; // 2MB
+
+    if (file.size > maxSize) {
+        catMsg.innerText = "❌ الصورة كبيرة (أقصى حاجة 2MB)";
+        return;
+    }
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowedTypes.includes(file.type)) {
+        catMsg.innerText = "❌ مسموح JPG أو PNG أو WEBP بس";
+        return;
+    }
+
     if (!name || !file) {
         catMsg.innerText = "❌ املى كل البيانات";
         return;
@@ -131,7 +193,8 @@ addCatBtn.onclick = async () => {
     try {
         // 📸 رفع الصورة
         const storageRef = ref(storage, "categories/" + slug);
-        await uploadBytes(storageRef, file);
+        const compressed = await compressImage(file);
+        await uploadBytes(storageRef, compressed);
 
         const imageUrl = await getDownloadURL(storageRef);
 
@@ -191,7 +254,7 @@ async function loadCategories() {
         }
 
         btn.onclick = () => {
-    console.log("clicked", cat.slug);
+            console.log("clicked", cat.slug);
             selectedCategory = cat.slug;
             localStorage.setItem("selected_category", selectedCategory);
 
@@ -205,5 +268,15 @@ async function loadCategories() {
         catContainer.appendChild(btn);
     });
 }
+
+document.getElementById("new-cat-image").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    const preview = document.getElementById("preview");
+
+    if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+    }
+});
 
 loadCategories();

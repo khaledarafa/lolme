@@ -4,71 +4,59 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="إضافة سؤال">
-
   <div class="add-category-box">
-
     <h3>➕ إضافة فئة جديدة</h3>
 
     <input id="new-cat-name" placeholder="اسم الفئة" />
     <input id="new-cat-slug" style="display:none" />
 
     <select id="new-cat-group">
-        <option value="football">⚽ كورة</option>
-        <option value="songs">🎵 أغاني</option>
-        <option value="brain">🧠 ذكاء</option>
-        <option value="movies">🎬 ترفيه</option>
-        <option value="products">🛍️ منتجات</option>
-        <option value="mix">🌍 منوعات</option>
+      <option value="football">⚽ كورة</option>
+      <option value="songs">🎵 أغاني</option>
+      <option value="brain">🧠 ذكاء</option>
+      <option value="movies">🎬 ترفيه</option>
+      <option value="products">🛍️ منتجات</option>
+      <option value="mix">🌍 منوعات</option>
     </select>
 
-    <input type="file" id="new-cat-image" />
+    <label for="new-cat-image" class="upload-box"> 📸 اختار صورة للفئة </label>
+
+    <input type="file" id="new-cat-image" hidden />
+
+    <img id="preview" />
 
     <button id="add-cat-btn">➕ إضافة الفئة</button>
 
     <p id="cat-msg"></p>
-
-</div>
-
-<div id="category-buttons" class="category-buttons"></div>
-    <!-- <div id="category-buttons" class="category-buttons">
-    
-      <button class="cat-btn" data-cat="funny">😂 مضحك</button>
-      <button class="cat-btn" data-cat="truth">😏 صراحة</button>
-      <button class="cat-btn" data-cat="deep">🧠 عميق</button>
-      <button class="cat-btn" data-cat="friends">👯 صحاب</button>
-      <button class="cat-btn" data-cat="love">❤️ حب</button>
-      <button class="cat-btn" data-cat="challenge">🔥 تحدي</button>
-      <button class="cat-btn" data-cat="embarrassing">😳 إحراج</button>
-      <button class="cat-btn" data-cat="songs">🎵 أغاني</button>
-      <button class="cat-btn" data-cat="football">⚽ كورة</button>
-      <button class="cat-btn" data-cat="hazoom">💣 اسئلة حزوم</button>
-    </div> -->
-
+  </div>
+  <img
+    id="preview"
+    style="width:100%;border-radius:10px;margin-top:10px;display:none;"
+  />
+  <div id="category-buttons" class="category-buttons"></div>
 
   <section class="add-q-section">
     <!-- <h2>➕ أضف سؤال جديد</h2> -->
     <div class="add-q-box">
-    <select id="q-type">
-  <option value="choice">اختيارات</option>
-  <option value="text">إجابة كتابة</option>
-</select>
+      <select id="q-type">
+        <option value="choice">اختيارات</option>
+        <option value="text">إجابة كتابة</option>
+      </select>
 
       <input id="q-text" placeholder="اكتب السؤال 😏" />
-<div id="options-box">
-      <input id="opt1" placeholder="اختيار 1" />
-      <input id="opt2" placeholder="اختيار 2" />
-      <input id="opt3" placeholder="اختيار 3" />
-      <input id="opt4" placeholder="اختيار 4" />
-</div>
+      <div id="options-box">
+        <input id="opt1" placeholder="اختيار 1" />
+        <input id="opt2" placeholder="اختيار 2" />
+        <input id="opt3" placeholder="اختيار 3" />
+        <input id="opt4" placeholder="اختيار 4" />
+      </div>
       <input id="correct" placeholder="الإجابة الصح (لازم تكون زي اختيار)" />
 
       <button id="add-q-btn">🔥 إضافة السؤال</button>
 
       <div id="msg"></div>
-
     </div>
   </section>
 
   <script type="module" src="/js/addq.js"></script>
-
 </Layout>
