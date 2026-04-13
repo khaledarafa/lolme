@@ -1,726 +1,561 @@
 ---
-// src/pages/room/[code].astro
 const { code } = Astro.params;
 import Layout from "../../../layouts/Layout.astro";
 ---
 
 <Layout>
-    <div class="room-container">
-        <div
-            style="font-size: x-large; text-align: center; 
-    margin-top: 16px;"
-        >
-            🎮 كود الغرفه : {code}
-        </div>
+    <div class="top-bar">
+        🎮 كود الغرفة: {code}
+        <button id="show-results">📊 عرض النتائج</button>
+        <button id="end-game">❌ اقفل الروم</button>
+    </div>
+    <div id="players-section" data-code={code}></div>
 
-        <div class="room-header">
-            <div class="category-dropdown">
-                <button id="open-admin">👑 شاشة الأدمن</button>
-                <button class="dropdown-btn">🎯 الفئات ▼</button>
+    <div class="suggest-box">
+        <button id="send-suggest-admin">إرسال</button>
+        <input id="suggest-input-admin" placeholder="اقترح فئة 😏" />
+    </div>
 
-                <div class="dropdown-menu">
-                    <div
-                        class="cat-card cat-btn"
-                        data-cat="funny"
-                        style="background-image:url('/images/funny.webp')"
-                    >
-                        <span>😂 مضحك</span>
-                    </div>
+    <div class="suggestions-wrapper">
+        <div id="suggestions-list" class="suggestions-list"></div>
+    </div>
 
-                    <div
-                        class="cat-card cat-btn"
-                        data-cat="truth"
-                        style="background-image:url('/images/truth.webp')"
-                    >
-                        <span>😏 صراحة</span>
-                    </div>
+    <div class="board" id="board"></div>
 
-                    <div
-                        class="cat-card cat-btn"
-                        data-cat="deep"
-                        style="background-image:url('/images/deep.webp')"
-                    >
-                        <span>🧠 عميق</span>
-                    </div>
+    <div id="question-sheet" class="sheet hidden">
+        <div class="sheet-content" id="sheet-content"></div>
+    </div>
 
-                    <div
-                        class="cat-card cat-btn"
-                        data-cat="friends"
-                        style="background-image:url('/images/friends.webp')"
-                    >
-                        <span>👯 صحاب</span>
-                    </div>
+    <div id="image-modal" class="image-modal hidden">
+        <span id="close-image">❌</span>
+        <img id="modal-img" />
+    </div>
+</Layout>
 
-                    <div
-                        class="cat-card cat-btn"
-                        data-cat="love"
-                        style="background-image:url('/images/love.webp')"
-                    >
-                        <span>❤️ حب</span>
-                    </div>
+<script
+    src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
+></script>
+<script type="module">
+    import { db } from "/js/firebase.js";
+    import {
+        doc,
+        onSnapshot,
+        updateDoc,
+        getDoc,
+        deleteDoc,
+        getDocs,
+        collection,
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-                    <div
-                        class="cat-card cat-btn"
-                        data-cat="challenge"
-                        style="background-image:url('/images/challenge.webp')"
-                    >
-                        <span>🔥 تحدي</span>
-                    </div>
+    const roomCode =
+        document.querySelector(".board").dataset?.code ||
+        window.location.pathname.split("/")[2];
 
-                    <div
-                        class="cat-card cat-btn"
-                        data-cat="embarrassing"
-                        style="background-image:url('/images/embarrassing.webp')"
-                    >
-                        <span>😳 إحراج</span>
-                    </div>
+    const roomRef = doc(db, "rooms", roomCode);
+    const winSound = new Audio("/sounds/win.mp3");
+    const loseSound = new Audio("/sounds/lose.mp3");
 
-                    <div
-                        class="cat-card cat-btn"
-                        data-cat="songs"
-                        style="background-image:url('/images/songs.webp')"
-                    >
-                        <span>🎵 أغاني</span>
-                    </div>
+    let categoriesMap = {};
 
-                    <div
-                        class="cat-card cat-btn"
-                        data-cat="football"
-                        style="background-image:url('/images/football.webp')"
-                    >
-                        <span>⚽ كورة</span>
-                    </div>
+    async function loadCategoriesMap() {
+        const snap = await getDocs(collection(db, "categories"));
 
-                    <div
-                        class="cat-card cat-btn"
-                        data-cat="hazoom"
-                        style="background-image:url('/images/hazooma.jpeg')"
-                    >
-                        <span>💣 حزوم</span>
-                    </div>
+        snap.forEach((doc) => {
+            const cat = doc.data();
+            categoriesMap[cat.slug] = { image: cat.image, name: cat.name };
+        });
+    }
+
+    await loadCategoriesMap();
+
+    function playWinEffect() {
+        winSound.currentTime = 0;
+        winSound.play();
+
+        // 💥 انفجار في النص
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+        });
+
+        // 👉 من اليمين
+        confetti({
+            particleCount: 60,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+        });
+
+        // 👈 من الشمال
+        confetti({
+            particleCount: 60,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+        });
+
+        // 🎯 من فوق
+        confetti({
+            particleCount: 80,
+            spread: 100,
+            origin: { y: 0 },
+        });
+
+        // 🌸 ورد (pink vibes 😂)
+        confetti({
+            particleCount: 50,
+            spread: 80,
+            colors: ["#ff69b4", "#ffc0cb", "#ff1493"],
+        });
+
+        // 🔁 شغل مستمر (حلاوة بقى)
+        const duration = 1500;
+        const end = Date.now() + duration;
+
+        (function frame() {
+            confetti({
+                particleCount: 4,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+            });
+            confetti({
+                particleCount: 4,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+            });
+
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+        })();
+    }
+
+    function playLoseEffect() {
+        loseSound.currentTime = 0;
+        loseSound.play();
+
+        document.body.classList.add("shake");
+        setTimeout(() => {
+            document.body.classList.remove("shake");
+        }, 300);
+    }
+    const board = document.getElementById("board");
+    let playerId = localStorage.getItem("player_" + roomCode);
+
+    // ✅ عند الخروج
+    window.addEventListener("beforeunload", () => {
+        if (playerId) {
+            updateDoc(roomRef, {
+                [`players.${playerId}.lastSeen`]: Date.now(),
+            });
+        }
+    });
+
+    // ✅ عند الدخول
+    (async () => {
+        if (!playerId) return;
+
+        const snap = await getDoc(roomRef);
+        const data = snap.data();
+
+        if (!data) return;
+
+        await updateDoc(roomRef, {
+            [`players.${playerId}`]: {
+                name: data.players?.[playerId]?.name || "لاعب 😏",
+                score: data.players?.[playerId]?.score || 0,
+                lastSeen: Date.now(),
+            },
+        });
+    })();
+
+    let lastCount = 0;
+    const msgSound = new Audio("/sounds/msg.mp3");
+
+    onSnapshot(roomRef, (snap) => {
+        const data = snap.data();
+
+        const messages = data.suggestions || [];
+        const list = document.getElementById("suggestions-list");
+
+        if (list) {
+            list.innerHTML = messages
+                .map((m) => {
+                    const name =
+                        m.playerName ||
+                        data.players?.[m.player]?.name ||
+                        "لاعب 😏";
+
+                    return `
+                <div class="suggest-item">
+                    <span class="name">${name}</span>
+                    <span class="text">${m.text}</span>
                 </div>
+            `;
+                })
+                .join("");
+
+            list.scrollTop = list.scrollHeight;
+        }
+
+        // 🔊 صوت
+        if (lastCount !== 0 && messages.length > lastCount) {
+            const lastMsg = messages[messages.length - 1];
+
+            if (lastMsg.player !== playerId) {
+                msgSound.currentTime = 0;
+                msgSound.play().catch(() => {});
+            }
+        }
+
+        lastCount = messages.length;
+
+        const gamePlan = data.gamePlan || [];
+        // if (playerId !== data.hostId) {
+        //     window.location.href = `/room/${roomCode}/player`;
+        // }
+        board.innerHTML = "";
+
+        const section = document.getElementById("players-section");
+
+        const playersCount = Object.keys(data.players || {}).length;
+
+        section.innerHTML = `
+            <div class="players-card compact">
+
+                <div class="players-header">
+                👥 ${playersCount}
+                ${playerId === data.hostId ? " | 👑 هوست" : " | 🎮 لاعب"}
+                </div>
+
+                <div class="players-list">
+                ${Object.entries(data.players || {})
+                    .map(
+                        ([id, player]) => `
+                    <span class="player-chip ${id === playerId ? "me" : ""}">
+                    ${player.name} ${id === data.hostId ? "👑" : ""}
+                    </span>
+                `,
+                    )
+                    .join("")}
+                </div>
+
+            </div>
+            `;
+        async function openQuestion(cat, index, catIndex) {
+            const sheet = document.getElementById("question-sheet");
+            const content = document.getElementById("sheet-content");
+
+            const question = cat.questions[index];
+            const imageHtml = question.image
+  ? `<img src="${question.image}" class="question-img" />`
+  : "";
+
+            if (!question) return;
+
+            await updateDoc(roomRef, {
+                currentQuestion: {
+                    text: question.text,
+                    options: question.options || [],
+                    correct: question.correct,
+                    type: question.type || "choice",
+                    category: cat.category,
+                    categoryIndex: catIndex,
+                    questionIndex: index,
+                },
+                [`questionStartTimes.${catIndex}_${index}`]: Date.now(),
+            });
+            if (!question) return;
+
+            if (question.type === "text") {
+                content.innerHTML = `
+        <div class="question-box">
+
+            ${imageHtml}
+<h2>${question.text}</h2>
+<div class="admin-correct">
+    ✅ الإجابة: ${question.correct}
+</div>
+
+            <div class="text-answer-box">
+                <input id="text-answer" placeholder="اكتب إجابتك 😏" />
+                <button id="send-answer">إرسال</button>
             </div>
 
-            <button id="start-game">🚀 ابدأ اللعبة</button>
-            <button id="next-question">➡️ السؤال اللي بعده</button>
-            <button id="show-results">📊 عرض النتائج</button>
-            <button id="end-game">❌ اقفل الروم</button>
-        </div>
-        <div id="players-section" data-code={code}></div>
+            <div id="feedback"></div>
 
-        <div id="question-box"></div>
-        <div id="results-box"></div>
-
-        <div class="suggest-box">
-            <button id="send-suggest-admin">إرسال</button>
-            <input id="suggest-input-admin" placeholder="اقترح فئة 😏" />
         </div>
 
-        <div class="suggestions-wrapper">
-            <div id="suggestions-list" class="suggestions-list"></div>
+        <div class="close-sheet">
+            <button id="close-sheet">❌ قفل</button>
         </div>
-    </div>
-    <script type="module">
-        import { db } from "/js/firebase.js";
-        import { doc, onSnapshot, updateDoc, deleteDoc, collection, query, where, getDocs, getDoc, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        const normalize = (str) => str ?.toLowerCase() .trim() .replace(/[أإآ]/g, "ا") // كل الألف زي بعض .replace(/ة/g, "ه") .replace(/ى/g, "ي") .replace(/\s+/g, " ");
-        async function calculateScores(data) {
-            const category = data.questionCategory;
-            const currentIndex = data.currentIndex?.[category] ?? 0;
+    `;
+            } else {
+                content.innerHTML = `
+        <div class="question-box">
 
-            const currentAnswers =
-                data.answers?.[category]?.[currentIndex] || {};
+            ${imageHtml}
+<h2>${question.text}</h2>
+<div class="admin-correct">
+    ✅ الإجابة: ${question.correct}
+</div>
 
-            const startTime =
-                data.questionStartTimes?.[`${category}_${currentIndex}`];
+            <div class="answers">
+                ${question.options
+                    .map(
+                        (opt) => `
+                    <button class="answer-btn" data-answer="${opt}">
+                        ${opt}
+                    </button>
+                `,
+                    )
+                    .join("")}
+            </div>
 
-            // ❌ امسح currentQuestion من هنا
-            if (data.scoredQuestions?.[`${category}_${currentIndex}`]) {
-                console.log("⛔ السؤال ده اتحسب قبل كده");
-                return;
+            <div id="feedback"></div>
+
+        </div>
+
+        <div class="close-sheet">
+            <button id="close-sheet">❌ قفل</button>
+        </div>
+    `;
             }
+setTimeout(() => {
+    const qImg = document.querySelector(".question-img");
 
-            let results = [];
+    if (qImg) {
+        qImg.addEventListener("click", () => {
+            const modal = document.getElementById("image-modal");
+            const modalImg = document.getElementById("modal-img");
 
-            Object.entries(currentAnswers).forEach(([id, ans]) => {
-                let diff = 0;
-
-                if (startTime && ans.time) {
-                    diff = (ans.time - startTime) / 1000;
-                }
-
-                const normalize = (str) => str?.trim().replace(/\s+/g, " ");
-
-                let isCorrect = false;
-
-                if (Array.isArray(ans.correctAnswer)) {
-                    isCorrect = ans.correctAnswer.some(
-                        (c) => normalize(ans.answer) === normalize(c),
-                    );
-                } else {
-                    isCorrect =
-                        normalize(ans.answer) === normalize(ans.correctAnswer);
-                }
-                results.push({
-                    id,
-                    time: diff,
-                    correct: isCorrect,
-                });
-            });
-
-            for (const r of results) {
-                const prevScore = data.players?.[r.id]?.score || 0;
-
-                // 👇 خلي عندك score حقيقي
-                const score = r.correct ? Math.max(10 - r.time, 1) : 0;
-
-                await updateDoc(roomRef, {
-                    [`players.${r.id}.score`]: prevScore + score,
-                });
-            }
-
-            // 👇 مهم عشان ما يتحسبش مرتين
-            await updateDoc(roomRef, {
-                [`scoredQuestions.${category}_${currentIndex}`]: true,
-            });
-        }
-        document
-            .getElementById("next-question")
-            ?.addEventListener("click", async () => {
-                const snap = await getDoc(roomRef);
-                const data = snap.data();
-
-                await calculateScores(data);
-                const category = data.questionCategory;
-                const currentIndex = data.currentIndex?.[category] ?? -1;
-                const nextIndex = currentIndex + 1;
-
-                const list = data.questionsList || [];
-
-                if (nextIndex >= list.length) {
-                    document.getElementById("question-box").innerHTML = `
-                        <div class="question-card">
-                            <h2>🏁 خلصت الأسئلة في الفئة دي</h2>
-                        </div>
-                    `;
-                    return;
-                }
-
-                const q = list[nextIndex];
-                await updateDoc(roomRef, {
-                    [`currentIndex.${category}`]: nextIndex,
-                    question: q,
-                    [`answers.${category}.${nextIndex}`]: {},
-
-                    [`questionStartTimes.${category}_${nextIndex}`]: Date.now(), // 👈 المهم
-                });
-            });
-        // const container = document.getElementById("players");
-        const container = document.getElementById("players-section");
-        const controls = document.getElementById("host-controls");
-
-        const roomCode = container.dataset.code;
-        let playerId;
-        document.getElementById("open-admin")?.addEventListener("click", () => {
-            window.open(`/room/${roomCode}/admin`, "_blank");
+            modalImg.src = qImg.src;
+            modal.classList.remove("hidden");
         });
-        function loadPlayerId() {
-            playerId = localStorage.getItem("player_" + roomCode);
-            console.log("🧠 playerId:", playerId);
-        }
+    }
+}, 0);
+            let answered = false;
 
-        // const meBox = document.getElementById("me-box");
-        const roomRef = doc(db, "rooms", roomCode);
+            // 👇 text question
+            const sendBtn = document.getElementById("send-answer");
 
-        loadPlayerId();
+            if (sendBtn) {
+                sendBtn.addEventListener("click", async () => {
+                    if (answered) return;
+                    answered = true;
 
-        // sessionStorage → بيتمسح لما تعمل refresh أو تقفل التاب ✅
-        async function loadCategoryCounts() {
-            const catButtons = document.querySelectorAll(".cat-btn");
+                    const input = document.getElementById("text-answer");
+                    const answer = input.value.trim();
 
-            // 🧠 كاش السيشن
-            const cached = sessionStorage.getItem("categoryCounts");
+                    if (!answer) return;
 
-            if (cached) {
-                const counts = JSON.parse(cached);
+                    const playerId = localStorage.getItem("player_" + roomCode);
+                    const correctAnswer = cat.questions[index]?.correct;
 
-                catButtons.forEach((btn) => {
-                    const category = btn.dataset.cat;
-                    if (counts[category] !== undefined) {
-                        btn.innerHTML += ` (${counts[category]})`;
+                    const answeredKey = `${catIndex}_${index}`;
+
+                    await updateDoc(roomRef, {
+                        [`answers.${answeredKey}.${playerId}`]: {
+                            answer,
+                            correctAnswer,
+                            category: cat.category,
+                            questionIndex: index,
+                            time: Date.now(),
+                        },
+                        [`answeredQuestions.${answeredKey}`]: true,
+                    });
+
+                    const feedback = document.getElementById("feedback");
+                    if (answer === correctAnswer) {
+                        playWinEffect();
+                        feedback.innerHTML = "✅ إجابة صح يا بطل!";
+                        feedback.style.color = "#22c55e";
+                    } else {
+                        playLoseEffect();
+                        feedback.innerHTML = `
+<span class="wrong-text">❌ غلط يا نجم</span>
+<br><br>
+<span class="correct-text">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+`;
                     }
                 });
-
-                console.log("⚡ من السيشن");
-                return;
             }
 
-            // 🔥 أول مرة في السيشن
-            const counts = {};
+            document.querySelectorAll(".answer-btn").forEach((btn) => {
+                btn.addEventListener("click", async () => {
+                    if (answered) return;
+                    answered = true;
 
-            for (const btn of catButtons) {
-                const category = btn.dataset.cat;
+                    const answer = btn.dataset.answer;
+                    const playerId = localStorage.getItem("player_" + roomCode);
 
-                const q = query(
-                    collection(db, "questions"),
-                    where("approved", "==", true),
-                    where("category", "==", category),
-                );
+                    // 👇 الصح بقى
+                    const correctAnswer = cat.questions[index]?.correct;
 
-                const snap = await getDocs(q);
+                    // 👇 نفس المفتاح اللي في البورد
+                    const answeredKey = `${catIndex}_${index}`;
+                    if (!playerId) {
+                        alert("❌ في مشكلة في اللاعب يا نجم");
+                        return;
+                    }
+                    await updateDoc(roomRef, {
+                        [`answers.${answeredKey}.${playerId}`]: {
+                            answer,
+                            correctAnswer,
+                            category: cat.category,
+                            questionIndex: index,
+                            time: Date.now(),
+                        },
+                        [`answeredQuestions.${answeredKey}`]: true,
+                    });
 
-                const count = snap.size;
-                counts[category] = count;
+                    const feedback = document.getElementById("feedback");
 
-                btn.innerHTML += ` (${count})`;
-            }
+                    document.querySelectorAll(".answer-btn").forEach((b) => {
+                        b.disabled = true;
 
-            // 💾 خزّن في السيشن
-            sessionStorage.setItem("categoryCounts", JSON.stringify(counts));
+                        const btnAnswer = b.dataset.answer;
 
-            console.log("💾 اتحفظ في السيشن");
-        }
+                        // ✅ الإجابة الصح دايمًا أخضر
+                        if (btnAnswer === correctAnswer) {
+                            b.style.background = "#22c55e";
+                            b.style.color = "#000";
+                        }
 
-        loadCategoryCounts();
+                        // ❌ اللي الأدمن اختاره وكان غلط
+                        else if (btnAnswer === answer) {
+                            b.style.background = "#ef4444";
+                            b.style.color = "#fff";
+                        }
 
-        const catButtons = document.querySelectorAll(".cat-btn");
+                        // 👇 باقي الاختيارات باهتة
+                        else {
+                            b.style.opacity = "0.4";
+                        }
+                    });
 
-        catButtons.forEach((btn) => {
-            btn.addEventListener("click", async () => {
-                const snap = await getDoc(roomRef);
-                const data = snap.data();
+                    // 🔥 ده اللي كان ناقصك بصراحة
+                    if (answer === correctAnswer) {
+                        playWinEffect();
+                        feedback.innerHTML = "✅ إجابة صح يا بطل!";
+                        feedback.style.color = "#22c55e";
+                    } else {
+                        playLoseEffect();
 
-                if (playerId !== data.hostId) return;
+                        feedback.innerHTML = `
+                            <span class="wrong-text">❌ غلط يا نجم 😏</span>
+                            <br><br>
+                            <span class="correct-text">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+                            `;
+                    }
 
-                // UI
-                catButtons.forEach((b) => b.classList.remove("active"));
-                btn.classList.add("active");
-
-                const category = btn.dataset.cat;
-
-                await updateDoc(roomRef, {
-                    questionCategory: category,
-
-                    // 👇 مهم جدًا
-                    question: null,
-                    questionsList: [],
-
-                    // 👇 نبدأ الفئة دي من الأول
-                    [`currentIndex.${category}`]: -1,
+                    feedback.style.textAlign = "center";
+                    feedback.style.marginTop = "10px";
+                    feedback.style.fontWeight = "bold";
                 });
             });
+            sheet.classList.add("show");
+
+            document.getElementById("close-sheet").onclick = () => {
+                sheet.classList.remove("show");
+            };
+        }
+
+        gamePlan.forEach((cat, catIndex) => {
+            const col = document.createElement("div");
+            col.className = "column";
+
+            // 👇 اسم الفئة
+            const title = document.createElement("div");
+            title.className = "category-card";
+
+            // title.style.backgroundImage = `url(${categoryImages[cat.category]})`;
+
+const realCat = cat.category;
+
+title.innerHTML = `
+    <img src="${categoriesMap[realCat]?.image}" />
+    <div class="overlay">
+        ${categoriesMap[realCat]?.name || realCat}
+    </div>
+`;
+            col.appendChild(title);
+
+            // 👇 الكروت (قيم ثابتة)
+            cat.questions.forEach((_, i) => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerText = "❓";
+
+                const answeredKey = `${catIndex}_${i}`;
+                const isAnswered = data.answeredQuestions?.[answeredKey];
+
+                if (isAnswered) {
+                    card.style.opacity = "0.3";
+                    card.style.pointerEvents = "none";
+                    card.innerText = "✔️";
+                } else {
+                    card.addEventListener("click", () => {
+                        openQuestion(cat, i, catIndex);
+                    });
+                }
+
+                col.appendChild(card);
+            });
+
+            board.appendChild(col);
         });
 
-        // 🔥 هنا تحط الكود ده
-        (async () => {
+        // document.getElementById("open-admin")?.addEventListener("click", () => {
+        //     window.open(`/room/${roomCode}/admin`, "_blank");
+        // });
+    });
+
+    // إرسال
+    document
+        .getElementById("send-suggest-admin")
+        ?.addEventListener("click", async () => {
+            const input = document.getElementById("suggest-input-admin");
+            const text = input.value.trim();
+            if (!text) return;
+
             const snap = await getDoc(roomRef);
             const data = snap.data();
 
-            if (!data) return;
+            const newSuggestion = {
+                text,
+                player: playerId,
+                playerName: data.players?.[playerId]?.name || "لاعب 😏",
+                time: Date.now(),
+            };
 
-            if (playerId) {
-                await updateDoc(roomRef, {
-                    [`players.${playerId}`]: {
-                        name: data.players?.[playerId]?.name || "لاعب 😏",
-                        score: data.players?.[playerId]?.score || 0,
-                        lastSeen: Date.now(),
-                    },
-                });
-
-                console.log("🔄 رجعنا اللاعب (ممكن يكون هوست)");
-            }
-        })();
-
-        // 🔄 realtime
-        onSnapshot(roomRef, (snap) => {
-            const data = snap.data();
-            const isHost = playerId && playerId === data.hostId;
-            if (playerId !== data.hostId) {
-                document.body.innerHTML = "🚫 مش مسموح";
-                return;
-            }
-            if (!data) {
-                container.innerHTML = "الروم اتقفلت 👋";
-                return;
-            }
-
-            console.log("👀 me:", playerId);
-            console.log("👑 host:", data.hostId);
-            console.log("🎯 isHost:", playerId === data.hostId);
-
-            console.log("🔥 room:", data);
-            const section = document.getElementById("players-section");
-
-const now = Date.now();
-
-const activePlayers = Object.entries(data.players || {}).filter(
-  ([id, player]) => now - (player.lastSeen || 0) < 4000,
-);
-
-const playersCount = activePlayers.length;
-
-// const myName = data.players?.[playerId]?.name;
-
-section.innerHTML = `
-  <div class="players-card compact">
-
-    <div class="players-header">
-      👥 ${playersCount}
-      ${
-        playerId === data.hostId
-          ? " | 👑 هوست"
-          : " | 🎮 لاعب"
-      }
-    </div>
-
-    <div class="players-list">
-      ${Object.entries(data.players || {})
-        .map(
-          ([id, player]) => `
-        <span class="player-chip ${id === playerId ? "me" : ""}">
-          ${player.name} ${id === data.hostId ? "👑" : ""}
-        </span>
-      `,
-        )
-        .join("")}
-    </div>
-
-  </div>
-`;
-            const questionBox = document.getElementById("question-box");
-            const category = data.questionCategory;
-            const currentIndex = data.currentIndex?.[category] ?? 0;
-
-            const myAnswer =
-                data.answers?.[category]?.[currentIndex]?.[playerId]?.answer;
-
-            const q = data.question;
-            const correctAnswer = data.question?.correct;
-
-            console.log("🧠 السؤال الحالي:", data.question);
-            console.log("✅ الصح:", correctAnswer);
-            console.log("👈 اختياري:", myAnswer);
-            if (q) {
-                let feedbackHTML = "";
-
-                if (myAnswer) {
-                    const isCorrect =
-                        normalize(myAnswer) === normalize(correctAnswer);
-
-                    feedbackHTML = `
-                        <div class="feedback ${isCorrect ? "correct" : "wrong"}">
-                        ${isCorrect ? "✅ إجابة صح يا بطل!" : "❌ غلط يا نجم 😏"}
-                        </div>
-                    `;
-                }
-
-                if (q.type === "choice" || !q.type) {
-                    questionBox.innerHTML = `
-                        <div class="question-card">
-                            <h2>${q.text}</h2>
-<div class="admin-answer" style="
-    margin-top:10px;
-    padding:8px;
-    background:#020617;
-    border:1px solid #22c55e;
-    border-radius:8px;
-    color:#22c55e;
-    font-size:14px;
-">
-     الإجابة: ${Array.isArray(correctAnswer) ? correctAnswer.join(" / ") : correctAnswer}
-</div>
-                            <div class="answers">
-                                ${q.options
-                                    .map(
-                                        (opt) => `
-                                    <button class="answer-btn" data-answer="${opt}">
-                                        ${opt}
-                                    </button>
-                                `,
-                                    )
-                                    .join("")}
-                            </div>
-                            ${feedbackHTML}
-                        </div>
-                    `;
-                } else {
-                    questionBox.innerHTML = `
-                        <div class="question-card">
-                            <h2>${q.text}</h2>
-<div class="admin-answer" style="
-    margin-top:10px;
-    padding:8px;
-    background:#020617;
-    border:1px solid #22c55e;
-    border-radius:8px;
-    color:#22c55e;
-    font-size:14px;
-">
-    👑 الإجابة: ${Array.isArray(correctAnswer) ? correctAnswer.join(" / ") : correctAnswer}
-</div>
-                            <input id="text-answer" placeholder="اكتب إجابتك 😏" />
-                            <button id="send-answer">إرسال</button>
-
-                            ${feedbackHTML}
-                        </div>
-                    `;
-                }
-
-                // 🔥 هنا بقى المهم
-                document.querySelectorAll(".answer-btn").forEach((btn) => {
-                    const answer = btn.dataset.answer;
-
-                    // 🔒 لو جاوب قبل كده
-                    if (myAnswer) {
-                        btn.disabled = true;
-
-                        if (answer === myAnswer) {
-                            btn.style.background = "#3b82f6"; // اختياره
-                        }
-                    }
-
-                    btn.addEventListener("click", async () => {
-                        if (myAnswer) return;
-
-                        const snap = await getDoc(roomRef);
-                        const data = snap.data();
-
-                        const startTime =
-                            data.questionStartTimes?.[
-                                `${category}_${currentIndex}`
-                            ];
-
-                        // 🚫 لو لسه مفيش startTime
-                        if (!startTime) {
-                            console.log("⏳ لسه السؤال ما بدأش");
-                            return;
-                        }
-
-                        await updateDoc(roomRef, {
-                            [`answers.${category}.${currentIndex}.${playerId}`]:
-                                {
-                                    answer,
-                                    correctAnswer,
-                                    category,
-                                    questionIndex: currentIndex,
-                                    time: Date.now(),
-                                },
-                        });
-                    });
-                });
-
-                const sendBtn = document.getElementById("send-answer");
-
-                if (sendBtn) {
-                    sendBtn.addEventListener("click", async () => {
-                        if (myAnswer) return;
-
-                        const input = document.getElementById("text-answer");
-                        const answer = input.value.trim();
-
-                        if (!answer) return;
-
-                        const snap = await getDoc(roomRef);
-                        const data = snap.data();
-
-                        const startTime =
-                            data.questionStartTimes?.[
-                                `${category}_${currentIndex}`
-                            ];
-
-                        if (!startTime) return;
-
-                        await updateDoc(roomRef, {
-                            [`answers.${category}.${currentIndex}.${playerId}`]:
-                                {
-                                    answer,
-                                    correctAnswer,
-                                    category,
-                                    questionIndex: currentIndex,
-                                    time: Date.now(),
-                                },
-                        });
-                    });
-                }
-            }
-
-            const currentAnswers =
-                data.answers?.[category]?.[currentIndex] || {};
-
-            let fastestPlayer = null;
-            let fastestTime = Infinity;
-
-            Object.entries(currentAnswers).forEach(([id, ans]) => {
-                if (ans.time < fastestTime) {
-                    fastestTime = ans.time;
-                    fastestPlayer = id;
-                }
+            await updateDoc(roomRef, {
+                suggestions: [...(data.suggestions || []), newSuggestion],
             });
 
-            if (fastestPlayer) {
-                console.log("🏆 أسرع لاعب:", fastestPlayer);
-            }
-
-            const resultBox = document.getElementById("results-box");
-
-            const startTime =
-                data.questionStartTimes?.[`${category}_${currentIndex}`];
-
-            let results = [];
-
-            Object.entries(currentAnswers).forEach(([id, ans]) => {
-                let diff = 0;
-
-                if (startTime && ans.time) {
-                    diff = (ans.time - startTime) / 1000;
-                }
-
-                let isCorrect = false;
-
-                if (Array.isArray(correctAnswer)) {
-                    isCorrect = correctAnswer.some(
-                        (c) => normalize(ans.answer) === normalize(c),
-                    );
-                } else {
-                    isCorrect =
-                        normalize(ans.answer) === normalize(correctAnswer);
-                }
-                results.push({
-                    id,
-                    time: diff,
-                    correct: isCorrect,
-                });
-            });
-            results.sort((a, b) => a.time - b.time);
-            resultBox.innerHTML = `
-                <div class='results-card'>
-                    <h3>⚡ ترتيب السرعة:</h3>
-                </div>
-                `;
-            resultBox.innerHTML =
-                "<div class='results-card card'><h3>⚡ أسرع اللاعبين:</h3></div>";
-
-            results.forEach((r, index) => {
-                const name = data.players[r.id]?.name || "لاعب";
-
-                const isMe = r.id === playerId;
-
-                const div = document.createElement("div");
-                // const isHost = playerId === data.hostId;
-
-                if (isHost) {
-                    // 👑 الهوست يشوف كله
-                    div.className = `result-item ${
-                        r.correct ? "correct-player" : "wrong-player"
-                    }`;
-                } else {
-                    // 🎮 اللاعب يشوف نفسه بس
-                    if (isMe) {
-                        div.className = `result-item ${
-                            r.correct ? "correct-player" : "wrong-player"
-                        }`;
-                    } else {
-                        div.className = "result-item"; // عادي بدون ألوان
-                    }
-                }
-                div.innerHTML = `
-  <span>
-    ${index === 0 ? "🏆" : "⚡"} 
-    ${name}
-    ${isMe ? "👉 (انت)" : ""}
-  </span>
-  <span>
-  ${r.time ? r.time.toFixed(2) + "s" : "--"}
-</span>
-`;
-
-                resultBox.querySelector(".results-card").appendChild(div);
-            });
-
-            // 👑 تحديد الهوست
-if (controls) {
-  controls.style.display = isHost ? "block" : "none";
-}
-            // 🎮 حالة اللعبة
-            if (data.status === "playing") {
-                console.log("🔥 اللعبة بدأت!");
-                // document.body.style.background = "#111";
-            }
+            input.value = "";
         });
+    const endBtn = document.getElementById("end-game");
 
-        // 🚀 start game
-        document
-            .getElementById("start-game")
-            ?.addEventListener("click", async () => {
-                const snap = await getDoc(roomRef);
-                const data = snap.data();
+    endBtn?.addEventListener("click", async () => {
+        if (!confirm("متأكد إنك عايز تقفل الروم؟ 😏")) return;
 
-                const category = data.questionCategory;
+        // 👇 ده الجديد
+        localStorage.removeItem("counted_room");
 
-                if (!category) {
-                    alert("اختار فئة الأول يا نجم 😏");
-                    return;
-                }
-
-                const qSnap = await getDocs(
-                    query(
-                        collection(db, "questions"),
-                        where("approved", "==", true),
-                        where("category", "==", category),
-                    ),
-                );
-
-                const list = qSnap.docs.map((doc) => doc.data());
-
-                // shuffle
-                list.sort(() => Math.random() - 0.5);
-
-                if (list.length === 0) {
-                    document.getElementById("question-box").innerHTML = `
-                        <div class="question-card">
-                            <h2>😅 مفيش أسئلة في الفئة دي</h2>
-                        </div>
-                    `;
-                    return;
-                }
-
-                await updateDoc(roomRef, {
-                    status: "playing",
-
-                    questionsList: list,
-                    question: list[0],
-
-                    // 👇 مهم
-                    [`answers.${category}`]: {},
-                    [`currentIndex.${category}`]: 0,
-
-                    [`questionStartTimes.${category}_0`]: Date.now(),
-                });
-            });
-        // ❌ end game
-        document
-            .getElementById("end-game")
-            ?.addEventListener("click", async () => {
-                await deleteDoc(roomRef);
-                alert("الروم اتقفلت 👋");
-                window.location.href = "/";
-            });
-        document
-            .getElementById("show-results")
-            ?.addEventListener("click", () => {
-                window.location.href = `/room/${roomCode}/results`;
-            });
-const dropdown = document.querySelector(".category-dropdown");
-
-document.querySelectorAll(".cat-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    dropdown.classList.remove("open");
-  });
-});
-const btn = document.querySelector(".dropdown-btn");
-
-btn.addEventListener("click", () => {
-  dropdown.classList.toggle("open");
-});
-    </script>
-</Layout>
+        await deleteDoc(roomRef);
+        window.location.href = "/";
+    });
+    // document.getElementById("show-results").addEventListener("click", () => {
+    //     window.open(`/room/${roomCode}/results`, "_blank");
+    // });
+    document.getElementById("show-results")?.addEventListener("click", () => {
+        window.location.href = `/room/${roomCode}/results`;
+    });
+    document.getElementById("close-image").onclick = () => {
+        document.getElementById("image-modal").classList.add("hidden");
+    };
+</script>
