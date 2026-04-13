@@ -6,7 +6,7 @@ import Layout from "../../../layouts/Layout.astro";
 <Layout>
     <div class="player-container">
         <h2 id="question">⏳ مستني السؤال...</h2>
-
+        <div id="question-image"></div>
         <div id="answers"></div>
 
         <div id="text-box" style="display:none;">
@@ -49,6 +49,7 @@ import Layout from "../../../layouts/Layout.astro";
 
     let answered = false;
     let currentQ = null;
+    
     const winSound = new Audio("/sounds/win.mp3");
     const loseSound = new Audio("/sounds/lose.mp3");
 
@@ -83,41 +84,48 @@ import Layout from "../../../layouts/Layout.astro";
         loseSound.currentTime = 0;
         loseSound.play().catch(() => {});
     }
-let lastCount = 0;
-const msgSound = new Audio("/sounds/msg.mp3");
+    let lastCount = 0;
+    const msgSound = new Audio("/sounds/msg.mp3");
 
-onSnapshot(roomRef, (snap) => {
-    const data = snap.data();
+    onSnapshot(roomRef, (snap) => {
+        const data = snap.data();
+        if (!data) return;
 
-    const messages = data.suggestions || [];
-    const list = document.getElementById("chat-list");
+        if (data.showResults) {
+            window.location.href = `/room/${roomCode}/results`;
+            return;
+        }
+        const messages = data.suggestions || [];
+        const list = document.getElementById("chat-list");
 
-    if (list) {
-        list.innerHTML = messages.map((m) => {
-            const isMe = m.player === playerId;
+        if (list) {
+            list.innerHTML = messages
+                .map((m) => {
+                    const isMe = m.player === playerId;
 
-            return `
+                    return `
                 <div class="suggest-item ${isMe ? "me" : ""}">
                     <span class="name">${m.playerName}</span>
                     <span class="text">${m.text}</span>
                 </div>
             `;
-        }).join("");
+                })
+                .join("");
 
-        list.scrollTop = list.scrollHeight;
-    }
-
-    // 🔊 صوت
-    if (lastCount !== 0 && messages.length > lastCount) {
-        const lastMsg = messages[messages.length - 1];
-
-        if (lastMsg.player !== playerId) {
-            msgSound.currentTime = 0;
-            msgSound.play().catch(() => {});
+            list.scrollTop = list.scrollHeight;
         }
-    }
 
-    lastCount = messages.length;
+        // 🔊 صوت
+        if (lastCount !== 0 && messages.length > lastCount) {
+            const lastMsg = messages[messages.length - 1];
+
+            if (lastMsg.player !== playerId) {
+                msgSound.currentTime = 0;
+                msgSound.play().catch(() => {});
+            }
+        }
+
+        lastCount = messages.length;
 
         const q = data.currentQuestion;
 
@@ -131,6 +139,13 @@ onSnapshot(roomRef, (snap) => {
             window.lastQuestionKey = newKey;
         }
         qEl.innerText = q.text;
+        const imgBox = document.getElementById("question-image");
+
+        if (q.image) {
+            imgBox.innerHTML = `<img src="${q.image}" class="question-img" />`;
+        } else {
+            imgBox.innerHTML = "";
+        }
         answersEl.innerHTML = "";
         feedback.innerHTML = "";
 
@@ -160,35 +175,45 @@ onSnapshot(roomRef, (snap) => {
 
                     if (opt === q.correct) {
                         playWinEffect();
-                        feedback.innerText = "✅ صح 🔥";
+                        feedback.innerHTML = `
+<div class="feedback-box success">
+🔥 صح يا بطل!
+</div>
+`;
                     } else {
                         playLoseEffect();
-                        feedback.innerText = "❌ غلط 😏";
+                        feedback.innerHTML = `
+<div class="feedback-box error">
+    ❌ غلط يا نجم 😏
+    <br><br>
+    <span class="correct-answer">✅ الإجابة الصحيحة: ${q.correct}</span>
+</div>
+`;
                     }
 
                     // 🎨 تلوين الأزرار
                     document.querySelectorAll(".answer-btn").forEach((b) => {
-    b.disabled = true;
+                        b.disabled = true;
 
-    const btnAnswer = b.innerText;
+                        const btnAnswer = b.innerText;
 
-    // ✅ لو ده الصح
-    if (btnAnswer === q.correct) {
-        b.style.background = "#22c55e"; // أخضر
-        b.style.color = "#000";
-    }
+                        // ✅ لو ده الصح
+                        if (btnAnswer === q.correct) {
+                            b.style.background = "#22c55e"; // أخضر
+                            b.style.color = "#000";
+                        }
 
-    // ❌ لو ده اللي اللاعب اختاره وكان غلط
-    else if (btnAnswer === opt) {
-        b.style.background = "#ef4444"; // أحمر
-        b.style.color = "#fff";
-    }
+                        // ❌ لو ده اللي اللاعب اختاره وكان غلط
+                        else if (btnAnswer === opt) {
+                            b.style.background = "#ef4444"; // أحمر
+                            b.style.color = "#fff";
+                        }
 
-    // 👇 الباقي باهت
-    else {
-        b.style.opacity = "0.4";
-    }
-});
+                        // 👇 الباقي باهت
+                        else {
+                            b.style.opacity = "0.4";
+                        }
+                    });
                 };
 
                 answersEl.appendChild(btn);
@@ -197,7 +222,6 @@ onSnapshot(roomRef, (snap) => {
             answersEl.innerHTML = "";
             textBox.style.display = "block";
         }
-
     });
 
     document.getElementById("send-answer").onclick = async () => {
@@ -221,13 +245,13 @@ onSnapshot(roomRef, (snap) => {
             },
         });
 
-if (answer === currentQ.correct) {
-    playWinEffect();
-    feedback.innerText = "✅ صح 🔥";
-} else {
-    playLoseEffect();
-    feedback.innerText = `❌ غلط 😏 \n\n✅ الإجابة الصحيحة: ${currentQ.correct}`;
-}
+        if (answer === currentQ.correct) {
+            playWinEffect();
+            feedback.innerText = "✅ صح 🔥";
+        } else {
+            playLoseEffect();
+            feedback.innerText = `❌ غلط 😏 \n\n✅ الإجابة الصحيحة: ${currentQ.correct}`;
+        }
 
         // 🔒 قفل الإدخال
         input.disabled = true;

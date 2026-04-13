@@ -1142,7 +1142,7 @@ h2 {
 }
 
 
-@keyframes shake {
+/* @keyframes shake {
   0% { transform: translateX(0); }
   25% { transform: translateX(-5px); }
   50% { transform: translateX(5px); }
@@ -1152,7 +1152,7 @@ h2 {
 
 .shake {
   animation: shake 0.3s;
-}
+} */
 
 
 
@@ -2790,4 +2790,141 @@ h1 {
 }
 
 
+/* ============================================player.astro============================== */
+.player-container {
+  max-width: 900px;
+  margin: auto;
+  padding: 30px 20px;
+  text-align: center;
+}
 
+/* الكارت */
+.player-container {
+  background: linear-gradient(145deg, #020617, #020617);
+  border-radius: 25px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+}
+
+/* السؤال */
+/* #question {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 25px;
+  color: #fff;
+} */
+
+/* الصورة */
+/* .question-img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 15px;
+  margin-bottom: 20px;
+} */
+
+/* الإجابات */
+#answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 👈 اتنين جنب بعض */
+  gap: 15px;
+}
+
+/* زر الإجابة */
+/* .answer-btn {
+  padding: 20px;
+  font-size: 22px;
+  border-radius: 16px;
+  border: 2px solid #22c55e;
+  background: linear-gradient(145deg, #020617, #111827);
+  color: #fff;
+  cursor: pointer;
+  transition: 0.25s;
+} */
+
+.answer-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+}
+
+/* الفيدباك */
+/* #feedback {
+  margin-top: 20px;
+  font-size: 22px;
+  font-weight: bold;
+} */
+
+/* التكست */
+#text-box input {
+  width: 70%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+}
+
+#text-box button {
+  padding: 12px 20px;
+  margin-left: 10px;
+  border-radius: 10px;
+  background: #22c55e;
+  border: none;
+  color: #000;
+  cursor: pointer;
+}
+#question-image {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* .question-img {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 20px;
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.question-img {
+  animation: fadeIn 0.5s ease;
+} */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.feedback-box {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 15px;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+/* الصح */
+.feedback-box.success {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border: 1px solid #22c55e;
+}
+
+/* الغلط */
+.feedback-box.error {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+/* .correct-answer {
+  display: block;
+  margin-top: 10px;
+  color: #22c55e;
+} */
