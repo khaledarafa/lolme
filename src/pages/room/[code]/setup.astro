@@ -40,21 +40,17 @@ import Layout from "../../../layouts/Layout.astro";
             const gamePlan = [];
 
             for (const cat of selectedCategories) {
-                const q = query(
-                    collection(db, "questions"),
-                    where("approved", "==", true),
-                    where("category", "==", cat),
-                );
-
+const q = query(
+    collection(db, "questions"),
+    where("approved", "==", true),
+    where("category", "==", cat)
+);
                 const snap = await getDocs(q);
 
                 let list = snap.docs.map((d) => d.data());
 
-                // shuffle
                 list.sort(() => Math.random() - 0.5);
-
                 list = list.slice(0, questionsCount);
-
                 gamePlan.push({
                     category: cat,
                     questions: list,
@@ -62,24 +58,6 @@ import Layout from "../../../layouts/Layout.astro";
             }
 
             return gamePlan;
-        }
-        async function validateCategories() {
-            for (const cat of selectedCategories) {
-                const q = query(
-                    collection(db, "questions"),
-                    where("approved", "==", true),
-                    where("category", "==", cat),
-                );
-
-                const snap = await getDocs(q);
-
-                if (snap.size < questionsCount) {
-                    alert(`❌ الفئة (${cat}) فيها ${snap.size} سؤال بس`);
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         const roomCode = document.getElementById("setup-root").dataset.code;
@@ -140,7 +118,7 @@ import Layout from "../../../layouts/Layout.astro";
                 div.className = "cat-card";
                 div.dataset.cat = cat.slug;
 
-                // 🖼️ الصورة من Firebase
+                // 🖼️ صورة الفئة
                 div.style.backgroundImage = `url(${cat.image})`;
 
                 const span = document.createElement("span");
@@ -168,7 +146,6 @@ import Layout from "../../../layouts/Layout.astro";
                 grid.appendChild(div);
             });
         }
-
         loadCategories();
 
         // 🚀 بدء الجولة

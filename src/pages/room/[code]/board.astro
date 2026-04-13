@@ -25,6 +25,11 @@ import Layout from "../../../layouts/Layout.astro";
     <div id="question-sheet" class="sheet hidden">
         <div class="sheet-content" id="sheet-content"></div>
     </div>
+
+    <div id="image-modal" class="image-modal hidden">
+        <span id="close-image">❌</span>
+        <img id="modal-img" />
+    </div>
 </Layout>
 
 <script
@@ -245,6 +250,10 @@ import Layout from "../../../layouts/Layout.astro";
             const content = document.getElementById("sheet-content");
 
             const question = cat.questions[index];
+            const imageHtml = question.image
+  ? `<img src="${question.image}" class="question-img" />`
+  : "";
+
             if (!question) return;
 
             await updateDoc(roomRef, {
@@ -254,10 +263,10 @@ import Layout from "../../../layouts/Layout.astro";
                     correct: question.correct,
                     type: question.type || "choice",
                     category: cat.category,
-        categoryIndex: catIndex,
+                    categoryIndex: catIndex,
                     questionIndex: index,
                 },
-    [`questionStartTimes.${catIndex}_${index}`]: Date.now()
+                [`questionStartTimes.${catIndex}_${index}`]: Date.now(),
             });
             if (!question) return;
 
@@ -265,7 +274,8 @@ import Layout from "../../../layouts/Layout.astro";
                 content.innerHTML = `
         <div class="question-box">
 
-            <h2>${question.text}</h2>
+            ${imageHtml}
+<h2>${question.text}</h2>
 
             <div class="text-answer-box">
                 <input id="text-answer" placeholder="اكتب إجابتك 😏" />
@@ -284,7 +294,8 @@ import Layout from "../../../layouts/Layout.astro";
                 content.innerHTML = `
         <div class="question-box">
 
-            <h2>${question.text}</h2>
+            ${imageHtml}
+<h2>${question.text}</h2>
 
             <div class="answers">
                 ${question.options
@@ -307,7 +318,19 @@ import Layout from "../../../layouts/Layout.astro";
         </div>
     `;
             }
+setTimeout(() => {
+    const qImg = document.querySelector(".question-img");
 
+    if (qImg) {
+        qImg.addEventListener("click", () => {
+            const modal = document.getElementById("image-modal");
+            const modalImg = document.getElementById("modal-img");
+
+            modalImg.src = qImg.src;
+            modal.classList.remove("hidden");
+        });
+    }
+}, 0);
             let answered = false;
 
             // 👇 text question
@@ -414,9 +437,9 @@ import Layout from "../../../layouts/Layout.astro";
                         feedback.innerHTML = "✅ إجابة صح يا بطل!";
                         feedback.style.color = "#22c55e";
                     } else {
-                            playLoseEffect();
+                        playLoseEffect();
 
-                            feedback.innerHTML = `
+                        feedback.innerHTML = `
                             <span class="wrong-text">❌ غلط يا نجم 😏</span>
                             <br><br>
                             <span class="correct-text">✅ الإجابة الصحيحة: ${correctAnswer}</span>
@@ -445,12 +468,14 @@ import Layout from "../../../layouts/Layout.astro";
 
             // title.style.backgroundImage = `url(${categoryImages[cat.category]})`;
 
-            title.innerHTML = `
-                <img src="${categoriesMap[cat.category]?.image}" />
-                <div class="overlay">
-                    ${categoriesMap[cat.category]?.name || cat.category}
-                </div>
-            `;
+const realCat = cat.category;
+
+title.innerHTML = `
+    <img src="${categoriesMap[realCat]?.image}" />
+    <div class="overlay">
+        ${categoriesMap[realCat]?.name || realCat}
+    </div>
+`;
             col.appendChild(title);
 
             // 👇 الكروت (قيم ثابتة)
@@ -524,4 +549,7 @@ import Layout from "../../../layouts/Layout.astro";
     document.getElementById("show-results")?.addEventListener("click", () => {
         window.location.href = `/room/${roomCode}/results`;
     });
+    document.getElementById("close-image").onclick = () => {
+        document.getElementById("image-modal").classList.add("hidden");
+    };
 </script>

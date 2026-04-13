@@ -67,10 +67,39 @@ fileInput.addEventListener("change", () => {
     label.innerText = "✅ تم اختيار الصورة";
 });
 const msg = document.getElementById("msg");
-let selectedCategory = localStorage.getItem("selected_category") || "";
+const qImageInput = document.getElementById("q-image");
+qImageInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
 
+    if (file) {
+        console.log("📸 صورة السؤال اتاختارت:", file.name);
+    }
+});
+let selectedCategory = localStorage.getItem("selected_category") || "";
+const qPreview = document.getElementById("q-preview");
+
+qImageInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    qPreview.src = URL.createObjectURL(file);
+    qPreview.style.display = "block";
+});
+// ده بتاع اختيار الفئة
 btn.onclick = async () => {
     const type = document.getElementById("q-type").value;
+
+    let imageUrl = "";
+
+    const file = document.getElementById("q-image").files[0];
+
+    if (file) {
+        const compressed = await compressImage(file);
+        const storageRef = ref(storage, "questions/" + Date.now());
+        await uploadBytes(storageRef, compressed);
+        imageUrl = await getDownloadURL(storageRef);
+    }
+
     const text = document.getElementById("q-text").value.trim();
 
     const options = [
@@ -93,10 +122,6 @@ btn.onclick = async () => {
         return;
     }
 
-    if (!selectedCategory) {
-        msg.innerText = "❌ اختار فئة الأول 👆";
-        return;
-    }
     if (type === "choice" && options.some(o => !o)) {
         msg.innerText = "❌ لازم تملى كل الاختيارات";
         msg.style.color = "red";
@@ -132,7 +157,8 @@ btn.onclick = async () => {
             text,
             options: type === "choice" ? options : null,
             correct,
-            type, // 👈 الجديد
+            image: imageUrl || null,
+            type,
             category: selectedCategory,
             approved: false,
             createdAt: Date.now(),
@@ -159,45 +185,72 @@ btn.onclick = async () => {
 // الخطوة 2: JS (رفع الصورة + حفظ الفئة)
 const addCatBtn = document.getElementById("add-cat-btn");
 const catMsg = document.getElementById("cat-msg");
-
+// ده بتاع إضافة الفئة
 addCatBtn.onclick = async () => {
-
     const name = document.getElementById("new-cat-name").value.trim();
+
     const slug = name
         .toLowerCase()
         .replace(/[^a-z0-9\u0600-\u06FF ]/g, "")
         .replace(/\s+/g, "-") || "cat-" + Date.now();
 
     const group = document.getElementById("new-cat-group").value;
+    const catType = document.getElementById("new-cat-type").value;
+
     const file = document.getElementById("new-cat-image").files[0];
 
     const maxSize = 2 * 1024 * 1024; // 2MB
-
-    if (file.size > maxSize) {
-        catMsg.innerText = "❌ الصورة كبيرة (أقصى حاجة 2MB)";
-        return;
-    }
-
     const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
-    if (!allowedTypes.includes(file.type)) {
-        catMsg.innerText = "❌ مسموح JPG أو PNG أو WEBP بس";
+    // ✅ تحقق من الاسم
+    if (!name) {
+        catMsg.innerText = "❌ اكتب اسم الفئة";
         return;
     }
 
-    if (!name || !file) {
-        catMsg.innerText = "❌ املى كل البيانات";
+    // ✅ لو فئة صور لازم صورة
+    if (catType === "image" && !file) {
+        catMsg.innerText = "❌ دي فئة صور… لازم تختار صورة";
         return;
+    }
+
+    // ✅ لو فئة عادية ورفع صورة
+    if (catType !== "image" && file) {
+        catMsg.innerText = "❌ انت مختار صورة… اختار نوع الفئة (صور) فوق 👆";
+        return;
+    }
+
+    // ✅ لو فيه صورة
+    let imageUrl = null;
+
+    if (file) {
+        if (!allowedTypes.includes(file.type)) {
+            catMsg.innerText = "❌ مسموح JPG أو PNG أو WEBP بس";
+            return;
+        }
+
+        try {
+            const compressed = await compressImage(file);
+
+            if (compressed.size > maxSize) {
+                catMsg.innerText = "❌ الصورة بعد الضغط لسه كبيرة";
+                return;
+            }
+
+            const storageRef = ref(storage, "categories/" + slug);
+            await uploadBytes(storageRef, compressed);
+
+            imageUrl = await getDownloadURL(storageRef);
+
+        } catch (err) {
+            console.error(err);
+            catMsg.innerText = "❌ مشكلة في رفع الصورة";
+            return;
+        }
     }
 
     try {
-        // 📸 رفع الصورة
-        const storageRef = ref(storage, "categories/" + slug);
-        const compressed = await compressImage(file);
-        await uploadBytes(storageRef, compressed);
-
-        const imageUrl = await getDownloadURL(storageRef);
-
+        // ✅ منع التكرار
         const q = query(
             collection(db, "categories"),
             where("slug", "==", slug)
@@ -210,11 +263,12 @@ addCatBtn.onclick = async () => {
             return;
         }
 
-        // 💾 حفظ في فايرستور
+        // 💾 حفظ الفئة
         await addDoc(collection(db, "categories"), {
             name,
             slug,
             group,
+            type: catType,
             image: imageUrl,
             createdAt: Date.now()
         });
@@ -232,7 +286,9 @@ addCatBtn.onclick = async () => {
         catMsg.innerText = "❌ حصل خطأ";
     }
 };
-
+document.getElementById("new-cat-name").value = "";
+document.getElementById("new-cat-image").value = "";
+preview.style.display = "none";
 const catContainer = document.getElementById("category-buttons");
 
 async function loadCategories() {
@@ -253,17 +309,30 @@ async function loadCategories() {
             btn.classList.add("active");
         }
 
-        btn.onclick = () => {
-            console.log("clicked", cat.slug);
-            selectedCategory = cat.slug;
-            localStorage.setItem("selected_category", selectedCategory);
+btn.onclick = () => {
+    selectedCategory = cat.slug;
 
-            document.querySelectorAll(".cat-btn").forEach(b => {
-                b.classList.remove("active");
-            });
+    // ❌ نشيل active من الكل
+    document.querySelectorAll(".cat-btn").forEach(b => {
+        b.classList.remove("active");
+    });
 
-            btn.classList.add("active");
-        };
+    // ✅ نضيفه للزرار ده
+    btn.classList.add("active");
+
+    const qImageInput = document.getElementById("q-image");
+    const label = document.querySelector('label[for="q-image"]');
+
+    if (cat.type === "image") {
+        qImageInput.disabled = false;
+        label.style.opacity = "1";
+        label.innerText = "📸 لازم تختار صورة للسؤال";
+    } else {
+        qImageInput.disabled = true;
+        label.style.opacity = "0.5";
+        label.innerText = "🚫 الصورة مش مطلوبة للفئة دي";
+    }
+};
 
         catContainer.appendChild(btn);
     });
