@@ -209,9 +209,9 @@ import Layout from "../../../layouts/Layout.astro";
         lastCount = messages.length;
 
         const gamePlan = data.gamePlan || [];
-        if (playerId !== data.hostId) {
-            window.location.href = `/room/${roomCode}/player`;
-        }
+        // if (playerId !== data.hostId) {
+        //     window.location.href = `/room/${roomCode}/player`;
+        // }
         board.innerHTML = "";
 
         const section = document.getElementById("players-section");
@@ -254,8 +254,10 @@ import Layout from "../../../layouts/Layout.astro";
                     correct: question.correct,
                     type: question.type || "choice",
                     category: cat.category,
+        categoryIndex: catIndex,
                     questionIndex: index,
                 },
+    [`questionStartTimes.${catIndex}_${index}`]: Date.now()
             });
             if (!question) return;
 

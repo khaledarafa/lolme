@@ -146,7 +146,7 @@ onSnapshot(roomRef, (snap) => {
                     if (answered) return;
                     answered = true;
 
-                    const answeredKey = `${q.category}_${q.questionIndex}`;
+                    const answeredKey = `${q.categoryIndex}_${q.questionIndex}`;
 
                     await updateDoc(roomRef, {
                         [`answers.${answeredKey}.${playerId}`]: {
@@ -209,7 +209,7 @@ onSnapshot(roomRef, (snap) => {
 
         if (!answer || !currentQ) return;
 
-        const answeredKey = `${currentQ.category}_${currentQ.questionIndex}`;
+        const answeredKey = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
 
         await updateDoc(roomRef, {
             [`answers.${answeredKey}.${playerId}`]: {

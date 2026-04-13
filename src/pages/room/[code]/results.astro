@@ -7,7 +7,9 @@ import Layout from "../../../layouts/Layout.astro";
     <h1 style="text-align:center; margin:20px;">📊 نتائج اللعبة</h1>
 
     <div id="results"></div>
-
+    <script
+        src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
+    ></script>
     <script type="module">
         import { db } from "/js/firebase.js";
         import {
@@ -21,6 +23,28 @@ import Layout from "../../../layouts/Layout.astro";
 
         const container = document.getElementById("results");
         const counted = {};
+        const winMusic = new Audio("/sounds/win.mp3");
+        winMusic.volume = 0.6; // خليه هادي شوية
+
+        function startConfetti() {
+            const duration = 5 * 1000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 15,
+                    spread: 120,
+                    origin: {
+                        x: Math.random(),
+                        y: Math.random() * 0.5,
+                    },
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            })();
+        }
         async function loadResults() {
             const snap = await getDoc(roomRef);
             const data = snap.data();
@@ -34,7 +58,6 @@ import Layout from "../../../layouts/Layout.astro";
             const players = data.players || {};
 
             let html = `
-                <div class="table-wrapper">
                 <table class="results-table">
                     <thead>
                         <tr>
@@ -42,8 +65,9 @@ import Layout from "../../../layouts/Layout.astro";
                             <th>📂 الفئة</th>
                             <th>❓ السؤال</th>
                             <th>✍️ إجابته</th>
-                            <th>✅ الصح</th>
                             <th>🏁 النتيجة</th>
+                            <th>✅ الصح</th>
+                            <th>⏱️ الوقت</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,42 +75,91 @@ import Layout from "../../../layouts/Layout.astro";
 
             const scores = {};
 
-            for (let questionKey in answers) {
+            for (let questionKey in data.questionStartTimes) {
+                const startTime = data.questionStartTimes[questionKey];
                 const question = answers[questionKey];
+
+                if (!question) continue;
+
+                // 🔥 أسرع واحد
+                let fastestTime = Infinity;
+                let fastestPlayer = null;
 
                 for (let playerId in question) {
                     const ans = question[playerId];
 
-                    const playerName = players[playerId]?.name || "لاعب";
+                    if (ans.time) {
+                        const diff = (ans.time - startTime) / 1000;
 
+                        if (diff > 0 && diff < fastestTime) {
+                            fastestTime = diff;
+                            fastestPlayer = playerId;
+                        }
+                    }
+                }
+
+                // 🔥 عرض البيانات
+                for (let playerId in question) {
+                    const ans = question[playerId];
+
+                    let timeDiff = null;
+
+                    if (ans.time) {
+                        timeDiff = (ans.time - startTime) / 1000;
+                    }
+
+                    const playerName = players[playerId]?.name || "لاعب";
                     const isCorrect = ans.answer === ans.correctAnswer;
 
                     if (!counted[playerId]) counted[playerId] = new Set();
 
-                    const uniqueKey = questionKey; // السؤال نفسه
-
-                    if (isCorrect && !counted[playerId].has(uniqueKey)) {
+                    if (isCorrect && !counted[playerId].has(questionKey)) {
                         scores[playerId] = (scores[playerId] || 0) + 1;
-                        counted[playerId].add(uniqueKey);
+                        counted[playerId].add(questionKey);
                     }
 
                     html += `
-                <tr>
-                    <td><strong>${playerName}</strong></td>
-                    <td style="opacity:0.8">${ans.category}</td>
-                    <td>#${ans.questionIndex + 1}</td>
-                    <td>${ans.answer}</td>
-                    <td>${ans.correctAnswer}</td>
-                    <td class="${isCorrect ? "correct-answer" : "wrong-answer"}">
-                        ${isCorrect ? "✔️ صح" : "❌ غلط"}
-                    </td>
-                </tr>
-                `;
+            <tr>
+                <td><strong>${playerName}</strong></td>
+                <td style="opacity:0.8">${ans.category}</td>
+                <td>#${ans.questionIndex + 1}</td>
+                <td>${ans.answer}</td>
+                <td class="${isCorrect ? "correct-answer" : "wrong-answer"}">
+                    ${isCorrect ? "✔️ صح" : "❌ غلط"}
+                </td>
+                <td>${ans.correctAnswer}</td>
+                <td>
+                    ${timeDiff !== null ? timeDiff.toFixed(2) + "s" : "--"}
+                    ${playerId === fastestPlayer ? "⚡" : ""}
+                </td>
+            </tr>
+        `;
                 }
             }
-
             html += `</tbody></table>`;
+            const leaderboardHTML = `
+<div class="leaderboard">
+<div class="trophy-box">
+    <div class="trophy-icon">🏆</div>
+    <div class="leader-title">الترتيب</div>
+</div>
+    ${Object.entries(scores)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([playerId, score], i) => {
+            const name = players[playerId]?.name || "لاعب";
 
+            return `
+                <div class="leader-item">
+                    <span>#${i + 1}</span>
+                    <span>${name}</span>
+                    <span>${score} نقطة</span>
+                </div>
+            `;
+        })
+        .join("")}
+</div>
+`;
             // 🔥 leaderboard
 
             const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
@@ -108,120 +181,41 @@ import Layout from "../../../layouts/Layout.astro";
 
                 </div>
                 `;
-            container.innerHTML = html + leaderboard;
+            container.innerHTML = `
+<div class="flip-card" id="flip-card">
+    <div class="flip-inner">
+
+        <!-- 👈 الكارت المقفول -->
+        <div class="flip-front">
+            <h2>🎯 اضغط لمعرفة الفائز</h2>
+        </div>
+
+        <!-- 👉 الكاس بس -->
+        <div class="flip-back">
+            ${leaderboardHTML}
+        </div>
+
+    </div>
+</div>
+
+<!-- 👇 الجدول بره -->
+<div class="table-wrapper">
+    ${html}
+</div>
+`;
+            document.getElementById("flip-card").onclick = () => {
+                const card = document.getElementById("flip-card");
+                card.classList.add("flipped");
+
+                // 🎉 الكونفتي
+                startConfetti();
+
+                // 🎶 المزيكا
+                winMusic.currentTime = 0;
+                winMusic.play().catch(() => {});
+            };
         }
-        
+
         loadResults();
     </script>
 </Layout>
-
-<!-- ---
-const { code } = Astro.params;
-import Layout from "../../../layouts/Layout.astro";
----
-
-<Layout>
-    <h1>📊 نتائج اللعبة</h1>
-    <p>الكود: {code}</p>
-
-    <div class="table-wrapper">
-        <div id="results-table" data-code={code}></div>
-    </div>
-    <script type="module">
-        import { db } from "/js/firebase.js";
-        import {
-            doc,
-            onSnapshot,
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        const container = document.getElementById("results-table");
-        const roomCode = container.dataset.code;
-        const roomRef = doc(db, "rooms", roomCode);
-
-        onSnapshot(roomRef, (snap) => {
-            const data = snap.data();
-
-            if (!data) {
-                container.innerHTML = "الروم اتقفلت 👋";
-                return;
-            }
-
-            let allResults = [];
-
-            const answers = data.answers || {};
-            const players = data.players || {};
-
-            Object.entries(answers).forEach(([category, categoryAnswers]) => {
-                Object.entries(categoryAnswers).forEach(
-                    ([qIndex, qAnswers]) => {
-                        const startTime =
-                            data.questionStartTimes?.[`${category}_${qIndex}`];
-
-                        Object.entries(qAnswers).forEach(([playerId, ans]) => {
-                            const diff = startTime
-                                ? Math.max((ans.time - startTime) / 1000, 0) // 👈 fix السالب
-                                : 0;
-
-                            const normalize = (str) =>
-                                str?.trim().replace(/\s+/g, " ");
-
-                            const isCorrect =
-                                normalize(ans.answer) ===
-                                normalize(ans.correctAnswer);
-
-                            allResults.push({
-                                playerId,
-                                name: players[playerId]?.name || "لاعب",
-                                category,
-                                question: Number(qIndex),
-                                time: diff,
-                                answer: ans.answer,
-                                correct: isCorrect,
-                            });
-                        });
-                    },
-                );
-            });
-            // 🔥 ترتيب حسب السرعة
-            allResults.sort((a, b) => a.time - b.time);
-
-            // 🧾 جدول
-            container.innerHTML = `
-        <table class="results-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>اللاعب</th>
-              <th>الفئة</th>
-                <th>السؤال</th> 
-              <th>الوقت (ث)</th>
-              <th>الإجابة</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${allResults
-                .map(
-                    (r, i) => `
-                    <tr>
-                       <td>
-                        ${i === 0 ? "💎 أسطورة" : i === 1 ? "🔶 محترف" : i === 2 ? "🥉 جامد" : i + 1}
-                        </td>
-                        <td>${r.name}</td>
-                        <td>${r.category}</td>
-                        <td>سؤال ${r.question + 1}</td>
-                        <td>
-                        ${r.time !== null && r.time !== undefined ? r.time.toFixed(2) + "s" : "--"}
-                        </td>
-                        <td class="${r.correct ? "correct-answer" : "wrong-answer"}">
-                        ${r.answer}
-                        </td>
-                    </tr>
-                    `,
-                )
-                .join("")}
-          </tbody>
-        </table>
-      `;
-        });
-    </script>
-</Layout> -->
