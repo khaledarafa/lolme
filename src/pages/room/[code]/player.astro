@@ -5,6 +5,7 @@ import Layout from "../../../layouts/Layout.astro";
 
 <Layout>
     <div class="player-container">
+        <div id="admin-status" class="admin-status"></div>
         <h2 id="question">⏳ مستني السؤال...</h2>
         <div id="question-image"></div>
         <div id="answers"></div>
@@ -110,7 +111,16 @@ import Layout from "../../../layouts/Layout.astro";
         }
         const messages = data.suggestions || [];
         const list = document.getElementById("chat-list");
+const isAdminManager = data.adminMode === "admin";
+const statusBox = document.getElementById("admin-status");
 
+if (isAdminManager) {
+    statusBox.innerText = "🧠 الأدمن بيدير اللعبة (يقدر يجاوب ويظهر في النتيجة 😏… بس شايف الإجابة الصح من قبل ما تجاوبوا)";
+    statusBox.style.background = "#7c3aed";
+} else {
+    statusBox.innerText = "🎮 الأدمن بيلعب معاكم (زيكم بالظبط 😎… مش هيشوف الإجابات غير في نهاية الجولة)";
+    statusBox.style.background = "#16a34a";
+}
         if (list) {
             list.innerHTML = messages
                 .map((m) => {

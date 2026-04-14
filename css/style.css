@@ -50,7 +50,7 @@ html {
 }
 
 body {
-  font-family: "Tajawal", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  font-family: "Comic Sans", "Tajawal", "Segoe UI",  Helvetica, Arial, sans-serif !important;
   background: var(--bg);
   color: var(--text-color);
   padding: 8px;
@@ -1904,7 +1904,7 @@ h1 {
 
   color: white;
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.0rem;
 }
 
 .cat-card.active {
@@ -2708,6 +2708,91 @@ h1 {
   align-items: center;
   justify-content: center;
   font-size: large;
+  z-index: 1000;
+  flex-wrap: wrap;
+
+  /* background: rgba(11, 18, 32, 0.9); */
+  backdrop-filter: blur(10px);
+
+  /* padding: 10px 16px; */
+
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: space-between; */
+
+  /* gap: 10px; */
+}
+.answer-progress.green {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.5);
+}
+
+.answer-progress.red {
+  background: linear-gradient(135deg, #ef4444, #991b1b);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+}
+
+.answer-progress.waiting {
+  background: #374151;
+}
+.answer-progress {
+    text-align: center;
+    margin: 12px auto;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-weight: bold;
+    font-size: 15px;
+    color: #fff;
+
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    box-shadow: 0 6px 20px rgba(22, 163, 74, 0.5);
+
+    display: inline-block;
+    min-width: 280px;
+
+    animation: fadeInUp 0.4s ease;
+}
+.top-bar button {
+  padding: 6px 10px;
+  font-size: 14px;
+}
+.answer-progress.warning {
+    background: linear-gradient(135deg, #ef4444, #991b1b);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+}
+
+.answer-progress.waiting {
+    background: linear-gradient(135deg, #374151, #111827);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+.not-answered {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #fca5a5;
+    text-align: center;
+    opacity: 0.9;
+}
+
+/* ✨ Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@media (max-width: 600px) {
+
+  .answer-progress {
+    font-size: 14px;
+    padding: 5px 10px;
+    width: 70%;
+    text-align: center;
+  }
 }
 
 .text-answer-box {
@@ -2940,3 +3025,64 @@ h1 {
   margin-top: 10px;
   color: #22c55e;
 } */
+
+
+
+
+
+
+
+
+.role-select {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.role-btn {
+    padding: 12px 20px;
+    margin: 8px;
+    border: none;
+    border-radius: 12px;
+    background: #1f2937;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.role-btn:hover {
+    background: #374151;
+}
+
+.role-btn.active {
+    background: #22c55e;
+}
+
+.admin-status {
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #fff;
+
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+
+    transition: all 0.3s ease;
+}
+
+/* 🧠 وضع الإدارة */
+.admin-status.admin-mode {
+    background: linear-gradient(135deg, #7c3aed, #4c1d95);
+    box-shadow: 0 0 15px rgba(124, 58, 237, 0.6);
+}
+
+/* 🎮 وضع اللعب */
+.admin-status.play-mode {
+    background: linear-gradient(135deg, #16a34a, #14532d);
+    box-shadow: 0 0 15px rgba(22, 163, 74, 0.6);
+}
+
+

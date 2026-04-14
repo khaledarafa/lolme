@@ -4,13 +4,34 @@ import Layout from "../../../layouts/Layout.astro";
 ---
 
 <Layout>
-    <div class="top-bar">
+    <!-- <div class="top-bar">
         🎮 كود الغرفة: {code}
-        <button id="show-results">📊 عرض النتائج</button>
+        <button id="show-results" style="display:none;">📊 عرض النتائج</button>
         <button id="end-game">❌ اقفل الروم</button>
+        <button id="open-admin">👑 شاشة الأدمن</button>
     </div>
-    <div id="players-section" data-code={code}></div>
+    <div id="players-section" data-code={code}></div> -->
 
+<div class="top-bar">
+
+    <div class="left">
+        <span>🎮 كود الغرفة: {code}</span>
+        <button id="end-game" class="end-btn">❌ اقفل الروم</button>
+        <button id="open-admin">👑 شاشة الأدمن</button>
+    </div>
+
+    <div class="center">
+        <div id="answer-progress" class="answer-progress"></div>
+        <div id="not-answered-list" class="not-answered"></div>
+    </div>
+
+    <div class="right">
+        <button id="show-results" style="display:none;">📊 عرض النتائج</button>
+    </div>
+
+</div>
+
+<div id="players-section" data-code={code}></div>
     <div class="suggest-box">
         <button id="send-suggest-admin">إرسال</button>
         <input id="suggest-input-admin" placeholder="اقترح فئة 😏" />
@@ -52,7 +73,7 @@ import Layout from "../../../layouts/Layout.astro";
         window.location.pathname.split("/")[2];
 
     const roomRef = doc(db, "rooms", roomCode);
-    const winSound = new Audio("/sounds/win.mp3");
+    const winSound = new Audio("/sounds/winn.mp3");
     const loseSound = new Audio("/sounds/lose.mp3");
 
     let categoriesMap = {};
@@ -145,6 +166,19 @@ import Layout from "../../../layouts/Layout.astro";
     const board = document.getElementById("board");
     let playerId = localStorage.getItem("player_" + roomCode);
 
+    (async () => {
+        const snap = await getDoc(roomRef);
+        const data = snap.data();
+
+        if (!data || playerId !== data.hostId || data.adminMode !== "admin") {
+            alert("❌ مش أدمن يا نجم 😏");
+            window.location.href = `/room/${roomCode}/board`;
+            return;
+        }
+
+        document.body.style.display = "block";
+    })();
+
     // ✅ عند الخروج
     window.addEventListener("beforeunload", () => {
         if (playerId) {
@@ -174,10 +208,68 @@ import Layout from "../../../layouts/Layout.astro";
 
     let lastCount = 0;
     const msgSound = new Audio("/sounds/msg.mp3");
+    let soundEnabled = false;
 
+    document.addEventListener("click", () => {
+        if (!soundEnabled) {
+            msgSound
+                .play()
+                .then(() => {
+                    msgSound.pause();
+                    msgSound.currentTime = 0;
+                    soundEnabled = true;
+                })
+                .catch(() => {});
+        }
+    });
     onSnapshot(roomRef, (snap) => {
         const data = snap.data();
 
+        const progressBox = document.getElementById("answer-progress");
+        const notAnsweredBox = document.getElementById("not-answered-list");
+
+        const currentQ = data.currentQuestion;
+
+        let totalPlayers = Object.keys(data.players || {}).length;
+        let answeredPlayers = 0;
+        let notAnsweredNames = [];
+
+        progressBox.classList.remove("green", "red", "waiting");
+
+        if (!currentQ) {
+            // ⚪ مفيش سؤال
+            progressBox.innerText = "🎯 اختار سؤال الأول";
+            progressBox.classList.add("waiting");
+            notAnsweredBox.innerText = "";
+        } else {
+            const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
+            const answersForQ = data.answers?.[key] || {};
+
+            const answeredIds = Object.keys(answersForQ);
+            answeredPlayers = answeredIds.length;
+
+            // 👇 نجيب اللي ما جاوبوش
+            Object.entries(data.players || {}).forEach(([id, player]) => {
+                if (!answeredIds.includes(id)) {
+                    notAnsweredNames.push(player.name);
+                }
+            });
+
+            if (answeredPlayers === totalPlayers && totalPlayers > 0) {
+                // 🟢 كله جاوب
+                progressBox.innerText = "🔥 كل اللعيبة جاوبت";
+                progressBox.classList.add("green");
+            } else {
+                // 🔴 في ناس لسه
+                progressBox.innerText = `⚠️ جاوب ${answeredPlayers} من ${totalPlayers}`;
+                progressBox.classList.add("red");
+            }
+
+            // 👇 أسماء اللي لسه
+            notAnsweredBox.innerText = notAnsweredNames.length
+                ? `⏳ مستني: ${notAnsweredNames.join(" - ")}`
+                : "";
+        }
         const messages = data.suggestions || [];
         const list = document.getElementById("suggestions-list");
 
@@ -217,6 +309,21 @@ import Layout from "../../../layouts/Layout.astro";
         // if (playerId !== data.hostId) {
         //     window.location.href = `/room/${roomCode}/player`;
         // }
+
+        const totalQuestions = data.gamePlan?.reduce((total, cat) => {
+            return total + (cat.questions?.length || 0);
+        }, 0);
+
+        const answeredCount = Object.keys(data.answeredQuestions || {}).length;
+
+        // 👇 لو كل الأسئلة اتجاوبت
+        if (answeredCount >= totalQuestions && totalQuestions > 0) {
+            document.getElementById("show-results").style.display =
+                "inline-block";
+        } else {
+            document.getElementById("show-results").style.display = "none";
+        }
+
         board.innerHTML = "";
 
         const section = document.getElementById("players-section");
@@ -251,8 +358,8 @@ import Layout from "../../../layouts/Layout.astro";
 
             const question = cat.questions[index];
             const imageHtml = question.image
-  ? `<img src="${question.image}" class="question-img" />`
-  : "";
+                ? `<img src="${question.image}" class="question-img" />`
+                : "";
 
             if (!question) return;
 
@@ -265,6 +372,7 @@ import Layout from "../../../layouts/Layout.astro";
                     category: cat.category,
                     categoryIndex: catIndex,
                     questionIndex: index,
+                    image: question.image || null,
                 },
                 [`questionStartTimes.${catIndex}_${index}`]: Date.now(),
             });
@@ -276,9 +384,6 @@ import Layout from "../../../layouts/Layout.astro";
 
             ${imageHtml}
 <h2>${question.text}</h2>
-<div class="admin-correct">
-    ✅ الإجابة: ${question.correct}
-</div>
 
             <div class="text-answer-box">
                 <input id="text-answer" placeholder="اكتب إجابتك 😏" />
@@ -299,9 +404,6 @@ import Layout from "../../../layouts/Layout.astro";
 
             ${imageHtml}
 <h2>${question.text}</h2>
-<div class="admin-correct">
-    ✅ الإجابة: ${question.correct}
-</div>
 
             <div class="answers">
                 ${question.options
@@ -324,19 +426,19 @@ import Layout from "../../../layouts/Layout.astro";
         </div>
     `;
             }
-setTimeout(() => {
-    const qImg = document.querySelector(".question-img");
+            setTimeout(() => {
+                const qImg = document.querySelector(".question-img");
 
-    if (qImg) {
-        qImg.addEventListener("click", () => {
-            const modal = document.getElementById("image-modal");
-            const modalImg = document.getElementById("modal-img");
+                if (qImg) {
+                    qImg.addEventListener("click", () => {
+                        const modal = document.getElementById("image-modal");
+                        const modalImg = document.getElementById("modal-img");
 
-            modalImg.src = qImg.src;
-            modal.classList.remove("hidden");
-        });
-    }
-}, 0);
+                        modalImg.src = qImg.src;
+                        modal.classList.remove("hidden");
+                    });
+                }
+            }, 0);
             let answered = false;
 
             // 👇 text question
@@ -371,14 +473,20 @@ setTimeout(() => {
                     const feedback = document.getElementById("feedback");
                     if (answer === correctAnswer) {
                         playWinEffect();
-                        feedback.innerHTML = "✅ إجابة صح يا بطل!";
+                        feedback.innerHTML = `
+<div class="feedback-box success">
+    🔥 صح يا بطل!
+</div>
+`;
                         feedback.style.color = "#22c55e";
                     } else {
                         playLoseEffect();
                         feedback.innerHTML = `
-<span class="wrong-text">❌ غلط يا نجم</span>
-<br><br>
-<span class="correct-text">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+<div class="feedback-box error">
+    ❌ غلط يا نجم 😏
+    <br><br>
+    <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+</div>
 `;
                     }
                 });
@@ -440,16 +548,22 @@ setTimeout(() => {
                     // 🔥 ده اللي كان ناقصك بصراحة
                     if (answer === correctAnswer) {
                         playWinEffect();
-                        feedback.innerHTML = "✅ إجابة صح يا بطل!";
+                        feedback.innerHTML = `
+<div class="feedback-box success">
+    🔥 صح يا بطل!
+</div>
+`;
                         feedback.style.color = "#22c55e";
                     } else {
                         playLoseEffect();
 
                         feedback.innerHTML = `
-                            <span class="wrong-text">❌ غلط يا نجم 😏</span>
-                            <br><br>
-                            <span class="correct-text">✅ الإجابة الصحيحة: ${correctAnswer}</span>
-                            `;
+<div class="feedback-box error">
+    ❌ غلط يا نجم 😏
+    <br><br>
+    <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+</div>
+`;
                     }
 
                     feedback.style.textAlign = "center";
@@ -474,9 +588,9 @@ setTimeout(() => {
 
             // title.style.backgroundImage = `url(${categoryImages[cat.category]})`;
 
-const realCat = cat.category;
+            const realCat = cat.category;
 
-title.innerHTML = `
+            title.innerHTML = `
     <img src="${categoriesMap[realCat]?.image}" />
     <div class="overlay">
         ${categoriesMap[realCat]?.name || realCat}
@@ -509,9 +623,9 @@ title.innerHTML = `
             board.appendChild(col);
         });
 
-        // document.getElementById("open-admin")?.addEventListener("click", () => {
-        //     window.open(`/room/${roomCode}/admin`, "_blank");
-        // });
+        document.getElementById("open-admin")?.addEventListener("click", () => {
+            window.open(`/room/${roomCode}/adminwanswer`, "_blank");
+        });
     });
 
     // إرسال
@@ -549,13 +663,17 @@ title.innerHTML = `
         await deleteDoc(roomRef);
         window.location.href = "/";
     });
-    // document.getElementById("show-results").addEventListener("click", () => {
-    //     window.open(`/room/${roomCode}/results`, "_blank");
-    // });
-    document.getElementById("show-results")?.addEventListener("click", () => {
-        window.location.href = `/room/${roomCode}/results`;
-    });
+
     document.getElementById("close-image").onclick = () => {
         document.getElementById("image-modal").classList.add("hidden");
     };
+    document
+        .getElementById("show-results")
+        ?.addEventListener("click", async () => {
+            await updateDoc(roomRef, {
+                showResults: true,
+            });
+
+            window.location.href = `/room/${roomCode}/results`;
+        });
 </script>

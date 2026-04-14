@@ -21,6 +21,13 @@ import Layout from "../../../layouts/Layout.astro";
         <div id="categories-grid" class="categories-grid"></div>
         <p id="summary"></p>
         <!-- 🚀 زرار البداية -->
+        <div class="role-select">
+            <p>اختار دورك 👇</p>
+
+            <button class="role-btn" data-role="player"> 🎮 هلعب معاهم </button>
+
+            <button class="role-btn" data-role="admin"> 🧠 هدور اللعبة </button>
+        </div>
         <button id="start-round" class="start-btn"> 🚀 ابدأ الجولة </button>
     </div>
 
@@ -40,11 +47,11 @@ import Layout from "../../../layouts/Layout.astro";
             const gamePlan = [];
 
             for (const cat of selectedCategories) {
-const q = query(
-    collection(db, "questions"),
-    where("approved", "==", true),
-    where("category", "==", cat)
-);
+                const q = query(
+                    collection(db, "questions"),
+                    where("approved", "==", true),
+                    where("category", "==", cat),
+                );
                 const snap = await getDocs(q);
 
                 let list = snap.docs.map((d) => d.data());
@@ -96,7 +103,32 @@ const q = query(
                 }
             });
         });
+        let selectedRole = null;
 
+        document.querySelectorAll(".role-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                document
+                    .querySelectorAll(".role-btn")
+                    .forEach((b) => b.classList.remove("active"));
+
+                btn.classList.add("active");
+
+                selectedRole = btn.dataset.role;
+
+                localStorage.setItem("role", selectedRole);
+            });
+        });
+        const savedRole = localStorage.getItem("role");
+
+        if (savedRole) {
+            selectedRole = savedRole;
+
+            document.querySelectorAll(".role-btn").forEach((btn) => {
+                if (btn.dataset.role === savedRole) {
+                    btn.classList.add("active");
+                }
+            });
+        }
         function updateSummary() {
             const total = selectedCategories.length * questionsCount;
 
@@ -152,6 +184,11 @@ const q = query(
         document
             .getElementById("start-round")
             .addEventListener("click", async () => {
+                if (!selectedRole) {
+                    alert("اختار انت هتلعب ولا هتدير يا نجم 😏");
+                    return;
+                }
+
                 if (selectedCategories.length === 0) {
                     alert("اختار فئة 😏");
                     return;
@@ -169,6 +206,7 @@ const q = query(
                         currentCategoryIndex: 0,
                         currentQuestionIndex: 0,
                         status: "playing",
+                        adminMode: selectedRole,
                     },
                     { merge: true },
                 );
@@ -186,7 +224,11 @@ const q = query(
                     localStorage.setItem("counted_room", "1");
                 }
                 // 👇 روح للعبة
-                window.location.href = `/room/${roomCode}/board`;
+                if (selectedRole === "admin") {
+                    window.location.href = `/room/${roomCode}/admin-board`;
+                } else {
+                    window.location.href = `/room/${roomCode}/board`;
+                }
             });
     </script>
 </Layout>
