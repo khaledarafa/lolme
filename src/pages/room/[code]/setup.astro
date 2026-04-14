@@ -139,45 +139,80 @@ import Layout from "../../../layouts/Layout.astro";
         const grid = document.getElementById("categories-grid");
 
         async function loadCategories() {
-            const snap = await getDocs(collection(db, "categories"));
+  const snap = await getDocs(collection(db, "categories"));
 
-            grid.innerHTML = "";
+  grid.innerHTML = "";
 
-            snap.forEach((doc) => {
-                const cat = doc.data();
+  const groups = {};
+function getGroupLabel(group) {
+  const map = {
+    football: "⚽ كورة",
+    songs: "🎵 أغاني",
+    brain: "🧠 ذكاء ومعلومات",
+    movies: "🎬 ترفيه",
+    products: "🛍️ منتجات",
+    mix: "🌍 منوعات",
+  };
 
-                const div = document.createElement("div");
-                div.className = "cat-card";
-                div.dataset.cat = cat.slug;
+  return map[group] || group;
+}
+  snap.forEach((doc) => {
+    const cat = doc.data();
 
-                // 🖼️ صورة الفئة
-                div.style.backgroundImage = `url(${cat.image})`;
+    if (!groups[cat.group]) {
+      groups[cat.group] = [];
+    }
 
-                const span = document.createElement("span");
-                span.innerText = cat.name;
+    groups[cat.group].push(cat);
+  });
 
-                div.appendChild(span);
+  // 🔥 نبني الواجهة بالجروبات
+Object.keys(groups).forEach((groupName) => {
 
-                // 🎯 اختيار الفئة
-                div.addEventListener("click", () => {
-                    const catSlug = cat.slug;
+  const groupWrapper = document.createElement("div");
+  groupWrapper.className = "group-block";
 
-                    if (selectedCategories.includes(catSlug)) {
-                        selectedCategories = selectedCategories.filter(
-                            (c) => c !== catSlug,
-                        );
-                        div.classList.remove("active");
-                    } else {
-                        selectedCategories.push(catSlug);
-                        div.classList.add("active");
-                    }
+  const title = document.createElement("h3");
+  title.innerText = getGroupLabel(groupName);
+  title.className = "group-title";
 
-                    updateSummary();
-                });
+  const row = document.createElement("div");
+  row.className = "group-row";
 
-                grid.appendChild(div);
-            });
-        }
+  groups[groupName].forEach((cat) => {
+    const div = document.createElement("div");
+    div.className = "cat-card";
+    div.dataset.cat = cat.slug;
+    div.style.backgroundImage = `url(${cat.image})`;
+
+    const span = document.createElement("span");
+    span.innerText = cat.name;
+
+    div.appendChild(span);
+
+    div.addEventListener("click", () => {
+      const catSlug = cat.slug;
+
+      if (selectedCategories.includes(catSlug)) {
+        selectedCategories = selectedCategories.filter(c => c !== catSlug);
+        div.classList.remove("active");
+      } else {
+        selectedCategories.push(catSlug);
+        div.classList.add("active");
+      }
+
+      updateSummary();
+    });
+
+    row.appendChild(div);
+  });
+
+  groupWrapper.appendChild(title);
+  groupWrapper.appendChild(row);
+
+  grid.appendChild(groupWrapper);
+});
+}
         loadCategories();
 
         // 🚀 بدء الجولة
@@ -232,79 +267,3 @@ import Layout from "../../../layouts/Layout.astro";
             });
     </script>
 </Layout>
-
-<style>
-    .setup-container {
-        max-width: 900px;
-        margin: auto;
-        padding: 20px;
-        text-align: center;
-    }
-
-    .sub {
-        opacity: 0.7;
-        margin-bottom: 20px;
-    }
-
-    .questions-count {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        margin-bottom: 25px;
-    }
-
-    .q-btn {
-        padding: 10px 16px;
-        border-radius: 10px;
-        border: none;
-        cursor: pointer;
-        background: #222;
-        color: #fff;
-    }
-
-    .q-btn.active {
-        background: #3b82f6;
-    }
-
-    .categories-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 15px;
-    }
-
-    /* .cat-card {
-      height: 100px;
-      border-radius: 15px;
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      align-items: flex-end;
-      padding: 10px;
-      cursor: pointer;
-      position: relative;
-      border: 2px solid transparent;
-    } */
-
-    /* .cat-card span {
-      background: rgba(0,0,0,0.5);
-      padding: 5px 10px;
-      border-radius: 8px;
-      font-size: 14px;
-    } */
-
-    /* .cat-card.active {
-      border: 2px solid #3b82f6;
-      transform: scale(1.05);
-    } */
-
-    .start-btn {
-        margin-top: 25px;
-        padding: 14px 25px;
-        border: none;
-        border-radius: 12px;
-        background: #10b981;
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-    }
-</style>

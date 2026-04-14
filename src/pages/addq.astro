@@ -3,9 +3,15 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="إضافة سؤال">
+<Layout>
   <div class="add-category-box">
     <h3>➕ إضافة فئة جديدة</h3>
+
+    <p class="hint-msg">
+  👀 خد لفة سريعة على الفئات اللي تحت قبل ما تضيف
+يمكن الفئة موجودة بس باسم شبه اللي في دماغك 😏 <br>
+ لو موجوده اختارها وضيف السؤال على طول 🔥
+</p>
 
     <input id="new-cat-name" placeholder="اسم الفئة" />
     <input id="new-cat-slug" style="display:none" />
@@ -34,15 +40,13 @@ import Layout from "../layouts/Layout.astro";
 
     <p id="cat-msg"></p>
   </div>
-  <img
-    id="preview"
-    style="width:100%;border-radius:10px;margin-top:10px;display:none;"
-  />
+  <img id="preview" style="width:100%;border-radius:10px;margin-top:10px;display:none;" />
   <div id="category-buttons" class="category-buttons"></div>
 
   <section class="add-q-section">
     <!-- <h2>➕ أضف سؤال جديد</h2> -->
     <div class="add-q-box">
+      <h3>🎯 إضافة سؤال</h2>
       <select id="q-type">
         <option value="choice">اختيارات</option>
         <option value="text">إجابة كتابة</option>
