@@ -10,23 +10,20 @@ import Layout from "../layouts/Layout.astro";
     <input id="new-cat-name" placeholder="اسم الفئة" />
     <input id="new-cat-slug" style="display:none" />
 
-<select id="new-cat-group">
-  <option value="football">⚽ كورة (دوريات - لاعبين - منتخبات)</option>
+    <select id="new-cat-group">
+      <option value="football">⚽ كورة (دوريات - لاعبين - منتخبات)</option>
 
-  <option value="songs">🎵 أغاني (عربي - مصري - أجنبي - خمن الأغنية)</option>
+      <option value="songs">🎵 أغاني (عربي - مصري - أجنبي - خمن الأغنية)</option
+      >
 
-  <option value="brain">🧠 ذكاء ومعلومات (جغرافيا - عواصم - رياضيات)</option>
+      <option value="brain">🧠 ذكاء ومعلومات (جغرافيا - عواصم - رياضيات)</option
+      >
 
-  <option value="movies">🎬 ترفيه (أفلام - مسلسلات - أنمي - كرتون)</option>
+      <option value="movies">🎬 ترفيه (أفلام - مسلسلات - أنمي - كرتون)</option>
 
-  <option value="products">🛍️ منتجات (ماركات - سوبر ماركت - تجاري)</option>
+      <option value="products">🛍️ منتجات (ماركات - سوبر ماركت - تجاري)</option>
 
-  <option value="mix">🌍 منوعات (مشاهير - حيوانات - سفر - ألعاب)</option>
-</select>
-
-    <select id="new-cat-type">
-      <option value="text">📝 أسئلة عادية</option>
-      <option value="image">🖼️ صور</option>
+      <option value="mix">🌍 منوعات (مشاهير - حيوانات - سفر - ألعاب)</option>
     </select>
 
     <label for="new-cat-image" class="upload-box"> 📸 اختار صورة للفئة </label>
@@ -52,10 +49,13 @@ import Layout from "../layouts/Layout.astro";
       </select>
 
       <input id="q-text" placeholder="اكتب السؤال 😏" />
-      <label for="q-image" class="upload-box">📸 صورة السؤال (اختياري)</label>
+      <label for="q-image" class="upload-box question-upload">📸 صورة السؤال (اختياري)</label>
       <input type="file" id="q-image" hidden />
 
-      <img id="q-preview" style="display:none;width:100%;border-radius:10px;margin-top:10px;" />
+      <img
+        id="q-preview"
+        style="display:none;width:100%;border-radius:10px;margin-top:10px;"
+      />
 
       <div id="options-box">
         <input id="opt1" placeholder="اختيار 1" />

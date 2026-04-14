@@ -61,7 +61,7 @@ fileInput.addEventListener("change", async (e) => {
     preview.src = URL.createObjectURL(compressed);
     preview.style.display = "block";
 });
-const label = document.querySelector(".upload-box");
+const label = document.querySelector(".question-upload");
 
 fileInput.addEventListener("change", () => {
     label.innerText = "✅ تم اختيار الصورة";
@@ -89,7 +89,7 @@ qImageInput.addEventListener("change", (e) => {
 btn.onclick = async () => {
     const type = document.getElementById("q-type").value;
 
-    let imageUrl = "";
+    let imageUrl = null;
 
     const file = document.getElementById("q-image").files[0];
 
@@ -157,7 +157,7 @@ btn.onclick = async () => {
             text,
             options: type === "choice" ? options : null,
             correct,
-            image: imageUrl || null,
+            image: imageUrl,
             type,
             category: selectedCategory,
             approved: false,
@@ -174,7 +174,9 @@ btn.onclick = async () => {
         document.getElementById("opt3").value = "";
         document.getElementById("opt4").value = "";
         document.getElementById("correct").value = "";
-
+        // 🧹 reset الصورة
+        document.getElementById("q-image").value = "";
+        qPreview.style.display = "none";
     } catch (err) {
         console.error(err);
         msg.innerText = "❌ حصل خطأ";
@@ -195,7 +197,6 @@ addCatBtn.onclick = async () => {
         .replace(/\s+/g, "-") || "cat-" + Date.now();
 
     const group = document.getElementById("new-cat-group").value;
-    const catType = document.getElementById("new-cat-type").value;
 
     const file = document.getElementById("new-cat-image").files[0];
 
@@ -205,18 +206,6 @@ addCatBtn.onclick = async () => {
     // ✅ تحقق من الاسم
     if (!name) {
         catMsg.innerText = "❌ اكتب اسم الفئة";
-        return;
-    }
-
-    // ✅ لو فئة صور لازم صورة
-    if (catType === "image" && !file) {
-        catMsg.innerText = "❌ دي فئة صور… لازم تختار صورة";
-        return;
-    }
-
-    // ✅ لو فئة عادية ورفع صورة
-    if (catType !== "image" && file) {
-        catMsg.innerText = "❌ انت مختار صورة… اختار نوع الفئة (صور) فوق 👆";
         return;
     }
 
@@ -268,7 +257,6 @@ addCatBtn.onclick = async () => {
             name,
             slug,
             group,
-            type: catType,
             image: imageUrl,
             createdAt: Date.now()
         });
@@ -309,30 +297,25 @@ async function loadCategories() {
             btn.classList.add("active");
         }
 
-btn.onclick = () => {
-    selectedCategory = cat.slug;
+        btn.onclick = () => {
+            selectedCategory = cat.slug;
 
-    // ❌ نشيل active من الكل
-    document.querySelectorAll(".cat-btn").forEach(b => {
-        b.classList.remove("active");
-    });
+            // ❌ نشيل active من الكل
+            document.querySelectorAll(".cat-btn").forEach(b => {
+                b.classList.remove("active");
+            });
 
-    // ✅ نضيفه للزرار ده
-    btn.classList.add("active");
+            // ✅ نضيفه للزرار ده
+            btn.classList.add("active");
 
-    const qImageInput = document.getElementById("q-image");
-    const label = document.querySelector('label[for="q-image"]');
-
-    if (cat.type === "image") {
-        qImageInput.disabled = false;
-        label.style.opacity = "1";
-        label.innerText = "📸 لازم تختار صورة للسؤال";
-    } else {
-        qImageInput.disabled = true;
-        label.style.opacity = "0.5";
-        label.innerText = "🚫 الصورة مش مطلوبة للفئة دي";
-    }
-};
+            const qImageInput = document.getElementById("q-image");
+            const label = document.querySelector('label[for="q-image"]');
+            qImageInput.disabled = false;
+            label.style.opacity = "1";
+            label.innerText = "📸 ممكن تضيف صورة (اختياري)";
+            document.getElementById("q-image").value = "";
+            qPreview.style.display = "none";
+        };
 
         catContainer.appendChild(btn);
     });
