@@ -61,19 +61,16 @@ fileInput.addEventListener("change", async (e) => {
     preview.src = URL.createObjectURL(compressed);
     preview.style.display = "block";
 });
-const label = document.querySelector(".question-upload");
-
+const questionLabel = document.querySelector(".question-upload");
+const categoryLabel = document.querySelector('label[for="new-cat-image"]');
 fileInput.addEventListener("change", () => {
-    label.innerText = "✅ تم اختيار الصورة";
+    categoryLabel.innerText = "✅ تم اختيار صورة للفئة";
 });
+
 const msg = document.getElementById("msg");
 const qImageInput = document.getElementById("q-image");
-qImageInput.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-
-    if (file) {
-        console.log("📸 صورة السؤال اتاختارت:", file.name);
-    }
+qImageInput.addEventListener("change", () => {
+    questionLabel.innerText = "✅ تم اختيار صورة للسؤال";
 });
 let selectedCategory = localStorage.getItem("selected_category") || "";
 const qPreview = document.getElementById("q-preview");
@@ -177,6 +174,7 @@ btn.onclick = async () => {
         // 🧹 reset الصورة
         document.getElementById("q-image").value = "";
         qPreview.style.display = "none";
+        questionLabel.innerText = "📸 صورة السؤال (اختياري)";
     } catch (err) {
         console.error(err);
         msg.innerText = "❌ حصل خطأ";
