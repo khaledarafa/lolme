@@ -6,9 +6,9 @@ import Layout from "../../../layouts/Layout.astro";
 <Layout>
     <div class="top-bar">
         🎮 كود الغرفة: {code}
-        <button id="show-results">📊 عرض النتائج</button>
+        <button id="show-results" style="display:none;">📊 عرض النتائج</button>
         <button id="end-game">❌ اقفل الروم</button>
-                <button id="open-admin">👑 شاشة الأدمن</button>
+        <button id="open-admin">👑 شاشة الأدمن</button>
     </div>
     <div id="players-section" data-code={code}></div>
 
@@ -175,7 +175,20 @@ import Layout from "../../../layouts/Layout.astro";
 
     let lastCount = 0;
     const msgSound = new Audio("/sounds/msg.mp3");
+    let soundEnabled = false;
 
+    document.addEventListener("click", () => {
+        if (!soundEnabled) {
+            msgSound
+                .play()
+                .then(() => {
+                    msgSound.pause();
+                    msgSound.currentTime = 0;
+                    soundEnabled = true;
+                })
+                .catch(() => {});
+        }
+    });
     onSnapshot(roomRef, (snap) => {
         const data = snap.data();
 
@@ -218,6 +231,21 @@ import Layout from "../../../layouts/Layout.astro";
         // if (playerId !== data.hostId) {
         //     window.location.href = `/room/${roomCode}/player`;
         // }
+
+        const totalQuestions = data.gamePlan?.reduce((total, cat) => {
+            return total + (cat.questions?.length || 0);
+        }, 0);
+
+        const answeredCount = Object.keys(data.answeredQuestions || {}).length;
+
+        // 👇 لو كل الأسئلة اتجاوبت
+        if (answeredCount >= totalQuestions && totalQuestions > 0) {
+            document.getElementById("show-results").style.display =
+                "inline-block";
+        } else {
+            document.getElementById("show-results").style.display = "none";
+        }
+
         board.innerHTML = "";
 
         const section = document.getElementById("players-section");
@@ -252,8 +280,8 @@ import Layout from "../../../layouts/Layout.astro";
 
             const question = cat.questions[index];
             const imageHtml = question.image
-  ? `<img src="${question.image}" class="question-img" />`
-  : "";
+                ? `<img src="${question.image}" class="question-img" />`
+                : "";
 
             if (!question) return;
 
@@ -266,7 +294,7 @@ import Layout from "../../../layouts/Layout.astro";
                     category: cat.category,
                     categoryIndex: catIndex,
                     questionIndex: index,
-    image: question.image || null
+                    image: question.image || null,
                 },
                 [`questionStartTimes.${catIndex}_${index}`]: Date.now(),
             });
@@ -320,19 +348,19 @@ import Layout from "../../../layouts/Layout.astro";
         </div>
     `;
             }
-setTimeout(() => {
-    const qImg = document.querySelector(".question-img");
+            setTimeout(() => {
+                const qImg = document.querySelector(".question-img");
 
-    if (qImg) {
-        qImg.addEventListener("click", () => {
-            const modal = document.getElementById("image-modal");
-            const modalImg = document.getElementById("modal-img");
+                if (qImg) {
+                    qImg.addEventListener("click", () => {
+                        const modal = document.getElementById("image-modal");
+                        const modalImg = document.getElementById("modal-img");
 
-            modalImg.src = qImg.src;
-            modal.classList.remove("hidden");
-        });
-    }
-}, 0);
+                        modalImg.src = qImg.src;
+                        modal.classList.remove("hidden");
+                    });
+                }
+            }, 0);
             let answered = false;
 
             // 👇 text question
@@ -367,14 +395,20 @@ setTimeout(() => {
                     const feedback = document.getElementById("feedback");
                     if (answer === correctAnswer) {
                         playWinEffect();
-                        feedback.innerHTML = "✅ إجابة صح يا بطل!";
+                        feedback.innerHTML = `
+<div class="feedback-box success">
+    🔥 صح يا بطل!
+</div>
+`;
                         feedback.style.color = "#22c55e";
                     } else {
                         playLoseEffect();
                         feedback.innerHTML = `
-<span class="wrong-text">❌ غلط يا نجم</span>
-<br><br>
-<span class="correct-text">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+<div class="feedback-box error">
+    ❌ غلط يا نجم 😏
+    <br><br>
+    <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+</div>
 `;
                     }
                 });
@@ -436,16 +470,22 @@ setTimeout(() => {
                     // 🔥 ده اللي كان ناقصك بصراحة
                     if (answer === correctAnswer) {
                         playWinEffect();
-                        feedback.innerHTML = "✅ إجابة صح يا بطل!";
+                        feedback.innerHTML = `
+<div class="feedback-box success">
+    🔥 صح يا بطل!
+</div>
+`;
                         feedback.style.color = "#22c55e";
                     } else {
                         playLoseEffect();
 
                         feedback.innerHTML = `
-                            <span class="wrong-text">❌ غلط يا نجم 😏</span>
-                            <br><br>
-                            <span class="correct-text">✅ الإجابة الصحيحة: ${correctAnswer}</span>
-                            `;
+<div class="feedback-box error">
+    ❌ غلط يا نجم 😏
+    <br><br>
+    <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+</div>
+`;
                     }
 
                     feedback.style.textAlign = "center";
@@ -470,9 +510,9 @@ setTimeout(() => {
 
             // title.style.backgroundImage = `url(${categoryImages[cat.category]})`;
 
-const realCat = cat.category;
+            const realCat = cat.category;
 
-title.innerHTML = `
+            title.innerHTML = `
     <img src="${categoriesMap[realCat]?.image}" />
     <div class="overlay">
         ${categoriesMap[realCat]?.name || realCat}
@@ -549,11 +589,13 @@ title.innerHTML = `
     document.getElementById("close-image").onclick = () => {
         document.getElementById("image-modal").classList.add("hidden");
     };
-    document.getElementById("show-results")?.addEventListener("click", async () => {
-    await updateDoc(roomRef, {
-        showResults: true
-    });
+    document
+        .getElementById("show-results")
+        ?.addEventListener("click", async () => {
+            await updateDoc(roomRef, {
+                showResults: true,
+            });
 
-    window.location.href = `/room/${roomCode}/results`;
-});
+            window.location.href = `/room/${roomCode}/results`;
+        });
 </script>

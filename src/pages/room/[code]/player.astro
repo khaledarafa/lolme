@@ -49,7 +49,7 @@ import Layout from "../../../layouts/Layout.astro";
 
     let answered = false;
     let currentQ = null;
-    
+
     const winSound = new Audio("/sounds/winn.mp3");
     const loseSound = new Audio("/sounds/lose.mp3");
 
@@ -86,7 +86,20 @@ import Layout from "../../../layouts/Layout.astro";
     }
     let lastCount = 0;
     const msgSound = new Audio("/sounds/msg.mp3");
+    let soundEnabled = false;
 
+    document.addEventListener("click", () => {
+        if (!soundEnabled) {
+            msgSound
+                .play()
+                .then(() => {
+                    msgSound.pause();
+                    msgSound.currentTime = 0;
+                    soundEnabled = true;
+                })
+                .catch(() => {});
+        }
+    });
     onSnapshot(roomRef, (snap) => {
         const data = snap.data();
         if (!data) return;
@@ -128,16 +141,14 @@ import Layout from "../../../layouts/Layout.astro";
         lastCount = messages.length;
 
         const q = data.currentQuestion;
-
         if (!q) return;
+        const answeredKey = `${q.categoryIndex}_${q.questionIndex}`;
+        const myAnswer = data.answers?.[answeredKey]?.[playerId]?.answer;
+        const correctAnswer = q.correct;
 
         currentQ = q;
-        const newKey = `${q.category}_${q.questionIndex}`;
+        const newKey = `${q.categoryIndex}_${q.questionIndex}`;
 
-        if (window.lastQuestionKey !== newKey) {
-            answered = false;
-            window.lastQuestionKey = newKey;
-        }
         qEl.innerText = q.text;
         const imgBox = document.getElementById("question-image");
 
@@ -146,27 +157,62 @@ import Layout from "../../../layouts/Layout.astro";
         } else {
             imgBox.innerHTML = "";
         }
-        answersEl.innerHTML = "";
-        feedback.innerHTML = "";
 
+        if (window.lastQuestionKey !== newKey) {
+            answered = false;
+            window.lastQuestionKey = newKey;
+
+            answersEl.innerHTML = "";
+            feedback.innerHTML = "";
+
+            // 💣 أهم سطرين في حياتك
+            const input = document.getElementById("text-answer");
+            const sendBtn = document.getElementById("send-answer");
+
+            if (input) {
+                input.value = "";
+                input.disabled = false;
+            }
+
+            if (sendBtn) {
+                sendBtn.disabled = false;
+            }
+        }
         if (q.type !== "text") {
             textBox.style.display = "none";
+
+            // 👇 امسح كل مرة قبل ما ترسم
+            answersEl.innerHTML = "";
 
             q.options.forEach((opt) => {
                 const btn = document.createElement("button");
                 btn.className = "answer-btn";
                 btn.innerText = opt;
 
-                btn.onclick = async () => {
-                    if (answered) return;
-                    answered = true;
+                // 👇 لو اللاعب جاوب قبل كده
+                if (myAnswer) {
+                    btn.disabled = true;
 
-                    const answeredKey = `${q.categoryIndex}_${q.questionIndex}`;
+                    if (opt === correctAnswer) {
+                        btn.style.background = "#22c55e";
+                        btn.style.color = "#000";
+                    } else if (opt === myAnswer) {
+                        btn.style.background = "#ef4444";
+                        btn.style.color = "#fff";
+                    } else {
+                        btn.style.opacity = "0.4";
+                    }
+                }
+
+                btn.onclick = async () => {
+                    if (answered || myAnswer) return;
+
+                    answered = true;
 
                     await updateDoc(roomRef, {
                         [`answers.${answeredKey}.${playerId}`]: {
                             answer: opt,
-                            correctAnswer: q.correct,
+                            correctAnswer: correctAnswer,
                             category: q.category,
                             questionIndex: q.questionIndex,
                             time: Date.now(),
@@ -176,10 +222,10 @@ import Layout from "../../../layouts/Layout.astro";
                     if (opt === q.correct) {
                         playWinEffect();
                         feedback.innerHTML = `
-<div class="feedback-box success">
-🔥 صح يا بطل!
-</div>
-`;
+                            <div class="feedback-box success">
+                            🔥 صح يا بطل!
+                            </div>
+                            `;
                     } else {
                         playLoseEffect();
                         feedback.innerHTML = `
@@ -221,6 +267,27 @@ import Layout from "../../../layouts/Layout.astro";
         } else {
             answersEl.innerHTML = "";
             textBox.style.display = "block";
+
+            const input = document.getElementById("text-answer");
+            const sendBtn = document.getElementById("send-answer");
+
+            // 💣 reset كل مرة
+            input.value = "";
+            input.disabled = false;
+            sendBtn.disabled = false;
+
+            // 👇 لو جاوب قبل كده
+            if (myAnswer) {
+                input.value = myAnswer;
+                input.disabled = true;
+                sendBtn.disabled = true;
+
+            }
+
+            // 🔥 focus
+            setTimeout(() => {
+                input.focus();
+            }, 0);
         }
     });
 
@@ -245,13 +312,19 @@ import Layout from "../../../layouts/Layout.astro";
             },
         });
 
-        if (answer === currentQ.correct) {
-            playWinEffect();
-            feedback.innerText = "✅ صح 🔥";
-        } else {
-            playLoseEffect();
-            feedback.innerText = `❌ غلط 😏 \n\n✅ الإجابة الصحيحة: ${currentQ.correct}`;
-        }
+if (answer === currentQ.correct) {
+    playWinEffect();
+    feedback.innerHTML = `
+        <span class="correct-text">✅ إجابة صح يا بطل!</span>
+    `;
+} else {
+    playLoseEffect();
+    feedback.innerHTML = `
+        <span class="wrong-text">❌ غلط يا نجم 😏</span>
+        <br><br>
+        <span class="correct-text">✅ الإجابة الصحيحة: ${currentQ.correct}</span>
+    `;
+}
 
         // 🔒 قفل الإدخال
         input.disabled = true;
