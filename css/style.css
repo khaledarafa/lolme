@@ -2394,25 +2394,35 @@ h1 {
 }
 
 .cat-btn {
-  width: 160px;        /* 👈 حجم ثابت */
-  height: 45px;        /* 👈 ارتفاع ثابت */
+  width: 160px;
+  height: 45px;
 
   padding: 0 10px;
-  border-radius: 999px;
   border: 1px solid #1e293b;
   background: linear-gradient(145deg, #020617, #0f172a);
   color: white;
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between; /* 👈 أهم تعديل */
 
   text-align: center;
   font-size: 14px;
-  overflow: hidden;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+.cat-btn span:first-child {
+  flex: 1;
+  text-align: center;
+}
+
+.cat-toggle {
+  flex-shrink: 0; /* 👈 مهم جدًا */
+  cursor: pointer;
+  z-index: 2;
+}
+.cat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .cat-btn:hover {
   background: var(--bg);
@@ -2725,44 +2735,6 @@ h1 {
   position: relative;
   z-index: 1;
 }
-
-/* .sheet {
-  position: fixed;
-  inset: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: rgba(0, 0, 0, 0.4);
-
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.3s;
-
-  z-index: 999;
-}
-
-.sheet-content {
-  background: #1f2937;
-  border-radius: 20px;
-
-  width: 90%;
-  max-width: 600px;
-
-  padding: 20px;
-
-  max-height: 80vh;
-  overflow-y: auto;
-
-  transform: scale(0.9);
-  transition: 0.3s;
-}
-
-.sheet.show {
-  opacity: 1;
-  pointer-events: auto;
-} */
 
 .sheet.show .sheet-content {
   transform: scale(1);

@@ -1,53 +1,32 @@
-import { db, collection, getDocs } from "/js/firebase.js";
+// public/js/categories.js
+import { db, collection, getDocs, doc, updateDoc } from "/js/firebase.js";
 
 const catContainer = document.getElementById("category-buttons");
 
 let selectedCategory = localStorage.getItem("selected_category") || "";
 
-// export async function loadCategories() {
-//     const snap = await getDocs(collection(db, "categories"));
-
-//     catContainer.innerHTML = "";
-
-//     snap.forEach(doc => {
-//         const cat = doc.data();
-
-//         const btn = document.createElement("button");
-//         btn.className = "cat-btn";
-//         btn.dataset.cat = cat.slug;
-//         btn.innerText = cat.name;
-
-//         if (cat.slug === selectedCategory) {
-//             btn.classList.add("active");
-//         }
-
-//         btn.onclick = () => {
-//             selectedCategory = cat.slug;
-//             localStorage.setItem("selected_category", cat.slug);
-
-//             document.querySelectorAll(".cat-btn").forEach(b => {
-//                 b.classList.remove("active");
-//             });
-
-//             btn.classList.add("active");
-//         };
-
-//         catContainer.appendChild(btn);
-//     });
-// }
-export async function loadCategories({ selectable = true } = {}) {
+export async function loadCategories({ selectable = true, editable = false } = {}) {
     const snap = await getDocs(collection(db, "categories"));
 
     catContainer.innerHTML = "";
 
-    snap.forEach(doc => {
-        const cat = doc.data();
+    snap.forEach(docSnap => {
+        const cat = docSnap.data();
 
+        // 👇 wrapper (ده أهم تعديل)
+        const wrapper = document.createElement("div");
+        wrapper.className = "cat-item";
+
+        // 👇 الزرار (عرض أو اختيار)
         const btn = document.createElement("button");
         btn.className = "cat-btn";
-        btn.innerText = cat.name;
 
-        // 👇 لو selectable = true → يبقى زي ما هو
+        const text = document.createElement("span");
+        text.innerText = cat.name;
+
+        btn.appendChild(text);
+
+        // ✅ اختيار الفئة (في addq)
         if (selectable) {
             btn.onclick = () => {
                 selectedCategory = cat.slug;
@@ -60,11 +39,36 @@ export async function loadCategories({ selectable = true } = {}) {
                 btn.classList.add("active");
             };
         } else {
-            // 👇 display فقط
             btn.style.cursor = "default";
-            btn.style.opacity = "0.7";
         }
 
-        catContainer.appendChild(btn);
+        // 👁️ toggle (برا الزرار)
+        if (editable) {
+            const toggle = document.createElement("span");
+            toggle.innerText = cat.hidden ? "🙈" : "👁️";
+            toggle.className = "cat-toggle";
+
+            toggle.onclick = async (e) => {
+                e.stopPropagation();
+
+                await updateDoc(doc(db, "categories", docSnap.id), {
+                    hidden: !cat.hidden
+                });
+
+                loadCategories({ selectable, editable: true });
+            };
+
+            // 👇 شكل الفئة لو مخفية
+            if (cat.hidden) {
+                btn.style.opacity = "0.4";
+            }
+
+            wrapper.appendChild(btn);
+            wrapper.appendChild(toggle);
+        } else {
+            wrapper.appendChild(btn);
+        }
+
+        catContainer.appendChild(wrapper);
     });
 }
