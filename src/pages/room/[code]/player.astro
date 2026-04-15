@@ -54,6 +54,48 @@ import Layout from "../../../layouts/Layout.astro";
     const winSound = new Audio("/sounds/winn.mp3");
     const loseSound = new Audio("/sounds/lose.mp3");
 
+    function normalize(text) {
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/[\u064B-\u065F]/g, "")
+            .replace(/أ|إ|آ/g, "ا")
+            .replace(/ى/g, "ي")
+            .replace(/ة/g, "ه");
+    }
+
+    function levenshtein(a, b) {
+        const matrix = [];
+
+        for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+        for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+        for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+                if (b[i - 1] === a[j - 1]) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j - 1] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j] + 1,
+                    );
+                }
+            }
+        }
+
+        return matrix[b.length][a.length];
+    }
+
+    function isCorrectAnswer(userAnswer, correctAnswer) {
+        const user = normalize(userAnswer);
+        const correct = normalize(correctAnswer);
+
+        const distance = levenshtein(user, correct);
+
+        return distance <= 1;
+    }
+
     function playWinEffect() {
         winSound.currentTime = 0;
         winSound.play().catch(() => {});
@@ -111,16 +153,18 @@ import Layout from "../../../layouts/Layout.astro";
         }
         const messages = data.suggestions || [];
         const list = document.getElementById("chat-list");
-const isAdminManager = data.adminMode === "admin";
-const statusBox = document.getElementById("admin-status");
+        const isAdminManager = data.adminMode === "admin";
+        const statusBox = document.getElementById("admin-status");
 
-if (isAdminManager) {
-    statusBox.innerText = "🧠 الأدمن بيدير اللعبة (يقدر يجاوب ويظهر في النتيجة 😏… بس شايف الإجابة الصح من قبل ما تجاوبوا)";
-    statusBox.style.background = "#7c3aed";
-} else {
-    statusBox.innerText = "🎮 الأدمن بيلعب معاكم (زيكم بالظبط 😎… مش هيشوف الإجابات غير في نهاية الجولة)";
-    statusBox.style.background = "#16a34a";
-}
+        if (isAdminManager) {
+            statusBox.innerText =
+                "🧠 الأدمن بيدير اللعبة (يقدر يجاوب ويظهر في النتيجة 😏… بس شايف الإجابة الصح من قبل ما تجاوبوا)";
+            statusBox.style.background = "#7c3aed";
+        } else {
+            statusBox.innerText =
+                "🎮 الأدمن بيلعب معاكم (زيكم بالظبط 😎… مش هيشوف الإجابات غير في نهاية الجولة)";
+            statusBox.style.background = "#16a34a";
+        }
         if (list) {
             list.innerHTML = messages
                 .map((m) => {
@@ -291,7 +335,6 @@ if (isAdminManager) {
                 input.value = myAnswer;
                 input.disabled = true;
                 sendBtn.disabled = true;
-
             }
 
             // 🔥 focus
@@ -322,19 +365,27 @@ if (isAdminManager) {
             },
         });
 
-if (answer === currentQ.correct) {
-    playWinEffect();
-    feedback.innerHTML = `
-        <span class="correct-text">✅ إجابة صح يا بطل!</span>
+        const user = normalize(answer);
+        const correct = normalize(currentQ.correct);
+
+        if (user === correct) {
+            playWinEffect();
+            feedback.innerHTML = `
+        <span class="correct-text">🔥 صح 100% يا بطل!</span>
     `;
-} else {
-    playLoseEffect();
-    feedback.innerHTML = `
+        } else if (isCorrectAnswer(answer, currentQ.correct)) {
+            playWinEffect();
+            feedback.innerHTML = `
+        <span class="correct-text">😏 قريبة فشخ… هنعديها!</span>
+    `;
+        } else {
+            playLoseEffect();
+            feedback.innerHTML = `
         <span class="wrong-text">❌ غلط يا نجم 😏</span>
         <br><br>
         <span class="correct-text">✅ الإجابة الصحيحة: ${currentQ.correct}</span>
     `;
-}
+        }
 
         // 🔒 قفل الإدخال
         input.disabled = true;

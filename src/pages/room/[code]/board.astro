@@ -1,4 +1,5 @@
 ---
+// src/pages/room/[code]/board.astro
 const { code } = Astro.params;
 import Layout from "../../../layouts/Layout.astro";
 ---
@@ -48,7 +49,16 @@ import Layout from "../../../layouts/Layout.astro";
     src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
 ></script>
 <script type="module">
-    import { db, doc, onSnapshot, updateDoc, getDoc, deleteDoc, getDocs, collection, } from "/js/firebase.js";
+    import {
+        db,
+        doc,
+        onSnapshot,
+        updateDoc,
+        getDoc,
+        deleteDoc,
+        getDocs,
+        collection,
+    } from "/js/firebase.js";
 
     const roomCode =
         document.querySelector(".board").dataset?.code ||
@@ -59,48 +69,48 @@ import Layout from "../../../layouts/Layout.astro";
     const loseSound = new Audio("/sounds/lose.mp3");
 
     let categoriesMap = {};
-function normalize(text) {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[\u064B-\u065F]/g, "")
-    .replace(/أ|إ|آ/g, "ا")
-    .replace(/ى/g, "ي")
-    .replace(/ة/g, "ه");
-}
-
-function levenshtein(a, b) {
-  const matrix = [];
-
-  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-
-  for (let i = 1; i <= b.length; i++) {
-    for (let j = 1; j <= a.length; j++) {
-      if (b[i - 1] === a[j - 1]) {
-        matrix[i][j] = matrix[i - 1][j - 1];
-      } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1,
-          matrix[i][j - 1] + 1,
-          matrix[i - 1][j] + 1
-        );
-      }
+    function normalize(text) {
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/[\u064B-\u065F]/g, "")
+            .replace(/أ|إ|آ/g, "ا")
+            .replace(/ى/g, "ي")
+            .replace(/ة/g, "ه");
     }
-  }
 
-  return matrix[b.length][a.length];
-}
+    function levenshtein(a, b) {
+        const matrix = [];
 
-// 👑 الدالة الرئيسية
-function isCorrectAnswer(userAnswer, correctAnswer) {
-  const user = normalize(userAnswer);
-  const correct = normalize(correctAnswer);
+        for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+        for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
 
-  const distance = levenshtein(user, correct);
+        for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+                if (b[i - 1] === a[j - 1]) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j - 1] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j] + 1,
+                    );
+                }
+            }
+        }
 
-  return distance <= 1;
-}
+        return matrix[b.length][a.length];
+    }
+
+    // 👑 الدالة الرئيسية
+    function isCorrectAnswer(userAnswer, correctAnswer) {
+        const user = normalize(userAnswer);
+        const correct = normalize(correctAnswer);
+
+        const distance = levenshtein(user, correct);
+
+        return distance <= 1;
+    }
     async function loadCategoriesMap() {
         const snap = await getDocs(collection(db, "categories"));
 
@@ -468,60 +478,77 @@ function isCorrectAnswer(userAnswer, correctAnswer) {
             // 👇 text question
             const sendBtn = document.getElementById("send-answer");
 
-            if (sendBtn) {
-                sendBtn.addEventListener("click", async () => {
-                    if (answered) return;
-                    answered = true;
+if (sendBtn) {
+    sendBtn.addEventListener("click", async () => {
 
-                    const input = document.getElementById("text-answer");
-                    const answer = input.value.trim();
+        if (answered) return;
 
-                    if (!answer) return;
+        const input = document.getElementById("text-answer");
+        const answer = input.value.trim();
 
-                    const playerId = localStorage.getItem("player_" + roomCode);
-                    const correctAnswer = cat.questions[index]?.correct;
+        if (!answer) return;
 
-                    const answeredKey = `${catIndex}_${index}`;
+        answered = true;
 
-                    await updateDoc(roomRef, {
-                        [`answers.${answeredKey}.${playerId}`]: {
-                            answer,
-                            correctAnswer,
-                            category: cat.category,
-                            questionIndex: index,
-                            time: Date.now(),
-                        },
-                        [`answeredQuestions.${answeredKey}`]: true,
-                    });
+        const playerId = localStorage.getItem("player_" + roomCode);
+        const correctAnswer = cat.questions[index]?.correct;
 
-                    const feedback = document.getElementById("feedback");
-                    
-                    if (isCorrectAnswer(answer, correctAnswer)) {
-                        playWinEffect();
-                        feedback.innerHTML = `
-<div class="feedback-box success">
-    🔥 صح يا بطل!
-</div>
-`;
-                        feedback.style.color = "#22c55e";
-                    } else {
-                        playLoseEffect();
-                        feedback.innerHTML = `
-<div class="feedback-box error">
-    ❌ غلط يا نجم 😏
-    <br><br>
-    <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
-</div>
-`;
-                    }
-                });
-            }
+        const answeredKey = `${catIndex}_${index}`;
 
+        await updateDoc(roomRef, {
+            [`answers.${answeredKey}.${playerId}`]: {
+                answer,
+                correctAnswer,
+                category: cat.category,
+                questionIndex: index,
+                time: Date.now(),
+            },
+            [`answeredQuestions.${answeredKey}`]: true,
+        });
+
+        const feedback = document.getElementById("feedback");
+
+        const user = normalize(answer);
+        const correct = normalize(correctAnswer);
+
+        if (user === correct) {
+            playWinEffect();
+            feedback.innerHTML = `
+            <div class="feedback-box success">
+                🔥 صح 100% يا وحش!
+            </div>
+            `;
+        } 
+        else if (isCorrectAnswer(answer, correctAnswer)) {
+            playWinEffect();
+            feedback.innerHTML = `
+            <div class="feedback-box success">
+                😏 قريبة فشخ… هنعديها!
+            </div>
+            `;
+        } 
+        else {
+            playLoseEffect();
+            feedback.innerHTML = `
+            <div class="feedback-box error">
+                ❌ غلط يا نجم 😏
+                <br><br>
+                <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+            </div>
+            `;
+        }
+
+        // 🔥 تحسين UX
+        input.disabled = true;
+        sendBtn.disabled = true;
+    });
+}
             document.querySelectorAll(".answer-btn").forEach((btn) => {
                 btn.addEventListener("click", async () => {
                     if (answered) return;
                     answered = true;
-
+                    input.disabled = true;
+                    sendBtn.disabled = true;
                     const answer = btn.dataset.answer;
                     const playerId = localStorage.getItem("player_" + roomCode);
 

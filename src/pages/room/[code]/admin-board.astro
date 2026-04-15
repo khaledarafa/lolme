@@ -53,16 +53,7 @@ import Layout from "../../../layouts/Layout.astro";
     src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
 ></script>
 <script type="module">
-    import {
-        db,
-        doc,
-        onSnapshot,
-        updateDoc,
-        getDoc,
-        deleteDoc,
-        getDocs,
-        collection,
-    } from "/js/firebase.js";
+    import { db, doc, onSnapshot, updateDoc, getDoc, deleteDoc, getDocs, collection, } from "/js/firebase.js";
 
     const roomCode =
         document.querySelector(".board").dataset?.code ||
@@ -71,7 +62,47 @@ import Layout from "../../../layouts/Layout.astro";
     const roomRef = doc(db, "rooms", roomCode);
     const winSound = new Audio("/sounds/winn.mp3");
     const loseSound = new Audio("/sounds/lose.mp3");
+function normalize(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[\u064B-\u065F]/g, "")
+    .replace(/أ|إ|آ/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ة/g, "ه");
+}
 
+function levenshtein(a, b) {
+  const matrix = [];
+
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b[i - 1] === a[j - 1]) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j] + 1
+        );
+      }
+    }
+  }
+
+  return matrix[b.length][a.length];
+}
+
+function isCorrectAnswer(userAnswer, correctAnswer) {
+  const user = normalize(userAnswer);
+  const correct = normalize(correctAnswer);
+
+  const distance = levenshtein(user, correct);
+
+  return distance <= 1;
+}
     let categoriesMap = {};
     let currentQuestion = null;
 
@@ -503,24 +534,35 @@ import Layout from "../../../layouts/Layout.astro";
                     });
 
                     const feedback = document.getElementById("feedback");
-                    if (answer === correctAnswer) {
-                        playWinEffect();
-                        feedback.innerHTML = `
+const user = normalize(answer);
+const correct = normalize(correctAnswer);
+
+if (user === correct) {
+    playWinEffect();
+    feedback.innerHTML = `
 <div class="feedback-box success">
-    🔥 صح يا بطل!
+    🔥 صح 100% يا بطل!
 </div>
 `;
-                        feedback.style.color = "#22c55e";
-                    } else {
-                        playLoseEffect();
-                        feedback.innerHTML = `
+}
+else if (isCorrectAnswer(answer, correctAnswer)) {
+    playWinEffect();
+    feedback.innerHTML = `
+<div class="feedback-box success">
+    😏 قريبة فشخ… هنعديها!
+</div>
+`;
+}
+else {
+    playLoseEffect();
+    feedback.innerHTML = `
 <div class="feedback-box error">
     ❌ غلط يا نجم 😏
     <br><br>
     <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
 </div>
 `;
-                    }
+}
                 });
             }
 
