@@ -9,7 +9,6 @@ import Layout from "../../../layouts/Layout.astro";
     <div class="left">
         <span>🎮 كود الغرفة: {code}</span>
         <button id="end-game" class="end-btn">❌ اقفل الروم</button>
-        <button id="open-admin">👑 شاشة الأدمن</button>
     </div>
 
     <div class="center">
@@ -50,16 +49,7 @@ import Layout from "../../../layouts/Layout.astro";
     src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
 ></script>
 <script type="module">
-    import { db } from "/js/firebase.js";
-    import {
-        doc,
-        onSnapshot,
-        updateDoc,
-        getDoc,
-        deleteDoc,
-        getDocs,
-        collection,
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { db, doc, onSnapshot, updateDoc, getDoc, deleteDoc, getDocs, collection,} from "/js/firebase.js";
 
     const roomCode =
         document.querySelector(".board").dataset?.code ||
@@ -584,9 +574,6 @@ title.innerHTML = `
             board.appendChild(col);
         });
 
-        // document.getElementById("open-admin")?.addEventListener("click", () => {
-        //     window.open(`/room/${roomCode}/admin`, "_blank");
-        // });
     });
 
     // إرسال
@@ -624,9 +611,7 @@ title.innerHTML = `
         await deleteDoc(roomRef);
         window.location.href = "/";
     });
-    // document.getElementById("show-results").addEventListener("click", () => {
-    //     window.open(`/room/${roomCode}/results`, "_blank");
-    // });
+
     document.getElementById("show-results")?.addEventListener("click", () => {
         window.location.href = `/room/${roomCode}/results`;
     });

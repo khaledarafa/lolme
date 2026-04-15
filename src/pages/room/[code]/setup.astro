@@ -32,16 +32,7 @@ import Layout from "../../../layouts/Layout.astro";
     </div>
 
     <script type="module">
-        import { db } from "/js/firebase.js";
-        import {
-            doc,
-            collection,
-            query,
-            where,
-            getDocs,
-            setDoc,
-            increment,
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { db, doc, collection, query, where, getDocs, setDoc, increment, } from "/js/firebase.js";
 
         async function buildGamePlan(selectedCategories, questionsCount) {
             const gamePlan = [];
@@ -139,80 +130,83 @@ import Layout from "../../../layouts/Layout.astro";
         const grid = document.getElementById("categories-grid");
 
         async function loadCategories() {
-  const snap = await getDocs(collection(db, "categories"));
+            const snap = await getDocs(collection(db, "categories"));
 
-  grid.innerHTML = "";
+            grid.innerHTML = "";
 
-  const groups = {};
-function getGroupLabel(group) {
-  const map = {
-    football: "⚽ كورة",
-    songs: "🎵 أغاني",
-    brain: "🧠 ذكاء ومعلومات",
-    movies: "🎬 ترفيه",
-    products: "🛍️ منتجات",
-    mix: "🌍 منوعات",
-  };
+            const groups = {};
+            function getGroupLabel(group) {
+                const map = {
+                    football: "⚽ كورة",
+                    songs: "🎵 أغاني",
+                    brain: "🧠 ذكاء ومعلومات",
+                    movies: "🎬 ترفيه",
+                    products: "🛍️ منتجات",
+                    mix: "🌍 منوعات",
+                };
 
-  return map[group] || group;
-}
-  snap.forEach((doc) => {
-    const cat = doc.data();
+                return map[group] || group;
+            }
+            snap.forEach((doc) => {
+                const cat = doc.data();
 
-    if (!groups[cat.group]) {
-      groups[cat.group] = [];
-    }
+                if (cat.hidden) return;
 
-    groups[cat.group].push(cat);
-  });
+                if (!groups[cat.group]) {
+                    groups[cat.group] = [];
+                }
 
-  // 🔥 نبني الواجهة بالجروبات
-Object.keys(groups).forEach((groupName) => {
+                groups[cat.group].push(cat);
+            });
 
-  const groupWrapper = document.createElement("div");
-  groupWrapper.className = "group-block";
+            // 🔥 نبني الواجهة بالجروبات
+            Object.keys(groups).forEach((groupName) => {
+                const groupWrapper = document.createElement("div");
+                groupWrapper.className = "group-block";
 
-  const title = document.createElement("h3");
-  title.innerText = getGroupLabel(groupName);
-  title.className = "group-title";
+                const title = document.createElement("h3");
+                title.innerText = getGroupLabel(groupName);
+                title.className = "group-title";
 
-  const row = document.createElement("div");
-  row.className = "group-row";
+                const row = document.createElement("div");
+                row.className = "group-row";
 
-  groups[groupName].forEach((cat) => {
-    const div = document.createElement("div");
-    div.className = "cat-card";
-    div.dataset.cat = cat.slug;
-    div.style.backgroundImage = `url(${cat.image})`;
+                groups[groupName].forEach((cat) => {
+                    const div = document.createElement("div");
+                    div.className = "cat-card";
+                    div.dataset.cat = cat.slug;
+                    div.style.backgroundImage = `url(${cat.image})`;
 
-    const span = document.createElement("span");
-    span.innerText = cat.name;
+                    const span = document.createElement("span");
+                    span.innerText = cat.name;
 
-    div.appendChild(span);
+                    div.appendChild(span);
 
-    div.addEventListener("click", () => {
-      const catSlug = cat.slug;
+                    div.addEventListener("click", () => {
+                        const catSlug = cat.slug;
 
-      if (selectedCategories.includes(catSlug)) {
-        selectedCategories = selectedCategories.filter(c => c !== catSlug);
-        div.classList.remove("active");
-      } else {
-        selectedCategories.push(catSlug);
-        div.classList.add("active");
-      }
+                        if (selectedCategories.includes(catSlug)) {
+                            selectedCategories = selectedCategories.filter(
+                                (c) => c !== catSlug,
+                            );
+                            div.classList.remove("active");
+                        } else {
+                            selectedCategories.push(catSlug);
+                            div.classList.add("active");
+                        }
 
-      updateSummary();
-    });
+                        updateSummary();
+                    });
 
-    row.appendChild(div);
-  });
+                    row.appendChild(div);
+                });
 
-  groupWrapper.appendChild(title);
-  groupWrapper.appendChild(row);
+                groupWrapper.appendChild(title);
+                groupWrapper.appendChild(row);
 
-  grid.appendChild(groupWrapper);
-});
-}
+                grid.appendChild(groupWrapper);
+            });
+        }
         loadCategories();
 
         // 🚀 بدء الجولة

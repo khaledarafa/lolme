@@ -4,34 +4,26 @@ import Layout from "../../../layouts/Layout.astro";
 ---
 
 <Layout>
-    <!-- <div class="top-bar">
-        🎮 كود الغرفة: {code}
-        <button id="show-results" style="display:none;">📊 عرض النتائج</button>
-        <button id="end-game">❌ اقفل الروم</button>
-        <button id="open-admin">👑 شاشة الأدمن</button>
-    </div>
-    <div id="players-section" data-code={code}></div> -->
+    <div class="top-bar">
+        <div class="left">
+            <span>🎮 كود الغرفة: {code}</span>
+            <button id="end-game" class="end-btn">❌ اقفل الروم</button>
+            <button id="open-admin">👑 شاشة الأدمن</button>
+        </div>
 
-<div class="top-bar">
+        <div class="center">
+            <div id="answer-progress" class="answer-progress"></div>
+            <div id="not-answered-list" class="not-answered"></div>
+        </div>
 
-    <div class="left">
-        <span>🎮 كود الغرفة: {code}</span>
-        <button id="end-game" class="end-btn">❌ اقفل الروم</button>
-        <button id="open-admin">👑 شاشة الأدمن</button>
-    </div>
-
-    <div class="center">
-        <div id="answer-progress" class="answer-progress"></div>
-        <div id="not-answered-list" class="not-answered"></div>
+        <div class="right">
+            <button id="show-results" style="display:none;"
+                >📊 عرض النتائج</button
+            >
+        </div>
     </div>
 
-    <div class="right">
-        <button id="show-results" style="display:none;">📊 عرض النتائج</button>
-    </div>
-
-</div>
-
-<div id="players-section" data-code={code}></div>
+    <div id="players-section" data-code={code}></div>
     <div class="suggest-box">
         <button id="send-suggest-admin">إرسال</button>
         <input id="suggest-input-admin" placeholder="اقترح فئة 😏" />
@@ -57,8 +49,8 @@ import Layout from "../../../layouts/Layout.astro";
     src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
 ></script>
 <script type="module">
-    import { db } from "/js/firebase.js";
     import {
+        db,
         doc,
         onSnapshot,
         updateDoc,
@@ -66,7 +58,7 @@ import Layout from "../../../layouts/Layout.astro";
         deleteDoc,
         getDocs,
         collection,
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    } from "/js/firebase.js";
 
     const roomCode =
         document.querySelector(".board").dataset?.code ||
@@ -622,12 +614,12 @@ import Layout from "../../../layouts/Layout.astro";
 
             board.appendChild(col);
         });
-
-        document.getElementById("open-admin")?.addEventListener("click", () => {
-            window.open(`/room/${roomCode}/adminwanswer`, "_blank");
-        });
     });
 
+    document.getElementById("open-admin")?.addEventListener("click", () => {
+        window.open(`/room/${roomCode}/adminwanswer`, "_blank");
+    });
+    
     // إرسال
     document
         .getElementById("send-suggest-admin")

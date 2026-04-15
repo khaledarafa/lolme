@@ -312,26 +312,6 @@ textarea {
   border: 1px solid var(--btn-border);
 }
 
-/* .category-btn {
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  cursor: pointer;
-  background: var(--bg);
-  transition: all 0.2s ease;
-}
-
-.category-btn:hover {
-  background: var(--btn-active-bg);
-}
-
-.category-btn.active {
-  background: var(--btn-active-bg);
-  color: var(--accent);
-  font-weight: bold;
-} */
-
-
 /* ======== Button Groups ======== */
 .btn-group {
   display: flex;
@@ -2414,17 +2394,26 @@ h1 {
 }
 
 .cat-btn {
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid #1e293b;
-    background: linear-gradient(145deg, #020617, #0f172a);
-  color: white;
-  cursor: pointer;
-  transition: 0.25s;
-  font-size: 14px;
-  /* opacity: 0.6; */
-}
+  width: 160px;        /* 👈 حجم ثابت */
+  height: 45px;        /* 👈 ارتفاع ثابت */
 
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid #1e293b;
+  background: linear-gradient(145deg, #020617, #0f172a);
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  font-size: 14px;
+  overflow: hidden;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .cat-btn:hover {
   background: var(--bg);
   transform: translateY(-2px);
@@ -2513,7 +2502,53 @@ h1 {
   border: 2px solid #22c55e;
 }
 
+/* 👁️ visibility box (نفس ستايل الموقع) */
+.visibility-box {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #020617, #0f172a);
+  border: 1px solid #1e293b;
 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* label */
+.visibility-box label {
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+/* السطر اللي فيه checkbox */
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* checkbox نفسه */
+.switch input {
+  width: 18px;
+  height: 18px;
+  accent-color: #22c55e; /* نفس اللون الأساسي */
+  cursor: pointer;
+}
+
+/* النص (ظاهرة / مخفية) */
+#visibility-text {
+  font-size: 18px;
+  opacity: 0.7;
+  text-align: right;
+}
+
+/* لما تبقى مخفية */
+#visibility-text.hidden {
+  color: #22c55e;
+  font-weight: bold;
+}
 
 /* ============================================.board================================= */
 .board {
