@@ -394,8 +394,10 @@ import Layout from "../../../layouts/Layout.astro";
                     categoryIndex: catIndex,
                     questionIndex: index,
                     image: question.image || null,
+                    hint: question.hint || null,
                 },
                 [`questionStartTimes.${catIndex}_${index}`]: Date.now(),
+                hints: {}
             });
             if (!question) return;
 
@@ -426,7 +428,14 @@ import Layout from "../../../layouts/Layout.astro";
                 hintBox.style.display = "none";
                 hintBox.innerText = "";
 
-                hintBtn.onclick = () => {
+                hintBtn.onclick = async () => {
+    const key = `${catIndex}_${index}`;
+
+    // 👇 ابعت إن التلميح اتفتح
+    await updateDoc(roomRef, {
+        [`hints.${key}`]: true
+    });
+
                     if (!question.hint) {
                         hintBox.innerText = "❌ مفيش تلميح";
                     } else {
@@ -469,7 +478,14 @@ import Layout from "../../../layouts/Layout.astro";
                 hintBox.style.display = "none";
                 hintBox.innerText = "";
 
-                hintBtn.onclick = () => {
+                hintBtn.onclick = async () => {
+    const key = `${catIndex}_${index}`;
+
+    // 👇 ابعت إن التلميح اتفتح
+    await updateDoc(roomRef, {
+        [`hints.${key}`]: true
+    });
+
                     if (!question.hint) {
                         hintBox.innerText = "❌ مفيش تلميح";
                     } else {

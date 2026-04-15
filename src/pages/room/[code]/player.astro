@@ -7,6 +7,7 @@ import Layout from "../../../layouts/Layout.astro";
     <div class="player-container">
         <div id="admin-status" class="admin-status"></div>
         <h2 id="question">⏳ مستني السؤال...</h2>
+        <p id="hint-box" style="display:none;"></p>
         <div id="question-image"></div>
         <div id="answers"></div>
 
@@ -151,6 +152,9 @@ import Layout from "../../../layouts/Layout.astro";
             window.location.href = `/room/${roomCode}/results`;
             return;
         }
+        
+        console.log("HINTS:", data.hints);
+console.log("QUESTION:", data.currentQuestion);
         const messages = data.suggestions || [];
         const list = document.getElementById("chat-list");
         const isAdminManager = data.adminMode === "admin";
@@ -193,8 +197,29 @@ import Layout from "../../../layouts/Layout.astro";
         }
 
         lastCount = messages.length;
+const q = data.currentQuestion;
 
-        const q = data.currentQuestion;
+if (!q) return;
+
+const key = `${q.categoryIndex}_${q.questionIndex}`;
+const hintVisible = data.hints?.[key];
+
+const hintBox = document.getElementById("hint-box");
+
+// 👇 لو التلميح اتفتح
+if (hintBox) {
+    if (hintVisible) {
+        if (q.hint) {
+            hintBox.innerText = "💡 " + q.hint;
+        } else {
+            hintBox.innerText = "❌ مفيش تلميح";
+        }
+
+        hintBox.style.display = "block";
+    } else {
+        hintBox.style.display = "none";
+    }
+}
         if (!q) return;
         const answeredKey = `${q.categoryIndex}_${q.questionIndex}`;
         const myAnswer = data.answers?.[answeredKey]?.[playerId]?.answer;
