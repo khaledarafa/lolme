@@ -4,25 +4,25 @@ import Layout from "../../../layouts/Layout.astro";
 ---
 
 <Layout>
-<div class="top-bar">
+    <div class="top-bar">
+        <div class="left">
+            <span>🎮 كود الغرفة: {code}</span>
+            <button id="end-game" class="end-btn">❌ اقفل الروم</button>
+        </div>
 
-    <div class="left">
-        <span>🎮 كود الغرفة: {code}</span>
-        <button id="end-game" class="end-btn">❌ اقفل الروم</button>
+        <div class="center">
+            <div id="answer-progress" class="answer-progress"></div>
+            <div id="not-answered-list" class="not-answered"></div>
+        </div>
+
+        <div class="right">
+            <button id="show-results" style="display:none;"
+                >📊 عرض النتائج</button
+            >
+        </div>
     </div>
 
-    <div class="center">
-        <div id="answer-progress" class="answer-progress"></div>
-        <div id="not-answered-list" class="not-answered"></div>
-    </div>
-
-    <div class="right">
-        <button id="show-results" style="display:none;">📊 عرض النتائج</button>
-    </div>
-
-</div>
-
-<div id="players-section" data-code={code}></div>
+    <div id="players-section" data-code={code}></div>
 
     <div class="suggest-box">
         <button id="send-suggest-admin">إرسال</button>
@@ -49,7 +49,7 @@ import Layout from "../../../layouts/Layout.astro";
 ></script>
 <script type="module">
     import { db, doc, onSnapshot, updateDoc, getDoc, deleteDoc, getDocs, collection, } from "/js/firebase.js";
-    
+
     const roomCode =
         document.querySelector(".board").dataset?.code ||
         window.location.pathname.split("/")[2];
@@ -59,7 +59,48 @@ import Layout from "../../../layouts/Layout.astro";
     const loseSound = new Audio("/sounds/lose.mp3");
 
     let categoriesMap = {};
+function normalize(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[\u064B-\u065F]/g, "")
+    .replace(/أ|إ|آ/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ة/g, "ه");
+}
 
+function levenshtein(a, b) {
+  const matrix = [];
+
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b[i - 1] === a[j - 1]) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j] + 1
+        );
+      }
+    }
+  }
+
+  return matrix[b.length][a.length];
+}
+
+// 👑 الدالة الرئيسية
+function isCorrectAnswer(userAnswer, correctAnswer) {
+  const user = normalize(userAnswer);
+  const correct = normalize(correctAnswer);
+
+  const distance = levenshtein(user, correct);
+
+  return distance <= 1;
+}
     async function loadCategoriesMap() {
         const snap = await getDocs(collection(db, "categories"));
 
@@ -454,7 +495,8 @@ import Layout from "../../../layouts/Layout.astro";
                     });
 
                     const feedback = document.getElementById("feedback");
-                    if (answer === correctAnswer) {
+                    
+                    if (isCorrectAnswer(answer, correctAnswer)) {
                         playWinEffect();
                         feedback.innerHTML = `
 <div class="feedback-box success">
@@ -605,7 +647,6 @@ import Layout from "../../../layouts/Layout.astro";
 
             board.appendChild(col);
         });
-
     });
 
     // إرسال

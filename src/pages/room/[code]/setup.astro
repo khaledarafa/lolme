@@ -32,7 +32,16 @@ import Layout from "../../../layouts/Layout.astro";
     </div>
 
     <script type="module">
-        import { db, doc, collection, query, where, getDocs, setDoc, increment, } from "/js/firebase.js";
+        import {
+            db,
+            doc,
+            collection,
+            query,
+            where,
+            getDocs,
+            setDoc,
+            increment,
+        } from "/js/firebase.js";
 
         async function buildGamePlan(selectedCategories, questionsCount) {
             const gamePlan = [];
@@ -131,23 +140,23 @@ import Layout from "../../../layouts/Layout.astro";
 
         async function loadCategories() {
             const snap = await getDocs(collection(db, "categories"));
-    const questionsSnap = await getDocs(collection(db, "questions"));
+            const questionsSnap = await getDocs(collection(db, "questions"));
 
-    const questionsCountMap = {};
+            const questionsCountMap = {};
 
-    questionsSnap.forEach(doc => {
-        const q = doc.data();
+            questionsSnap.forEach((doc) => {
+                const q = doc.data();
 
-        if (!q.approved) return;
+                if (!q.approved) return;
 
-        const cat = q.category;
+                const cat = q.category;
 
-        if (!questionsCountMap[cat]) {
-            questionsCountMap[cat] = 0;
-        }
+                if (!questionsCountMap[cat]) {
+                    questionsCountMap[cat] = 0;
+                }
 
-        questionsCountMap[cat]++;
-    });
+                questionsCountMap[cat]++;
+            });
             grid.innerHTML = "";
 
             const groups = {};
@@ -193,10 +202,10 @@ import Layout from "../../../layouts/Layout.astro";
                     div.dataset.cat = cat.slug;
                     div.style.backgroundImage = `url(${cat.image})`;
 
-const count = questionsCountMap[cat.slug] || 0;
+                    const count = questionsCountMap[cat.slug] || 0;
 
-const span = document.createElement("span");
-span.innerText = `${cat.name} (${count})`;
+                    const span = document.createElement("span");
+                    span.innerText = `${cat.name} (${count})`;
 
                     div.appendChild(span);
 
