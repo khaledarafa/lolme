@@ -374,19 +374,6 @@ import Layout from "../../../layouts/Layout.astro";
             </div>
             `;
         async function openQuestion(cat, index, catIndex) {
-            // منع تغيير السؤال قبل ما الكل يجاوب
-            //             const currentQ = (await getDoc(roomRef)).data().currentQuestion;
-
-            // if (currentQ) {
-            //     const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
-            //     const answersForQ = (await getDoc(roomRef)).data().answers?.[key] || {};
-            //     const totalPlayers = Object.keys((await getDoc(roomRef)).data().players || {}).length;
-
-            //     if (Object.keys(answersForQ).length < totalPlayers) {
-            //         alert("⏳ استنى لما كل اللعيبة تجاوب يا نجم 😏");
-            //         return;
-            //     }
-            // }
             const sheet = document.getElementById("question-sheet");
             const content = document.getElementById("sheet-content");
 
@@ -418,6 +405,8 @@ import Layout from "../../../layouts/Layout.astro";
 
             ${imageHtml}
 <h2>${question.text}</h2>
+    <button id="hint-btn">💡 تلميح</button>
+    <p id="hint-box" style="display:none;"></p>
 
             <div class="text-answer-box">
                 <input id="text-answer" placeholder="اكتب إجابتك 😏" />
@@ -432,12 +421,28 @@ import Layout from "../../../layouts/Layout.astro";
             <button id="close-sheet">❌ قفل</button>
         </div>
     `;
+                const hintBtn = document.getElementById("hint-btn");
+                const hintBox = document.getElementById("hint-box");
+                hintBox.style.display = "none";
+                hintBox.innerText = "";
+
+                hintBtn.onclick = () => {
+                    if (!question.hint) {
+                        hintBox.innerText = "❌ مفيش تلميح";
+                    } else {
+                        hintBox.innerText = currentQuestion.hint;
+                    }
+
+                    hintBox.style.display = "block";
+                };
             } else {
                 content.innerHTML = `
         <div class="question-box">
 
             ${imageHtml}
 <h2>${question.text}</h2>
+    <button id="hint-btn">💡 تلميح</button>
+    <p id="hint-box" style="display:none;"></p>
 
             <div class="answers">
                 ${question.options
@@ -459,6 +464,20 @@ import Layout from "../../../layouts/Layout.astro";
             <button id="close-sheet">❌ قفل</button>
         </div>
     `;
+                const hintBtn = document.getElementById("hint-btn");
+                const hintBox = document.getElementById("hint-box");
+                hintBox.style.display = "none";
+                hintBox.innerText = "";
+
+                hintBtn.onclick = () => {
+                    if (!question.hint) {
+                        hintBox.innerText = "❌ مفيش تلميح";
+                    } else {
+                        hintBox.innerText = currentQuestion.hint;
+                    }
+
+                    hintBox.style.display = "block";
+                };
             }
             setTimeout(() => {
                 const qImg = document.querySelector(".question-img");
@@ -478,77 +497,73 @@ import Layout from "../../../layouts/Layout.astro";
             // 👇 text question
             const sendBtn = document.getElementById("send-answer");
 
-if (sendBtn) {
-    sendBtn.addEventListener("click", async () => {
+            if (sendBtn) {
+                sendBtn.addEventListener("click", async () => {
+                    if (answered) return;
 
-        if (answered) return;
+                    const input = document.getElementById("text-answer");
+                    const answer = input.value.trim();
 
-        const input = document.getElementById("text-answer");
-        const answer = input.value.trim();
+                    if (!answer) return;
 
-        if (!answer) return;
+                    answered = true;
 
-        answered = true;
+                    const playerId = localStorage.getItem("player_" + roomCode);
+                    const correctAnswer = cat.questions[index]?.correct;
 
-        const playerId = localStorage.getItem("player_" + roomCode);
-        const correctAnswer = cat.questions[index]?.correct;
+                    const answeredKey = `${catIndex}_${index}`;
 
-        const answeredKey = `${catIndex}_${index}`;
+                    await updateDoc(roomRef, {
+                        [`answers.${answeredKey}.${playerId}`]: {
+                            answer,
+                            correctAnswer,
+                            category: cat.category,
+                            questionIndex: index,
+                            time: Date.now(),
+                        },
+                        [`answeredQuestions.${answeredKey}`]: true,
+                    });
 
-        await updateDoc(roomRef, {
-            [`answers.${answeredKey}.${playerId}`]: {
-                answer,
-                correctAnswer,
-                category: cat.category,
-                questionIndex: index,
-                time: Date.now(),
-            },
-            [`answeredQuestions.${answeredKey}`]: true,
-        });
+                    const feedback = document.getElementById("feedback");
 
-        const feedback = document.getElementById("feedback");
+                    const user = normalize(answer);
+                    const correct = normalize(correctAnswer);
 
-        const user = normalize(answer);
-        const correct = normalize(correctAnswer);
-
-        if (user === correct) {
-            playWinEffect();
-            feedback.innerHTML = `
+                    if (user === correct) {
+                        playWinEffect();
+                        feedback.innerHTML = `
             <div class="feedback-box success">
                 🔥 صح 100% يا وحش!
             </div>
             `;
-        } 
-        else if (isCorrectAnswer(answer, correctAnswer)) {
-            playWinEffect();
-            feedback.innerHTML = `
+                    } else if (isCorrectAnswer(answer, correctAnswer)) {
+                        playWinEffect();
+                        feedback.innerHTML = `
             <div class="feedback-box success">
                 😏 قريبة فشخ… هنعديها!
             </div>
             `;
-        } 
-        else {
-            playLoseEffect();
-            feedback.innerHTML = `
+                    } else {
+                        playLoseEffect();
+                        feedback.innerHTML = `
             <div class="feedback-box error">
                 ❌ غلط يا نجم 😏
                 <br><br>
                 <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
             </div>
             `;
-        }
+                    }
 
-        // 🔥 تحسين UX
-        input.disabled = true;
-        sendBtn.disabled = true;
-    });
-}
+                    // 🔥 تحسين UX
+                    input.disabled = true;
+                    sendBtn.disabled = true;
+                });
+            }
             document.querySelectorAll(".answer-btn").forEach((btn) => {
                 btn.addEventListener("click", async () => {
                     if (answered) return;
                     answered = true;
-                    input.disabled = true;
-                    sendBtn.disabled = true;
+
                     const answer = btn.dataset.answer;
                     const playerId = localStorage.getItem("player_" + roomCode);
 
