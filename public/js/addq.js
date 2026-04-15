@@ -5,7 +5,7 @@ import { loadCategories } from "/js/categories.js";
 const btn = document.getElementById("add-q-btn");
 const typeSelect = document.getElementById("q-type");
 const optionsBox = document.getElementById("options-box");
-
+const hint = document.getElementById("q-hint").value.trim();
 
 function compressImage(file) {
     return new Promise((resolve) => {
@@ -141,6 +141,7 @@ btn.onclick = async () => {
             image: imageUrl,
             type,
             category: selectedCategory,
+            hint,
             approved: false,
             createdAt: Date.now(),
             createdBy: localStorage.getItem("player_name") || "unknown"
@@ -167,5 +168,5 @@ btn.onclick = async () => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  loadCategories({ selectable: true });
+    loadCategories({ selectable: true });
 });

@@ -36,7 +36,11 @@ import Layout from "../../../layouts/Layout.astro";
     <div class="board" id="board"></div>
 
     <div id="question-sheet" class="sheet hidden">
-        <div class="sheet-content" id="sheet-content"></div>
+        <div class="sheet-content" id="sheet-content">
+            <!-- 👇 هنا -->
+            <button id="hint-btn">💡 تلميح</button>
+            <p id="hint-box" style="display:none;"></p>
+        </div>
     </div>
 
     <div id="image-modal" class="image-modal hidden">
@@ -69,6 +73,7 @@ import Layout from "../../../layouts/Layout.astro";
     const loseSound = new Audio("/sounds/lose.mp3");
 
     let categoriesMap = {};
+    let currentQuestion = null;
 
     async function loadCategoriesMap() {
         const snap = await getDocs(collection(db, "categories"));
@@ -349,6 +354,8 @@ import Layout from "../../../layouts/Layout.astro";
             const content = document.getElementById("sheet-content");
 
             const question = cat.questions[index];
+            currentQuestion = question;
+
             const imageHtml = question.image
                 ? `<img src="${question.image}" class="question-img" />`
                 : "";
@@ -365,6 +372,7 @@ import Layout from "../../../layouts/Layout.astro";
                     categoryIndex: catIndex,
                     questionIndex: index,
                     image: question.image || null,
+                    hint: question.hint || null,
                 },
                 [`questionStartTimes.${catIndex}_${index}`]: Date.now(),
             });
@@ -376,6 +384,8 @@ import Layout from "../../../layouts/Layout.astro";
 
             ${imageHtml}
 <h2>${question.text}</h2>
+    <button id="hint-btn">💡 تلميح</button>
+    <p id="hint-box" style="display:none;"></p>
 
             <div class="text-answer-box">
                 <input id="text-answer" placeholder="اكتب إجابتك 😏" />
@@ -390,12 +400,28 @@ import Layout from "../../../layouts/Layout.astro";
             <button id="close-sheet">❌ قفل</button>
         </div>
     `;
+                const hintBtn = document.getElementById("hint-btn");
+                const hintBox = document.getElementById("hint-box");
+                hintBox.style.display = "none";
+                hintBox.innerText = "";
+
+                hintBtn.onclick = () => {
+                    if (!currentQuestion || !currentQuestion.hint) {
+                        hintBox.innerText = "❌ مفيش تلميح";
+                    } else {
+                        hintBox.innerText = currentQuestion.hint;
+                    }
+
+                    hintBox.style.display = "block";
+                };
             } else {
                 content.innerHTML = `
         <div class="question-box">
 
             ${imageHtml}
 <h2>${question.text}</h2>
+    <button id="hint-btn">💡 تلميح</button>
+    <p id="hint-box" style="display:none;"></p>
 
             <div class="answers">
                 ${question.options
@@ -417,6 +443,20 @@ import Layout from "../../../layouts/Layout.astro";
             <button id="close-sheet">❌ قفل</button>
         </div>
     `;
+                const hintBtn = document.getElementById("hint-btn");
+                const hintBox = document.getElementById("hint-box");
+                hintBox.style.display = "none";
+                hintBox.innerText = "";
+
+                hintBtn.onclick = () => {
+                    if (!currentQuestion || !currentQuestion.hint) {
+                        hintBox.innerText = "❌ مفيش تلميح";
+                    } else {
+                        hintBox.innerText = currentQuestion.hint;
+                    }
+
+                    hintBox.style.display = "block";
+                };
             }
             setTimeout(() => {
                 const qImg = document.querySelector(".question-img");
@@ -619,7 +659,7 @@ import Layout from "../../../layouts/Layout.astro";
     document.getElementById("open-admin")?.addEventListener("click", () => {
         window.open(`/room/${roomCode}/adminwanswer`, "_blank");
     });
-    
+
     // إرسال
     document
         .getElementById("send-suggest-admin")

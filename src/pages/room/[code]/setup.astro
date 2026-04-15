@@ -131,7 +131,23 @@ import Layout from "../../../layouts/Layout.astro";
 
         async function loadCategories() {
             const snap = await getDocs(collection(db, "categories"));
+    const questionsSnap = await getDocs(collection(db, "questions"));
 
+    const questionsCountMap = {};
+
+    questionsSnap.forEach(doc => {
+        const q = doc.data();
+
+        if (!q.approved) return;
+
+        const cat = q.category;
+
+        if (!questionsCountMap[cat]) {
+            questionsCountMap[cat] = 0;
+        }
+
+        questionsCountMap[cat]++;
+    });
             grid.innerHTML = "";
 
             const groups = {};
@@ -177,8 +193,10 @@ import Layout from "../../../layouts/Layout.astro";
                     div.dataset.cat = cat.slug;
                     div.style.backgroundImage = `url(${cat.image})`;
 
-                    const span = document.createElement("span");
-                    span.innerText = cat.name;
+const count = questionsCountMap[cat.slug] || 0;
+
+const span = document.createElement("span");
+span.innerText = `${cat.name} (${count})`;
 
                     div.appendChild(span);
 
