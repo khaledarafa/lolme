@@ -32,7 +32,7 @@ function createQuestionCard(data) {
 
         <input class="correct" value="${data.correct || ""}" />
 
-        <textarea class="hint">${data.hint || ""}</textarea>
+        <textarea class="hint" placeholder="💡 تلميح بسيط يقرب للإجابة">${data.hint || ""}</textarea>
 
         <select class="approved">
             <option value="true" ${data.approved ? "selected" : ""}>✔️ موافق</option>
