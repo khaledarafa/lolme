@@ -26,12 +26,10 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
     <slot name="head"></slot>
 
     <!-- SEO DESCRIPTION -->
-<meta 
-  name="description" 
-  content={description || "ألعاب جماعية أونلاين وأسئلة وتحديات ممتعة مع أصحابك. العب، جاوب، وتنافس في الوقت الحقيقي داخل غرف خاصة. LOLME يجمع بين الاختبارات الخفيفة والألعاب التفاعلية في تجربة واحدة ممتعة."} 
-/>
+    <meta name="description" content={description || "🎮 ألعاب جماعية أونلاين + 🧠 اختبارات خفيفة + 😂 محتوى ترفيهي… العب مع أصحابك أو جرّب اختبارات ممتعة واكتشف حاجات جديدة عن نفسك 😏🔥"} />
+
     <!-- TITLE -->
-    <title>{title || "LOLME - ألعاب أونلاين واختبارات ممتعة مع أصحابك"}</title>
+    <title>{title || "LOLME - ألعاب أونلاين واختبارات ومحتوى ترفيهي"}</title>
 
     <!-- CANONICAL -->
     <link rel="preconnect" href="https://www.googletagmanager.com">
@@ -43,21 +41,21 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
     <link rel="preload" href="/favicon.webp" as="image">
 
     <!-- OG TAGS -->
-    <meta property="og:title" content={title || "LOLME - اختبارات خفيفة ومسلية"} />
-    <meta property="og:description" content={description || "اختبارات شخصية مجانية خفيفة وسريعة تكشف جوانب من نفسك بطريقة ممتعة. جرعتك اليومية من المرح والاكتشاف."} />
+    <meta property="og:title" content={title || "LOLME - منصة ترفيه وألعاب أونلاين"} />
+    <meta property="og:description" content={description || "🔥 منصة ترفيه كاملة! العب مع صحابك، جرّب اختبارات مسلية، واستمتع بمحتوى خفيف يغير مودك 😏🎮"} />
     <meta property="og:image" content={finalOg} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={`https://lolme.cc${Astro.url.pathname}`} />
-    
+
     <!-- bing.com/webmasters -->
     <meta name="msvalidate.01" content="2AFF695811779AE6FD6B606480E183D0" />
     <meta name="yandex-verification" content="fc837038f6a4dcdd" />
     <!-- TWITTER TAGS -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title || "LOLME - اختبارات خفيفة ومسلية"} />
-    <meta property="og:description" content={description || "اختبارات شخصية مجانية خفيفة وسريعة تكشف جوانب من نفسك بطريقة ممتعة. جرعتك اليومية من المرح والاكتشاف."} />
+    <meta name="twitter:title" content={title || "LOLME - منصة ترفيه وألعاب أونلاين"} />
+    <meta name="twitter:description" content={description || "🔥 منصة ترفيه كاملة! العب مع صحابك، جرّب اختبارات مسلية، واستمتع بمحتوى خفيف يغير مودك 😏🎮"} />
     <meta name="twitter:image" content={finalOg} />
 
     <!-- EXTRA VERIFICATION -->
