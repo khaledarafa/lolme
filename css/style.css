@@ -1612,6 +1612,8 @@ h1 {
   margin-bottom: 20px;
 }
 
+
+/* =========================================addc.astro=========================⃁ */
 /* 🎯 الأزرار (الفئات) */
 .category-buttons {
   display: grid;
@@ -1644,8 +1646,32 @@ h1 {
     max-width: 1200px;
   }
 }
+.cat-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
 
+.cat-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
 
+#edit-cat {
+  background: #22c55e;
+}
+
+#delete-cat {
+  background: #ef4444;
+}
+
+#cancel-cat {
+  background: #374151;
+}
+/* =============================================================== */
 /* 👑 الهوست */
 .host-box {
   /* background: rgba(255, 255, 255, 0.05); */

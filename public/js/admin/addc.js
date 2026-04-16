@@ -1,5 +1,5 @@
 // public/js/admin/addc.js
-import { db, storage, addDoc, collection, query, where, getDocs, ref, uploadBytes, getDownloadURL } from "/js/firebase.js";
+import { db, storage, addDoc, collection, query, where, getDocs, ref, uploadBytes, getDownloadURL, updateDoc, deleteDoc, doc } from "/js/firebase.js";
 import { loadCategories } from "/js/categories.js";
 
 window.initAddC = function () {
@@ -16,7 +16,13 @@ const preview = document.getElementById("preview");
 
 const toggle = document.getElementById("cat-visibility");
 const visibilityText = document.getElementById("visibility-text");
+const actionsBox = document.getElementById("cat-actions");
+const editBtn = document.getElementById("edit-cat");
+const deleteBtn = document.getElementById("delete-cat");
+const cancelBtn = document.getElementById("cancel-cat");
 
+let currentCatId = null;
+let currentCatData = null;
 toggle.addEventListener("change", () => {
     visibilityText.innerText = toggle.checked ? "🙈 مخفية" : "👁️ ظاهرة";
 });
@@ -94,10 +100,22 @@ addCatBtn.onclick = async () => {
     const q = query(collection(db, "categories"), where("slug", "==", slug));
     const snap = await getDocs(q);
 
-    if (!snap.empty) {
-        catMsg.innerText = "❌ الفئة موجودة بالفعل";
-        return;
-    }
+if (!snap.empty) {
+  const docSnap = snap.docs[0];
+
+  currentCatId = docSnap.id;
+  currentCatData = docSnap.data();
+
+  catMsg.innerText = "⚠️ الفئة موجودة بالفعل";
+  catMsg.style.color = "#facc15";
+
+  actionsBox.style.display = "flex";
+
+  addCatBtn.disabled = false;
+  addCatBtn.innerText = "➕ إضافة الفئة";
+
+  return;
+}
 
     await addDoc(collection(db, "categories"), {
         name,
@@ -133,7 +151,32 @@ toggle.addEventListener("change", () => {
         visibilityText.classList.remove("hidden");
     }
 });
+editBtn.onclick = async () => {
+  await updateDoc(doc(db, "categories", currentCatId), {
+    name: document.getElementById("new-cat-name").value.trim(),
+    group: document.getElementById("new-cat-group").value,
+    hidden: document.getElementById("cat-visibility").checked
+  });
 
+  catMsg.innerText = "✏️ تم التعديل";
+  catMsg.style.color = "#22c55e";
+
+  actionsBox.style.display = "none";
+};
+deleteBtn.onclick = async () => {
+  if (!confirm("متأكد تمسح الفئة؟ 😏")) return;
+
+  await deleteDoc(doc(db, "categories", currentCatId));
+
+  catMsg.innerText = "🗑️ تم الحذف";
+  catMsg.style.color = "red";
+
+  actionsBox.style.display = "none";
+};
+cancelBtn.onclick = () => {
+  actionsBox.style.display = "none";
+  catMsg.innerText = "❌ تم الإلغاء";
+};
 // document.addEventListener("DOMContentLoaded", () => {
 //   loadCategories({ selectable: false, editable: true });
 // });
