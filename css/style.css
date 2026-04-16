@@ -574,7 +574,6 @@ h2 {
 .imojidiv {
   display: flex;
   justify-content: center;
-  /* gap: 15px; */
   height: 150px;
   align-items: center;
   margin-top: -30px;
@@ -607,20 +606,6 @@ h2 {
 
 .emoji:nth-child(5) {
   animation-delay: 2s;
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-25px);
-  }
-
-  100% {
-    transform: translateY(0);
-  }
 }
 
 /* ======== Responsive Ads ======== */
