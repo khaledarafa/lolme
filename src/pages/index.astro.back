@@ -54,91 +54,105 @@ const homeButtons = [
   // { title: "حوّل PDF إلى صور 🤯", slug: "/pdf-to-images", img: "/images/pdf2imgs.webp" },
 ];
 ---
+
 <Layout title="🤣 LOLME">
 
-  <!-- 🔥 تثبيت التطبيق -->
-  <section class="top-mini">
-    <button id="install-btn" class="install-btn appbtn">📲 ثبت التطبيق</button>
-    <p>جرعة خفيفة من المرح اليومي 😌</p>
+  <!-- <section style="text-align:center; padding: 0px 0.1rem;">
+    <p style="margin: 0px;"> أدوات ترفيهية هايفة ومجنونة 🕺🔥</p>
+    <p> LOLME هو مكانك للضحك والهزار! ارفع صورة، اكتب ميمز، وروّست أصحابك بطريقة مرحة 😎 </p>
+  </section> -->
+
+  <section style="text-align:center; padding: 0px 0.1rem;">
+  <button id="install-btn" class="install-btn appbtn">📲 ثبت التطبيق</button>
+</section>
+
+  <section style="text-align:center; padding: 0px 0.1rem;">
+    <p> جرعة خفيفة من المرح اليومي 😌 </p>
   </section>
 
-  <!-- 😂 ايموجي -->
   <div class="imojidiv">
-    <div class="emoji">🤣</div>
-    <div class="emoji">😂</div>
-    <div class="emoji">😎</div>
-    <div class="emoji">🥳</div>
-    <div class="emoji">🤪</div>
+    <div class="emoji" style="font-size:2rem;">🤣</div>
+    <div class="emoji" style="left:20%;">🤣</div>
+    <div class="emoji" style="left:35%;">😂</div>
+    <div class="emoji" style="left:50%;">😎</div>
+    <div class="emoji" style="left:65%;">🥳</div>
+    <div class="emoji" style="left:80%;">🤪</div>
+    <div class="emoji" style="font-size:2rem;">🥳</div>
   </div>
 
-  <!-- 🎮 اللعب -->
+  <!-- ⭐ العنوان اللي بيحل المشكلة -->
   <section class="play-section">
-    <h2>🎮 العب مع صحابك الآن</h2>
+  <h2>🎮 العب مع صحابك الآن</h2>
 
-    <div class="play-box">
-      <a href="/how-to-play" class="play-btn secondary">🚀 ابدأ لعبة جديدة</a>
+  <div class="play-box">
+    
+    <!-- <button id="host-start" class="play-btn">
+      🎯 ابدأ لعبة
+    </button> -->
 
-      <input id="room-code" placeholder="اكتب الكود" maxlength="4" class="code-input" />
-      <input id="player-name" placeholder="اكتب اسمك 😏" class="code-input" />
+    <!-- <div class="divider">أو</div> -->
+<a href="/how-to-play" class="play-btn secondary"> 🚀 ابدأ لعبة جديدة </a>
+    <input id="room-code" type="text" placeholder="اكتب الكود" maxlength="4" class="code-input" />
+<input id="player-name" type="text" placeholder="اكتب اسمك 😏" class="code-input" />
+    <button id="join-game" class="play-btn secondary">
+   ادخل اللعبه 
+    </button>
+<!-- <a href="/how-to-play" class="play-btn secondary">
+  شرح اللعب
+</a> -->
+  </div>
+  <p class="game-desc">
+🔥 لعبة أسئلة متنوعة… كل جولة بتخليك تضحك أكتر 😏
+</p>
+  <div id="home-categories" class="home-grid"></div>
+</section>
+  <!-- <h2 style="text-align:center; margin:0px;">اختار حاجة تضحكك حالًا 👇</h2> -->
+  <main class="home-grid">
+    {homeButtons.map((btn, i) => (
+      <a href={btn.slug} class="home-card tilt-card">
+        <img 
+          src={btn.img} 
+          alt={btn.title}
+          width="350"
+          height="200"
+          loading={i === 0 ? "eager" : "lazy"}
+          fetchpriority={i === 0 ? "high" : "auto"}
+          style="object-fit:cover;"
+        />    
+        <div class="content">
+          <h3>{btn.title}</h3>
+        </div>
+      </a>
+    ))}
+  </main>
 
-      <button id="join-game" class="play-btn secondary">
-        ادخل اللعبه
-      </button>
-    </div>
-
-    <p class="game-desc">
-      🔥 لعبة أسئلة متنوعة… كل جولة بتخليك تضحك أكتر 😏
-    </p>
-  </section>
-
-  <!-- 🧠 الفئات (لوحدها بقى 👇) -->
-  <section class="categories-section">
-    <h2>🧠 من الكورة للأفلام للمعلومات… اختار وورّي صحابك مستواك 😏🔥</h2>
-    <div id="home-categories" class="home-grid"></div>
-  </section>
-
-  <!-- 😂 محتوى ترفيهي -->
-  <section class="fun-section">
-    <h2>😂 جرب حاجة تضحكك</h2>
-
-    <div class="home-grid">
-      {homeButtons.map((btn, i) => (
-        <a href={btn.slug} class="home-card tilt-card">
-          <img src={btn.img} alt={btn.title} />
-          <div class="content">
-            <h3>{btn.title}</h3>
-          </div>
-        </a>
-      ))}
-    </div>
-  </section>
-
-  <!-- 📰 مقالات -->
-  <section class="articles-section">
+  <section>
     <h2>📰 أحدث المقالات</h2>
-
     <div class="articles-grid">
       {latestArticles.map(article => (
         <a href={`/articles/${article.slug}`} class="article-card tilt-card">
-          <img src={article.image} alt={article.title} />
+          <img 
+            src={article.image} 
+            alt={article.title} 
+            width="350" 
+            height="200" 
+            loading="lazy" 
+            style="object-fit:cover;" 
+          />
           <h3>{article.title}</h3>
           <p>{article.description}</p>
         </a>
       ))}
     </div>
   </section>
-
-  <!-- scripts -->
-  <script type="module" src="/js/install-btn.js"></script>
-  <script src="/js/tilt-cards.js" defer></script>
+<script type="module" src="/js/install-btn.js"></script>
+  <script src="/js/tilt-cards.js"  defer></script>
   <script type="module" src="/js/codes.js"></script>
   <script type="module" src="/js/home-categories.js"></script>
-
 </Layout>
-<style>
-  /* ================================ home-card ============================= */
 
- .home-grid {
+<!-- <style>
+  .home-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 25px;
@@ -187,7 +201,6 @@ const homeButtons = [
     transform-origin: center;
   }
 
-/* =============== articles =============== */
 .articles-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -271,68 +284,5 @@ const homeButtons = [
   opacity: 0.6;
 }
 
-.home-card {
-  cursor: pointer;
-  overflow: hidden;
-  border-radius: 12px;
-  transition: 0.3s;
-  position: relative;
-}
 
-.home-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-}
-
-.home-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-}
-
-.home-card h3 {
-  /* position: absolute; */
-  /* bottom: 10px; */
-  /* right: 10px; */
-  color: white;
-  z-index: 2;
-}
-
-.top-mini {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.play-section {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.categories-section {
-  margin: 60px 0;
-  padding: 30px;
-  border-radius: 20px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(0,255,100,0.2);
-}
-
-.categories-section h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.fun-section {
-  margin: 60px 0;
-}
-
-.fun-section h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.articles-section {
-  margin-top: 60px;
-}
-</style>
+</style> -->
