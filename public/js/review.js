@@ -1,7 +1,7 @@
 // public/js/review.js
-import { db } from "/js/firebase.js";
-import { collection, query, where, getDocs, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { db, collection, query, where, getDocs, updateDoc, doc, deleteDoc, getDoc } from "/js/firebase.js";
+// import { collection, query, where, getDocs, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+// import { getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // const password = "lolo"; // غيرها براحتك
 

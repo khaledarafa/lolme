@@ -1,6 +1,6 @@
 ---
-// src/pages/addq.astro
-import Layout from "../layouts/Layout.astro";
+// src/pages/admin/addq.astro
+import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout>

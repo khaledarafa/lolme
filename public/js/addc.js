@@ -2,6 +2,12 @@
 import { db, storage, addDoc, collection, query, where, getDocs, ref, uploadBytes, getDownloadURL } from "/js/firebase.js";
 import { loadCategories } from "/js/categories.js";
 
+window.initAddC = function () {
+  const container = document.querySelector("#addc .category-buttons");
+
+  loadCategories(container, { selectable: false, editable: true });
+};
+
 // عناصر
 const addCatBtn = document.getElementById("add-cat-btn");
 const catMsg = document.getElementById("cat-msg");
@@ -115,7 +121,7 @@ addCatBtn.onclick = async () => {
 
     addCatBtn.disabled = false;
     addCatBtn.innerText = "➕ إضافة الفئة";
-    loadCategories({ selectable: false, editable: true });
+    // loadCategories({ selectable: false, editable: true });
 };
 
 toggle.addEventListener("change", () => {
@@ -128,6 +134,6 @@ toggle.addEventListener("change", () => {
     }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadCategories({ selectable: false, editable: true });
-});
+// document.addEventListener("DOMContentLoaded", () => {
+//   loadCategories({ selectable: false, editable: true });
+// });

@@ -1,0 +1,354 @@
+---
+// src/components/admin/rooms.astro
+---
+
+
+  <div class="admin-container">
+    <h1>👑 إدارة الرومات</h1>
+
+    <div id="rooms-list" class="rooms-grid"></div>
+  </div>
+  <div id="stats-box" style="margin-top:20px;"></div>
+  <button
+    id="delete-all"
+    style="margin-top:10px;background:#dc2626;color:#fff;padding:10px;border:none;border-radius:8px;"
+  >
+    🧨 حذف كل الغرف
+  </button>
+  <!-- <script type="module">
+    import { db } from "/js/firebase.js";
+    import { collection, getDocs, deleteDoc, doc, writeBatch, getDoc, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const ADMIN_PASS = "lolo";
+
+    // 🔐 حماية بسيطة
+    const saved = localStorage.getItem("admin_ok");
+
+    let ok = false;
+
+    if (saved === "1") {
+      ok = true;
+    } else {
+      const userPass = prompt("ادخل باسورد الأدمن 😏");
+      if (userPass === ADMIN_PASS) {
+        localStorage.setItem("admin_ok", "1");
+        ok = true;
+      }
+    }
+
+    if (!ok) {
+      document.body.innerHTML = "🚫 مش ليك يا نجم";
+    } else {
+      const container = document.getElementById("rooms-list");
+
+      async function loadRooms() {
+        container.innerHTML = "⏳ تحميل...";
+
+        const snap = await getDocs(collection(db, "rooms"));
+
+        if (snap.empty) {
+          container.innerHTML = "😅 مفيش رومات";
+          return;
+        }
+
+        container.innerHTML = "";
+
+        snap.docs.forEach((docItem) => {
+          const data = docItem.data();
+          const id = docItem.id;
+
+          const playersCount = Object.keys(data.players || {}).length;
+
+          const div = document.createElement("div");
+          div.className = "room-card";
+
+          div.innerHTML = `
+            <div class="top">
+              <h3>🎮 ${id}</h3>
+              <span>${data.status || "unknown"}</span>
+            </div>
+
+            <div class="info">
+              <p>👥 لاعبين: ${playersCount}</p>
+              <p>⏱️ ${timeAgo(data.createdAt)}</p>
+            </div>
+
+            <div class="actions">
+              <button class="enter">👁️ دخول</button>
+              <button class="delete">🗑️ حذف</button>
+            </div>
+          `;
+
+          // 👁️ دخول
+          div.querySelector(".enter").onclick = () => {
+            window.open(`/room/${id}`, "_blank");
+          };
+
+          // 🗑️ حذف
+          div.querySelector(".delete").onclick = async () => {
+            if (!confirm("متأكد تمسح الروم؟ 😏")) return;
+
+            await deleteDoc(doc(db, "rooms", id));
+            div.remove();
+          };
+
+          container.appendChild(div);
+        });
+      }
+      function timeAgo(ms) {
+        if (!ms) return "مش معروف";
+
+        const diff = Date.now() - ms;
+        const min = Math.floor(diff / 60000);
+
+        if (min < 1) return "لسه حالاً 😏";
+        if (min < 60) return `${min} دقيقة`;
+
+        const h = Math.floor(min / 60);
+        if (h < 24) return `${h} ساعة`;
+
+        const d = Math.floor(h / 24);
+        return `${d} يوم`;
+      }
+      loadRooms();
+    }
+    document.getElementById("delete-all").onclick = async () => {
+      if (!confirm("هتمسح كل الرومات يا وحش 😏 متأكد؟")) return;
+
+      const snap = await getDocs(collection(db, "rooms"));
+
+      if (snap.empty) {
+        alert("مفيش حاجة تتمسح 😅");
+        return;
+      }
+
+      let batch = writeBatch(db);
+      let count = 0;
+
+      for (const docItem of snap.docs) {
+        batch.delete(doc(db, "rooms", docItem.id));
+        count++;
+
+        // Firestore limit = 500
+        if (count === 500) {
+          await batch.commit();
+          batch = writeBatch(db);
+          count = 0;
+        }
+      }
+
+      if (count > 0) {
+        await batch.commit();
+      }
+
+      // alert("🔥 تم مسح كل الرومات");
+      location.reload();
+    };
+    async function loadStats() {
+      const today = new Date().toISOString().slice(0, 10);
+
+      const snap = await getDoc(doc(db, "stats", today));
+
+      const data = snap.data();
+
+      document.getElementById("stats-box").innerHTML = `
+        <h3>📊 النهارده</h3>
+        <p>🎮 عدد الغرف: ${data?.rooms || 0}</p>
+      `;
+        }
+
+    loadStats();
+  </script> -->
+<script type="module">
+import { db } from "/js/firebase.js";
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  writeBatch,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// 👇 العنصر
+const container = document.getElementById("rooms-list");
+
+// 🔥 تحميل الرومات
+async function loadRooms() {
+  container.innerHTML = "⏳ تحميل...";
+
+  const snap = await getDocs(collection(db, "rooms"));
+
+  if (snap.empty) {
+    container.innerHTML = "😅 مفيش رومات";
+    return;
+  }
+
+  container.innerHTML = "";
+
+  snap.docs.forEach((docItem) => {
+    const data = docItem.data();
+    const id = docItem.id;
+
+    const playersCount = Object.keys(data.players || {}).length;
+
+    const div = document.createElement("div");
+    div.className = "room-card";
+
+    div.innerHTML = `
+      <div class="top">
+        <h3>🎮 ${id}</h3>
+        <span>${data.status || "unknown"}</span>
+      </div>
+
+      <div class="info">
+        <p>👥 لاعبين: ${playersCount}</p>
+        <p>⏱️ ${timeAgo(data.createdAt)}</p>
+      </div>
+
+      <div class="actions">
+        <button class="enter">👁️ دخول</button>
+        <button class="delete">🗑️ حذف</button>
+      </div>
+    `;
+
+    // 👁️ دخول
+    div.querySelector(".enter").onclick = () => {
+      window.open(`/room/${id}/board`, "_blank");
+    };
+
+    // 🗑️ حذف
+    div.querySelector(".delete").onclick = async () => {
+      if (!confirm("متأكد تمسح الروم؟ 😏")) return;
+
+      await deleteDoc(doc(db, "rooms", id));
+      div.remove();
+    };
+
+    container.appendChild(div);
+  });
+}
+
+// ⏱️ وقت
+function timeAgo(ms) {
+  if (!ms) return "مش معروف";
+
+  const diff = Date.now() - ms;
+  const min = Math.floor(diff / 60000);
+
+  if (min < 1) return "لسه حالاً 😏";
+  if (min < 60) return `${min} دقيقة`;
+
+  const h = Math.floor(min / 60);
+  if (h < 24) return `${h} ساعة`;
+
+  const d = Math.floor(h / 24);
+  return `${d} يوم`;
+}
+
+// 🔥 حذف الكل
+document.getElementById("delete-all").onclick = async () => {
+  if (!confirm("هتمسح كل الرومات يا وحش 😏 متأكد؟")) return;
+
+  const snap = await getDocs(collection(db, "rooms"));
+
+  if (snap.empty) {
+    alert("مفيش حاجة تتمسح 😅");
+    return;
+  }
+
+  let batch = writeBatch(db);
+  let count = 0;
+
+  for (const docItem of snap.docs) {
+    batch.delete(doc(db, "rooms", docItem.id));
+    count++;
+
+    if (count === 500) {
+      await batch.commit();
+      batch = writeBatch(db);
+      count = 0;
+    }
+  }
+
+  if (count > 0) {
+    await batch.commit();
+  }
+
+  location.reload();
+};
+
+// 📊 الإحصائيات (مباشر من الرومات)
+async function loadStats() {
+  const snap = await getDocs(collection(db, "rooms"));
+
+  document.getElementById("stats-box").innerHTML = `
+    <h3>📊 الحالة الحالية</h3>
+    <p>🎮 عدد الغرف: ${snap.size}</p>
+  `;
+}
+
+// 🚀 تشغيل
+loadRooms();
+loadStats();
+
+</script>
+  <style>
+    .admin-container {
+      padding: 20px;
+    }
+
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .room-card {
+      background: #111;
+      border-radius: 16px;
+      padding: 16px;
+      color: #fff;
+      border: 1px solid #222;
+    }
+
+    .room-card .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+
+    .info p {
+      margin: 4px 0;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .delete {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .enter {
+      background: #3b82f6;
+      color: #fff;
+    }
+  </style>
+

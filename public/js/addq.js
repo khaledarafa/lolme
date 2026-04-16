@@ -2,6 +2,12 @@
 import { db, storage, addDoc, collection, query, where, getDocs, ref, uploadBytes, getDownloadURL } from "/js/firebase.js";
 import { loadCategories } from "/js/categories.js";
 
+window.initAddQ = function () {
+  const container = document.querySelector("#addq .category-buttons");
+
+  loadCategories(container, { selectable: true });
+};
+
 const btn = document.getElementById("add-q-btn");
 const typeSelect = document.getElementById("q-type");
 const optionsBox = document.getElementById("options-box");
@@ -167,6 +173,6 @@ btn.onclick = async () => {
     }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadCategories({ selectable: true });
-});
+// document.addEventListener("DOMContentLoaded", () => {
+//     loadCategories({ selectable: true });
+// });

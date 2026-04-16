@@ -1,0 +1,50 @@
+---
+// src/components/admin/addc.astro
+---
+
+<!-- 👇 الفئات -->
+<div id="category-buttons" class="category-buttons"></div>
+
+<div class="add-category-box">
+    <h3>➕ إضافة فئة جديدة</h3>
+
+    <p class="hint-msg">
+        👀 خد لفة سريعة على الفئات اللي تحت قبل ما تضيف يمكن الفئة موجودة 😏 <br
+        />
+        لو موجوده اختارها وضيف السؤال على طول 🔥
+    </p>
+
+    <input id="new-cat-name" placeholder="اسم الفئة" />
+
+    <select id="new-cat-group">
+        <option value="football">⚽ كورة</option>
+        <option value="songs">🎵 أغاني</option>
+        <option value="brain">🧠 معلومات</option>
+        <option value="movies">🎬 ترفيه</option>
+        <option value="products">🛍️ منتجات</option>
+        <option value="mix">🌍 منوعات</option>
+    </select>
+
+    <div class="visibility-box">
+        <label>👁️ حالة الفئة:</label>
+
+        <label class="switch">
+            <input type="checkbox" id="cat-visibility" />
+            <span>🙈 فئة مخفية</span>
+        </label>
+
+        <span id="visibility-text">👁️ ظاهرة</span>
+    </div>
+
+    <label for="new-cat-image" class="upload-box">📸 صورة</label>
+    <input type="file" id="new-cat-image" hidden />
+
+    <button id="add-cat-btn">➕ إضافة الفئة</button>
+    <p id="cat-msg"></p>
+</div>
+
+<img id="preview" style="display:none;width:100%;margin-top:10px;" />
+
+<!-- 🔥 السكربتات -->
+<script type="module" src="/js/categories.js"></script>
+<script type="module" src="/js/addc.js"></script>

@@ -31,3 +31,77 @@
   <p style="color: white;">&copy; {new Date().getFullYear()} LOLME. جميع الحقوق محفوظة.</p>
   <p style="color: white;">صنع بحب ❤️ بواسطة فريق LOLME</p>
 </footer>
+
+  <span
+  id="admin-secret"
+  style="
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 45px;
+    height: 45px;
+    background: transparent;
+    border-radius: 10px;
+    z-index: 999999;
+  "
+></span>
+<script>
+  let taps = 0;
+  const secret = document.getElementById("admin-secret");
+
+  secret.addEventListener("click", () => {
+    taps++;
+    console.log("click", taps);
+
+    if (taps >= 6) {
+      window.location.href = "/admin";
+    }
+
+    // خليها 3 ثواني بدل 0.8
+    setTimeout(() => {
+      taps = 0;
+    }, 3000);
+  });
+</script>
+</footer>
+
+<style>
+.main-footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: transparent;
+  /* border-top: 1px solid var(--highlight-color); */
+}
+.main-footer h2 a {
+  color: var(--highlight-color);
+  text-decoration: none;
+}
+.footer-nav {
+  margin: 1rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+.footer-nav a {
+  color: var(--main-color);
+  text-decoration: none;
+  font-weight: bold;
+}
+.footer-nav a:hover {
+  color: var(--highlight-color);
+}
+.social {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.social img {
+  width: 28px;
+  transition: transform 0.2s ease;
+}
+.social img:hover {
+  transform: scale(1.2);
+}
+</style>
