@@ -1,4 +1,4 @@
-// public/js/addc.js
+// public/js/admin/addc.js
 import { db, storage, addDoc, collection, query, where, getDocs, ref, uploadBytes, getDownloadURL } from "/js/firebase.js";
 import { loadCategories } from "/js/categories.js";
 

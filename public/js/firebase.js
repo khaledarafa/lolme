@@ -16,7 +16,10 @@ import {
   onSnapshot,
   addDoc,
   writeBatch,
-  increment
+  increment,
+  orderBy,     // 🔥 ضيف ده
+  limit,       // 🔥 وده
+  startAfter   // 🔥 وده
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // 🔥 Storage
@@ -61,7 +64,10 @@ export {
   onSnapshot,
   addDoc,
   writeBatch,
-  increment
+  increment,
+  orderBy,     // 🔥
+  limit,       // 🔥
+  startAfter   // 🔥
 };
 
 

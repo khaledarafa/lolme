@@ -172,7 +172,3 @@ btn.onclick = async () => {
         msg.style.color = "red";
     }
 };
-
-// document.addEventListener("DOMContentLoaded", () => {
-//     loadCategories({ selectable: true });
-// });

@@ -3,18 +3,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const tabs = document.querySelectorAll('.tab');
 
   const passwords = {
-    addc:   "1111",
+    addc: "1111",
     review: "22222",
-    rooms:  "333333"
+    rooms: "333333"
   };
 
-  const unlockedTabs = JSON.parse(localStorage.getItem("admin_tabs") || "{}"); // 🔥 يحفظ المفتوح
+  const unlockedTabs = JSON.parse(localStorage.getItem("admin_tabs") || "{}");
+  const savedTab = localStorage.getItem("active_tab") || "addq";
 
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
       const tabId = btn.dataset.tab;
 
-      // 🔐 لو التاب ليها باسورد
+      // 🔐 باسورد
       if (passwords[tabId] && !unlockedTabs[tabId]) {
         const pass = prompt("🔒 ادخل كلمة المرور");
 
@@ -24,8 +25,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         unlockedTabs[tabId] = true;
-localStorage.setItem("admin_tabs", JSON.stringify(unlockedTabs)); // ✔ اتفتحت خلاص
+        localStorage.setItem("admin_tabs", JSON.stringify(unlockedTabs));
       }
+
+      // حفظ التاب
+      localStorage.setItem("active_tab", tabId);
 
       // hide all
       tabs.forEach(t => t.classList.remove('active'));
@@ -39,8 +43,15 @@ localStorage.setItem("admin_tabs", JSON.stringify(unlockedTabs)); // ✔ اتف�
       if (tabId === "review") window.loadQuestions?.();
       if (tabId === "addq") window.initAddQ?.();
       if (tabId === "addc") window.initAddC?.();
+      if (tabId === "edit") window.loadQuestionsBatch?.();
     });
   });
 
-  window.initAddQ?.();
+  // 🔥 يرجع لنفس التاب بعد الريفريش
+  const defaultBtn = document.querySelector(`.top-tabs button[data-tab="${savedTab}"]`);
+  if (defaultBtn) {
+    defaultBtn.click();
+  } else {
+    document.querySelector('.top-tabs button')?.click();
+  }
 });

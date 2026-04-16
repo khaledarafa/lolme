@@ -4,13 +4,14 @@ import Review from "../../components/admin/review.astro";
 import Addc from "../../components/admin/addc.astro";
 import Addq from "../../components/admin/addq.astro";
 import Rooms from "../../components/admin/rooms.astro";
+import Editq from "../../components/admin/editq.astro";
 ---
 
 <Layout title="لوحة التحكم">
-
   <!-- 🔥 Tabs فوق -->
   <div class="top-tabs">
     <button data-tab="addq" class="active">➕ إضافة سؤال</button>
+    <button data-tab="edit">✏️ تعديل الأسئلة</button>
     <button data-tab="addc">📁 إضافة فئة</button>
     <button data-tab="review">✅ مراجعة</button>
     <button data-tab="rooms">🎮 الغرف</button>
@@ -19,9 +20,12 @@ import Rooms from "../../components/admin/rooms.astro";
   <!-- 🔥 Content -->
   <main class="content">
     <div class="content-inner">
-
       <div id="addq" class="tab active">
         <Addq />
+      </div>
+
+      <div id="edit" class="tab">
+        <Editq />
       </div>
 
       <div id="addc" class="tab">
@@ -35,210 +39,9 @@ import Rooms from "../../components/admin/rooms.astro";
       <div id="rooms" class="tab">
         <Rooms />
       </div>
-
     </div>
   </main>
 
-  <script type="module" src="/js/admin.js"></script>
+  <script type="module" src="/js/admin/admin.js"></script>
 
-  <!-- 🎨 Styles -->
-  <style>
-
-    /* 🔥 Tabs */
-    .top-tabs {
-      display: flex;
-      gap: 10px;
-      padding: 15px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .top-tabs button {
-      background: transparent;
-      border: 1px solid var(--border-color);
-      color: var(--text-color);
-      padding: 10px 15px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .top-tabs button:hover {
-      background: var(--btn-bg);
-    }
-
-    .top-tabs button.active {
-      background: var(--btn-active-bg);
-      color: var(--btn-active-text);
-    }
-
-    /* 🔥 Content */
-    .content {
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .content-inner {
-      width: 100%;
-      max-width: 1200px;
-    }
-
-    /* 🔥 Tabs Content */
-    .tab {
-      display: none;
-      background: var(--card);
-      padding: 20px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 0 10px var(--shadow-color);
-    }
-
-    .tab.active {
-      display: block;
-    }
-
-    h3 {
-      color: var(--h3);
-      margin-top: 0;
-    }
-
-    /* 📱 Responsive */
-    @media (max-width: 768px) {
-      .top-tabs {
-        justify-content: flex-start;
-        overflow-x: auto;
-      }
-
-      .top-tabs button {
-        white-space: nowrap;
-      }
-    }
-
-  </style>
-
-</Layout><!-- ---
-import Layout from "../../layouts/Layout.astro";
-import Review from "../../components/admin/review.astro";
-import Addc from "../../components/admin/addc.astro";
-import Addq from "../../components/admin/addq.astro";
-import Rooms from "../../components/admin/rooms.astro";
----
-
-<Layout title="لوحة التحكم">
-    <div class="admin-layout">
-        <aside class="sidebar">
-            <h2>⚙️ الأدمن</h2>
-
-            <button data-tab="addq" class="active">➕ إضافة سؤال</button>
-            <button data-tab="addc">📁 إضافة فئة</button>
-            <button data-tab="review">✅ مراجعة</button>
-            <button data-tab="rooms">🎮 الغرف</button>
-        </aside>
-
-        <main class="content">
-            <div id="addq" class="tab active">
-                <Addq />
-            </div>
-
-            <div id="addc" class="tab">
-                <Addc />
-            </div>
-
-            <div id="review" class="tab">
-                <Review />
-            </div>
-
-            <div id="rooms" class="tab">
-                <Rooms />
-            </div>
-        </main>
-    </div>
-
-    <script type="module" src="/js/admin.js"></script>
-
-    <style>
-        .admin-layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 220px;
-            background: var(--card);
-            border-left: 1px solid var(--border-color);
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .sidebar h2 {
-            margin-bottom: 10px;
-            color: var(--h3);
-        }
-
-        .sidebar button {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .sidebar button:hover {
-            background: var(--btn-bg);
-        }
-
-        .sidebar button.active {
-            background: var(--btn-active-bg);
-            color: var(--btn-active-text);
-        }
-
-        .content {
-            flex: 1;
-            padding: 20px;
-
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .tab {
-            display: none;
-            background: var(--card);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 0 10px var(--shadow-color);
-        }
-
-        .tab.active {
-            display: block;
-        }
-
-        h3 {
-            color: var(--h3);
-            margin-top: 0;
-        }
-
-        @media (max-width: 768px) {
-            .admin-layout {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                flex-direction: row;
-                overflow-x: auto;
-            }
-
-            .sidebar button {
-                flex: 1;
-                white-space: nowrap;
-            }
-        }
-    </style>
-</Layout> -->
+</Layout>
