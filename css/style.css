@@ -3582,7 +3582,7 @@ h1 {
 
 /* 🔥 Content */
 .content {
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   padding: 20px;
 }
