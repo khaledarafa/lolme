@@ -126,19 +126,12 @@ const homeButtons = [
     ))}
   </main>
 
-  <section>
+  <section class="articles-section">
     <h2>📰 أحدث المقالات</h2>
     <div class="articles-grid">
       {latestArticles.map(article => (
         <a href={`/articles/${article.slug}`} class="article-card tilt-card">
-          <img 
-            src={article.image} 
-            alt={article.title} 
-            width="350" 
-            height="200" 
-            loading="lazy" 
-            style="object-fit:cover;" 
-          />
+          <img src={article.image} alt={article.title} />
           <h3>{article.title}</h3>
           <p>{article.description}</p>
         </a>
