@@ -1,4 +1,5 @@
 
+  // public/js/drawer.js
   // drawer open/close
   const drawer = document.getElementById("drawer");
   const openBtn = document.getElementById("open-drawer");

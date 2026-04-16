@@ -1,9 +1,6 @@
 // public/js/categories.js
 import { db, collection, getDocs, doc, updateDoc } from "/js/firebase.js";
 
-const catContainer = document.getElementById("category-buttons");
-
-
 export async function loadCategories(container, { selectable = true, editable = false } = {}) {
     if (!container) return;
 

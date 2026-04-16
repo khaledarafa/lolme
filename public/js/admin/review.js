@@ -1,16 +1,6 @@
 // public/js/review.js
 import { db, collection, query, where, getDocs, updateDoc, doc, deleteDoc, getDoc } from "/js/firebase.js";
-// import { collection, query, where, getDocs, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-// import { getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// const password = "lolo"; // غيرها براحتك
-
-// const userPass = prompt("ادخل كلمة مرور الأدمن:");
-
-// if (userPass !== password) {
-//   document.body.innerHTML = "<h1>🚫 مش مسموح يا نجم</h1>";
-//   throw new Error("Unauthorized");
-// }
 const box = document.getElementById("questions-box");
 
 async function loadQuestions() {

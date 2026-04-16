@@ -1,7 +1,6 @@
 // public/js/codes.js
 
-import { db } from "/js/firebase.js";
-import { doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { db, doc, setDoc, getDoc, updateDoc } from "/js/firebase.js";
 
 window.addEventListener("DOMContentLoaded", () => {
 

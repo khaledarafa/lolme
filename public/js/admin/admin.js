@@ -1,3 +1,4 @@
+// public/js/admin/admin.js
 document.addEventListener("DOMContentLoaded", () => {
   const buttons = document.querySelectorAll('.top-tabs button');
   const tabs = document.querySelectorAll('.tab');
