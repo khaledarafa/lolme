@@ -32,16 +32,7 @@ import Layout from "../../../layouts/Layout.astro";
     </div>
 
     <script type="module">
-        import {
-            db,
-            doc,
-            collection,
-            query,
-            where,
-            getDocs,
-            setDoc,
-            increment,
-        } from "/js/firebase.js";
+        import { db, doc, collection, query, where, getDocs, setDoc, increment, } from "/js/firebase.js";
 
         async function buildGamePlan(selectedCategories, questionsCount) {
             const gamePlan = [];
@@ -164,7 +155,7 @@ import Layout from "../../../layouts/Layout.astro";
                 const map = {
                     football: "⚽ كورة",
                     songs: "🎵 أغاني",
-                    brain: "🧠 ذكاء ومعلومات",
+                    brain: "🧠 معلومات",
                     movies: "🎬 ترفيه",
                     products: "🛍️ منتجات",
                     mix: "🌍 منوعات",

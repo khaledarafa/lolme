@@ -61,7 +61,7 @@ qImageInput.addEventListener("change", () => {
     questionLabel.innerText = "✅ تم اختيار صورة للسؤال";
 });
 
-let selectedCategory = localStorage.getItem("selected_category") || "";
+// let selectedCategory = localStorage.getItem("selected_category") || "";
 const qPreview = document.getElementById("q-preview");
 
 qImageInput.addEventListener("change", (e) => {
@@ -121,11 +121,13 @@ btn.onclick = async () => {
         return;
     }
 
-    if (!selectedCategory) {
-        msg.innerText = "❌ اختار فئة الأول يا نجم 😏";
-        msg.style.color = "red";
-        return;
-    }
+const selectedCategory = localStorage.getItem("selected_category");
+
+if (!selectedCategory) {
+    msg.innerText = "❌ اختار فئة الأول يا نجم 😏";
+    msg.style.color = "red";
+    return;
+}
 
     const qCheck = query(
         collection(db, "questions"),
