@@ -16,6 +16,10 @@ function createQuestionCard(data) {
     div.innerHTML = `
         <h3>✏️ تعديل سؤال</h3>
 
+        ${data.image ? `
+            <img src="${data.image}" class="q-image-preview" />
+        ` : ""}
+
         <select class="q-type">
             <option value="choice" ${data.type === "choice" ? "selected" : ""}>اختيارات</option>
             <option value="text" ${data.type === "text" ? "selected" : ""}>إجابة كتابة</option>
