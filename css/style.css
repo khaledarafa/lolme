@@ -3583,8 +3583,8 @@ h1 {
 }
 
 /* 🔥 Content */
-.content {
-  /* display: flex; */
+.admin-content {
+  display: flex;
   justify-content: center;
   padding: 20px;
 }
@@ -3740,7 +3740,7 @@ textarea.hint::placeholder {
     padding: 12px !important;
   }
 
-  .content {
+  .admin-content {
     padding: 10px; /* بدل 20 */
   }
 
