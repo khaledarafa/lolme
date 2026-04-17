@@ -25,14 +25,14 @@ import Layout from "../../../layouts/Layout.astro";
 
     <div id="players-section" data-code={code}></div>
 
-    <div class="suggest-box">
+    <!-- <div class="suggest-box">
         <button id="send-suggest-admin">إرسال</button>
         <input id="suggest-input-admin" placeholder="اقترح فئة 😏" />
-    </div>
+    </div> -->
 
-    <div class="suggestions-wrapper">
+    <!-- <div class="suggestions-wrapper">
         <div id="suggestions-list" class="suggestions-list"></div>
-    </div>
+    </div> -->
 
     <div class="board" id="board"></div>
 
@@ -50,7 +50,16 @@ import Layout from "../../../layouts/Layout.astro";
     src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
 ></script>
 <script type="module">
-    import { db, doc, onSnapshot, updateDoc, getDoc, deleteDoc, getDocs, collection, } from "/js/firebase.js";
+    import {
+        db,
+        doc,
+        onSnapshot,
+        updateDoc,
+        getDoc,
+        deleteDoc,
+        getDocs,
+        collection,
+    } from "/js/firebase.js";
 
     const roomCode =
         document.querySelector(".board").dataset?.code ||
@@ -181,11 +190,15 @@ import Layout from "../../../layouts/Layout.astro";
         const snap = await getDoc(roomRef);
         const data = snap.data();
 
-if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adminMode !== "host")) {
-    alert("❌ مش أدمن يا نجم 😏");
-    window.location.href = `/room/${roomCode}/board`;
-    return;
-}
+        if (
+            !data ||
+            playerId !== data.hostId ||
+            (data.adminMode !== "admin" && data.adminMode !== "host")
+        ) {
+            alert("❌ مش أدمن يا نجم 😏");
+            window.location.href = `/room/${roomCode}/board`;
+            return;
+        }
 
         document.body.style.display = "block";
     })();
@@ -243,27 +256,27 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
         }
 
         const messages = data.suggestions || [];
-        const list = document.getElementById("suggestions-list");
+        // const list = document.getElementById("suggestions-list");
 
-        if (list) {
-            list.innerHTML = messages
-                .map((m) => {
-                    const name =
-                        m.playerName ||
-                        data.players?.[m.player]?.name ||
-                        "لاعب 😏";
+        // if (list) {
+        //     list.innerHTML = messages
+        //         .map((m) => {
+        //             const name =
+        //                 m.playerName ||
+        //                 data.players?.[m.player]?.name ||
+        //                 "لاعب 😏";
 
-                    return `
-                <div class="suggest-item">
-                    <span class="name">${name}</span>
-                    <span class="text">${m.text}</span>
-                </div>
-            `;
-                })
-                .join("");
+        //             return `
+        //         <div class="suggest-item">
+        //             <span class="name">${name}</span>
+        //             <span class="text">${m.text}</span>
+        //         </div>
+        //     `;
+        //         })
+        //         .join("");
 
-            list.scrollTop = list.scrollHeight;
-        }
+        //     list.scrollTop = list.scrollHeight;
+        // }
 
         // 🔊 صوت
         if (lastCount !== 0 && messages.length > lastCount) {
@@ -278,37 +291,34 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
         lastCount = messages.length;
 
         const gamePlan = data.gamePlan || [];
-        // if (playerId !== data.hostId) {
-        //     window.location.href = `/room/${roomCode}/player`;
-        // }
         board.innerHTML = "";
 
-        const section = document.getElementById("players-section");
+        // const section = document.getElementById("players-section");
 
-        const playersCount = Object.keys(data.players || {}).length;
+        // const playersCount = Object.keys(data.players || {}).length;
 
-        section.innerHTML = `
-            <div class="players-card compact">
+        // section.innerHTML = `
+        //     <div class="players-card compact">
 
-                <div class="players-header">
-                👥 ${playersCount}
-                ${playerId === data.hostId ? " | 👑 هوست" : " | 🎮 لاعب"}
-                </div>
+        //         <div class="players-header">
+        //         👥 ${playersCount}
+        //         ${playerId === data.hostId ? " | 👑 هوست" : " | 🎮 لاعب"}
+        //         </div>
 
-                <div class="players-list">
-                ${Object.entries(data.players || {})
-                    .map(
-                        ([id, player]) => `
-                    <span class="player-chip ${id === playerId ? "me" : ""}">
-                    ${player.name} ${id === data.hostId ? "👑" : ""}
-                    </span>
-                `,
-                    )
-                    .join("")}
-                </div>
+        //         <div class="players-list">
+        //         ${Object.entries(data.players || {})
+        //             .map(
+        //                 ([id, player]) => `
+        //             <span class="player-chip ${id === playerId ? "me" : ""}">
+        //             ${player.name} ${id === data.hostId ? "👑" : ""}
+        //             </span>
+        //         `,
+        //             )
+        //             .join("")}
+        //         </div>
 
-            </div>
-            `;
+        //     </div>
+        //     `;
         async function openQuestion(cat, index, catIndex) {
             const sheet = document.getElementById("question-sheet");
             const content = document.getElementById("sheet-content");
@@ -354,8 +364,8 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
                         <button id="close-sheet">❌ قفل</button>
                     </div>
                 `;
-                        } else {
-                            content.innerHTML = `
+            } else {
+                content.innerHTML = `
                     <div class="question-box">
 
                         ${imageHtml}
@@ -385,16 +395,16 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
                     </div>
                 `;
                 document.getElementById("mark-done").onclick = async () => {
-    const answeredKey = `${catIndex}_${index}`;
+                    const answeredKey = `${catIndex}_${index}`;
 
-    // 👇 نعلّم السؤال إنه اتجاوب
-    await updateDoc(roomRef, {
-        [`answeredQuestions.${answeredKey}`]: true,
-        currentQuestion: null
-    });
+                    // 👇 نعلّم السؤال إنه اتجاوب
+                    await updateDoc(roomRef, {
+                        [`answeredQuestions.${answeredKey}`]: true,
+                        currentQuestion: null,
+                    });
 
-    sheet.classList.remove("show");
-};
+                    sheet.classList.remove("show");
+                };
             }
             setTimeout(() => {
                 const qImg = document.querySelector(".question-img");
@@ -418,7 +428,7 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
 
                 await updateDoc(roomRef, {
                     [`answeredQuestions.${answeredKey}`]: true,
-                    currentQuestion: null
+                    currentQuestion: null,
                 });
 
                 sheet.classList.remove("show");
@@ -427,7 +437,7 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
                 sheet.classList.remove("show");
 
                 await updateDoc(roomRef, {
-                    currentQuestion: null
+                    currentQuestion: null,
                 });
             };
 
@@ -531,29 +541,29 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
     });
 
     // إرسال
-    document
-        .getElementById("send-suggest-admin")
-        ?.addEventListener("click", async () => {
-            const input = document.getElementById("suggest-input-admin");
-            const text = input.value.trim();
-            if (!text) return;
+    // document
+    //     .getElementById("send-suggest-admin")
+    //     ?.addEventListener("click", async () => {
+    //         const input = document.getElementById("suggest-input-admin");
+    //         const text = input.value.trim();
+    //         if (!text) return;
 
-            const snap = await getDoc(roomRef);
-            const data = snap.data();
+    //         const snap = await getDoc(roomRef);
+    //         const data = snap.data();
 
-            const newSuggestion = {
-                text,
-                player: playerId,
-                playerName: data.players?.[playerId]?.name || "لاعب 😏",
-                time: Date.now(),
-            };
+    //         const newSuggestion = {
+    //             text,
+    //             player: playerId,
+    //             playerName: data.players?.[playerId]?.name || "لاعب 😏",
+    //             time: Date.now(),
+    //         };
 
-            await updateDoc(roomRef, {
-                suggestions: [...(data.suggestions || []), newSuggestion],
-            });
+    //         await updateDoc(roomRef, {
+    //             suggestions: [...(data.suggestions || []), newSuggestion],
+    //         });
 
-            input.value = "";
-        });
+    //         input.value = "";
+    //     });
     const endBtn = document.getElementById("end-game");
 
     endBtn?.addEventListener("click", async () => {
