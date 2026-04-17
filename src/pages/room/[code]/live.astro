@@ -5,7 +5,7 @@ import Layout from "../../../layouts/Layout.astro";
 ---
 
 <Layout>
-    <div class="top-bar">
+    <div class="top-bar" style="display: none !important;">
         <div class="left">
             <span>🎮 كود الغرفة: {code}</span>
             <button id="end-game" class="end-btn">❌ اقفل الروم</button>
@@ -25,14 +25,14 @@ import Layout from "../../../layouts/Layout.astro";
 
     <div id="players-section" data-code={code}></div>
 
-    <div class="suggest-box">
+    <!-- <div class="suggest-box">
         <button id="send-suggest-admin">إرسال</button>
         <input id="suggest-input-admin" placeholder="اقترح فئة 😏" />
-    </div>
+    </div> -->
 
-    <div class="suggestions-wrapper">
+    <!-- <div class="suggestions-wrapper">
         <div id="suggestions-list" class="suggestions-list"></div>
-    </div>
+    </div> -->
     <div class="board" id="board"></div>
 
     <div id="question-sheet" class="sheet hidden">
@@ -354,32 +354,32 @@ if (!currentQ) {
 
         board.innerHTML = "";
 
-        const section = document.getElementById("players-section");
+        // const section = document.getElementById("players-section");
 
-        const playersCount = Object.keys(data.players || {}).length;
+        // const playersCount = Object.keys(data.players || {}).length;
 
-        section.innerHTML = `
-            <div class="players-card compact">
+        // section.innerHTML = `
+        //     <div class="players-card compact">
 
-                <div class="players-header">
-                👥 ${playersCount}
-                ${playerId === data.hostId ? " | 👑 هوست" : " | 🎮 لاعب"}
-                </div>
+        //         <div class="players-header">
+        //         👥 ${playersCount}
+        //         ${playerId === data.hostId ? " | 👑 هوست" : " | 🎮 لاعب"}
+        //         </div>
 
-                <div class="players-list">
-                ${Object.entries(data.players || {})
-                    .map(
-                        ([id, player]) => `
-                    <span class="player-chip ${id === playerId ? "me" : ""}">
-                    ${player.name} ${id === data.hostId ? "👑" : ""}
-                    </span>
-                `,
-                    )
-                    .join("")}
-                </div>
+        //         <div class="players-list">
+        //         ${Object.entries(data.players || {})
+        //             .map(
+        //                 ([id, player]) => `
+        //             <span class="player-chip ${id === playerId ? "me" : ""}">
+        //             ${player.name} ${id === data.hostId ? "👑" : ""}
+        //             </span>
+        //         `,
+        //             )
+        //             .join("")}
+        //         </div>
 
-            </div>
-            `;
+        //     </div>
+        // `;
         async function openQuestion(cat, index, catIndex) {
             const sheet = document.getElementById("question-sheet");
             const content = document.getElementById("sheet-content");
