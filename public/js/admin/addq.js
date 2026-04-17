@@ -163,6 +163,7 @@ if (!selectedCategory) {
         document.getElementById("opt3").value = "";
         document.getElementById("opt4").value = "";
         document.getElementById("correct").value = "";
+        document.getElementById("q-hint").value = "";
         // 🧹 reset الصورة
         document.getElementById("q-image").value = "";
         qPreview.style.display = "none";
