@@ -803,6 +803,10 @@ h2 {
 .page-content {
   position: relative;
   z-index: 1;
+  max-width: 1000px;
+            margin: auto;
+            padding: 10px;
+            text-align: center;
   /* text-align: -webkit-center; */
 }
 
@@ -2582,7 +2586,7 @@ h1 {
 .board {
   position: relative;
   z-index: 2;
-  max-width: 1200px;
+  max-width: 1000px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 15px;
@@ -3222,7 +3226,7 @@ h1 {
 
 /* =====================================setup.astro===================== */
 .setup-container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: auto;
   padding: 20px;
   text-align: center;
