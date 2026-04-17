@@ -32,7 +32,16 @@ import Layout from "../../../layouts/Layout.astro";
     </div>
 
     <script type="module">
-        import { db, doc, collection, query, where, getDocs, setDoc, increment, } from "/js/firebase.js";
+        import {
+            db,
+            doc,
+            collection,
+            query,
+            where,
+            getDocs,
+            setDoc,
+            increment,
+        } from "/js/firebase.js";
 
         async function buildGamePlan(selectedCategories, questionsCount) {
             const gamePlan = [];
@@ -254,6 +263,7 @@ import Layout from "../../../layouts/Layout.astro";
                         currentQuestionIndex: 0,
                         status: "playing",
                         adminMode: selectedRole,
+                        hostId: localStorage.getItem("player_" + roomCode),
                     },
                     { merge: true },
                 );

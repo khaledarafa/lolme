@@ -1,8 +1,8 @@
 ---
 // src/layouts/Layout.astro lolme.cc
 import Footer from "../components/Footer.astro";
-import Analytics from '@vercel/analytics/astro'
-// import AdsInjector from "../components/AdsInjector.astro";
+import Analytics from "@vercel/analytics/astro";
+import AdsInjector from "../components/AdsInjector.astro";
 const { title = "", description, img, ogImage } = Astro.props;
 import "../../css/style.css";
 
@@ -19,30 +19,55 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Fix Status Bar Color (PWA) -->
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0F1723" />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fefefe" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#0F1723"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#fefefe"
+    />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
 
-    <slot name="head"></slot>
+    <slot name="head" />
 
     <!-- SEO DESCRIPTION -->
-    <meta name="description" content={description || "🎮 ألعاب جماعية أونلاين + 🧠 اختبارات خفيفة + 😂 محتوى ترفيهي… العب مع أصحابك أو جرّب اختبارات ممتعة واكتشف حاجات جديدة عن نفسك 😏🔥"} />
+    <meta
+      name="description"
+      content={description ||
+        "🎮 ألعاب جماعية أونلاين + 🧠 اختبارات خفيفة + 😂 محتوى ترفيهي… العب مع أصحابك أو جرّب اختبارات ممتعة واكتشف حاجات جديدة عن نفسك 😏🔥"}
+    />
 
     <!-- TITLE -->
     <title>{title || "LOLME - ألعاب أونلاين واختبارات ومحتوى ترفيهي"}</title>
 
     <!-- CANONICAL -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://www.google-analytics.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">    
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Cairo:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="canonical" href={`https://lolme.cc${Astro.url.pathname}`} />
-    <link rel="preload" href="/favicon.webp" as="image">
+    <link rel="preload" href="/favicon.webp" as="image" />
 
     <!-- OG TAGS -->
-    <meta property="og:title" content={title || "LOLME - منصة ترفيه وألعاب أونلاين"} />
-    <meta property="og:description" content={description || "🔥 منصة ترفيه كاملة! العب مع صحابك، جرّب اختبارات مسلية، واستمتع بمحتوى خفيف يغير مودك 😏🎮"} />
+    <meta
+      property="og:title"
+      content={title || "LOLME - منصة ترفيه وألعاب أونلاين"}
+    />
+    <meta
+      property="og:description"
+      content={description ||
+        "🔥 منصة ترفيه كاملة! العب مع صحابك، جرّب اختبارات مسلية، واستمتع بمحتوى خفيف يغير مودك 😏🎮"}
+    />
     <meta property="og:image" content={finalOg} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -54,12 +79,22 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
     <meta name="yandex-verification" content="fc837038f6a4dcdd" />
     <!-- TWITTER TAGS -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title || "LOLME - منصة ترفيه وألعاب أونلاين"} />
-    <meta name="twitter:description" content={description || "🔥 منصة ترفيه كاملة! العب مع صحابك، جرّب اختبارات مسلية، واستمتع بمحتوى خفيف يغير مودك 😏🎮"} />
+    <meta
+      name="twitter:title"
+      content={title || "LOLME - منصة ترفيه وألعاب أونلاين"}
+    />
+    <meta
+      name="twitter:description"
+      content={description ||
+        "🔥 منصة ترفيه كاملة! العب مع صحابك، جرّب اختبارات مسلية، واستمتع بمحتوى خفيف يغير مودك 😏🎮"}
+    />
     <meta name="twitter:image" content={finalOg} />
 
     <!-- EXTRA VERIFICATION -->
-    <meta name="mylead-verification" content="71d6df0ab7b92b5fe986e8cae0205e5f" />
+    <meta
+      name="mylead-verification"
+      content="71d6df0ab7b92b5fe986e8cae0205e5f"
+    />
 
     <!-- FAVICON + MANIFEST -->
     <link rel="manifest" href="/manifest.json" />
@@ -73,14 +108,14 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
         s1.src = "https://www.googletagmanager.com/gtag/js?id=G-98W71513M3";
         s1.async = true;
         document.body.appendChild(s1);
-    
+
         const s2 = document.createElement("script");
         s2.src = "/js/googletagmanager.js";
         s2.type = "module";
         document.body.appendChild(s2);
       });
     </script>
-    
+
     <!-- PWAs + EXTRA -->
     <script src="/js/ad-close.js" defer></script>
     <!-- <script type="module" src="/js/register-sw.js"></script> -->
@@ -91,90 +126,115 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
         document.body.appendChild(s);
       });
     </script>
-    
   </head>
 
   <body>
-
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
           navigator.serviceWorker
-            .register('/service-worker.js')
-            .then(() => console.log('✅ Service Worker registered'))
-            .catch(err => console.error('❌ SW registration failed:', err));
+            .register("/service-worker.js")
+            .then(() => console.log("✅ Service Worker registered"))
+            .catch((err) => console.error("❌ SW registration failed:", err));
         });
       }
     </script>
-    
+
     <main>
-  <!-- الهيدر الثابت -->
-  <!-- <header class="page-header" style=" display:flex; justify-content:space-between; align-items:center; width:100%; max-width:1000px; margin:0 auto; padding:0.5rem 1rem; background:transparent; " > -->
-    <header class="page-header" style="display:flex;justify-content:space-around;align-items:center;width:94%;padding:0rem 1rem;background:#0000;">     
-    <!-- اليمين: اللينكات -->
-    <nav class="header-nav" style="display:flex; gap:10px; align-items:center;">
-      <a id="nav-home" href="/">🏠 الرئيسية</a>
-      <span class="divider">|</span>
-      <a id="nav-articles" href="/articles">📚 المقالات</a>
-  
-      <span id="toggle-theme" style="cursor:pointer; font-size:1.5rem;" > 🌙 </span>
-    </nav>
-    
-  <!-- اليسار: اللوجو -->
-  <div class="header-left" style="display:flex; align-items:center;">
-    <img src="/favicon.webp" alt="LOLME" width="40" height="40" class="logo" />
-  </div>
+      <!-- الهيدر الثابت -->
+      <!-- <header class="page-header" style=" display:flex; justify-content:space-between; align-items:center; width:100%; max-width:1000px; margin:0 auto; padding:0.5rem 1rem; background:transparent; " > -->
+      <header class="page-header">
+        <!-- اليمين: اللينكات -->
+        <nav
+          class="header-nav"
+          style="display:flex; gap:10px; align-items:center;"
+        >
+          <a id="nav-home" href="/">🏠 الرئيسية</a>
+          <span class="divider">|</span>
+          <a id="nav-articles" href="/articles">📚 المقالات</a>
 
-</header>
+          <span id="toggle-theme" style="cursor:pointer; font-size:1.5rem;">
+            🌙
+          </span>
+        </nav>
 
-  <!-- العنوان الرئيسي -->
-  {Astro.props.title && (
-    <div class="page-title">
-      <h1>{Astro.props.title}</h1>
-      {Astro.props.description && (
-        <p class="description">{Astro.props.description}</p>
-      )}
-    </div>
-  )}
+        <!-- اليسار: اللوجو -->
+        <div class="header-left" style="display:flex; align-items:center;">
+          <img
+            src="/favicon.webp"
+            alt="LOLME"
+            width="40"
+            height="40"
+            class="logo"
+          />
+        </div>
+      </header>
 
-{img && (
-  <div style="text-align:center; margin: 20px auto;">
-    <img 
-      src={img} 
-      alt={title} 
-      style="
+      <!-- العنوان الرئيسي -->
+      {
+        Astro.props.title && (
+          <div class="page-title">
+            <h1>{Astro.props.title}</h1>
+            {Astro.props.description && (
+              <p class="description">{Astro.props.description}</p>
+            )}
+          </div>
+        )
+      }
+
+      {
+        img && (
+          <div style="text-align:center; margin: 20px auto;">
+            <img
+              src={img}
+              alt={title}
+              style="
         max-width: 600px; 
         width: 90%; 
         border-radius: 14px; 
         box-shadow: 0 4px 10px rgba(0,0,0,0.15);
       "
-      class="tilt-card"
-    />
-  </div>
-)}
+              class="tilt-card"
+            />
+          </div>
+        )
+      }
 
-    <!-- إعلان فوق -->
-    <!-- <AdsInjector showTop={true} showSide={true} showFloating={true} showBottom={false} /> -->
+      <!-- إعلان فوق -->
+      <AdsInjector
+        showTop={true}
+        showSide={true}
+        showFloating={true}
+        showBottom={false}
+      />
 
-    <!-- محتوى الصفحة -->
-    <div class="page-content article">
-      <slot />
-    </div>
+      <!-- محتوى الصفحة -->
+      <div class="page-content article">
+        <slot />
+      </div>
 
-    <!-- إعلان تحت -->
-    <!-- <AdsInjector showTop={false} showSide={false} showFloating={false} showBottom={true} /> -->
-
+      <!-- إعلان تحت -->
+      <AdsInjector
+        showTop={false}
+        showSide={false}
+        showFloating={false}
+        showBottom={true}
+      />
     </main>
-    <div class="ad-space">مساحتك الإعلانية هنا</div>
 
+    <!-- ديسكتوب -->
+    <div id="ad-container" class="new-ad-space ad-box">🚀 مساحتك الإعلانية هنا</div>
     <Footer />
+
+    <script type="module" src="/js/ads-system.js"></script>
+
     <script type="module">
       document.addEventListener("DOMContentLoaded", () => {
         const themeToggle = document.getElementById("toggle-theme");
         if (!themeToggle) return; // لو العنصر مش موجود نخرج
-    
+
         function applyTheme(theme) {
-          if(theme === "light") {
+          if (theme === "light") {
             document.body.classList.add("light-theme");
             themeToggle.textContent = "🌞";
           } else {
@@ -182,34 +242,33 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
             themeToggle.textContent = "🌙";
           }
         }
-    
+
         const savedTheme = localStorage.getItem("theme") || "dark";
         applyTheme(savedTheme);
-    
+
         themeToggle.addEventListener("click", () => {
-          const newTheme = document.body.classList.contains("light-theme") ? "dark" : "light";
+          const newTheme = document.body.classList.contains("light-theme")
+            ? "dark"
+            : "light";
           applyTheme(newTheme);
           localStorage.setItem("theme", newTheme);
         });
       });
     </script>
-    <!-- <script>
-      setTimeout(() => {
-        document.dispatchEvent(new Event("load-ads"));
-      }, 700);
-    </script>
-     -->
 
-  <Analytics />
+    <Analytics />
+
+    <!-- موبايل -->
+    <div id="mobile-ad" class="ad-box"></div>
   </body>
 </html>
 
 <style>
   .page-title {
-    max-width: 1000px;      /* نفس عرض المقال */
-    margin: 20px auto;       /* يسنتر الـ div داخل الصفحة */
-    text-align: center;      /* يسنتر النصوص داخل الـ div */
-    padding: 0 15px;         /* مسافة داخلية بسيطة */
+    max-width: 1000px; /* نفس عرض المقال */
+    margin: 20px auto; /* يسنتر الـ div داخل الصفحة */
+    text-align: center; /* يسنتر النصوص داخل الـ div */
+    padding: 0 15px; /* مسافة داخلية بسيطة */
   }
 
   .page-title h1 {
@@ -226,5 +285,4 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
   .logo {
     vertical-align: middle;
   }
-
 </style>
