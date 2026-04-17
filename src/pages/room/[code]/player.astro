@@ -6,9 +6,10 @@ import Layout from "../../../layouts/Layout.astro";
 <Layout>
     <div class="player-container">
         <div id="admin-status" class="admin-status"></div>
+        <div id="category-card"></div>
+        <div id="question-image"></div>
         <h2 id="question">⏳ مستني السؤال...</h2>
         <p id="hint-box" style="display:none;"></p>
-        <div id="question-image"></div>
         <div id="answers"></div>
 
         <div id="text-box" style="display:none;">
@@ -17,6 +18,10 @@ import Layout from "../../../layouts/Layout.astro";
         </div>
 
         <div id="feedback"></div>
+
+        <div class="chat-divider">
+            <span>💬 الدردشة</span>
+        </div>
 
         <div class="suggest-box">
             <button id="send-chat">إرسال</button>
@@ -33,12 +38,7 @@ import Layout from "../../../layouts/Layout.astro";
 ></script>
 <script type="module">
     import { db } from "/js/firebase.js";
-    import {
-        doc,
-        onSnapshot,
-        updateDoc,
-        getDoc,
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { doc, onSnapshot, updateDoc, getDoc, getDocs, collection, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const roomCode = window.location.pathname.split("/")[2];
     const roomRef = doc(db, "rooms", roomCode);
@@ -51,6 +51,21 @@ import Layout from "../../../layouts/Layout.astro";
 
     let answered = false;
     let currentQ = null;
+    let categoriesMap = {};
+
+    async function loadCategoriesMap() {
+        const snap = await getDocs(collection(db, "categories"));
+
+        snap.forEach((doc) => {
+            const cat = doc.data();
+            categoriesMap[cat.slug] = {
+                image: cat.image,
+                name: cat.name,
+            };
+        });
+    }
+
+    await loadCategoriesMap();
 
     const winSound = new Audio("/sounds/winn.mp3");
     const loseSound = new Audio("/sounds/lose.mp3");
@@ -152,9 +167,9 @@ import Layout from "../../../layouts/Layout.astro";
             window.location.href = `/room/${roomCode}/results`;
             return;
         }
-        
+
         console.log("HINTS:", data.hints);
-console.log("QUESTION:", data.currentQuestion);
+        console.log("QUESTION:", data.currentQuestion);
         const messages = data.suggestions || [];
         const list = document.getElementById("chat-list");
         const isAdminManager = data.adminMode === "admin";
@@ -197,29 +212,44 @@ console.log("QUESTION:", data.currentQuestion);
         }
 
         lastCount = messages.length;
-const q = data.currentQuestion;
+        const q = data.currentQuestion;
 
-if (!q) return;
+        if (!q) return;
 
-const key = `${q.categoryIndex}_${q.questionIndex}`;
-const hintVisible = data.hints?.[key];
+        const key = `${q.categoryIndex}_${q.questionIndex}`;
+        const hintVisible = data.hints?.[key];
 
-const hintBox = document.getElementById("hint-box");
+        const hintBox = document.getElementById("hint-box");
+        const catCard = document.getElementById("category-card");
 
-// 👇 لو التلميح اتفتح
-if (hintBox) {
-    if (hintVisible) {
-        if (q.hint) {
-            hintBox.innerText = "💡 " + q.hint;
-        } else {
-            hintBox.innerText = "❌ مفيش تلميح";
+        if (q && catCard) {
+            const cat = categoriesMap[q.category];
+
+            if (cat) {
+                catCard.innerHTML = `
+            <div class="player-cat-card">
+                <img src="${cat.image}" />
+                <div class="overlay">${cat.name}</div>
+            </div>
+        `;
+            } else {
+                catCard.innerHTML = "";
+            }
         }
+        // 👇 لو التلميح اتفتح
+        if (hintBox) {
+            if (hintVisible) {
+                if (q.hint) {
+                    hintBox.innerText = "💡 " + q.hint;
+                } else {
+                    hintBox.innerText = "❌ مفيش تلميح";
+                }
 
-        hintBox.style.display = "block";
-    } else {
-        hintBox.style.display = "none";
-    }
-}
+                hintBox.style.display = "block";
+            } else {
+                hintBox.style.display = "none";
+            }
+        }
         if (!q) return;
         const answeredKey = `${q.categoryIndex}_${q.questionIndex}`;
         const myAnswer = data.answers?.[answeredKey]?.[playerId]?.answer;

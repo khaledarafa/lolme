@@ -53,16 +53,7 @@ import Layout from "../../../layouts/Layout.astro";
     src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
 ></script>
 <script type="module">
-    import {
-        db,
-        doc,
-        onSnapshot,
-        updateDoc,
-        getDoc,
-        deleteDoc,
-        getDocs,
-        collection,
-    } from "/js/firebase.js";
+    import { db, doc, onSnapshot, updateDoc, getDoc, deleteDoc, getDocs, collection, } from "/js/firebase.js";
 
     const roomCode =
         document.querySelector(".board").dataset?.code ||
@@ -307,6 +298,21 @@ import Layout from "../../../layouts/Layout.astro";
                 ? `⏳ مستني: ${notAnsweredNames.join(" - ")}`
                 : "";
         }
+        const hintBox = document.getElementById("hint-box");
+
+if (data.currentQuestion && hintBox) {
+    const q = data.currentQuestion;
+    const key = `${q.categoryIndex}_${q.questionIndex}`;
+
+    const isShown = data.hints?.[key];
+
+    if (isShown) {
+        hintBox.style.display = "block";
+        hintBox.innerText = q.hint || "❌ مفيش تلميح";
+    } else {
+        hintBox.style.display = "none";
+    }
+}
         const messages = data.suggestions || [];
         const list = document.getElementById("suggestions-list");
 
@@ -455,17 +461,11 @@ hintBtn.onclick = async () => {
 
     const key = `${q.categoryIndex}_${q.questionIndex}`;
 
+    const isShown = data.hints?.[key];
+
     await updateDoc(roomRef, {
-        [`hints.${key}`]: true
+        [`hints.${key}`]: !isShown
     });
-
-    if (!q.hint) {
-        hintBox.innerText = "❌ مفيش تلميح";
-    } else {
-        hintBox.innerText = q.hint;
-    }
-
-    hintBox.style.display = "block";
 };
             } else {
                 content.innerHTML = `
@@ -510,17 +510,11 @@ hintBtn.onclick = async () => {
 
     const key = `${q.categoryIndex}_${q.questionIndex}`;
 
+    const isShown = data.hints?.[key];
+
     await updateDoc(roomRef, {
-        [`hints.${key}`]: true
+        [`hints.${key}`]: !isShown
     });
-
-    if (!q.hint) {
-        hintBox.innerText = "❌ مفيش تلميح";
-    } else {
-        hintBox.innerText = q.hint;
-    }
-
-    hintBox.style.display = "block";
 };
             }
             setTimeout(() => {
@@ -735,9 +729,7 @@ hintBtn.onclick = async () => {
     });
 
     // إرسال
-    document
-        .getElementById("send-suggest-admin")
-        ?.addEventListener("click", async () => {
+    document .getElementById("send-suggest-admin") ?.addEventListener("click", async () => {
             const input = document.getElementById("suggest-input-admin");
             const text = input.value.trim();
             if (!text) return;
@@ -758,6 +750,7 @@ hintBtn.onclick = async () => {
 
             input.value = "";
         });
+
     const endBtn = document.getElementById("end-game");
 
     endBtn?.addEventListener("click", async () => {
