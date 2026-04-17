@@ -213,7 +213,19 @@ import Layout from "../../../layouts/Layout.astro";
         const notAnsweredBox = document.getElementById("not-answered-list");
 
         const currentQ = data.currentQuestion;
+if (currentQ) {
+    const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
 
+    const hintBox = document.getElementById("hint-box");
+
+    if (hintBox && data.hints?.[key]) {
+        const cat = data.gamePlan[currentQ.categoryIndex];
+        const q = cat.questions[currentQ.questionIndex];
+
+        hintBox.innerText = q.hint || "❌ مفيش تلميح";
+        hintBox.style.display = "block";
+    }
+}
         let totalPlayers = Object.keys(data.players || {}).length;
         let answeredPlayers = 0;
         let notAnsweredNames = [];
@@ -319,6 +331,7 @@ import Layout from "../../../layouts/Layout.astro";
 
         //     </div>
         //     `;
+
         async function openQuestion(cat, index, catIndex) {
             const sheet = document.getElementById("question-sheet");
             const content = document.getElementById("sheet-content");
@@ -350,13 +363,19 @@ import Layout from "../../../layouts/Layout.astro";
 
                         ${imageHtml}
                             <h2>${question.text}</h2>
+
                             <div class="admin-correct">
                                 ✅ الإجابة: ${question.correct}
                             </div>
-<button id="mark-done" class="done-btn">✔️ تم الإجابة</button>
+
+                            <button id="show-hint">💡 عرض التلميح</button>
+
+                            <button id="mark-done" class="done-btn">✔️ تم الإجابة</button>
                         
 
-                        <div id="feedback"></div>
+                        <div id="hint-box" style="display:none; margin-top:10px;"></div>
+
+<div id="feedback"></div>
 
                     </div>
 
@@ -364,16 +383,21 @@ import Layout from "../../../layouts/Layout.astro";
                         <button id="close-sheet">❌ قفل</button>
                     </div>
                 `;
+                const hintBox = document.getElementById("hint-box");
+
+if (hintBox) {
+    hintBox.style.display = "none";
+    hintBox.innerText = "";
+}
             } else {
                 content.innerHTML = `
                     <div class="question-box">
 
                         ${imageHtml}
                             <h2>${question.text}</h2>
-                            <div class="admin-correct">
-                                ✅ الإجابة: ${question.correct}
-                            </div>
-<button id="mark-done" class="done-btn">✔️ تم الإجابة</button>
+                            <div class="admin-correct"> ✅ الإجابة: ${question.correct} </div>
+                                <button id="show-hint">💡 عرض التلميح</button>
+                                <button id="mark-done" class="done-btn">✔️ تم الإجابة</button>
                         <div class="answers">
                             ${question.options
                                 .map(
@@ -386,7 +410,9 @@ import Layout from "../../../layouts/Layout.astro";
                                 .join("")}
                         </div>
 
-                        <div id="feedback"></div>
+                        <div id="hint-box" style="display:none; margin-top:10px;"></div>
+
+<div id="feedback"></div>
 
                     </div>
 
@@ -394,6 +420,12 @@ import Layout from "../../../layouts/Layout.astro";
                         <button id="close-sheet">❌ قفل</button>
                     </div>
                 `;
+                const hintBox = document.getElementById("hint-box");
+
+if (hintBox) {
+    hintBox.style.display = "none";
+    hintBox.innerText = "";
+}
                 document.getElementById("mark-done").onclick = async () => {
                     const answeredKey = `${catIndex}_${index}`;
 
@@ -406,6 +438,7 @@ import Layout from "../../../layouts/Layout.astro";
                     sheet.classList.remove("show");
                 };
             }
+
             setTimeout(() => {
                 const qImg = document.querySelector(".question-img");
 
@@ -491,6 +524,17 @@ import Layout from "../../../layouts/Layout.astro";
                     feedback.style.fontWeight = "bold";
                 });
             });
+            const hintBtn = document.getElementById("show-hint");
+
+if (hintBtn) {
+    hintBtn.onclick = async () => {
+        const key = `${catIndex}_${index}`;
+
+        await updateDoc(roomRef, {
+            [`hints.${key}`]: true,
+        });
+    };
+}
             sheet.classList.add("show");
         }
 
@@ -505,9 +549,9 @@ import Layout from "../../../layouts/Layout.astro";
             // title.style.backgroundImage = `url(${categoryImages[cat.category]})`;
 
             const realCat = cat.category;
-
+            const imgSrc = categoriesMap[realCat]?.image;
             title.innerHTML = `
-    <img src="${categoriesMap[realCat]?.image}" />
+    <img src="${imgSrc}" loading="lazy" />
     <div class="overlay">
         ${categoriesMap[realCat]?.name || realCat}
     </div>

@@ -49,7 +49,16 @@ import Layout from "../../../layouts/Layout.astro";
     src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
 ></script>
 <script type="module">
-    import { db, doc, onSnapshot, updateDoc, getDoc, deleteDoc, getDocs, collection, } from "/js/firebase.js";
+    import {
+        db,
+        doc,
+        onSnapshot,
+        updateDoc,
+        getDoc,
+        deleteDoc,
+        getDocs,
+        collection,
+    } from "/js/firebase.js";
 
     const roomCode =
         document.querySelector(".board").dataset?.code ||
@@ -58,7 +67,7 @@ import Layout from "../../../layouts/Layout.astro";
     const roomRef = doc(db, "rooms", roomCode);
     const winSound = new Audio("/sounds/winn.mp3");
     const loseSound = new Audio("/sounds/lose.mp3");
-let lastQuestionKey = null;
+    let lastQuestionKey = null;
     let categoriesMap = {};
     function normalize(text) {
         return text
@@ -236,25 +245,42 @@ let lastQuestionKey = null;
 
     onSnapshot(roomRef, (snap) => {
         const data = snap.data();
-const sheet = document.getElementById("question-sheet");
-const currentQ = data.currentQuestion;
-
-if (!currentQ) {
-    sheet.classList.remove("show");
-    lastQuestionKey = null;
-} else {
+        const sheet = document.getElementById("question-sheet");
+        const currentQ = data.currentQuestion;
+if (currentQ) {
     const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
 
-    if (key !== lastQuestionKey) {
-        lastQuestionKey = key;
+    const hintBox = document.getElementById("hint-box");
 
-        // 🔥 هنا نفتح الشيت من gamePlan مش من Firebase
+    if (hintBox && data.hints?.[key]) {
         const cat = data.gamePlan[currentQ.categoryIndex];
         const q = cat.questions[currentQ.questionIndex];
 
-        openQuestion(cat, currentQ.questionIndex, currentQ.categoryIndex);
+        hintBox.innerText = q.hint || "❌ مفيش تلميح";
+        hintBox.style.display = "block";
     }
 }
+
+        if (!currentQ) {
+            sheet.classList.remove("show");
+            lastQuestionKey = null;
+        } else {
+            const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
+
+            if (key !== lastQuestionKey) {
+                lastQuestionKey = key;
+
+                // 🔥 هنا نفتح الشيت من gamePlan مش من Firebase
+                const cat = data.gamePlan[currentQ.categoryIndex];
+                const q = cat.questions[currentQ.questionIndex];
+
+                openQuestion(
+                    cat,
+                    currentQ.questionIndex,
+                    currentQ.categoryIndex,
+                );
+            }
+        }
         const progressBox = document.getElementById("answer-progress");
         const notAnsweredBox = document.getElementById("not-answered-list");
 
@@ -380,6 +406,7 @@ if (!currentQ) {
 
         //     </div>
         // `;
+
         async function openQuestion(cat, index, catIndex) {
             const sheet = document.getElementById("question-sheet");
             const content = document.getElementById("sheet-content");
@@ -397,7 +424,6 @@ if (!currentQ) {
 
             ${imageHtml}
 <h2>${question.text}</h2>
-    <button id="hint-btn">💡 تلميح</button>
     <p id="hint-box" style="display:none;"></p>
 
             <div class="text-answer-box">
@@ -413,34 +439,12 @@ if (!currentQ) {
             <button id="close-sheet">❌ قفل</button>
         </div>
     `;
-                const hintBtn = document.getElementById("hint-btn");
-                const hintBox = document.getElementById("hint-box");
-                hintBox.style.display = "none";
-                hintBox.innerText = "";
-
-                hintBtn.onclick = async () => {
-    const key = `${catIndex}_${index}`;
-
-    // 👇 ابعت إن التلميح اتفتح
-    await updateDoc(roomRef, {
-        [`hints.${key}`]: true
-    });
-
-                    if (!question.hint) {
-                        hintBox.innerText = "❌ مفيش تلميح";
-                    } else {
-                        hintBox.innerText = currentQuestion.hint;
-                    }
-
-                    hintBox.style.display = "block";
-                };
             } else {
                 content.innerHTML = `
         <div class="question-box">
 
             ${imageHtml}
 <h2>${question.text}</h2>
-    <button id="hint-btn">💡 تلميح</button>
     <p id="hint-box" style="display:none;"></p>
 
             <div class="answers">
@@ -463,27 +467,6 @@ if (!currentQ) {
             <button id="close-sheet">❌ قفل</button>
         </div>
     `;
-                const hintBtn = document.getElementById("hint-btn");
-                const hintBox = document.getElementById("hint-box");
-                hintBox.style.display = "none";
-                hintBox.innerText = "";
-
-                hintBtn.onclick = async () => {
-    const key = `${catIndex}_${index}`;
-
-    // 👇 ابعت إن التلميح اتفتح
-    await updateDoc(roomRef, {
-        [`hints.${key}`]: true
-    });
-
-                    if (!question.hint) {
-                        hintBox.innerText = "❌ مفيش تلميح";
-                    } else {
-                        hintBox.innerText = currentQuestion.hint;
-                    }
-
-                    hintBox.style.display = "block";
-                };
             }
             setTimeout(() => {
                 const qImg = document.querySelector(".question-img");
@@ -685,7 +668,6 @@ if (!currentQ) {
                     card.style.pointerEvents = "none";
                     card.innerText = "✔️";
                 } else {
-
                 }
 
                 col.appendChild(card);
