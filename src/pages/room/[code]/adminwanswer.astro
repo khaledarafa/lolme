@@ -204,11 +204,11 @@ import Layout from "../../../layouts/Layout.astro";
     })();
 
     let lastCount = 0;
+    let boardBuilt = false;
     const msgSound = new Audio("/sounds/msg.mp3");
 
     onSnapshot(roomRef, (snap) => {
         const data = snap.data();
-
         const progressBox = document.getElementById("answer-progress");
         const notAnsweredBox = document.getElementById("not-answered-list");
 
@@ -303,7 +303,8 @@ if (currentQ) {
         lastCount = messages.length;
 
         const gamePlan = data.gamePlan || [];
-        board.innerHTML = "";
+        if (!boardBuilt) {
+    board.innerHTML = "";
 
         // const section = document.getElementById("players-section");
 
@@ -581,7 +582,27 @@ if (hintBtn) {
             });
 
             board.appendChild(col);
-        });
+        });    boardBuilt = true;
+}
+
+Object.keys(data.answeredQuestions || {}).forEach((key) => {
+    const [catIndex, qIndex] = key.split("_");
+
+    const col = board.children[catIndex];
+    if (!col) return;
+
+    const card = col.children[Number(qIndex) + 1];
+
+    if (card) {
+        const newCard = card.cloneNode(true);
+
+        newCard.style.opacity = "0.3";
+        newCard.style.pointerEvents = "none";
+        newCard.innerText = "✔️";
+
+        card.replaceWith(newCard);
+    }
+});
     });
 
     // إرسال
