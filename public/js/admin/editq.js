@@ -24,14 +24,14 @@ function createQuestionCard(data) {
             <option value="choice" ${data.type === "choice" ? "selected" : ""}>اختيارات</option>
             <option value="text" ${data.type === "text" ? "selected" : ""}>إجابة كتابة</option>
         </select>
-
-        <input class="q-text" value="${data.text || ""}" />
+<select class="q-category"></select>
+        <input class="q-text" />
 
         <div class="options-box" style="${data.type === "text" ? "display:none" : ""}">
-            <input class="opt1" value="${data.options?.[0] || ""}" />
-            <input class="opt2" value="${data.options?.[1] || ""}" />
-            <input class="opt3" value="${data.options?.[2] || ""}" />
-            <input class="opt4" value="${data.options?.[3] || ""}" />
+            <input class="opt1" />
+            <input class="opt2" />
+            <input class="opt3" />
+            <input class="opt4" />
         </div>
 
         <input class="correct" value="${data.correct || ""}" />
@@ -48,7 +48,29 @@ function createQuestionCard(data) {
 
         <div class="save-msg"></div>  <!-- 👈 دي كانت ناقصة -->
         `;
+        const catSelect = div.querySelector(".q-category");
 
+getDocs(collection(db, "categories")).then((snap) => {
+    snap.forEach((docSnap) => {
+        const cat = docSnap.data();
+
+        const opt = document.createElement("option");
+        opt.value = cat.slug;
+        opt.textContent = cat.name;
+
+        if (data.category === cat.slug) {
+            opt.selected = true;
+        }
+
+        catSelect.appendChild(opt);
+    });
+});
+// 👇 هنا بالظبط
+div.querySelector(".q-text").value = data.text || "";
+div.querySelector(".opt1").value = data.options?.[0] || "";
+div.querySelector(".opt2").value = data.options?.[1] || "";
+div.querySelector(".opt3").value = data.options?.[2] || "";
+div.querySelector(".opt4").value = data.options?.[3] || "";
     // 🔥 لو مفيش hint → لون أحمر
     if (!data.hint) {
         div.style.border = "2px solid red";
@@ -60,6 +82,7 @@ function createQuestionCard(data) {
     saveBtn.onclick = async () => {
         const newData = {
             text: div.querySelector(".q-text").value.trim(),
+            category: div.querySelector(".q-category").value,
             type: div.querySelector(".q-type").value,
             correct: div.querySelector(".correct").value.trim(),
             hint: div.querySelector(".hint").value.trim(),
