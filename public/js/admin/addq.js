@@ -11,7 +11,6 @@ window.initAddQ = function () {
 const btn = document.getElementById("add-q-btn");
 const typeSelect = document.getElementById("q-type");
 const optionsBox = document.getElementById("options-box");
-const hint = document.getElementById("q-hint").value.trim();
 
 function compressImage(file) {
     return new Promise((resolve) => {
@@ -74,8 +73,8 @@ qImageInput.addEventListener("change", (e) => {
 
 // ده بتاع اختيار الفئة
 btn.onclick = async () => {
+    const hint = document.getElementById("q-hint").value.trim();
     const type = document.getElementById("q-type").value;
-
     let imageUrl = null;
 
     const file = document.getElementById("q-image").files[0];

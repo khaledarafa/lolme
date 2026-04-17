@@ -53,7 +53,7 @@ async function loadQuestions() {
   ${optionsHTML}
 
   <p>✅ الصح: ${data.correct}</p>
-
+<p>💡 التلميح: ${data.hint || "❌ مفيش تلميح"}</p>
   <button data-id="${id}" class="approve">✅ موافقة</button>
   <button data-id="${id}" class="delete">❌ حذف</button>
   <button data-id="${id}" class="edit">✏️ تعديل</button>
@@ -121,7 +121,7 @@ function addEvents() {
 <input class="edit-opt" />
 
 <input class="edit-correct" />
-
+<textarea class="edit-hint" placeholder="💡 التلميح"></textarea>
 <button class="save-edit">💾 حفظ</button>
 `;
 
@@ -139,6 +139,7 @@ function addEvents() {
             }
 
             form.querySelector(".edit-correct").value = correct;
+            form.querySelector(".edit-hint").value = data.hint || "";
             parent.appendChild(form);
 
             form.querySelector(".save-edit").onclick = async () => {
@@ -148,11 +149,12 @@ function addEvents() {
                     .map(inp => inp.value);
 
                 const newCorrect = form.querySelector(".edit-correct").value;
-
+const newHint = form.querySelector(".edit-hint").value;
                 await updateDoc(doc(db, "questions", id), {
                     text: newText,
                     options: newOptions,
                     correct: newCorrect,
+    hint: newHint,
                     approved: false
                 });
 
