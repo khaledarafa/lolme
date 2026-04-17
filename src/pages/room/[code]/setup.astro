@@ -25,8 +25,10 @@ import Layout from "../../../layouts/Layout.astro";
             <p>اختار دورك 👇</p>
 
             <button class="role-btn" data-role="player"> 🎮 هلعب معاهم </button>
-
             <button class="role-btn" data-role="admin"> 🧠 هدور اللعبة </button>
+            <button class="role-btn" data-role="host">
+                🎤 هعمل لايف (مذيع)
+            </button>
         </div>
         <button id="start-round" class="start-btn"> 🚀 ابدأ الجولة </button>
     </div>
@@ -283,6 +285,11 @@ import Layout from "../../../layouts/Layout.astro";
                 // 👇 روح للعبة
                 if (selectedRole === "admin") {
                     window.location.href = `/room/${roomCode}/admin-board`;
+                } else if (selectedRole === "host") {
+                    // 👑 يفتح صفحتين
+                    window.open(`/room/${roomCode}/live`, "_blank");
+
+                    window.location.href = `/room/${roomCode}/adminwanswer`;
                 } else {
                     window.location.href = `/room/${roomCode}/board`;
                 }

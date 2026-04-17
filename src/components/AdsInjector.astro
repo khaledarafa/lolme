@@ -17,7 +17,7 @@ const { showTop = true, showBottom = true, showSide = true, showFloating = true 
 )} -->
 
 {/* SIDE RIGHT */}
-{!isMobile && showSide && adsConfig.sideRight?.length > 0 && (
+<!-- {!isMobile && showSide && adsConfig.sideRight?.length > 0 && (
   <div class="ad-right ad-side">
 
     <span class="side-close-btn" onclick=" event.stopPropagation(); const sideRight = this.closest('.ad-right'); if (sideRight) sideRight.remove(); " > ✖ </span>
@@ -29,7 +29,7 @@ const { showTop = true, showBottom = true, showSide = true, showFloating = true 
     ))}
 
   </div>
-)}
+)} -->
 
 <!-- {!isMobile && showSide && adsConfig.sideRight?.length > 0 && (
   <div class="ad-right">
@@ -38,7 +38,7 @@ const { showTop = true, showBottom = true, showSide = true, showFloating = true 
 )} -->
 
 {/* SIDE LEFT */}
-{!isMobile && showSide && adsConfig.sideLeft?.length > 0 && (
+<!-- {!isMobile && showSide && adsConfig.sideLeft?.length > 0 && (
   <div class="ad-left ad-side">
 
     <span class="side-close-btn" onclick=" event.stopPropagation(); const sideLeft = this.closest('.ad-left'); if (sideLeft) sideLeft.remove(); " > ✖ </span>
@@ -50,7 +50,7 @@ const { showTop = true, showBottom = true, showSide = true, showFloating = true 
     ))}
 
   </div>
-)}
+)} -->
 
 <!-- {!isMobile && showSide && adsConfig.sideLeft?.length > 0 && (
   <div class="ad-left">
@@ -59,7 +59,7 @@ const { showTop = true, showBottom = true, showSide = true, showFloating = true 
 )} -->
 
 {/* FLOATING */}
-{!isMobile && showFloating && adsConfig.floating?.length > 0 && (
+<!-- {!isMobile && showFloating && adsConfig.floating?.length > 0 && (
   <div class="ad-floating">
     {adsConfig.floating.map(ad => (
       <div class="float-box">
@@ -70,7 +70,7 @@ const { showTop = true, showBottom = true, showSide = true, showFloating = true 
       </div>
     ))}
   </div>
-)}
+)} -->
 
 {/* BOTTOM — نسخة واحدة فقط */}
 {showBottom && adsConfig.bottom?.length > 0 && (

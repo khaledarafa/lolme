@@ -1,5 +1,5 @@
 ---
-// src/pages/room/[code]/adminwanswer.astro
+// src/pages/room/[code]/live.astro
 const { code } = Astro.params;
 import Layout from "../../../layouts/Layout.astro";
 ---
@@ -33,7 +33,6 @@ import Layout from "../../../layouts/Layout.astro";
     <div class="suggestions-wrapper">
         <div id="suggestions-list" class="suggestions-list"></div>
     </div>
-
     <div class="board" id="board"></div>
 
     <div id="question-sheet" class="sheet hidden">
@@ -59,9 +58,50 @@ import Layout from "../../../layouts/Layout.astro";
     const roomRef = doc(db, "rooms", roomCode);
     const winSound = new Audio("/sounds/winn.mp3");
     const loseSound = new Audio("/sounds/lose.mp3");
-
+let lastQuestionKey = null;
     let categoriesMap = {};
+    function normalize(text) {
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/[\u064B-\u065F]/g, "")
+            .replace(/أ|إ|آ/g, "ا")
+            .replace(/ى/g, "ي")
+            .replace(/ة/g, "ه");
+    }
 
+    function levenshtein(a, b) {
+        const matrix = [];
+
+        for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+        for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+        for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+                if (b[i - 1] === a[j - 1]) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j - 1] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j] + 1,
+                    );
+                }
+            }
+        }
+
+        return matrix[b.length][a.length];
+    }
+
+    // 👑 الدالة الرئيسية
+    function isCorrectAnswer(userAnswer, correctAnswer) {
+        const user = normalize(userAnswer);
+        const correct = normalize(correctAnswer);
+
+        const distance = levenshtein(user, correct);
+
+        return distance <= 1;
+    }
     async function loadCategoriesMap() {
         const snap = await getDocs(collection(db, "categories"));
 
@@ -177,29 +217,46 @@ import Layout from "../../../layouts/Layout.astro";
         });
     })();
 
-    (async () => {
-        const snap = await getDoc(roomRef);
-        const data = snap.data();
-
-if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adminMode !== "host")) {
-    alert("❌ مش أدمن يا نجم 😏");
-    window.location.href = `/room/${roomCode}/board`;
-    return;
-}
-
-        document.body.style.display = "block";
-    })();
-
     let lastCount = 0;
     const msgSound = new Audio("/sounds/msg.mp3");
+    let soundEnabled = false;
+
+    document.addEventListener("click", () => {
+        if (!soundEnabled) {
+            msgSound
+                .play()
+                .then(() => {
+                    msgSound.pause();
+                    msgSound.currentTime = 0;
+                    soundEnabled = true;
+                })
+                .catch(() => {});
+        }
+    });
 
     onSnapshot(roomRef, (snap) => {
         const data = snap.data();
+const sheet = document.getElementById("question-sheet");
+const currentQ = data.currentQuestion;
 
+if (!currentQ) {
+    sheet.classList.remove("show");
+    lastQuestionKey = null;
+} else {
+    const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
+
+    if (key !== lastQuestionKey) {
+        lastQuestionKey = key;
+
+        // 🔥 هنا نفتح الشيت من gamePlan مش من Firebase
+        const cat = data.gamePlan[currentQ.categoryIndex];
+        const q = cat.questions[currentQ.questionIndex];
+
+        openQuestion(cat, currentQ.questionIndex, currentQ.categoryIndex);
+    }
+}
         const progressBox = document.getElementById("answer-progress");
         const notAnsweredBox = document.getElementById("not-answered-list");
-
-        const currentQ = data.currentQuestion;
 
         let totalPlayers = Object.keys(data.players || {}).length;
         let answeredPlayers = 0;
@@ -241,7 +298,6 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
                 ? `⏳ مستني: ${notAnsweredNames.join(" - ")}`
                 : "";
         }
-
         const messages = data.suggestions || [];
         const list = document.getElementById("suggestions-list");
 
@@ -281,6 +337,21 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
         // if (playerId !== data.hostId) {
         //     window.location.href = `/room/${roomCode}/player`;
         // }
+
+        const totalQuestions = data.gamePlan?.reduce((total, cat) => {
+            return total + (cat.questions?.length || 0);
+        }, 0);
+
+        const answeredCount = Object.keys(data.answeredQuestions || {}).length;
+
+        // 👇 لو كل الأسئلة اتجاوبت
+        if (answeredCount >= totalQuestions && totalQuestions > 0) {
+            document.getElementById("show-results").style.display =
+                "inline-block";
+        } else {
+            document.getElementById("show-results").style.display = "none";
+        }
+
         board.innerHTML = "";
 
         const section = document.getElementById("players-section");
@@ -320,81 +391,99 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
 
             if (!question) return;
 
-            await updateDoc(roomRef, {
-                currentQuestion: {
-                    text: question.text,
-                    options: question.options || [],
-                    correct: question.correct,
-                    type: question.type || "choice",
-                    category: cat.category,
-                    categoryIndex: catIndex,
-                    questionIndex: index,
-                },
-                [`questionStartTimes.${catIndex}_${index}`]: Date.now(),
-            });
-            if (!question) return;
-
             if (question.type === "text") {
                 content.innerHTML = `
-                    <div class="question-box">
+        <div class="question-box">
 
-                        ${imageHtml}
-                            <h2>${question.text}</h2>
-                            <div class="admin-correct">
-                                ✅ الإجابة: ${question.correct}
-                            </div>
-<button id="mark-done" class="done-btn">✔️ تم الإجابة</button>
-                        
+            ${imageHtml}
+<h2>${question.text}</h2>
+    <button id="hint-btn">💡 تلميح</button>
+    <p id="hint-box" style="display:none;"></p>
 
-                        <div id="feedback"></div>
+            <div class="text-answer-box">
+                <input id="text-answer" placeholder="اكتب إجابتك 😏" />
+                <button id="send-answer">إرسال</button>
+            </div>
 
-                    </div>
+            <div id="feedback"></div>
 
-                    <div class="close-sheet">
-                        <button id="close-sheet">❌ قفل</button>
-                    </div>
-                `;
-                        } else {
-                            content.innerHTML = `
-                    <div class="question-box">
+        </div>
 
-                        ${imageHtml}
-                            <h2>${question.text}</h2>
-                            <div class="admin-correct">
-                                ✅ الإجابة: ${question.correct}
-                            </div>
-<button id="mark-done" class="done-btn">✔️ تم الإجابة</button>
-                        <div class="answers">
-                            ${question.options
-                                .map(
-                                    (opt) => `
-                                <button class="answer-btn" data-answer="${opt}">
-                                    ${opt}
-                                </button>
-                            `,
-                                )
-                                .join("")}
-                        </div>
+        <div class="close-sheet">
+            <button id="close-sheet">❌ قفل</button>
+        </div>
+    `;
+                const hintBtn = document.getElementById("hint-btn");
+                const hintBox = document.getElementById("hint-box");
+                hintBox.style.display = "none";
+                hintBox.innerText = "";
 
-                        <div id="feedback"></div>
+                hintBtn.onclick = async () => {
+    const key = `${catIndex}_${index}`;
 
-                    </div>
-
-                    <div class="close-sheet">
-                        <button id="close-sheet">❌ قفل</button>
-                    </div>
-                `;
-                document.getElementById("mark-done").onclick = async () => {
-    const answeredKey = `${catIndex}_${index}`;
-
-    // 👇 نعلّم السؤال إنه اتجاوب
+    // 👇 ابعت إن التلميح اتفتح
     await updateDoc(roomRef, {
-        [`answeredQuestions.${answeredKey}`]: true,
-        currentQuestion: null
+        [`hints.${key}`]: true
     });
 
-    sheet.classList.remove("show");
-};
+                    if (!question.hint) {
+                        hintBox.innerText = "❌ مفيش تلميح";
+                    } else {
+                        hintBox.innerText = currentQuestion.hint;
+                    }
+
+                    hintBox.style.display = "block";
+                };
+            } else {
+                content.innerHTML = `
+        <div class="question-box">
+
+            ${imageHtml}
+<h2>${question.text}</h2>
+    <button id="hint-btn">💡 تلميح</button>
+    <p id="hint-box" style="display:none;"></p>
+
+            <div class="answers">
+                ${question.options
+                    .map(
+                        (opt) => `
+                    <button class="answer-btn" data-answer="${opt}">
+                        ${opt}
+                    </button>
+                `,
+                    )
+                    .join("")}
+            </div>
+
+            <div id="feedback"></div>
+
+        </div>
+
+        <div class="close-sheet">
+            <button id="close-sheet">❌ قفل</button>
+        </div>
+    `;
+                const hintBtn = document.getElementById("hint-btn");
+                const hintBox = document.getElementById("hint-box");
+                hintBox.style.display = "none";
+                hintBox.innerText = "";
+
+                hintBtn.onclick = async () => {
+    const key = `${catIndex}_${index}`;
+
+    // 👇 ابعت إن التلميح اتفتح
+    await updateDoc(roomRef, {
+        [`hints.${key}`]: true
+    });
+
+                    if (!question.hint) {
+                        hintBox.innerText = "❌ مفيش تلميح";
+                    } else {
+                        hintBox.innerText = currentQuestion.hint;
+                    }
+
+                    hintBox.style.display = "block";
+                };
             }
             setTimeout(() => {
                 const qImg = document.querySelector(".question-img");
@@ -412,25 +501,70 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
             let answered = false;
 
             // 👇 text question
+            const sendBtn = document.getElementById("send-answer");
 
-            document.getElementById("mark-done").onclick = async () => {
-                const answeredKey = `${catIndex}_${index}`;
+            if (sendBtn) {
+                sendBtn.addEventListener("click", async () => {
+                    if (answered) return;
 
-                await updateDoc(roomRef, {
-                    [`answeredQuestions.${answeredKey}`]: true,
-                    currentQuestion: null
+                    const input = document.getElementById("text-answer");
+                    const answer = input.value.trim();
+
+                    if (!answer) return;
+
+                    answered = true;
+
+                    const playerId = localStorage.getItem("player_" + roomCode);
+                    const correctAnswer = cat.questions[index]?.correct;
+
+                    const answeredKey = `${catIndex}_${index}`;
+
+                    await updateDoc(roomRef, {
+                        [`answers.${answeredKey}.${playerId}`]: {
+                            answer,
+                            correctAnswer,
+                            category: cat.category,
+                            questionIndex: index,
+                            time: Date.now(),
+                        },
+                        [`answeredQuestions.${answeredKey}`]: true,
+                    });
+
+                    const feedback = document.getElementById("feedback");
+
+                    const user = normalize(answer);
+                    const correct = normalize(correctAnswer);
+
+                    if (user === correct) {
+                        playWinEffect();
+                        feedback.innerHTML = `
+            <div class="feedback-box success">
+                🔥 صح 100% يا وحش!
+            </div>
+            `;
+                    } else if (isCorrectAnswer(answer, correctAnswer)) {
+                        playWinEffect();
+                        feedback.innerHTML = `
+            <div class="feedback-box success">
+                😏 قريبة فشخ… هنعديها!
+            </div>
+            `;
+                    } else {
+                        playLoseEffect();
+                        feedback.innerHTML = `
+            <div class="feedback-box error">
+                ❌ غلط يا نجم 😏
+                <br><br>
+                <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+            </div>
+            `;
+                    }
+
+                    // 🔥 تحسين UX
+                    input.disabled = true;
+                    sendBtn.disabled = true;
                 });
-
-                sheet.classList.remove("show");
-            };
-            document.getElementById("close-sheet").onclick = async () => {
-                sheet.classList.remove("show");
-
-                await updateDoc(roomRef, {
-                    currentQuestion: null
-                });
-            };
-
+            }
             document.querySelectorAll(".answer-btn").forEach((btn) => {
                 btn.addEventListener("click", async () => {
                     if (answered) return;
@@ -461,19 +595,48 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
 
                     const feedback = document.getElementById("feedback");
 
+                    document.querySelectorAll(".answer-btn").forEach((b) => {
+                        b.disabled = true;
+
+                        const btnAnswer = b.dataset.answer;
+
+                        // ✅ الإجابة الصح دايمًا أخضر
+                        if (btnAnswer === correctAnswer) {
+                            b.style.background = "#22c55e";
+                            b.style.color = "#000";
+                        }
+
+                        // ❌ اللي الأدمن اختاره وكان غلط
+                        else if (btnAnswer === answer) {
+                            b.style.background = "#ef4444";
+                            b.style.color = "#fff";
+                        }
+
+                        // 👇 باقي الاختيارات باهتة
+                        else {
+                            b.style.opacity = "0.4";
+                        }
+                    });
+
                     // 🔥 ده اللي كان ناقصك بصراحة
                     if (answer === correctAnswer) {
                         playWinEffect();
-                        feedback.innerHTML = "✅ إجابة صح يا بطل!";
+                        feedback.innerHTML = `
+<div class="feedback-box success">
+    🔥 صح يا بطل!
+</div>
+`;
                         feedback.style.color = "#22c55e";
                     } else {
                         playLoseEffect();
 
                         feedback.innerHTML = `
-                            <span class="wrong-text">❌ غلط يا نجم 😏</span>
-                            <br><br>
-                            <span class="correct-text">✅ الإجابة الصحيحة: ${correctAnswer}</span>
-                            `;
+<div class="feedback-box error">
+    ❌ غلط يا نجم 😏
+    <br><br>
+    <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+</div>
+`;
                     }
 
                     feedback.style.textAlign = "center";
@@ -482,6 +645,10 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
                 });
             });
             sheet.classList.add("show");
+
+            document.getElementById("close-sheet").onclick = () => {
+                sheet.classList.remove("show");
+            };
         }
 
         gamePlan.forEach((cat, catIndex) => {
@@ -518,9 +685,7 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
                     card.style.pointerEvents = "none";
                     card.innerText = "✔️";
                 } else {
-                    card.addEventListener("click", () => {
-                        openQuestion(cat, i, catIndex);
-                    });
+
                 }
 
                 col.appendChild(card);
@@ -566,10 +731,16 @@ if (!data || playerId !== data.hostId || (data.adminMode !== "admin" && data.adm
         window.location.href = "/";
     });
 
-    document.getElementById("show-results")?.addEventListener("click", () => {
-        window.location.href = `/room/${roomCode}/results`;
-    });
     document.getElementById("close-image").onclick = () => {
         document.getElementById("image-modal").classList.add("hidden");
     };
+    document
+        .getElementById("show-results")
+        ?.addEventListener("click", async () => {
+            await updateDoc(roomRef, {
+                showResults: true,
+            });
+
+            window.location.href = `/room/${roomCode}/results`;
+        });
 </script>

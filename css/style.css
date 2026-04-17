@@ -803,7 +803,7 @@ h2 {
 .page-content {
   position: relative;
   z-index: 1;
-  max-width: 1000px;
+  max-width: 1200px;
             margin: auto;
             padding: 10px;
             text-align: center;
@@ -2586,9 +2586,9 @@ h1 {
 .board {
   position: relative;
   z-index: 2;
-  max-width: 1000px;
+  max-width: inherit;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 15px;
   padding: 20px;
   margin: 0 auto;
