@@ -49,16 +49,7 @@ import Layout from "../../../layouts/Layout.astro";
     src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
 ></script>
 <script type="module">
-    import {
-        db,
-        doc,
-        onSnapshot,
-        updateDoc,
-        getDoc,
-        deleteDoc,
-        getDocs,
-        collection,
-    } from "/js/firebase.js";
+    import { db, doc, onSnapshot, updateDoc, getDoc, deleteDoc, getDocs, collection, } from "/js/firebase.js";
 
     const roomCode =
         document.querySelector(".board").dataset?.code ||

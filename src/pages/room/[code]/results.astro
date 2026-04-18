@@ -5,27 +5,34 @@ import Layout from "../../../layouts/Layout.astro";
 
 <Layout>
     <h1 style="text-align:center; margin:20px;">📊 نتائج اللعبة</h1>
-
+    <button id="back-to-game" style="margin:20px;"> 🔙 رجوع للعبة </button>
     <div id="results"></div>
     <script
         src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
     ></script>
+
     <script type="module">
         import { db } from "/js/firebase.js";
         import {
             doc,
-            getDoc,
+            onSnapshot,
+            updateDoc,
         } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const roomCode = window.location.pathname.split("/")[2];
-
         const roomRef = doc(db, "rooms", roomCode);
 
         const container = document.getElementById("results");
         const counted = {};
         const winMusic = new Audio("/sounds/win.mp3");
-        winMusic.volume = 0.6; // خليه هادي شوية
 
+        winMusic.volume = 0.6;
+
+        window.addEventListener("pageshow", (event) => {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
         function startConfetti() {
             const duration = 5 * 1000;
             const end = Date.now() + duration;
@@ -45,43 +52,53 @@ import Layout from "../../../layouts/Layout.astro";
                 }
             })();
         }
-        async function loadResults() {
-            const snap = await getDoc(roomRef);
+
+        // 🔥 realtime listener
+        onSnapshot(roomRef, (snap) => {
             const data = snap.data();
 
             if (!data) {
-                container.innerHTML = "<p>❌ مفيش بيانات</p>";
+                window.location.href = "/";
                 return;
             }
 
+            // 🔥 أهم شرط بقى
+            if (!data.showResults) {
+                window.history.back();
+                return;
+            }
+
+            renderResults(data);
+        });
+
+        function renderResults(data) {
             const answers = data.answers || {};
             const players = data.players || {};
 
             let html = `
-                <table class="results-table">
-                    <thead>
-                        <tr>
-                            <th>👤 اللاعب</th>
-                            <th>📂 الفئة</th>
-                            <th>❓ السؤال</th>
-                            <th>✍️ إجابته</th>
-                            <th>🏁 النتيجة</th>
-                            <th>✅ الصح</th>
-                            <th>⏱️ الوقت</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                `;
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>👤 اللاعب</th>
+                    <th>📂 الفئة</th>
+                    <th>❓ السؤال</th>
+                    <th>✍️ إجابته</th>
+                    <th>🏁 النتيجة</th>
+                    <th>✅ الصح</th>
+                    <th>⏱️ الوقت</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
 
             const scores = {};
 
-            for (let questionKey in data.questionStartTimes) {
+            for (let questionKey in data.questionStartTimes || {}) {
                 const startTime = data.questionStartTimes[questionKey];
                 const question = answers[questionKey];
 
                 if (!question) continue;
 
-                // 🔥 أسرع واحد
                 let fastestTime = Infinity;
                 let fastestPlayer = null;
 
@@ -98,7 +115,6 @@ import Layout from "../../../layouts/Layout.astro";
                     }
                 }
 
-                // 🔥 عرض البيانات
                 for (let playerId in question) {
                     const ans = question[playerId];
 
@@ -119,103 +135,106 @@ import Layout from "../../../layouts/Layout.astro";
                     }
 
                     html += `
-            <tr>
-                <td><strong>${playerName}</strong></td>
-                <td style="opacity:0.8">${ans.category}</td>
-                <td>#${ans.questionIndex + 1}</td>
-                <td>${ans.answer}</td>
-                <td class="${isCorrect ? "correct-answer" : "wrong-answer"}">
-                    ${isCorrect ? "✔️ صح" : "❌ غلط"}
-                </td>
-                <td>${ans.correctAnswer}</td>
-                <td>
-                    ${timeDiff !== null ? timeDiff.toFixed(2) + "s" : "--"}
-                    ${playerId === fastestPlayer ? "⚡" : ""}
-                </td>
-            </tr>
-        `;
+                <tr>
+                    <td><strong>${playerName}</strong></td>
+                    <td>${ans.category}</td>
+                    <td>#${ans.questionIndex + 1}</td>
+                    <td>${ans.answer}</td>
+                    <td>${isCorrect ? "✔️ صح" : "❌ غلط"}</td>
+                    <td>${ans.correctAnswer}</td>
+                    <td>
+                        ${timeDiff !== null ? timeDiff.toFixed(2) + "s" : "--"}
+                        ${playerId === fastestPlayer ? "⚡" : ""}
+                    </td>
+                </tr>
+            `;
                 }
             }
+
             html += `</tbody></table>`;
-            const leaderboardHTML = `
-                    <div class="leaderboard">
-                    <div class="trophy-box">
-                        <div class="trophy-icon">🏆</div>
-                        <div class="leader-title">الترتيب</div>
-                    </div>
-                        ${Object.entries(scores)
-                            .sort((a, b) => b[1] - a[1])
-                            .slice(0, 3)
-                            .map(([playerId, score], i) => {
-                                const name = players[playerId]?.name || "لاعب";
 
-                                return `
-                                    <div class="leader-item">
-                                        <span>#${i + 1}</span>
-                                        <span>${name}</span>
-                                        <span>${score} نقطة</span>
-                                    </div>
-                                `;
-                            })
-                            .join("")}
-                    </div>
+            const playersCount = Object.keys(players).length;
+
+            let leaderboardHTML = "";
+
+            if (playersCount < 2) {
+                leaderboardHTML = `
+        <div class="leaderboard">
+            <div class="trophy-box">
+                <div class="trophy-icon">😏</div>
+                <div class="leader-title">إنت لوحدك يا نجم 😂</div>
+            </div>
+        </div>
+    `;
+            } else {
+                leaderboardHTML = `
+        <div class="leaderboard">
+            <div class="trophy-box">
+                <div class="trophy-icon">🏆</div>
+                <div class="leader-title">الترتيب</div>
+            </div>
+            ${Object.entries(scores)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 3)
+                .map(([playerId, score], i) => {
+                    const name = players[playerId]?.name || "لاعب";
+
+                    return `
+                        <div class="leader-item">
+                            <span>#${i + 1}</span>
+                            <span>${name}</span>
+                            <span>${score} نقطة</span>
+                        </div>
                     `;
-            // 🔥 leaderboard
+                })
+                .join("")}
+        </div>
+    `;
+            }
 
-            const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-            const winner = sorted[0];
-            const winnerName = players[winner[0]]?.name || "لاعب";
-            const winnerScore = winner[1];
-            let leaderboard = `
-                <div class="winner-container">
-
-                    <div class="trophy">🏆</div>
-
-                    <div class="winner-name">
-                        ${winnerName}
-                    </div>
-
-                    <div class="winner-score">
-                        ${winnerScore} نقطة
-                    </div>
-
-                </div>
-                `;
             container.innerHTML = `
-                <div class="flip-card" id="flip-card">
-                    <div class="flip-inner">
-
-                        <!-- 👈 الكارت المقفول -->
-                        <div class="flip-front">
-                            <h2>🎯 اضغط لمعرفة الفائز</h2>
-                        </div>
-
-                        <!-- 👉 الكاس بس -->
-                        <div class="flip-back">
-                            ${leaderboardHTML}
-                        </div>
-
-                    </div>
+        <div class="flip-card" id="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <h2>🎯 اضغط لمعرفة الفائز</h2>
                 </div>
 
-                <!-- 👇 الجدول بره -->
-                <div class="table-wrapper">
-                    ${html}
+                <div class="flip-back">
+                    ${leaderboardHTML}
                 </div>
-                `;
-            document.getElementById("flip-card").onclick = () => {
-                const card = document.getElementById("flip-card");
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            ${html}
+        </div>
+    `;
+
+            const card = document.getElementById("flip-card");
+
+            // 🔥 لو الأدمن فتح الكارت
+            if (data.showWinner) {
                 card.classList.add("flipped");
 
-                // 🎉 الكونفتي
                 startConfetti();
-
-                // 🎶 المزيكا
                 winMusic.currentTime = 0;
                 winMusic.play().catch(() => {});
+            }
+
+            // 👇 لما الأدمن يدوس
+            card.onclick = async () => {
+                await updateDoc(roomRef, {
+                    showWinner: true,
+                });
             };
         }
-
-        loadResults();
+        document
+            .getElementById("back-to-game")
+            ?.addEventListener("click", async () => {
+                await updateDoc(roomRef, {
+                    showResults: false,
+                    showWinner: false,
+                });
+            });
     </script>
 </Layout>

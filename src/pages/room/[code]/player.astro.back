@@ -1,0 +1,474 @@
+---
+// src/pages/room/[code]/player.astro.back
+const { code } = Astro.params;
+import Layout from "../../../layouts/Layout.astro";
+---
+
+<Layout>
+    <div class="player-container">
+        <div id="admin-status" class="admin-status"></div>
+        <div id="category-card"></div>
+        <div id="question-image"></div>
+        <h2 id="question">⏳ مستني السؤال...</h2>
+        <p id="hint-box" style="display:none;"></p>
+        <div id="answers"></div>
+
+        <div id="text-box" style="display:none;">
+            <input id="text-answer" placeholder="اكتب إجابتك 😏" />
+            <button id="send-answer">إرسال</button>
+        </div>
+
+        <div id="feedback"></div>
+
+        <div class="chat-divider">
+            <span>💬 الدردشة</span>
+        </div>
+
+        <div class="suggest-box">
+            <button id="send-chat">إرسال</button>
+            <input id="chat-input" placeholder="اكتب رسالة 😏" />
+        </div>
+
+        <div class="suggestions-wrapper">
+            <div id="chat-list" class="suggestions-list"></div>
+        </div>
+    </div>
+</Layout>
+<script
+    src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
+></script>
+<script type="module">
+    import { db } from "/js/firebase.js";
+    import { doc, onSnapshot, updateDoc, getDoc, getDocs, collection, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const roomCode = window.location.pathname.split("/")[2];
+    const roomRef = doc(db, "rooms", roomCode);
+    const playerId = localStorage.getItem("player_" + roomCode);
+
+    const qEl = document.getElementById("question");
+    const answersEl = document.getElementById("answers");
+    const textBox = document.getElementById("text-box");
+    const feedback = document.getElementById("feedback");
+
+    let answered = false;
+    let currentQ = null;
+    let categoriesMap = {};
+
+    async function loadCategoriesMap() {
+        const snap = await getDocs(collection(db, "categories"));
+
+        snap.forEach((doc) => {
+            const cat = doc.data();
+            categoriesMap[cat.slug] = {
+                image: cat.image,
+                name: cat.name,
+            };
+        });
+    }
+
+    await loadCategoriesMap();
+
+    const winSound = new Audio("/sounds/winn.mp3");
+    const loseSound = new Audio("/sounds/lose.mp3");
+
+    function normalize(text) {
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/[\u064B-\u065F]/g, "")
+            .replace(/أ|إ|آ/g, "ا")
+            .replace(/ى/g, "ي")
+            .replace(/ة/g, "ه");
+    }
+
+    function levenshtein(a, b) {
+        const matrix = [];
+
+        for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+        for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+        for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+                if (b[i - 1] === a[j - 1]) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j - 1] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j] + 1,
+                    );
+                }
+            }
+        }
+
+        return matrix[b.length][a.length];
+    }
+
+    function isCorrectAnswer(userAnswer, correctAnswer) {
+        const user = normalize(userAnswer);
+        const correct = normalize(correctAnswer);
+
+        const distance = levenshtein(user, correct);
+
+        return distance <= 1;
+    }
+
+    function playWinEffect() {
+        winSound.currentTime = 0;
+        winSound.play().catch(() => {});
+
+        // 💥 من النص
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+        });
+
+        // 👉 من اليمين
+        confetti({
+            particleCount: 40,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+        });
+
+        // 👈 من الشمال
+        confetti({
+            particleCount: 40,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+        });
+    }
+    function playLoseEffect() {
+        loseSound.currentTime = 0;
+        loseSound.play().catch(() => {});
+    }
+    let lastCount = 0;
+    const msgSound = new Audio("/sounds/msg.mp3");
+    let soundEnabled = false;
+
+    document.addEventListener("click", () => {
+        if (!soundEnabled) {
+            msgSound
+                .play()
+                .then(() => {
+                    msgSound.pause();
+                    msgSound.currentTime = 0;
+                    soundEnabled = true;
+                })
+                .catch(() => {});
+        }
+    });
+    onSnapshot(roomRef, (snap) => {
+        const data = snap.data();
+        if (!data) return;
+
+        if (data.showResults) {
+            window.location.href = `/room/${roomCode}/results`;
+            return;
+        }
+
+        console.log("HINTS:", data.hints);
+        console.log("QUESTION:", data.currentQuestion);
+        const messages = data.suggestions || [];
+        const list = document.getElementById("chat-list");
+        const isAdminManager = data.adminMode === "admin";
+        const statusBox = document.getElementById("admin-status");
+
+        if (isAdminManager) {
+            statusBox.innerText =
+                "🧠 الأدمن بيدير اللعبة (يقدر يجاوب ويظهر في النتيجة 😏… بس شايف الإجابة الصح من قبل ما تجاوبوا)";
+            statusBox.style.background = "#7c3aed";
+        } else {
+            statusBox.innerText =
+                "🎮 الأدمن بيلعب معاكم (زيكم بالظبط 😎… مش هيشوف الإجابات غير في نهاية الجولة)";
+            statusBox.style.background = "#16a34a";
+        }
+        if (list) {
+            list.innerHTML = messages
+                .map((m) => {
+                    const isMe = m.player === playerId;
+
+                    return `
+                <div class="suggest-item ${isMe ? "me" : ""}">
+                    <span class="name">${m.playerName}</span>
+                    <span class="text">${m.text}</span>
+                </div>
+            `;
+                })
+                .join("");
+
+            list.scrollTop = list.scrollHeight;
+        }
+
+        // 🔊 صوت
+        if (lastCount !== 0 && messages.length > lastCount) {
+            const lastMsg = messages[messages.length - 1];
+
+            if (lastMsg.player !== playerId) {
+                msgSound.currentTime = 0;
+                msgSound.play().catch(() => {});
+            }
+        }
+
+        lastCount = messages.length;
+        const q = data.currentQuestion;
+
+        if (!q) return;
+
+        const key = `${q.categoryIndex}_${q.questionIndex}`;
+        const hintVisible = data.hints?.[key];
+
+        const hintBox = document.getElementById("hint-box");
+        const catCard = document.getElementById("category-card");
+
+        if (q && catCard) {
+            const cat = categoriesMap[q.category];
+
+            if (cat) {
+                catCard.innerHTML = `
+            <div class="player-cat-card">
+                <img src="${cat.image}" />
+                <div class="overlay">${cat.name}</div>
+            </div>
+        `;
+            } else {
+                catCard.innerHTML = "";
+            }
+        }
+        // 👇 لو التلميح اتفتح
+        if (hintBox) {
+            if (hintVisible) {
+                if (q.hint) {
+                    hintBox.innerText = "💡 " + q.hint;
+                } else {
+                    hintBox.innerText = "❌ مفيش تلميح";
+                }
+
+                hintBox.style.display = "block";
+            } else {
+                hintBox.style.display = "none";
+            }
+        }
+        if (!q) return;
+        const answeredKey = `${q.categoryIndex}_${q.questionIndex}`;
+        const myAnswer = data.answers?.[answeredKey]?.[playerId]?.answer;
+        const correctAnswer = q.correct;
+
+        currentQ = q;
+        const newKey = `${q.categoryIndex}_${q.questionIndex}`;
+
+        qEl.innerText = q.text;
+        const imgBox = document.getElementById("question-image");
+
+        if (q.image) {
+            imgBox.innerHTML = `<img src="${q.image}" class="question-img" />`;
+        } else {
+            imgBox.innerHTML = "";
+        }
+
+        if (window.lastQuestionKey !== newKey) {
+            answered = false;
+            window.lastQuestionKey = newKey;
+
+            answersEl.innerHTML = "";
+            feedback.innerHTML = "";
+
+            // 💣 أهم سطرين في حياتك
+            const input = document.getElementById("text-answer");
+            const sendBtn = document.getElementById("send-answer");
+
+            if (input) {
+                input.value = "";
+                input.disabled = false;
+            }
+
+            if (sendBtn) {
+                sendBtn.disabled = false;
+            }
+        }
+        if (q.type !== "text") {
+            textBox.style.display = "none";
+
+            // 👇 امسح كل مرة قبل ما ترسم
+            answersEl.innerHTML = "";
+
+            q.options.forEach((opt) => {
+                const btn = document.createElement("button");
+                btn.className = "answer-btn";
+                btn.innerText = opt;
+
+                // 👇 لو اللاعب جاوب قبل كده
+                if (myAnswer) {
+                    btn.disabled = true;
+
+                    if (opt === correctAnswer) {
+                        btn.style.background = "#22c55e";
+                        btn.style.color = "#000";
+                    } else if (opt === myAnswer) {
+                        btn.style.background = "#ef4444";
+                        btn.style.color = "#fff";
+                    } else {
+                        btn.style.opacity = "0.4";
+                    }
+                }
+
+                btn.onclick = async () => {
+                    if (answered || myAnswer) return;
+
+                    answered = true;
+
+                    await updateDoc(roomRef, {
+                        [`answers.${answeredKey}.${playerId}`]: {
+                            answer: opt,
+                            correctAnswer: correctAnswer,
+                            category: q.category,
+                            questionIndex: q.questionIndex,
+                            time: Date.now(),
+                        },
+                    });
+
+                    if (opt === q.correct) {
+                        playWinEffect();
+                        feedback.innerHTML = `
+                            <div class="feedback-box success">
+                            🔥 صح يا بطل!
+                            </div>
+                            `;
+                    } else {
+                        playLoseEffect();
+                        feedback.innerHTML = `
+<div class="feedback-box error">
+    ❌ غلط يا نجم 😏
+    <br><br>
+    <span class="correct-answer">✅ الإجابة الصحيحة: ${q.correct}</span>
+</div>
+`;
+                    }
+
+                    // 🎨 تلوين الأزرار
+                    document.querySelectorAll(".answer-btn").forEach((b) => {
+                        b.disabled = true;
+
+                        const btnAnswer = b.innerText;
+
+                        // ✅ لو ده الصح
+                        if (btnAnswer === q.correct) {
+                            b.style.background = "#22c55e"; // أخضر
+                            b.style.color = "#000";
+                        }
+
+                        // ❌ لو ده اللي اللاعب اختاره وكان غلط
+                        else if (btnAnswer === opt) {
+                            b.style.background = "#ef4444"; // أحمر
+                            b.style.color = "#fff";
+                        }
+
+                        // 👇 الباقي باهت
+                        else {
+                            b.style.opacity = "0.4";
+                        }
+                    });
+                };
+
+                answersEl.appendChild(btn);
+            });
+        } else {
+            answersEl.innerHTML = "";
+            textBox.style.display = "block";
+
+            const input = document.getElementById("text-answer");
+            const sendBtn = document.getElementById("send-answer");
+
+            // 💣 reset كل مرة
+            input.value = "";
+            input.disabled = false;
+            sendBtn.disabled = false;
+
+            // 👇 لو جاوب قبل كده
+            if (myAnswer) {
+                input.value = myAnswer;
+                input.disabled = true;
+                sendBtn.disabled = true;
+            }
+
+            // 🔥 focus
+            setTimeout(() => {
+                input.focus();
+            }, 0);
+        }
+    });
+
+    document.getElementById("send-answer").onclick = async () => {
+        if (answered) return;
+        answered = true;
+
+        const input = document.getElementById("text-answer");
+        const answer = input.value.trim();
+
+        if (!answer || !currentQ) return;
+
+        const answeredKey = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
+
+        await updateDoc(roomRef, {
+            [`answers.${answeredKey}.${playerId}`]: {
+                answer,
+                correctAnswer: currentQ.correct,
+                category: currentQ.category,
+                questionIndex: currentQ.questionIndex,
+                time: Date.now(),
+            },
+        });
+
+        const user = normalize(answer);
+        const correct = normalize(currentQ.correct);
+
+        if (user === correct) {
+            playWinEffect();
+            feedback.innerHTML = `
+        <span class="correct-text">🔥 صح 100% يا بطل!</span>
+    `;
+        } else if (isCorrectAnswer(answer, currentQ.correct)) {
+            playWinEffect();
+            feedback.innerHTML = `
+        <span class="correct-text">😏 قريبة فشخ… هنعديها!</span>
+    `;
+        } else {
+            playLoseEffect();
+            feedback.innerHTML = `
+        <span class="wrong-text">❌ غلط يا نجم 😏</span>
+        <br><br>
+        <span class="correct-text">✅ الإجابة الصحيحة: ${currentQ.correct}</span>
+    `;
+        }
+
+        // 🔒 قفل الإدخال
+        input.disabled = true;
+        document.getElementById("send-answer").disabled = true;
+    };
+
+    document
+        .getElementById("send-chat")
+        ?.addEventListener("click", async () => {
+            const input = document.getElementById("chat-input");
+            const text = input.value.trim();
+            if (!text) return;
+
+            const snap = await getDoc(roomRef);
+            const data = snap.data();
+
+            const newMsg = {
+                text,
+                player: playerId,
+                playerName: data.players?.[playerId]?.name || "لاعب 😏",
+                time: Date.now(),
+            };
+
+            await updateDoc(roomRef, {
+                suggestions: [...(data.suggestions || []), newMsg],
+            });
+
+            input.value = "";
+        });
+</script>

@@ -3358,6 +3358,12 @@ h1 {
   text-align: center;
   font-weight: 500;
 }
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  #hint-box {
+  font-size: 18px;
+  }
+}
 
 @keyframes fadeIn {
   from {

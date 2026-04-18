@@ -1,4 +1,5 @@
 ---
+// src/pages/room/[code]/admin-board.astro
 const { code } = Astro.params;
 import Layout from "../../../layouts/Layout.astro";
 ---
@@ -8,7 +9,7 @@ import Layout from "../../../layouts/Layout.astro";
         <div class="left">
             <span>🎮 كود الغرفة: {code}</span>
             <button id="end-game" class="end-btn">❌ اقفل الروم</button>
-            <button id="open-admin">👑 شاشة الأدمن</button>
+            <!-- <button id="open-admin">👑 شاشة الأدمن</button> -->
         </div>
 
         <div class="center">
@@ -53,7 +54,16 @@ import Layout from "../../../layouts/Layout.astro";
     src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
 ></script>
 <script type="module">
-    import { db, doc, onSnapshot, updateDoc, getDoc, deleteDoc, getDocs, collection, } from "/js/firebase.js";
+    import {
+        db,
+        doc,
+        onSnapshot,
+        updateDoc,
+        getDoc,
+        deleteDoc,
+        getDocs,
+        collection,
+    } from "/js/firebase.js";
 
     const roomCode =
         document.querySelector(".board").dataset?.code ||
@@ -264,6 +274,13 @@ import Layout from "../../../layouts/Layout.astro";
 
         progressBox.classList.remove("green", "red", "waiting");
 
+        if (data.showResults) {
+    if (!window.location.pathname.includes("results")) {
+        window.location.href = `/room/${roomCode}/results`;
+    }
+    return;
+}
+
         if (!currentQ) {
             // ⚪ مفيش سؤال
             progressBox.innerText = "🎯 اختار سؤال الأول";
@@ -300,19 +317,19 @@ import Layout from "../../../layouts/Layout.astro";
         }
         const hintBox = document.getElementById("hint-box");
 
-if (data.currentQuestion && hintBox) {
-    const q = data.currentQuestion;
-    const key = `${q.categoryIndex}_${q.questionIndex}`;
+        if (data.currentQuestion && hintBox) {
+            const q = data.currentQuestion;
+            const key = `${q.categoryIndex}_${q.questionIndex}`;
 
-    const isShown = data.hints?.[key];
+            const isShown = data.hints?.[key];
 
-    if (isShown) {
-        hintBox.style.display = "block";
-        hintBox.innerText = q.hint || "❌ مفيش تلميح";
-    } else {
-        hintBox.style.display = "none";
-    }
-}
+            if (isShown) {
+                hintBox.style.display = "block";
+                hintBox.innerText = q.hint || "❌ مفيش تلميح";
+            } else {
+                hintBox.style.display = "none";
+            }
+        }
         const messages = data.suggestions || [];
         const list = document.getElementById("suggestions-list");
 
@@ -349,9 +366,6 @@ if (data.currentQuestion && hintBox) {
         lastCount = messages.length;
 
         const gamePlan = data.gamePlan || [];
-        // if (playerId !== data.hostId) {
-        //     window.location.href = `/room/${roomCode}/player`;
-        // }
 
         const totalQuestions = data.gamePlan?.reduce((total, cat) => {
             return total + (cat.questions?.length || 0);
@@ -427,96 +441,86 @@ if (data.currentQuestion && hintBox) {
 
             if (question.type === "text") {
                 content.innerHTML = `
-        <div class="question-box">
+                    <div class="question-box">
 
-            ${imageHtml}
-<h2>${question.text}</h2>
-    <button id="hint-btn">💡 تلميح</button>
-    <p id="hint-box" style="display:none;"></p>
+                        ${imageHtml}
+                            <h2>${question.text}</h2>
 
-            <div class="text-answer-box">
-                <input id="text-answer" placeholder="اكتب إجابتك 😏" />
-                <button id="send-answer">إرسال</button>
-            </div>
+                            <div class="admin-correct">
+                                ✅ الإجابة: ${question.correct}
+                            </div>
 
-            <div id="feedback"></div>
+                            <button id="show-hint">💡 عرض التلميح</button>
 
-        </div>
+                            <button id="mark-done" class="done-btn">✔️ تم الإجابة</button>
+                        
 
-        <div class="close-sheet">
-            <button id="close-sheet">❌ قفل</button>
-        </div>
-    `;
-                const hintBtn = document.getElementById("hint-btn");
+                        <div id="hint-box" style="display:none; margin-top:10px;"></div>
+
+<div id="feedback"></div>
+
+                    </div>
+
+                    <div class="close-sheet">
+                        <button id="close-sheet">❌ قفل</button>
+                    </div>
+                `;
                 const hintBox = document.getElementById("hint-box");
-                hintBox.style.display = "none";
-                hintBox.innerText = "";
 
-hintBtn.onclick = async () => {
-    const snap = await getDoc(roomRef);
-    const data = snap.data();
-    const q = data.currentQuestion;
-
-    if (!q) return;
-
-    const key = `${q.categoryIndex}_${q.questionIndex}`;
-
-    const isShown = data.hints?.[key];
-
-    await updateDoc(roomRef, {
-        [`hints.${key}`]: !isShown
-    });
-};
+                if (hintBox) {
+                    hintBox.style.display = "none";
+                    hintBox.innerText = "";
+                }
             } else {
                 content.innerHTML = `
-        <div class="question-box">
+                    <div class="question-box">
 
-            ${imageHtml}
-<h2>${question.text}</h2>
-    <button id="hint-btn">💡 تلميح</button>
-    <p id="hint-box" style="display:none;"></p>
+                        ${imageHtml}
+                            <h2>${question.text}</h2>
+                            <div class="admin-correct"> ✅ الإجابة: ${question.correct} </div>
+                                <button id="show-hint">💡 عرض التلميح</button>
+                                <button id="mark-done" class="done-btn">✔️ تم الإجابة</button>
+                        <div class="answers">
+                            ${question.options
+                                .map(
+                                    (opt) => `
+                                <button class="answer-btn" data-answer="${opt}">
+                                    ${opt}
+                                </button>
+                            `,
+                                )
+                                .join("")}
+                        </div>
 
-            <div class="answers">
-                ${question.options
-                    .map(
-                        (opt) => `
-                    <button class="answer-btn" data-answer="${opt}">
-                        ${opt}
-                    </button>
-                `,
-                    )
-                    .join("")}
-            </div>
+                        <div id="hint-box" style="display:none; margin-top:10px;"></div>
 
-            <div id="feedback"></div>
+<div id="feedback"></div>
 
-        </div>
+                    </div>
 
-        <div class="close-sheet">
-            <button id="close-sheet">❌ قفل</button>
-        </div>
-    `;
-                const hintBtn = document.getElementById("hint-btn");
+                    <div class="close-sheet">
+                        <button id="close-sheet">❌ قفل</button>
+                    </div>
+                `;
                 const hintBox = document.getElementById("hint-box");
-                hintBox.style.display = "none";
-                hintBox.innerText = "";
 
-hintBtn.onclick = async () => {
-    const snap = await getDoc(roomRef);
-    const data = snap.data();
-    const q = data.currentQuestion;
+                if (hintBox) {
+                    hintBox.style.display = "none";
+                    hintBox.innerText = "";
+                }
+                document.getElementById("mark-done").onclick = async () => {
+                    const answeredKey = `${catIndex}_${index}`;
 
-    if (!q) return;
+                    // 👇 نعلّم السؤال إنه اتجاوب
+                    await updateDoc(roomRef, {
+                        [`answeredQuestions.${answeredKey}`]: true,
+                        currentQuestion: null,
+                    });
 
-    const key = `${q.categoryIndex}_${q.questionIndex}`;
-
-    const isShown = data.hints?.[key];
-
-    await updateDoc(roomRef, {
-        [`hints.${key}`]: !isShown
-    });
-};
+                    sheet.classList.remove("show");
+                };
             }
+
             setTimeout(() => {
                 const qImg = document.querySelector(".question-img");
 
@@ -530,147 +534,176 @@ hintBtn.onclick = async () => {
                     });
                 }
             }, 0);
+
             let answered = false;
+            document.getElementById("mark-done").onclick = async () => {
+                const answeredKey = `${catIndex}_${index}`;
 
+                await updateDoc(roomRef, {
+                    [`answeredQuestions.${answeredKey}`]: true,
+                    currentQuestion: null,
+                });
+
+                sheet.classList.remove("show");
+            };
+            document.getElementById("close-sheet").onclick = async () => {
+                sheet.classList.remove("show");
+
+                await updateDoc(roomRef, {
+                    currentQuestion: null,
+                });
+            };
+
+                                const hintBtn = document.getElementById("show-hint");
+
+if (hintBtn) {
+    hintBtn.onclick = async () => {
+        const key = `${catIndex}_${index}`;
+
+        await updateDoc(roomRef, {
+            [`hints.${key}`]: true,
+        });
+    };
+}
             // 👇 text question
-            const sendBtn = document.getElementById("send-answer");
+            // const sendBtn = document.getElementById("send-answer");
 
-            if (sendBtn) {
-                sendBtn.addEventListener("click", async () => {
-                    if (answered) return;
-                    answered = true;
+            //             if (sendBtn) {
+            //                 sendBtn.addEventListener("click", async () => {
+            //                     if (answered) return;
+            //                     answered = true;
 
-                    const input = document.getElementById("text-answer");
-                    const answer = input.value.trim();
+            //                     const input = document.getElementById("text-answer");
+            //                     const answer = input.value.trim();
 
-                    if (!answer) return;
+            //                     if (!answer) return;
 
-                    const playerId = localStorage.getItem("player_" + roomCode);
-                    const correctAnswer = cat.questions[index]?.correct;
+            //                     const playerId = localStorage.getItem("player_" + roomCode);
+            //                     const correctAnswer = cat.questions[index]?.correct;
 
-                    const answeredKey = `${catIndex}_${index}`;
+            //                     const answeredKey = `${catIndex}_${index}`;
 
-                    await updateDoc(roomRef, {
-                        [`answers.${answeredKey}.${playerId}`]: {
-                            answer,
-                            correctAnswer,
-                            category: cat.category,
-                            questionIndex: index,
-                            time: Date.now(),
-                        },
-                        [`answeredQuestions.${answeredKey}`]: true,
-                    });
+            //                     await updateDoc(roomRef, {
+            //                         [`answers.${answeredKey}.${playerId}`]: {
+            //                             answer,
+            //                             correctAnswer,
+            //                             category: cat.category,
+            //                             questionIndex: index,
+            //                             time: Date.now(),
+            //                         },
+            //                         [`answeredQuestions.${answeredKey}`]: true,
+            //                     });
 
-                    const feedback = document.getElementById("feedback");
-                    const user = normalize(answer);
-                    const correct = normalize(correctAnswer);
+            //                     const feedback = document.getElementById("feedback");
+            //                     const user = normalize(answer);
+            //                     const correct = normalize(correctAnswer);
 
-                    if (user === correct) {
-                        playWinEffect();
-                        feedback.innerHTML = `
-<div class="feedback-box success">
-    🔥 صح 100% يا بطل!
-</div>
-`;
-                    } else if (isCorrectAnswer(answer, correctAnswer)) {
-                        playWinEffect();
-                        feedback.innerHTML = `
-<div class="feedback-box success">
-    😏 قريبة فشخ… هنعديها!
-</div>
-`;
-                    } else {
-                        playLoseEffect();
-                        feedback.innerHTML = `
-<div class="feedback-box error">
-    ❌ غلط يا نجم 😏
-    <br><br>
-    <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
-</div>
-`;
-                    }
-                });
-            }
+            //                     if (user === correct) {
+            //                         playWinEffect();
+            //                         feedback.innerHTML = `
+            // <div class="feedback-box success">
+            //     🔥 صح 100% يا بطل!
+            // </div>
+            // `;
+            //                     } else if (isCorrectAnswer(answer, correctAnswer)) {
+            //                         playWinEffect();
+            //                         feedback.innerHTML = `
+            // <div class="feedback-box success">
+            //     😏 قريبة فشخ… هنعديها!
+            // </div>
+            // `;
+            //                     } else {
+            //                         playLoseEffect();
+            //                         feedback.innerHTML = `
+            // <div class="feedback-box error">
+            //     ❌ غلط يا نجم 😏
+            //     <br><br>
+            //     <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+            // </div>
+            // `;
+            //                     }
+            //                 });
+            //             }
 
-            document.querySelectorAll(".answer-btn").forEach((btn) => {
-                btn.addEventListener("click", async () => {
-                    if (answered) return;
-                    answered = true;
+            //             document.querySelectorAll(".answer-btn").forEach((btn) => {
+            //                 btn.addEventListener("click", async () => {
+            //                     if (answered) return;
+            //                     answered = true;
 
-                    const answer = btn.dataset.answer;
-                    const playerId = localStorage.getItem("player_" + roomCode);
+            //                     const answer = btn.dataset.answer;
+            //                     const playerId = localStorage.getItem("player_" + roomCode);
 
-                    // 👇 الصح بقى
-                    const correctAnswer = cat.questions[index]?.correct;
+            //                     // 👇 الصح بقى
+            //                     const correctAnswer = cat.questions[index]?.correct;
 
-                    // 👇 نفس المفتاح اللي في البورد
-                    const answeredKey = `${catIndex}_${index}`;
-                    if (!playerId) {
-                        alert("❌ في مشكلة في اللاعب يا نجم");
-                        return;
-                    }
-                    await updateDoc(roomRef, {
-                        [`answers.${answeredKey}.${playerId}`]: {
-                            answer,
-                            correctAnswer,
-                            category: cat.category,
-                            questionIndex: index,
-                            time: Date.now(),
-                        },
-                        [`answeredQuestions.${answeredKey}`]: true,
-                    });
+            //                     // 👇 نفس المفتاح اللي في البورد
+            //                     const answeredKey = `${catIndex}_${index}`;
+            //                     if (!playerId) {
+            //                         alert("❌ في مشكلة في اللاعب يا نجم");
+            //                         return;
+            //                     }
+            //                     await updateDoc(roomRef, {
+            //                         [`answers.${answeredKey}.${playerId}`]: {
+            //                             answer,
+            //                             correctAnswer,
+            //                             category: cat.category,
+            //                             questionIndex: index,
+            //                             time: Date.now(),
+            //                         },
+            //                         [`answeredQuestions.${answeredKey}`]: true,
+            //                     });
 
-                    const feedback = document.getElementById("feedback");
+            //                     const feedback = document.getElementById("feedback");
 
-                    document.querySelectorAll(".answer-btn").forEach((b) => {
-                        b.disabled = true;
+            //                     document.querySelectorAll(".answer-btn").forEach((b) => {
+            //                         b.disabled = true;
 
-                        const btnAnswer = b.dataset.answer;
+            //                         const btnAnswer = b.dataset.answer;
 
-                        // ✅ الإجابة الصح دايمًا أخضر
-                        if (btnAnswer === correctAnswer) {
-                            b.style.background = "#22c55e";
-                            b.style.color = "#000";
-                        }
+            //                         // ✅ الإجابة الصح دايمًا أخضر
+            //                         if (btnAnswer === correctAnswer) {
+            //                             b.style.background = "#22c55e";
+            //                             b.style.color = "#000";
+            //                         }
 
-                        // ❌ اللي الأدمن اختاره وكان غلط
-                        else if (btnAnswer === answer) {
-                            b.style.background = "#ef4444";
-                            b.style.color = "#fff";
-                        }
+            //                         // ❌ اللي الأدمن اختاره وكان غلط
+            //                         else if (btnAnswer === answer) {
+            //                             b.style.background = "#ef4444";
+            //                             b.style.color = "#fff";
+            //                         }
 
-                        // 👇 باقي الاختيارات باهتة
-                        else {
-                            b.style.opacity = "0.4";
-                        }
-                    });
+            //                         // 👇 باقي الاختيارات باهتة
+            //                         else {
+            //                             b.style.opacity = "0.4";
+            //                         }
+            //                     });
 
-                    // 🔥 ده اللي كان ناقصك بصراحة
-                    if (answer === correctAnswer) {
-                        playWinEffect();
-                        feedback.innerHTML = `
-<div class="feedback-box success">
-    🔥 صح يا بطل!
-</div>
-`;
-                        feedback.style.color = "#22c55e";
-                    } else {
-                        playLoseEffect();
+            //                     // 🔥 ده اللي كان ناقصك بصراحة
+            //                     if (answer === correctAnswer) {
+            //                         playWinEffect();
+            //                         feedback.innerHTML = `
+            // <div class="feedback-box success">
+            //     🔥 صح يا بطل!
+            // </div>
+            // `;
+            //                         feedback.style.color = "#22c55e";
+            //                     } else {
+            //                         playLoseEffect();
 
-                        feedback.innerHTML = `
-<div class="feedback-box error">
-    ❌ غلط يا نجم 😏
-    <br><br>
-    <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
-</div>
-`;
-                    }
+            //                         feedback.innerHTML = `
+            // <div class="feedback-box error">
+            //     ❌ غلط يا نجم 😏
+            //     <br><br>
+            //     <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
+            // </div>
+            // `;
+            //                     }
 
-                    feedback.style.textAlign = "center";
-                    feedback.style.marginTop = "10px";
-                    feedback.style.fontWeight = "bold";
-                });
-            });
+            //                     feedback.style.textAlign = "center";
+            //                     feedback.style.marginTop = "10px";
+            //                     feedback.style.fontWeight = "bold";
+            //                 });
+            //             });
             sheet.classList.add("show");
 
             document.getElementById("close-sheet").onclick = () => {
@@ -691,11 +724,11 @@ hintBtn.onclick = async () => {
             const realCat = cat.category;
 
             title.innerHTML = `
-    <img src="${categoriesMap[realCat]?.image}" />
-    <div class="overlay">
-        ${categoriesMap[realCat]?.name || realCat}
-    </div>
-`;
+                <img src="${categoriesMap[realCat]?.image}" />
+                <div class="overlay">
+                    ${categoriesMap[realCat]?.name || realCat}
+                </div>
+            `;
             col.appendChild(title);
 
             // 👇 الكروت (قيم ثابتة)
@@ -724,12 +757,10 @@ hintBtn.onclick = async () => {
         });
     });
 
-    document.getElementById("open-admin")?.addEventListener("click", () => {
-        window.open(`/room/${roomCode}/adminwanswer`, "_blank");
-    });
-
     // إرسال
-    document .getElementById("send-suggest-admin") ?.addEventListener("click", async () => {
+    document
+        .getElementById("send-suggest-admin")
+        ?.addEventListener("click", async () => {
             const input = document.getElementById("suggest-input-admin");
             const text = input.value.trim();
             if (!text) return;
