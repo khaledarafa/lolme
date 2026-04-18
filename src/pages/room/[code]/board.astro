@@ -739,7 +739,10 @@ import Layout from "../../../layouts/Layout.astro";
         // 👇 ده الجديد
         localStorage.removeItem("counted_room");
 
-        await deleteDoc(roomRef);
+        await updateDoc(roomRef, {
+  status: "finished",
+  finishedAt: Date.now()
+});
         window.location.href = "/";
     });
 

@@ -49,7 +49,16 @@ import Layout from "../../../layouts/Layout.astro";
     src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
 ></script>
 <script type="module">
-    import { db, doc, onSnapshot, updateDoc, getDoc, deleteDoc, getDocs, collection, } from "/js/firebase.js";
+    import {
+        db,
+        doc,
+        onSnapshot,
+        updateDoc,
+        getDoc,
+        deleteDoc,
+        getDocs,
+        collection,
+    } from "/js/firebase.js";
 
     const roomCode =
         document.querySelector(".board").dataset?.code ||
@@ -236,21 +245,33 @@ import Layout from "../../../layouts/Layout.astro";
 
     onSnapshot(roomRef, (snap) => {
         const data = snap.data();
+
+        const modal = document.getElementById("image-modal");
+const modalImg = document.getElementById("modal-img");
+
+if (data.imageViewer?.open) {
+    modalImg.src = data.imageViewer.src;
+    modal.classList.remove("hidden");
+} else {
+    modal.classList.add("hidden");
+}
+
+
         const sheet = document.getElementById("question-sheet");
         const currentQ = data.currentQuestion;
-if (currentQ) {
-    const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
+        if (currentQ) {
+            const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
 
-    const hintBox = document.getElementById("hint-box");
+            const hintBox = document.getElementById("hint-box");
 
-    if (hintBox && data.hints?.[key]) {
-        const cat = data.gamePlan[currentQ.categoryIndex];
-        const q = cat.questions[currentQ.questionIndex];
+            if (hintBox && data.hints?.[key]) {
+                const cat = data.gamePlan[currentQ.categoryIndex];
+                const q = cat.questions[currentQ.questionIndex];
 
-        hintBox.innerText = q.hint || "❌ مفيش تلميح";
-        hintBox.style.display = "block";
-    }
-}
+                hintBox.innerText = q.hint || "❌ مفيش تلميح";
+                hintBox.style.display = "block";
+            }
+        }
 
         if (!currentQ) {
             sheet.classList.remove("show");
@@ -414,8 +435,8 @@ if (currentQ) {
         <div class="question-box">
 
             ${imageHtml}
-<h2>${question.text}</h2>
-    <p id="hint-box" style="display:none;"></p>
+                <h2>${question.text}</h2>
+                    <p id="hint-box" style="display:none;"></p>
 
             <div class="text-answer-box">
                 <input id="text-answer" placeholder="اكتب إجابتك 😏" />
@@ -435,19 +456,19 @@ if (currentQ) {
         <div class="question-box">
 
             ${imageHtml}
-<h2>${question.text}</h2>
-    <p id="hint-box" style="display:none;"></p>
+                <h2>${question.text}</h2>
+                    <p id="hint-box" style="display:none;"></p>
 
-            <div class="answers">
-                ${question.options
-                    .map(
-                        (opt) => `
+                <div class="answers">
+                    ${question.options
+                        .map(
+                            (opt) => `
                     <button class="answer-btn" data-answer="${opt}">
                         ${opt}
                     </button>
                 `,
-                    )
-                    .join("")}
+                        )
+                        .join("")}
             </div>
 
             <div id="feedback"></div>
@@ -459,19 +480,7 @@ if (currentQ) {
         </div>
     `;
             }
-            setTimeout(() => {
-                const qImg = document.querySelector(".question-img");
 
-                if (qImg) {
-                    qImg.addEventListener("click", () => {
-                        const modal = document.getElementById("image-modal");
-                        const modalImg = document.getElementById("modal-img");
-
-                        modalImg.src = qImg.src;
-                        modal.classList.remove("hidden");
-                    });
-                }
-            }, 0);
             let answered = false;
 
             // 👇 text question
@@ -704,9 +713,14 @@ if (currentQ) {
         window.location.href = "/";
     });
 
-    document.getElementById("close-image").onclick = () => {
-        document.getElementById("image-modal").classList.add("hidden");
-    };
+document.getElementById("close-image").onclick = async () => {
+    await updateDoc(roomRef, {
+        imageViewer: {
+            open: false,
+            src: ""
+        }
+    });
+};
     document
         .getElementById("show-results")
         ?.addEventListener("click", async () => {

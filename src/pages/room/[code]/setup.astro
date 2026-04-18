@@ -287,9 +287,9 @@ import Layout from "../../../layouts/Layout.astro";
                     window.location.href = `/room/${roomCode}/admin-board`;
                 } else if (selectedRole === "host") {
                     // 👑 يفتح صفحتين
-                    window.open(`/room/${roomCode}/live`, "_blank");
+                    window.open(`/room/${roomCode}/liveboard`, "_blank");
 
-                    window.location.href = `/room/${roomCode}/liveanswer`;
+                    window.location.href = `/room/${roomCode}/liveadmin`;
                 } else {
                     window.location.href = `/room/${roomCode}/board`;
                 }

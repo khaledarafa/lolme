@@ -209,6 +209,17 @@ import Layout from "../../../layouts/Layout.astro";
 
     onSnapshot(roomRef, (snap) => {
         const data = snap.data();
+
+const modal = document.getElementById("image-modal");
+const modalImg = document.getElementById("modal-img");
+
+if (data.imageViewer?.open) {
+    modalImg.src = data.imageViewer.src;
+    modal.classList.remove("hidden");
+} else {
+    modal.classList.add("hidden");
+}
+
         const progressBox = document.getElementById("answer-progress");
         const notAnsweredBox = document.getElementById("not-answered-list");
 
@@ -441,17 +452,16 @@ if (hintBox) {
             }
 
             setTimeout(() => {
-                const qImg = document.querySelector(".question-img");
-
-                if (qImg) {
-                    qImg.addEventListener("click", () => {
-                        const modal = document.getElementById("image-modal");
-                        const modalImg = document.getElementById("modal-img");
-
-                        modalImg.src = qImg.src;
-                        modal.classList.remove("hidden");
-                    });
-                }
+                document.querySelectorAll(".question-img").forEach((img) => {
+    img.addEventListener("click", async () => {
+        await updateDoc(roomRef, {
+            imageViewer: {
+                open: true,
+                src: img.src
+            }
+        });
+    });
+});
             }, 0);
             let answered = false;
 
@@ -644,7 +654,12 @@ Object.keys(data.answeredQuestions || {}).forEach((key) => {
     document.getElementById("show-results")?.addEventListener("click", () => {
         window.location.href = `/room/${roomCode}/results`;
     });
-    document.getElementById("close-image").onclick = () => {
-        document.getElementById("image-modal").classList.add("hidden");
-    };
+document.getElementById("close-image").onclick = async () => {
+    await updateDoc(roomRef, {
+        imageViewer: {
+            open: false,
+            src: ""
+        }
+    });
+};
 </script>
