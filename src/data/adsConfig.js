@@ -48,16 +48,27 @@ export const adsConfig = {
     },
   ],
 
+  // gridAds: [
+  //   {
+  //     id: "grid1",
+  //     img: "/ads/store-index-og.png",
+  //     link: "https://monce.cc/store",
+  //     // img: "ads/cadeau-grid.jpeg",
+  //     // link: "https://www.tiktok.com/@cadeau.chocolate?_r=1&_t=ZS-930L7LDuSOO",
+  //     // video: "/ads/iphone-ad.mp4",
+  //     every: 4,
+  //   },
+  // ],
   gridAds: [
-    {
-      id: "grid1",
-      img: "/ads/store-index-og.png",
-      link: "https://monce.cc/store",
-      // img: "ads/cadeau-grid.jpeg",
-      // link: "https://www.tiktok.com/@cadeau.chocolate?_r=1&_t=ZS-930L7LDuSOO",
-      // video: "/ads/iphone-ad.mp4",
-      every: 4,
-    },
+{
+  id: "grid1",
+  title: "مونسيسي 🎯",
+  desc: "متجر رقمي للتوكيدات والوعي والمنتجات الرقمية",
+  img: "/ads/store-index-og.png",
+  link: "https://monce.cc/store",
+  cta: "اعرف أكتر",
+  every: 4,
+}
   ],
 
   inContent: [

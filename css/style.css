@@ -913,11 +913,96 @@ h2 {
 }
 
 .grid-ad-box {
-  width: 100%;
-  max-width: 350px;
-  margin: 15px auto;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  /* background: var(--card); */
+  border: 1px solid var(--border-color);
+  transition: 0.3s;
+    box-shadow: 0 4px 10px var(--shadow-color);
 }
 
+.grid-ad-box:hover {
+  transform: translateY(-5px);
+}
+.grid-ad-box {
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border-color);
+  transition: 0.3s;
+  position: relative;
+}
+
+.grid-ad-box:hover {
+  transform: translateY(-5px);
+}
+
+/* الميديا */
+.ad-media img,
+.ad-media video {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+/* المحتوى */
+.ad-body {
+  padding: 10px;
+  text-align: center;
+}
+
+.ad-body h4 {
+  color: #22c55e;
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.ad-body p {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+/* زرار */
+.ad-body button {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  background: #22c55e;
+  color: black;
+  cursor: pointer;
+}
+
+/* البادج */
+.ad-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #22c55e;
+  color: black;
+  padding: 3px 6px;
+  font-size: 11px;
+  border-radius: 5px;
+}
+.ad-tilt-inner img,
+.ad-tilt-inner video {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+.ad-label {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #22c55e;
+  color: black;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+}
 .ad-tilt {
   perspective: 1000px;
   transform-style: preserve-3d;
