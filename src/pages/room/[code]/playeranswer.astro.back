@@ -1,5 +1,5 @@
 ---
-// src/pages/room/[code]/adminwanswer.astro
+// src/pages/room/[code]/playeranswer.astro
 const { code } = Astro.params;
 import Layout from "../../../layouts/Layout.astro";
 ---
