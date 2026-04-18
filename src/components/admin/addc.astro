@@ -40,10 +40,18 @@
     <input type="file" id="new-cat-image" hidden />
 
     <div id="cat-actions" class="cat-actions" style="display:none;">
-  <button id="edit-cat">✏️ تعديل</button>
-  <button id="delete-cat">🗑️ حذف</button>
-  <button id="cancel-cat">❌ إلغاء</button>
-</div>
+        <button id="edit-cat">✏️ تعديل</button>
+        <button id="delete-cat">🗑️ حذف</button>
+        <button id="cancel-cat">❌ إلغاء</button>
+    </div>
+
+    <div class="roles-box">
+        <label>🎭 تظهر لمين؟</label>
+
+        <label ><input type="checkbox" value="player" class="cat-role" checked /> 🎮 لاعب</label >
+        <label ><input type="checkbox" value="admin" class="cat-role" checked /> 🧠 أدمن</label >
+        <label ><input type="checkbox" value="host" class="cat-role" checked /> 🎤 مذيع</label >
+    </div>
 
     <button id="add-cat-btn">➕ إضافة الفئة</button>
     <p id="cat-msg"></p>

@@ -3,9 +3,9 @@ import { db, storage, addDoc, collection, query, where, getDocs, ref, uploadByte
 import { loadCategories } from "/js/categories.js";
 
 window.initAddC = function () {
-  const container = document.querySelector("#addc .category-buttons");
+    const container = document.querySelector("#addc .category-buttons");
 
-  loadCategories(container, { selectable: false, editable: true });
+    loadCategories(container, { selectable: false, editable: true });
 };
 
 // عناصر
@@ -87,6 +87,9 @@ addCatBtn.onclick = async () => {
     const hidden = document.getElementById("cat-visibility").checked;
     const file = fileInput.files[0];
 
+    const roles = Array.from(document.querySelectorAll(".cat-role:checked"))
+        .map(el => el.value);
+
     let imageUrl = null;
 
     if (file) {
@@ -100,22 +103,22 @@ addCatBtn.onclick = async () => {
     const q = query(collection(db, "categories"), where("slug", "==", slug));
     const snap = await getDocs(q);
 
-if (!snap.empty) {
-  const docSnap = snap.docs[0];
+    if (!snap.empty) {
+        const docSnap = snap.docs[0];
 
-  currentCatId = docSnap.id;
-  currentCatData = docSnap.data();
+        currentCatId = docSnap.id;
+        currentCatData = docSnap.data();
 
-  catMsg.innerText = "⚠️ الفئة موجودة بالفعل";
-  catMsg.style.color = "#facc15";
+        catMsg.innerText = "⚠️ الفئة موجودة بالفعل";
+        catMsg.style.color = "#facc15";
 
-  actionsBox.style.display = "flex";
+        actionsBox.style.display = "flex";
 
-  addCatBtn.disabled = false;
-  addCatBtn.innerText = "➕ إضافة الفئة";
+        addCatBtn.disabled = false;
+        addCatBtn.innerText = "➕ إضافة الفئة";
 
-  return;
-}
+        return;
+    }
 
     await addDoc(collection(db, "categories"), {
         name,
@@ -123,11 +126,13 @@ if (!snap.empty) {
         group,
         image: imageUrl,
         hidden,
+        roles: roles.length ? roles : ["player", "admin", "host"],
         createdAt: Date.now()
     });
 
     catMsg.innerText = "✅ الفئة اتضافت";
-
+preview.style.display = "none";
+document.querySelectorAll(".cat-role").forEach(el => el.checked = true);
     // 🧹 reset
     document.getElementById("new-cat-name").value = "";
     document.getElementById("cat-visibility").checked = false;
@@ -152,10 +157,14 @@ toggle.addEventListener("change", () => {
     }
 });
 editBtn.onclick = async () => {
+  const roles = Array.from(document.querySelectorAll(".cat-role:checked"))
+    .map(el => el.value);
+
   await updateDoc(doc(db, "categories", currentCatId), {
     name: document.getElementById("new-cat-name").value.trim(),
     group: document.getElementById("new-cat-group").value,
-    hidden: document.getElementById("cat-visibility").checked
+    hidden: document.getElementById("cat-visibility").checked,
+    roles: roles.length ? roles : ["player", "admin", "host"]
   });
 
   catMsg.innerText = "✏️ تم التعديل";
@@ -164,18 +173,18 @@ editBtn.onclick = async () => {
   actionsBox.style.display = "none";
 };
 deleteBtn.onclick = async () => {
-  if (!confirm("متأكد تمسح الفئة؟ 😏")) return;
+    if (!confirm("متأكد تمسح الفئة؟ 😏")) return;
 
-  await deleteDoc(doc(db, "categories", currentCatId));
+    await deleteDoc(doc(db, "categories", currentCatId));
 
-  catMsg.innerText = "🗑️ تم الحذف";
-  catMsg.style.color = "red";
+    catMsg.innerText = "🗑️ تم الحذف";
+    catMsg.style.color = "red";
 
-  actionsBox.style.display = "none";
+    actionsBox.style.display = "none";
 };
 cancelBtn.onclick = () => {
-  actionsBox.style.display = "none";
-  catMsg.innerText = "❌ تم الإلغاء";
+    actionsBox.style.display = "none";
+    catMsg.innerText = "❌ تم الإلغاء";
 };
 // document.addEventListener("DOMContentLoaded", () => {
 //   loadCategories({ selectable: false, editable: true });

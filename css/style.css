@@ -1693,7 +1693,22 @@ h1 {
     max-width: 1200px;
   }
 }
+.roles-box {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
 
+.roles-box label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #111827;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
 .cat-actions {
   display: flex;
   gap: 10px;

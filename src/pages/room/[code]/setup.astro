@@ -18,7 +18,7 @@ import Layout from "../../../layouts/Layout.astro";
         <div id="setup-root" data-code={code}></div>
 
         <!-- 🎴 الفئات -->
-        <div id="categories-grid" class="categories-grid"></div>
+        <div id="categories-grid" class="categories-grid" style="display:none;"></div>
         <p id="summary"></p>
         <!-- 🚀 زرار البداية -->
         <div class="role-select">
@@ -45,30 +45,48 @@ import Layout from "../../../layouts/Layout.astro";
             increment,
         } from "/js/firebase.js";
 
-        async function buildGamePlan(selectedCategories, questionsCount) {
-            const gamePlan = [];
+async function buildGamePlan(selectedCategories, questionsCount) {
+    const gamePlan = [];
 
-            for (const cat of selectedCategories) {
-                const q = query(
-                    collection(db, "questions"),
-                    where("approved", "==", true),
-                    where("category", "==", cat),
-                );
-                const snap = await getDocs(q);
+    // 👇 نجيب كل الفئات مرة واحدة
+    const catsSnap = await getDocs(collection(db, "categories"));
+    const catsMap = {};
 
-                let list = snap.docs.map((d) => d.data());
+    catsSnap.forEach(doc => {
+        const c = doc.data();
+        catsMap[c.slug] = c;
+    });
 
-                list.sort(() => Math.random() - 0.5);
-                list = list.slice(0, questionsCount);
-                gamePlan.push({
-                    category: cat,
-                    questions: list,
-                });
-            }
+    for (const cat of selectedCategories) {
 
-            return gamePlan;
+        const catData = catsMap[cat];
+
+        // 🔥 أهم فلترة
+        if (catData?.roles && !catData.roles.includes(selectedRole)) {
+            continue;
         }
 
+        const q = query(
+            collection(db, "questions"),
+            where("approved", "==", true),
+            where("category", "==", cat),
+        );
+
+        const snap = await getDocs(q);
+
+        let list = snap.docs.map((d) => d.data());
+
+        list.sort(() => Math.random() - 0.5);
+        list = list.slice(0, questionsCount);
+
+        gamePlan.push({
+            category: cat,
+            questions: list,
+        });
+    }
+
+    return gamePlan;
+}
         const roomCode = document.getElementById("setup-root").dataset.code;
         const roomRef = doc(db, "rooms", roomCode);
 
@@ -109,16 +127,21 @@ import Layout from "../../../layouts/Layout.astro";
 
         document.querySelectorAll(".role-btn").forEach((btn) => {
             btn.addEventListener("click", () => {
-                document
-                    .querySelectorAll(".role-btn")
-                    .forEach((b) => b.classList.remove("active"));
+    document
+        .querySelectorAll(".role-btn")
+        .forEach((b) => b.classList.remove("active"));
 
-                btn.classList.add("active");
+    btn.classList.add("active");
 
-                selectedRole = btn.dataset.role;
+    selectedRole = btn.dataset.role;
 
-                localStorage.setItem("role", selectedRole);
-            });
+    localStorage.setItem("role", selectedRole);
+
+    // 👇 الجديد بقى
+    document.getElementById("categories-grid").style.display = "block";
+
+    loadCategories();
+});
         });
         const savedRole = localStorage.getItem("role");
 
@@ -174,17 +197,20 @@ import Layout from "../../../layouts/Layout.astro";
 
                 return map[group] || group;
             }
-            snap.forEach((doc) => {
-                const cat = doc.data();
+snap.forEach((doc) => {
+    const cat = doc.data();
 
-                if (cat.hidden) return;
+    // 👇 أهم سطر في حياتك حالياً 😂
+    if (cat.roles && !cat.roles.includes(selectedRole)) return;
 
-                if (!groups[cat.group]) {
-                    groups[cat.group] = [];
-                }
+    if (cat.hidden) return;
 
-                groups[cat.group].push(cat);
-            });
+    if (!groups[cat.group]) {
+        groups[cat.group] = [];
+    }
+
+    groups[cat.group].push(cat);
+});
 
             // 🔥 نبني الواجهة بالجروبات
             Object.keys(groups).forEach((groupName) => {
@@ -236,7 +262,7 @@ import Layout from "../../../layouts/Layout.astro";
                 grid.appendChild(groupWrapper);
             });
         }
-        loadCategories();
+        // loadCategories();
 
         // 🚀 بدء الجولة
         document
@@ -285,6 +311,9 @@ import Layout from "../../../layouts/Layout.astro";
                 // 👇 روح للعبة
                 if (selectedRole === "admin") {
                     window.location.href = `/room/${roomCode}/admin-board`;
+                    await setDoc(roomRef, {
+  currentQuestion: null
+}, { merge: true });
                 } else if (selectedRole === "host") {
                     // 👑 يفتح صفحتين
                     window.open(`/room/${roomCode}/liveboard`, "_blank");
