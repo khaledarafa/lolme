@@ -17,9 +17,9 @@ import {
   addDoc,
   writeBatch,
   increment,
-  orderBy,     // 🔥 ضيف ده
-  limit,       // 🔥 وده
-  startAfter   // 🔥 وده
+  orderBy,
+  limit,
+  startAfter, getCountFromServer,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // 🔥 Storage
@@ -65,9 +65,10 @@ export {
   addDoc,
   writeBatch,
   increment,
-  orderBy,     // 🔥
-  limit,       // 🔥
-  startAfter   // 🔥
+  orderBy,
+  limit,
+  startAfter,
+  getCountFromServer,
 };
 
 

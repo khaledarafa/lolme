@@ -150,6 +150,7 @@ if (!selectedCategory) {
             category: selectedCategory,
             hint,
             approved: false,
+            random: Math.random(),
             createdAt: Date.now(),
             createdBy: localStorage.getItem("player_name") || "unknown"
         });

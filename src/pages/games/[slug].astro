@@ -21,9 +21,7 @@ const categoryNames: Record<string, string> = {
 
 function generateSEOContent(data: any) {
   const category =
-    data?.gamePlan?.[0]?.category ||
-    data?.categories?.[0] ||
-    "general";
+    data?.gamePlan?.[0]?.category || data?.categories?.[0] || "general";
 
   const map = {
     general: {
@@ -39,8 +37,8 @@ function generateSEOContent(data: any) {
   };
 
   const niceName =
-    categoryNames[category as keyof typeof categoryNames] 
-  || category.replaceAll("-", " ")
+    categoryNames[category as keyof typeof categoryNames] ||
+    category.replaceAll("-", " ");
 
   return (
     map[category as keyof typeof map] || {
@@ -67,12 +65,9 @@ try {
 
   if (data) {
     const category =
-      data.gamePlan?.[0]?.category ||
-      data.categories?.[0] ||
-      "general";
+      data.gamePlan?.[0]?.category || data.categories?.[0] || "general";
 
-    niceName =
-      categoryNames[category] || category.replaceAll("-", " ");
+    niceName = categoryNames[category] || category.replaceAll("-", " ");
 
     seo = generateSEOContent(data);
 
@@ -83,86 +78,77 @@ try {
       "اختبار قوي في",
     ];
 
-    const randomText =
-      variants[Math.floor(Math.random() * variants.length)];
+    const randomText = variants[Math.floor(Math.random() * variants.length)];
 
     title = `${randomText} ${niceName} 🔥`;
   }
-
 } catch (e) {
   console.log("ERROR", e);
 }
-
 ---
 
 <Layout>
-<div class="game-page">
-  {
-    !data && <p>❌ الصفحة مش موجودة</p>
-  }
+  <div class="game-page">
+    {!data && <p>❌ الصفحة مش موجودة</p>}
 
-  {
-    data && (
-      <>
-        <h1>{title}</h1>
+    {
+      data && (
+        <>
+          <h1>{title}</h1>
 
-        <p class="intro">{seo?.intro}</p>
+          <p class="intro">{seo?.intro}</p>
 
-        <p class="meta">
-          عدد الأسئلة: {data.gamePlan?.[0]?.questions?.length || 0}
-        </p>
+          <p class="meta">
+            عدد الأسئلة: {data.gamePlan?.[0]?.questions?.length || 0}
+          </p>
 
-        <div class="game-board">
-          {
-            data.gamePlan.map((cat: any) => (
+          <div class="game-board">
+            {data.gamePlan.map((cat: any) => (
               <div class="category">
                 <h2>
                   {categoryNames[cat.category as keyof typeof categoryNames] ||
                     cat.category.replaceAll("-", " ")}
                 </h2>
 
-                {
-                  cat.questions.map((q: any) => (
-                    <div class="question-card">
-                      <p class="q-text">{q.text}</p>
+                {cat.questions.map((q: any) => (
+                  <div class="question-card">
+                    <p class="q-text">{q.text}</p>
 
-                      <div class="options">
-                        {
-                          (q.options || []).map((opt: any) => (
-                            <button class="option-btn">
-                              {opt}
-                            </button>
-                          ))
-                        }
-                      </div>
-
-                      <div class="cta-hint">
-                        👀 عايز تعرف الإجابة؟ العب اللعبة 😏🔥
-                      </div>
+                    <div class="options">
+                      {(q.options || []).map((opt: any) => (
+                        <button class="option-btn">{opt}</button>
+                      ))}
                     </div>
-                  ))
-                }
+
+                    <div class="cta-hint">
+                      👀 عايز تعرف الإجابة؟ العب اللعبة 😏🔥
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))
-          }
-        </div>
+            ))}
+          </div>
 
-        <div class="seo-extra">
-          <h3>ليه تعمل الاختبار ده؟ 🤔</h3>
-          <p>{seo?.desc}</p>
-        </div>
+          <div class="seo-extra">
+            <h3>ليه تعمل الاختبار ده؟ 🤔</h3>
+            <p>{seo?.desc}</p>
+          </div>
 
-        <a href="/" class="play-btn">
-          🎮 العب لايف مع أصحابك
-        </a>
-      </>
-    )
-  }
-</div>
-<script>
-document.querySelectorAll<HTMLButtonElement>(".option-btn")
-  .forEach(btn => {
-    btn.innerText = "❌ العب اللعبة عشان تعرف 😈";
-  });
-</script>
+          <a href="/" class="play-btn">
+            🎮 العب لايف مع أصحابك
+          </a>
+        </>
+      )
+    }
+  </div>
+  <script>
+    document
+      .querySelectorAll<HTMLButtonElement>(".option-btn")
+      .forEach((btn) => {
+        btn.addEventListener("click", () => {
+          btn.innerText = "❌ العب اللعبة عشان تعرف 😈";
+          btn.style.background = "#3a1b1b";
+        });
+      });
+  </script>
 </Layout>

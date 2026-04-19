@@ -81,32 +81,13 @@ import Layout from "../../../layouts/Layout.astro";
         </div>
         <p id="summary"></p>
 
-        <!-- <div class="role-select">
-            <p>اختار دورك 👇</p>
-
-            <button class="role-btn" data-role="player"> 🎮 هلعب معاهم </button>
-            <button class="role-btn" data-role="admin"> 🧠 هدور اللعبة </button>
-            <button class="role-btn" data-role="host">
-                🎤 هعمل لايف (مذيع)
-            </button>
-        </div> -->
         <button id="start-round" class="start-btn" style="display:none;">
             🚀 ابدأ الجولة
         </button>
     </div>
 
     <script type="module">
-        import {
-            db,
-            doc,
-            collection,
-            query,
-            where,
-            getDocs,
-            setDoc,
-            increment,
-        } from "/js/firebase.js";
-
+        import { db, doc, collection, query, where, orderBy, limit, getDocs, setDoc, increment, getCountFromServer, } from "/js/firebase.js";
         async function buildGamePlan(selectedCategories, questionsCount) {
             const gamePlan = [];
 
@@ -127,18 +108,33 @@ import Layout from "../../../layouts/Layout.astro";
                     continue;
                 }
 
-                const q = query(
+                const rand = Math.random();
+
+                let q = query(
                     collection(db, "questions"),
                     where("approved", "==", true),
                     where("category", "==", cat),
+                    where("random", ">=", rand),
+                    orderBy("random"),
+                    limit(questionsCount),
                 );
 
-                const snap = await getDocs(q);
+                let snap = await getDocs(q);
+
+                // 👇 fallback لو مفيش نتايج
+                if (snap.empty) {
+                    q = query(
+                        collection(db, "questions"),
+                        where("approved", "==", true),
+                        where("category", "==", cat),
+                        orderBy("random"),
+                        limit(questionsCount),
+                    );
+
+                    snap = await getDocs(q);
+                }
 
                 let list = snap.docs.map((d) => d.data());
-
-                list.sort(() => Math.random() - 0.5);
-                list = list.slice(0, questionsCount);
 
                 gamePlan.push({
                     category: cat,
@@ -247,51 +243,34 @@ import Layout from "../../../layouts/Layout.astro";
         }
 
         const grid = document.getElementById("categories-grid");
-function generateSkeleton() {
-  let html = "";
+        function generateSkeleton() {
+            let html = "";
 
-  const groupsCount = 4; // نفس عدد السكاشن تقريبًا
+            const groupsCount = 4; // نفس عدد السكاشن تقريبًا
 
-  for (let i = 0; i < groupsCount; i++) {
-    html += `
+            for (let i = 0; i < groupsCount; i++) {
+                html += `
       <div class="group-block">
         <div class="group-title skeleton-title"></div>
         <div class="group-row">
           ${Array(6)
-            .fill(`<div class="cat-card skeleton-card"></div>`)
-            .join("")}
+              .fill(`<div class="cat-card skeleton-card"></div>`)
+              .join("")}
         </div>
       </div>
     `;
-  }
+            }
 
-  return html;
-}
+            return html;
+        }
         async function loadCategories() {
             grid.innerHTML = generateSkeleton();
             const snap = await getDocs(collection(db, "categories"));
-            const questionsSnap = await getDocs(collection(db, "questions"));
-
-            const questionsCountMap = {};
-
-            questionsSnap.forEach((doc) => {
-                const q = doc.data();
-
-                if (!q.approved) return;
-
-                const cat = q.category;
-
-                if (!questionsCountMap[cat]) {
-                    questionsCountMap[cat] = 0;
-                }
-
-                questionsCountMap[cat]++;
-            });
 
             // 👇 استنى شوية عشان المستخدم يشوف التحميل
             await new Promise((resolve) => setTimeout(resolve, 500));
-// 👇 امسح السكلتون قبل ما تعرض الحقيقي
-grid.innerHTML = "";
+            // 👇 امسح السكلتون قبل ما تعرض الحقيقي
+            grid.innerHTML = "";
             const groups = {};
             function getGroupLabel(group) {
                 const map = {
@@ -321,7 +300,7 @@ grid.innerHTML = "";
             });
 
             // 🔥 نبني الواجهة بالجروبات
-            Object.keys(groups).forEach((groupName) => {
+            Object.keys(groups).forEach(async (groupName) => {
                 const groupWrapper = document.createElement("div");
                 groupWrapper.className = "group-block";
 
@@ -332,43 +311,54 @@ grid.innerHTML = "";
                 const row = document.createElement("div");
                 row.className = "group-row";
 
-                groups[groupName].forEach((cat) => {
-                    const div = document.createElement("div");
-                    div.className = "cat-card";
-                    div.dataset.cat = cat.slug;
-                    div.style.backgroundImage = `url(${cat.image})`;
+                const cards = await Promise.all(
+                    groups[groupName].map(async (cat) => {
+                        const div = document.createElement("div");
+                        div.className = "cat-card";
+                        div.dataset.cat = cat.slug;
+                        div.style.backgroundImage = `url(${cat.image})`;
 
-                    const count = questionsCountMap[cat.slug] || 0;
+                        const qRef = query(
+                            collection(db, "questions"),
+                            where("approved", "==", true),
+                            where("category", "==", cat.slug),
+                        );
 
-                    const span = document.createElement("span");
-                    span.innerText = `${cat.name} (${count})`;
+                        const snapshot = await getCountFromServer(qRef);
+                        const count = snapshot.data().count;
 
-                    div.appendChild(span);
+                        const span = document.createElement("span");
+                        span.innerText = `${cat.name} (${count})`;
 
-                    div.addEventListener("click", () => {
-                        const catSlug = cat.slug;
+                        div.appendChild(span);
 
-                        if (selectedCategories.includes(catSlug)) {
-                            selectedCategories = selectedCategories.filter(
-                                (c) => c !== catSlug,
-                            );
-                            div.classList.remove("active");
-                        } else {
-                            selectedCategories.push(catSlug);
-                            div.classList.add("active");
-                        }
+                        div.addEventListener("click", () => {
+                            const catSlug = cat.slug;
 
-                        updateSummary();
-                        if (selectedCategories.length > 0) {
-                            document.getElementById(
-                                "start-round",
-                            ).style.display = "block";
-                        }
-                    });
+                            if (selectedCategories.includes(catSlug)) {
+                                selectedCategories = selectedCategories.filter(
+                                    (c) => c !== catSlug,
+                                );
+                                div.classList.remove("active");
+                            } else {
+                                selectedCategories.push(catSlug);
+                                div.classList.add("active");
+                            }
 
-                    row.appendChild(div);
-                });
+                            updateSummary();
+                            if (selectedCategories.length > 0) {
+                                document.getElementById(
+                                    "start-round",
+                                ).style.display = "block";
+                            }
+                        });
 
+                        return div;
+                    }),
+                );
+
+                // 👇 نضيفهم مرة واحدة
+                cards.forEach((div) => row.appendChild(div));
                 groupWrapper.appendChild(title);
                 groupWrapper.appendChild(row);
 
