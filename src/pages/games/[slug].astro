@@ -13,6 +13,8 @@ const { slug } = Astro.params;
         const slug = window.location.pathname.split("/").pop();
         const root = document.getElementById("game-root");
         const categoryNames = {
+            general: "منوعات",
+
             // 🐾 حيوانات
             "what-animal-is-this": "ما هو الحيوان",
             animals: "أسئلة عن الحيوانات",
@@ -53,9 +55,17 @@ const { slug } = Astro.params;
         };
         function generateSEOContent(data) {
             const category =
-                data.gamePlan?.[0]?.category || data.categories?.[0] || "quiz";
+                data.gamePlan?.[0]?.category ||
+                data.categories?.[0] ||
+                "general";
 
             const map = {
+                general: {
+                    title: "اختبار منوعات 🔥",
+                    intro: "اختبر معلوماتك في مجالات مختلفة 😏🔥",
+                    desc: "مجموعة أسئلة متنوعة وممتعة في كل المجالات.",
+                },
+
                 // 🐾 حيوانات
                 "what-animal-is-this": {
                     title: "اختبار معلومات عن الحيوانات 🐾",
@@ -181,7 +191,9 @@ const { slug } = Astro.params;
             const data = snap.data();
             const seo = generateSEOContent(data);
             const category =
-                data.gamePlan?.[0]?.category || data.categories?.[0] || "quiz";
+                data.gamePlan?.[0]?.category ||
+                data.categories?.[0] ||
+                "general";
 
             const niceName =
                 categoryNames[category] || category.replaceAll("-", " ");

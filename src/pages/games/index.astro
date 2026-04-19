@@ -1,0 +1,120 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="🎮 كل الاختبارات">
+    <section class="categories-section">
+        <h1>🔥 كل الاختبارات والألعاب</h1>
+        <p class="intro">جرب كل الألعاب واكتشف مستواك 😏🔥</p>
+
+        <div id="games-list" class="home-grid"></div>
+
+        <!-- pagination -->
+        <div id="pagination" style="margin-top:20px;"></div>
+
+        <button id="start-round" class="start-btn"> 🚀 ابدأ الجولة </button>
+    </section>
+
+    <script type="module">
+        import { db, collection, getDocs } from "/js/firebase.js";
+
+        const container = document.getElementById("games-list");
+        const pagination = document.getElementById("pagination");
+
+        const categoryNames = {
+            general: "منوعات",
+            "what-animal-is-this": "ما هو الحيوان",
+            "supermarket-products": "منتجات السوبر ماركت",
+            "english-league": "الدوري الإنجليزي",
+            "serie-a": "الدوري الإيطالي",
+            "champions-league": "دوري أبطال أوروبا",
+            "world-cup": "كأس العالم",
+            "find-difference": "اوجد الاختلافات",
+            songs: "ألعاب أغاني",
+            geography: "جغرافيا",
+            movies: "ألعاب أفلام",
+            series: "مسلسلات",
+            brain: "معلومات عامة",
+            mix: "منوعات",
+        };
+
+        let games = [];
+        let currentPage = 1;
+        const perPage = 12;
+
+        async function loadGames() {
+            const snap = await getDocs(collection(db, "publicRooms"));
+
+            snap.forEach((doc) => {
+                games.push(doc.data());
+            });
+
+            renderPage();
+        }
+
+        function renderPage() {
+            const start = (currentPage - 1) * perPage;
+            const end = start + perPage;
+
+            const pageGames = games.slice(start, end);
+
+            let html = "";
+
+            pageGames.forEach((data) => {
+                const category =
+                    data.gamePlan?.[0]?.category ||
+                    data.categories?.[0] ||
+                    "general";
+
+                const niceName =
+                    categoryNames[category] || category.replaceAll("-", " ");
+
+                const names = ["اختبار", "تحدي", "لعبة", "مسابقة", "تجربة"];
+                const randomName =
+                    names[Math.floor(Math.random() * names.length)];
+
+                const title = `${randomName} ${niceName} 🔥`;
+
+                html += `
+          <a href="/games/${data.slug}" class="home-card">
+            <div class="content">
+              <h3>${title}</h3>
+              <p>🔥 ${data.questionsCount} سؤال</p>
+            </div>
+          </a>
+        `;
+            });
+
+            container.innerHTML = html;
+
+            renderPagination();
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(games.length / perPage);
+
+            let html = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                html += `
+          <button class="page-btn" data-page="${i}">
+            ${i}
+          </button>
+        `;
+            }
+
+            pagination.innerHTML = html;
+
+            document.querySelectorAll(".page-btn").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    currentPage = Number(btn.dataset.page);
+                    renderPage();
+                });
+            });
+        }
+document.getElementById("start-round")?.addEventListener("click", () => {
+  window.location.href = "/how-to-play";
+});
+        loadGames();
+    </script>
+</Layout>

@@ -7,10 +7,69 @@ import Layout from "../../../layouts/Layout.astro";
 <Layout>
     <div class="setup-container">
         <h1>🎯 إعداد الجولة</h1>
-        <p class="sub">🎮 اختار الفئات وعدد الأسئلة… وخلي اللعب يبدأ 🔥 👇</p>
+        <p class="sub">
+            👇 اختار هتلعب إزاي الأول… وبعدها هنكمل خطوة خطوة 😏🔥
+        </p>
+        <!-- 🚀 زرار البداية -->
+        <div class="modes-intro">
+            <h2>🎮 تختار تلعب إزاي؟</h2>
+            <p>اختار الطريقة اللي تناسبك وابدأ التحدي 😏🔥</p>
 
+            <div class="modes-grid">
+                <!-- 🎮 لعب -->
+                <div class="mode-card">
+                    <div class="icon">🎮</div>
+                    <h3>العب مع أصحابك</h3>
+                    <p>
+                        1️⃣ اختار الفئات وابدأ الجولة <br />
+                        2️⃣ اعمل لعبة وابعت الكود لصحابك <br />
+                        3️⃣ كل واحد يدخل ويجاوب من موبايله <br />
+                        4️⃣ في الآخر يظهر مين كسب 🔥
+                    </p>
+                    <button class="role-btn" data-role="player">
+                        🎮 هلعب معاهم
+                    </button>
+                </div>
+
+                <!-- 🧠 ادمن -->
+                <div class="mode-card">
+                    <div class="icon">🧠</div>
+                    <h3>إدارة اللعبة</h3>
+                    <p>
+                        1️⃣ اختار الفئات وابدأ الجولة <br />
+                        2️⃣ افتح الأسئلة عندك <br />
+                        3️⃣ أصحابك يشوفوا ويجاوبوا من عندهم <br />
+                        4️⃣ إنت تشوف الإجابات وتدير اللعبة 😎
+                    </p>
+                    <button class="role-btn" data-role="admin">
+                        🧠 هدور اللعبة
+                    </button>
+                </div>
+
+                <!-- 🎤 لايف -->
+                <div class="mode-card">
+                    <div class="icon">🎤</div>
+                    <h3>وضع اللايف</h3>
+                    <p>
+                        1️⃣ اختار الفئات وابدأ الجولة <br />
+                        2️⃣ هتفتح لك صفحتين تلقائي 👇 <br /><br />
+
+                        💡 شاشة اللايف بورد قدام الكاميرا 🎥 <br />
+                        🚫 أي كليك عليها مش هيشتغل <br />
+
+                        🧠 كل التحكم بيكون من لايف أدمن 😎 <br />
+                        <br />
+                        الجمهور يشوف الأسئلة على اللايف <br />
+                        وإنت تكتب النتيجه وتحدد مين كسب 😎
+                    </p>
+                    <button class="role-btn" data-role="host">
+                        🎤 هعمل لايف (مذيع)
+                    </button>
+                </div>
+            </div>
+        </div>
         <!-- ⚙️ عدد الأسئلة -->
-        <div class="questions-count">
+        <div class="questions-count" id="questions-box" style="display:none;">
             <button class="q-btn active" data-count="3">3 أسئلة</button>
             <button class="q-btn" data-count="5">5 أسئلة</button>
             <button class="q-btn" data-count="7">7 أسئلة</button>
@@ -21,8 +80,8 @@ import Layout from "../../../layouts/Layout.astro";
         <div id="categories-grid" class="categories-grid" style="display:none;">
         </div>
         <p id="summary"></p>
-        <!-- 🚀 زرار البداية -->
-        <div class="role-select">
+
+        <!-- <div class="role-select">
             <p>اختار دورك 👇</p>
 
             <button class="role-btn" data-role="player"> 🎮 هلعب معاهم </button>
@@ -30,8 +89,10 @@ import Layout from "../../../layouts/Layout.astro";
             <button class="role-btn" data-role="host">
                 🎤 هعمل لايف (مذيع)
             </button>
-        </div>
-        <button id="start-round" class="start-btn"> 🚀 ابدأ الجولة </button>
+        </div> -->
+        <button id="start-round" class="start-btn" style="display:none;">
+            🚀 ابدأ الجولة
+        </button>
     </div>
 
     <script type="module">
@@ -103,6 +164,22 @@ import Layout from "../../../layouts/Layout.astro";
                 btn.classList.add("active");
                 questionsCount = Number(btn.dataset.count);
 
+                // 👇 بعد ما يختار عدد الأسئلة نظهر الفئات
+                document.getElementById("categories-grid").style.display =
+                    "block";
+
+                loadCategories();
+
+                // scroll
+                const el = document.getElementById("categories-grid");
+
+                const y = el.getBoundingClientRect().top + window.scrollY - 120;
+
+                window.scrollTo({
+                    top: y,
+                    behavior: "smooth",
+                });
+
                 updateSummary(); // 👈 ضيف دي هنا
             });
         });
@@ -137,11 +214,14 @@ import Layout from "../../../layouts/Layout.astro";
 
                 localStorage.setItem("role", selectedRole);
 
-                // 👇 الجديد بقى
-                document.getElementById("categories-grid").style.display =
+                // 👇 نوري بس عدد الأسئلة الأول
+                document.getElementById("questions-box").style.display =
                     "block";
 
-                loadCategories();
+                // نخبي الباقي
+                document.getElementById("categories-grid").style.display =
+                    "none";
+                document.getElementById("start-round").style.display = "none";
             });
         });
         const savedRole = localStorage.getItem("role");
@@ -155,9 +235,8 @@ import Layout from "../../../layouts/Layout.astro";
                 }
             });
 
-            // 🔥 المهم بقى
-            document.getElementById("categories-grid").style.display = "block";
-            loadCategories();
+            document.getElementById("questions-box").style.display = "block";
+            window.scrollTo(0, 0);
         }
 
         function updateSummary() {
@@ -168,8 +247,28 @@ import Layout from "../../../layouts/Layout.astro";
         }
 
         const grid = document.getElementById("categories-grid");
+function generateSkeleton() {
+  let html = "";
 
+  const groupsCount = 4; // نفس عدد السكاشن تقريبًا
+
+  for (let i = 0; i < groupsCount; i++) {
+    html += `
+      <div class="group-block">
+        <div class="group-title skeleton-title"></div>
+        <div class="group-row">
+          ${Array(6)
+            .fill(`<div class="cat-card skeleton-card"></div>`)
+            .join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  return html;
+}
         async function loadCategories() {
+            grid.innerHTML = generateSkeleton();
             const snap = await getDocs(collection(db, "categories"));
             const questionsSnap = await getDocs(collection(db, "questions"));
 
@@ -188,8 +287,11 @@ import Layout from "../../../layouts/Layout.astro";
 
                 questionsCountMap[cat]++;
             });
-            grid.innerHTML = "";
 
+            // 👇 استنى شوية عشان المستخدم يشوف التحميل
+            await new Promise((resolve) => setTimeout(resolve, 500));
+// 👇 امسح السكلتون قبل ما تعرض الحقيقي
+grid.innerHTML = "";
             const groups = {};
             function getGroupLabel(group) {
                 const map = {
@@ -257,6 +359,11 @@ import Layout from "../../../layouts/Layout.astro";
                         }
 
                         updateSummary();
+                        if (selectedCategories.length > 0) {
+                            document.getElementById(
+                                "start-round",
+                            ).style.display = "block";
+                        }
                     });
 
                     row.appendChild(div);

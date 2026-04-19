@@ -22,7 +22,7 @@ const modules = import.meta.glob("./articles/*.astro", {
 const articles: ArticleWithSlug[] = [];
 
 for (const [path, loader] of Object.entries(modules)) {
-  const fm = await loader() as ArticleFrontmatter;
+  const fm = (await loader()) as ArticleFrontmatter;
 
   if (path.endsWith("index.astro")) continue;
 
@@ -45,17 +45,25 @@ const latestArticles: ArticleWithSlug[] = articles.slice(0, 5);
 
 // home buttons
 const homeButtons = [
-  { title: "✨ جرب وشوف هيطلع لك إيه", slug: "/tests", img: "/images/tests.webp" },
+  {
+    title: "✨ جرب وشوف هيطلع لك إيه",
+    slug: "/tests",
+    img: "/images/tests.webp",
+  },
   { title: "🤣 نكت مضحكة", slug: "/jokes", img: "/images/jokes.webp" },
-  { title: "🎮 ركن الجيمنج", slug: "/gaming", img: "/images/moncellence-live.webp" },
+  {
+    title: "🎮 ركن الجيمنج",
+    slug: "/gaming",
+    img: "/images/moncellence-live.webp",
+  },
   // { title: "📸 اعمل ميميز دلوقتي", slug: "/meme", img: "/images/meme.webp" },
   // { title: "🔥 روّست صاحبك", slug: "/roast", img: "/images/roast.webp" },
   // { title: "🤣 صور مضحكة", slug: "/funnyImages", img: "/images/funny.webp" },
   // { title: "حوّل PDF إلى صور 🤯", slug: "/pdf-to-images", img: "/images/pdf2imgs.webp" },
 ];
 ---
-<Layout title="🤣 LOLME">
 
+<Layout title="🤣 LOLME">
   <!-- 🔥 تثبيت التطبيق -->
   <section class="top-mini">
     <button id="install-btn" class="install-btn appbtn">📲 ثبت التطبيق</button>
@@ -80,17 +88,18 @@ const homeButtons = [
     <div class="play-box">
       <a href="/how-to-play" class="play-btn secondary">🚀 ابدأ لعبة جديدة</a>
 
-      <input id="room-code" placeholder="اكتب الكود" maxlength="4" class="code-input" />
+      <input
+        id="room-code"
+        placeholder="اكتب الكود"
+        maxlength="4"
+        class="code-input"
+      />
       <input id="player-name" placeholder="اكتب اسمك 😏" class="code-input" />
 
-      <button id="join-game" class="play-btn secondary">
-        ادخل اللعبه
-      </button>
+      <button id="join-game" class="play-btn secondary"> ادخل اللعبه </button>
     </div>
 
-    <p class="game-desc">
-      🔥 لعبة أسئلة متنوعة… كل جولة بتخليك تضحك أكتر 😏
-    </p>
+    <p class="game-desc">🔥 لعبة أسئلة متنوعة… كل جولة بتخليك تضحك أكتر 😏</p>
   </section>
 
   <!-- 🧠 الفئات (لوحدها بقى 👇) -->
@@ -99,19 +108,27 @@ const homeButtons = [
     <div id="home-categories" class="home-grid"></div>
   </section>
 
+  <section class="seo-games">
+    <h2>🔥 اختبارات ممكن تعجبك</h2>
+    <div id="seo-games-list" class="home-grid"></div>
+    <a href="/games" class="play-btn"> 🔥 شوف كل الاختبارات </a>
+  </section>
+
   <!-- 😂 محتوى ترفيهي -->
   <section class="fun-section">
     <h2>😂 جرب حاجة تضحكك</h2>
 
     <div class="home-grid">
-      {homeButtons.map((btn, i) => (
-        <a href={btn.slug} class="home-card tilt-card">
-          <img src={btn.img} alt={btn.title} />
-          <div class="content">
-            <h3>{btn.title}</h3>
-          </div>
-        </a>
-      ))}
+      {
+        homeButtons.map((btn, i) => (
+          <a href={btn.slug} class="home-card tilt-card">
+            <img src={btn.img} alt={btn.title} />
+            <div class="content">
+              <h3>{btn.title}</h3>
+            </div>
+          </a>
+        ))
+      }
     </div>
   </section>
 
@@ -120,13 +137,15 @@ const homeButtons = [
     <h2>📰 أحدث المقالات</h2>
 
     <div class="articles-grid">
-      {latestArticles.map(article => (
-        <a href={`/articles/${article.slug}`} class="article-card tilt-card">
-          <img src={article.image} alt={article.title} />
-          <h3>{article.title}</h3>
-          <p>{article.description}</p>
-        </a>
-      ))}
+      {
+        latestArticles.map((article) => (
+          <a href={`/articles/${article.slug}`} class="article-card tilt-card">
+            <img src={article.image} alt={article.title} />
+            <h3>{article.title}</h3>
+            <p>{article.description}</p>
+          </a>
+        ))
+      }
     </div>
   </section>
 
@@ -135,5 +154,5 @@ const homeButtons = [
   <script src="/js/tilt-cards.js" defer></script>
   <script type="module" src="/js/codes.js"></script>
   <script type="module" src="/js/home-categories.js"></script>
-
+  <script type="module" src="/js/home-seo-games.js"></script>
 </Layout>
