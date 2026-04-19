@@ -5,7 +5,19 @@ let allQuestions = [];
 let isSearching = false;
 
 const container = document.getElementById("editq");
+const filterSelect = document.getElementById("filter-category");
 
+getDocs(collection(db, "categories")).then((snap) => {
+    snap.forEach((docSnap) => {
+        const cat = docSnap.data();
+
+        const opt = document.createElement("option");
+        opt.value = cat.slug;
+        opt.textContent = cat.name;
+
+        filterSelect.appendChild(opt);
+    });
+});
 // 🔥 رسم كارت السؤال (المصدر الوحيد)
 function createQuestionCard(data) {
     const id = data.id;
@@ -25,6 +37,7 @@ function createQuestionCard(data) {
             <option value="text" ${data.type === "text" ? "selected" : ""}>إجابة كتابة</option>
         </select>
 <select class="q-category"></select>
+<div class="cat-slug-view" style="font-size:12px;color:#aaa;"></div>
         <input class="q-text" />
 
         <div class="options-box" style="${data.type === "text" ? "display:none" : ""}">
@@ -48,29 +61,33 @@ function createQuestionCard(data) {
 
         <div class="save-msg"></div>  <!-- 👈 دي كانت ناقصة -->
         `;
-        const catSelect = div.querySelector(".q-category");
-
-getDocs(collection(db, "categories")).then((snap) => {
-    snap.forEach((docSnap) => {
-        const cat = docSnap.data();
-
-        const opt = document.createElement("option");
-        opt.value = cat.slug;
-        opt.textContent = cat.name;
-
-        if (data.category === cat.slug) {
-            opt.selected = true;
-        }
-
-        catSelect.appendChild(opt);
-    });
+    const catSelect = div.querySelector(".q-category");
+const slugView = div.querySelector(".cat-slug-view");
+catSelect.addEventListener("change", () => {
+    slugView.innerText = "slug: " + catSelect.value;
 });
-// 👇 هنا بالظبط
-div.querySelector(".q-text").value = data.text || "";
-div.querySelector(".opt1").value = data.options?.[0] || "";
-div.querySelector(".opt2").value = data.options?.[1] || "";
-div.querySelector(".opt3").value = data.options?.[2] || "";
-div.querySelector(".opt4").value = data.options?.[3] || "";
+    getDocs(collection(db, "categories")).then((snap) => {
+        snap.forEach((docSnap) => {
+            const cat = docSnap.data();
+
+            const opt = document.createElement("option");
+            opt.value = cat.slug;
+            opt.textContent = cat.name;
+
+            if (data.category === cat.slug || data.category === cat.name) {
+                opt.selected = true;
+            }
+
+            catSelect.appendChild(opt);
+        });
+        slugView.innerText = "slug: " + catSelect.value;
+    });
+    // 👇 هنا بالظبط
+    div.querySelector(".q-text").value = data.text || "";
+    div.querySelector(".opt1").value = data.options?.[0] || "";
+    div.querySelector(".opt2").value = data.options?.[1] || "";
+    div.querySelector(".opt3").value = data.options?.[2] || "";
+    div.querySelector(".opt4").value = data.options?.[3] || "";
     // 🔥 لو مفيش hint → لون أحمر
     if (!data.hint) {
         div.style.border = "2px solid red";
@@ -113,9 +130,9 @@ div.querySelector(".opt4").value = data.options?.[3] || "";
 
             div.style.border = "2px solid #22c55e";
             setTimeout(() => {
-    msg.innerText = "";
-    div.style.border = "1px solid var(--border-color)";
-}, 2000);
+                msg.innerText = "";
+                div.style.border = "1px solid var(--border-color)";
+            }, 2000);
 
         } catch (err) {
             msg.innerText = "❌ حصل خطأ";
@@ -176,13 +193,13 @@ export async function loadQuestionsBatch() {
             collection(db, "questions"),
             orderBy("createdAt", "desc"),
             startAfter(lastDoc),
-            limit(10)
+            // limit(50)
         );
     } else {
         q = query(
             collection(db, "questions"),
             orderBy("createdAt", "desc"),
-            limit(10)
+            // limit(50)
         );
     }
 
@@ -208,23 +225,31 @@ export async function loadQuestionsBatch() {
 
 // 🔍 البحث
 document.getElementById("search-q")?.addEventListener("input", (e) => {
-    const val = e.target.value.toLowerCase();
+const val = e.target.value.toLowerCase();
+const selectedCat = filterSelect.value;
+
+const filtered = allQuestions.filter(q => {
+    const matchText = q.text?.toLowerCase().includes(val);
+    const matchCat = selectedCat ? q.category === selectedCat : true;
+    return matchText && matchCat;
+});
+
+renderQuestions(filtered);
+});
+filterSelect?.addEventListener("change", () => {
+    const val = filterSelect.value;
 
     if (!val) {
-        isSearching = false;
         renderQuestions(allQuestions);
         return;
     }
 
-    isSearching = true;
-
     const filtered = allQuestions.filter(q =>
-        q.text?.toLowerCase().includes(val)
+        q.category === val
     );
 
     renderQuestions(filtered);
 });
-
 // 🔽 تحميل المزيد
 document.getElementById("load-more")?.addEventListener("click", () => {
     loadQuestionsBatch();

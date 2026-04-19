@@ -65,6 +65,39 @@ fileInput.addEventListener("change", async (e) => {
     preview.style.display = "block";
 });
 
+function slugifyArabic(text) {
+    return text
+        .toLowerCase()
+        .replace(/ع/g, "3")
+        .replace(/ء|أ|إ|آ/g, "a")
+        .replace(/ب/g, "b")
+        .replace(/ت/g, "t")
+        .replace(/ث/g, "th")
+        .replace(/ج/g, "g")
+        .replace(/ح/g, "7")
+        .replace(/خ/g, "kh")
+        .replace(/د/g, "d")
+        .replace(/ذ/g, "z")
+        .replace(/ر/g, "r")
+        .replace(/ز/g, "z")
+        .replace(/س/g, "s")
+        .replace(/ش/g, "sh")
+        .replace(/ص/g, "s")
+        .replace(/ض/g, "d")
+        .replace(/ط/g, "t")
+        .replace(/ظ/g, "z")
+        .replace(/غ/g, "gh")
+        .replace(/ف/g, "f")
+        .replace(/ق/g, "q")
+        .replace(/ك/g, "k")
+        .replace(/ل/g, "l")
+        .replace(/م/g, "m")
+        .replace(/ن/g, "n")
+        .replace(/ه/g, "h")
+        .replace(/و/g, "w")
+        .replace(/ي/g, "y")
+        .replace(/\s+/g, "-");
+}
 
 // إضافة الفئة
 addCatBtn.onclick = async () => {
@@ -78,9 +111,15 @@ addCatBtn.onclick = async () => {
         return;
     }
 
-    const slug = name
-        .toLowerCase()
-        .replace(/[^a-z0-9\u0600-\u06FF ]/g, "")
+    let slug = document.getElementById("new-cat-slug").value.trim().toLowerCase();
+
+    if (!slug) {
+        slug = slugifyArabic(name);
+    }
+
+    // تنظيف السلاج
+    slug = slug
+        .replace(/[^a-z0-9-]/g, "")
         .replace(/\s+/g, "-");
 
     const group = document.getElementById("new-cat-group").value;
@@ -131,10 +170,11 @@ addCatBtn.onclick = async () => {
     });
 
     catMsg.innerText = "✅ الفئة اتضافت";
-preview.style.display = "none";
-document.querySelectorAll(".cat-role").forEach(el => el.checked = true);
+    preview.style.display = "none";
+    document.querySelectorAll(".cat-role").forEach(el => el.checked = true);
     // 🧹 reset
     document.getElementById("new-cat-name").value = "";
+    document.getElementById("new-cat-slug").value = "";
     document.getElementById("cat-visibility").checked = false;
     fileInput.value = "";
     preview.style.display = "none";
@@ -157,20 +197,20 @@ toggle.addEventListener("change", () => {
     }
 });
 editBtn.onclick = async () => {
-  const roles = Array.from(document.querySelectorAll(".cat-role:checked"))
-    .map(el => el.value);
+    const roles = Array.from(document.querySelectorAll(".cat-role:checked"))
+        .map(el => el.value);
 
-  await updateDoc(doc(db, "categories", currentCatId), {
-    name: document.getElementById("new-cat-name").value.trim(),
-    group: document.getElementById("new-cat-group").value,
-    hidden: document.getElementById("cat-visibility").checked,
-    roles: roles.length ? roles : ["player", "admin", "host"]
-  });
+    await updateDoc(doc(db, "categories", currentCatId), {
+        name: document.getElementById("new-cat-name").value.trim(),
+        group: document.getElementById("new-cat-group").value,
+        hidden: document.getElementById("cat-visibility").checked,
+        roles: roles.length ? roles : ["player", "admin", "host"]
+    });
 
-  catMsg.innerText = "✏️ تم التعديل";
-  catMsg.style.color = "#22c55e";
+    catMsg.innerText = "✏️ تم التعديل";
+    catMsg.style.color = "#22c55e";
 
-  actionsBox.style.display = "none";
+    actionsBox.style.display = "none";
 };
 deleteBtn.onclick = async () => {
     if (!confirm("متأكد تمسح الفئة؟ 😏")) return;

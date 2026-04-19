@@ -23,6 +23,8 @@
     doc,
     writeBatch,
     getDoc,
+    orderBy,
+    query,
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   // 👇 العنصر
@@ -32,7 +34,12 @@
   async function loadRooms() {
     container.innerHTML = "⏳ تحميل...";
 
-    const snap = await getDocs(collection(db, "rooms"));
+    const q = query(
+      collection(db, "rooms"),
+      orderBy("createdAt", "asc"), // 👈 من الأقدم للأحدث
+    );
+
+    const snap = await getDocs(q);
 
     if (snap.empty) {
       container.innerHTML = "😅 مفيش رومات";

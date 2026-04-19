@@ -1,5 +1,5 @@
 ---
-// src/pages/room/[code]/board.astro  هلعب معاهم 
+// src/pages/room/[code]/board.astro  هلعب معاهم
 const { code } = Astro.params;
 import Layout from "../../../layouts/Layout.astro";
 ---
@@ -49,16 +49,7 @@ import Layout from "../../../layouts/Layout.astro";
     src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
 ></script>
 <script type="module">
-    import {
-        db,
-        doc,
-        onSnapshot,
-        updateDoc,
-        getDoc,
-        deleteDoc,
-        getDocs,
-        collection,
-    } from "/js/firebase.js";
+    import { db, doc, onSnapshot, updateDoc, getDoc, getDocs, collection, setDoc, } from "/js/firebase.js";
 
     const roomCode =
         document.querySelector(".board").dataset?.code ||
@@ -242,8 +233,8 @@ import Layout from "../../../layouts/Layout.astro";
                 .catch(() => {});
         }
     });
-
-    onSnapshot(roomRef, (snap) => {
+    let archivedOnce = false;
+    onSnapshot(roomRef, async (snap) => {
         const data = snap.data();
 
         const progressBox = document.getElementById("answer-progress");
@@ -339,6 +330,47 @@ import Layout from "../../../layouts/Layout.astro";
 
         // 👇 لو كل الأسئلة اتجاوبت
         if (answeredCount >= totalQuestions && totalQuestions > 0) {
+            if (!data.archived && !archivedOnce) {
+                archivedOnce = true;
+
+                // 👇 categories
+                const categories = data.gamePlan?.map((c) => {
+  return categoriesMap[c.category]?.slug || "quiz";
+}) || [];
+
+                // 👇 slug base
+                const slugBase = categories
+                    .join("-")
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")
+                    .replace(/[^a-z0-9-]/g, "");
+
+                // 👇 unique slug
+                const safeBase = slugBase || "quiz";
+const slug = `${safeBase}-${Date.now().toString().slice(-5)}`;
+
+                // 👇 ref بعد ما السلاج اتعمل
+                const publicRef = doc(db, "publicRooms", slug);
+
+                // 👇 title عربي
+                const title = `اختبار ${categories.join(" و ")} 🔥`;
+
+                // 👇 حفظ النسخة
+                await setDoc(publicRef, {
+                    title,
+                    slug,
+                    gamePlan: data.gamePlan || [],
+                    categories,
+                    questionsCount: totalQuestions,
+                    createdAt: Date.now(),
+                });
+
+                // 👇 نعلم إنها اتأرشفت
+                await updateDoc(roomRef, {
+                    archived: true,
+                });
+            }
+
             document.getElementById("show-results").style.display =
                 "inline-block";
         } else {
@@ -397,7 +429,7 @@ import Layout from "../../../layouts/Layout.astro";
                     hint: question.hint || null,
                 },
                 [`questionStartTimes.${catIndex}_${index}`]: Date.now(),
-                hints: {}
+                hints: {},
             });
             if (!question) return;
 
@@ -429,12 +461,12 @@ import Layout from "../../../layouts/Layout.astro";
                 hintBox.innerText = "";
 
                 hintBtn.onclick = async () => {
-    const key = `${catIndex}_${index}`;
+                    const key = `${catIndex}_${index}`;
 
-    // 👇 ابعت إن التلميح اتفتح
-    await updateDoc(roomRef, {
-        [`hints.${key}`]: true
-    });
+                    // 👇 ابعت إن التلميح اتفتح
+                    await updateDoc(roomRef, {
+                        [`hints.${key}`]: true,
+                    });
 
                     if (!question.hint) {
                         hintBox.innerText = "❌ مفيش تلميح";
@@ -479,12 +511,12 @@ import Layout from "../../../layouts/Layout.astro";
                 hintBox.innerText = "";
 
                 hintBtn.onclick = async () => {
-    const key = `${catIndex}_${index}`;
+                    const key = `${catIndex}_${index}`;
 
-    // 👇 ابعت إن التلميح اتفتح
-    await updateDoc(roomRef, {
-        [`hints.${key}`]: true
-    });
+                    // 👇 ابعت إن التلميح اتفتح
+                    await updateDoc(roomRef, {
+                        [`hints.${key}`]: true,
+                    });
 
                     if (!question.hint) {
                         hintBox.innerText = "❌ مفيش تلميح";
@@ -740,9 +772,9 @@ import Layout from "../../../layouts/Layout.astro";
         localStorage.removeItem("counted_room");
 
         await updateDoc(roomRef, {
-  status: "finished",
-  finishedAt: Date.now()
-});
+            status: "finished",
+            finishedAt: Date.now(),
+        });
         window.location.href = "/";
     });
 

@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const tabs = document.querySelectorAll('.tab');
 
   const passwords = {
+    // ditq: "000",
+    // addq: "000",
     addc: "1111",
     review: "22222",
     rooms: "333333"
