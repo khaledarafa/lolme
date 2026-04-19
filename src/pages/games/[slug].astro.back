@@ -1,0 +1,304 @@
+---
+// src/pages/games/[slug].astro
+import Layout from "../../layouts/Layout.astro";
+const { slug } = Astro.params;
+---
+
+<Layout>
+    <div id="game-root" class="game-page">جاري التحميل...</div>
+
+    <script type="module">
+        import { db, doc, getDoc } from "/js/firebase.js";
+
+        const slug = window.location.pathname.split("/").pop();
+        const root = document.getElementById("game-root");
+        const categoryNames = {
+            general: "منوعات",
+
+            // 🐾 حيوانات
+            "what-animal-is-this": "ما هو الحيوان",
+            animals: "أسئلة عن الحيوانات",
+
+            // 🎵 أغاني
+            songs: "ألعاب أغاني",
+
+            // ⚽ كورة
+            football: "منوعات كرة قدم",
+            "english-league": "الدوري الإنجليزي",
+            "serie-a": "الدوري الإيطالي",
+            "champions-league": "دوري أبطال أوروبا",
+            "world-cup": "كأس العالم",
+            "player-career": "مسيرة لاعب",
+            "saudi-league": "دوري سعودي",
+
+            // 🌍 جغرافيا
+            geography: "جغرافيا",
+            flags: "اعرف الدولة من العلم",
+            capitals: "عواصم الدول",
+
+            // 🎬 أفلام ومسلسلات
+            movies: "ألعاب أفلام",
+            series: "مسلسلات",
+
+            // 🛍️ منتجات
+            "supermarket-products": "منتجات السوبر ماركت",
+
+            // 🧠 عام
+            brain: "معلومات عامة",
+            mix: "منوعات",
+
+            // 🧩 ألعاب
+            "find-difference": "اوجد الاختلافات",
+
+            // 👀 خاصة
+            "eye-challenge": "عيون لاعبين",
+        };
+        function generateSEOContent(data) {
+            const category =
+                data.gamePlan?.[0]?.category ||
+                data.categories?.[0] ||
+                "general";
+
+            const map = {
+                general: {
+                    title: "اختبار منوعات 🔥",
+                    intro: "اختبر معلوماتك في مجالات مختلفة 😏🔥",
+                    desc: "مجموعة أسئلة متنوعة وممتعة في كل المجالات.",
+                },
+
+                // 🐾 حيوانات
+                "what-animal-is-this": {
+                    title: "اختبار معلومات عن الحيوانات 🐾",
+                    intro: "اختبر معلوماتك عن الحيوانات وسلوكها بطريقة ممتعة 😏🔥",
+                    desc: "اختبار شامل عن الحيوانات، فيه أسئلة ممتعة وتحدي حقيقي لمعلوماتك.",
+                },
+                animals: {
+                    title: "أسئلة عن الحيوانات 🐾",
+                    intro: "هل تعرف معلومات كافية عن الحيوانات؟ جرب الاختبار ده 😏",
+                    desc: "مجموعة أسئلة ممتعة عن الحيوانات وسلوكها وخصائصها.",
+                },
+
+                // 🎵 أغاني
+                songs: {
+                    title: "اختبار أغاني 🎵",
+                    intro: "هل أنت خبير في الأغاني؟ جرب التحدي 🔥",
+                    desc: "اختبار ممتع في عالم الأغاني والفنانين.",
+                },
+
+                // ⚽ كورة
+                football: {
+                    title: "اختبار كورة ⚽",
+                    intro: "اختبر معلوماتك الكروية واعرف مستواك 😏🔥",
+                    desc: "أسئلة قوية في عالم كرة القدم والبطولات.",
+                },
+                "english-league": {
+                    title: "اختبار الدوري الإنجليزي ⚽",
+                    intro: "هل أنت متابع قوي للبريميرليج؟ جرب الاختبار ده 🔥",
+                    desc: "أسئلة عن الدوري الإنجليزي والفرق واللاعبين.",
+                },
+                "serie-a": {
+                    title: "اختبار الدوري الإيطالي 🇮🇹",
+                    intro: "اختبر معلوماتك في الكالتشيو 😏🔥",
+                    desc: "أسئلة عن الدوري الإيطالي وتاريخه.",
+                },
+                "champions-league": {
+                    title: "اختبار دوري أبطال أوروبا 🏆",
+                    intro: "هل تعرف تاريخ الأبطال؟ جرب الاختبار 🔥",
+                    desc: "أسئلة عن دوري أبطال أوروبا والنهائيات.",
+                },
+                "world-cup": {
+                    title: "اختبار كأس العالم 🌍",
+                    intro: "اختبر معلوماتك عن كأس العالم 😏🔥",
+                    desc: "أسئلة عن المنتخبات والبطولات العالمية.",
+                },
+
+                // 🌍 جغرافيا
+                geography: {
+                    title: "اختبار جغرافيا 🌍",
+                    intro: "هل تعرف الدول والعواصم؟ جرب الاختبار 😏",
+                    desc: "أسئلة عن الجغرافيا والدول حول العالم.",
+                },
+                flags: {
+                    title: "اعرف الدولة من العلم 🚩",
+                    intro: "هل تقدر تعرف الدول من أعلامها؟ 😏🔥",
+                    desc: "اختبار ممتع عن أعلام الدول.",
+                },
+                capitals: {
+                    title: "اختبار عواصم الدول 🌍",
+                    intro: "اختبر معلوماتك عن عواصم العالم 😏",
+                    desc: "أسئلة عن عواصم الدول المختلفة.",
+                },
+
+                // 🎬 أفلام ومسلسلات
+                movies: {
+                    title: "اختبار أفلام 🎬",
+                    intro: "هل أنت عاشق للأفلام؟ جرب الاختبار 🔥",
+                    desc: "أسئلة عن أشهر الأفلام والممثلين.",
+                },
+                series: {
+                    title: "اختبار مسلسلات 📺",
+                    intro: "هل أنت متابع قوي للمسلسلات؟ 😏",
+                    desc: "أسئلة عن أشهر المسلسلات.",
+                },
+
+                // 🧠 معلومات عامة
+                brain: {
+                    title: "اختبار معلومات عامة 🧠",
+                    intro: "اختبر ذكاءك ومعلوماتك العامة 😏🔥",
+                    desc: "أسئلة متنوعة في مجالات مختلفة.",
+                },
+
+                // 🛍️ منتجات
+                products: {
+                    title: "اختبار منتجات السوبر ماركت 🛍️",
+                    intro: "هل تعرف المنتجات كويس؟ جرب التحدي 😏",
+                    desc: "أسئلة ممتعة عن المنتجات والعلامات التجارية.",
+                },
+
+                // 🧩 ألعاب
+                "find-difference": {
+                    title: "اختبار اوجد الاختلافات 🔍",
+                    intro: "ركز كويس واكتشف الفرق 😏🔥",
+                    desc: "اختبار بصري ممتع لاكتشاف الاختلافات.",
+                },
+
+                // 👤 شخصية لاعب
+                "player-career": {
+                    title: "اختبار مسيرة لاعب ⚽",
+                    intro: "هل تعرف مسيرة اللاعبين؟ جرب الاختبار 😏",
+                    desc: "أسئلة عن انتقالات اللاعبين وتاريخهم.",
+                },
+            };
+            const niceName =
+                categoryNames[category] || category.replaceAll("-", " ");
+            // 🧠 fallback ذكي
+            return (
+                map[category] || {
+                    title: `اختبار ${category} 🔥`,
+                    intro: `اختبر معلوماتك في ${niceName} بطريقة ممتعة 😏`,
+                    desc: `مجموعة أسئلة ممتعة عن ${niceName}.`,
+                }
+            );
+        }
+        async function loadGame() {
+            const snap = await getDoc(doc(db, "publicRooms", slug));
+
+            if (!snap.exists()) {
+                root.innerHTML = "❌ الصفحة مش موجودة";
+                return;
+            }
+
+            const data = snap.data();
+            const seo = generateSEOContent(data);
+            const category =
+                data.gamePlan?.[0]?.category ||
+                data.categories?.[0] ||
+                "general";
+
+            const niceName =
+                categoryNames[category] || category.replaceAll("-", " ");
+
+            // 🔥 عنوان متغير
+            const variants = [
+                "اختبر معلوماتك في",
+                "هل أنت خبير في",
+                "تحدي سريع في",
+                "اختبار قوي في",
+                "جرب نفسك في",
+                "اختبار ممتع في",
+                "اختبر ذكاءك في",
+                "هل تقدر تجاوب على",
+                "تحدي جديد في",
+                "اختبار سهل ولا صعب في",
+                "اختبر مستواك في",
+                "هل تعرف كل شيء عن",
+                "جرب التحدي في",
+                "اختبار سريع في",
+                "تحدي الأذكياء في",
+                "اختبار المشاهير في",
+                "هل أنت محترف في",
+                "اختبار شامل في",
+                "جرب اختبار اليوم في",
+                "هل أنت جاهز لتحدي",
+            ];
+
+            const randomText =
+                variants[Math.floor(Math.random() * variants.length)];
+
+            const title = `${randomText} ${niceName} - هل تعرف الإجابة؟ 🤔`;
+
+            root.innerHTML = `
+        <h1>${title}</h1>
+            <p class="intro">${seo.intro}</p>
+
+        <p class="meta">
+          عدد الأسئلة: ${data.questionsCount}
+        </p>
+
+        <div class="game-board">
+          ${data.gamePlan
+              .map(
+                  (cat) => `
+            <div class="category">
+              <h2>${
+                  categoryNames[cat.category] ||
+                  cat.category.replaceAll("-", " ")
+              }</h2>
+
+              ${cat.questions
+                  .map(
+                      (q) => `
+                <div class="question-card">
+
+                    <p class="q-text">${q.text}</p>
+
+                    <div class="options">
+                    ${(q.options || [])
+                        .map(
+                            (opt) => `
+                        <button class="option-btn">${opt}</button>
+                    `,
+                        )
+                        .join("")}
+    </div>
+
+    <div class="cta-hint">
+      👀 عايز تعرف الإجابة؟ العب اللعبة 😏🔥
+    </div>
+
+  </div>
+`,
+                  )
+                  .join("")}
+            </div>
+          `,
+              )
+              .join("")}
+        </div>
+
+        <div class="seo-extra">
+          <h3>ليه تعمل الاختبار ده؟ 🤔</h3>
+          <p>${seo.desc}</p>
+        </div>
+
+        <a href="/" class="play-btn">
+          🎮 العب لايف مع أصحابك
+        </a>
+      `;
+            document.querySelectorAll(".option-btn").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    btn.innerText = "❌ العب اللعبة عشان تعرف 😈";
+                    btn.style.background = "#3a1b1b";
+                });
+            });
+            // 🔥 تفاعل بسيط
+            document.querySelectorAll(".question-card").forEach((card) => {
+                card.addEventListener("click", () => {
+                    card.classList.toggle("active");
+                });
+            });
+        }
+
+        loadGame();
+    </script>
+</Layout>
