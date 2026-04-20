@@ -122,7 +122,7 @@ import Layout from "../../../layouts/Layout.astro";
                 let snap = await getDocs(q);
 
                 // 👇 fallback لو مفيش نتايج
-                if (snap.empty) {
+                if (snap.docs.length < questionsCount) {
                     q = query(
                         collection(db, "questions"),
                         where("approved", "==", true),
@@ -134,7 +134,10 @@ import Layout from "../../../layouts/Layout.astro";
                     snap = await getDocs(q);
                 }
 
-                let list = snap.docs.map((d) => d.data());
+                let list = snap.docs.map((d) => ({
+  id: d.id,
+  ...d.data()
+}));
 
                 gamePlan.push({
                     category: cat,
