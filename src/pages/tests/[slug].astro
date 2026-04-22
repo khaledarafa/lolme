@@ -1,10 +1,18 @@
 ---
 // src/pages/tests/[slug].astro
-export const prerender = false;
+export const prerender = true;
 
 import Layout from "../../layouts/Layout.astro";
 import { quizzes } from "../../data/quizzes/index.js";
 
+// 🔥 توليد كل الصفحات static
+export async function getStaticPaths() {
+  return quizzes.map((quiz) => ({
+    params: { slug: quiz.slug },
+  }));
+}
+
+// 🧠 Types
 interface Option {
   text: string;
   value: string;
@@ -27,26 +35,48 @@ interface Quiz {
   results: Record<string, QuizResult>;
 }
 
+// 📌 slug
 const { slug } = Astro.params;
 
+// 🔗 related
 const otherQuizzes = quizzes.filter(q => q.slug !== slug);
 
+// 💥 أهم سطر (الداتا التقيلة)
 let quiz: Quiz;
+
 try {
   quiz = (await import(`../../data/quizzes/${slug}.json`)).default;
 } catch {
-  throw new Error("Quiz not found");
+  return Astro.redirect("/tests");
 }
 
+// 📦 destructure
 const { title, img, questions, results } = quiz;
 ---
 
-<Layout title={title} img={img}>
+<Layout 
+  title={`${title} | اختبار شخصيتك 😂🔥`}
+  description={`جرب ${title} الآن واكتشف نتيجتك بطريقة ممتعة مع أصحابك. اختبار تفاعلي مجاني.`}
+  img={img}
+/>
 
 <div id="otherQuizzesData" data-json={JSON.stringify(otherQuizzes)}></div>
 
 <section class="quiz">
+<section class="seo-intro">
+  <h1>{title}</h1>
 
+  <p>
+    جرب هذا الاختبار الآن واكتشف نتيجتك بطريقة ممتعة 😂،
+    جاوب على الأسئلة التالية واعرف شخصيتك بشكل مختلف 😏🔥
+  </p>
+
+  <h2>كيف يعمل هذا الاختبار؟</h2>
+  <p>
+    يعتمد هذا الاختبار على اختياراتك لتحليل شخصيتك،
+    كل إجابة تعكس جانب من تفكيرك وسلوكك اليومي.
+  </p>
+</section>
   <form id="quizForm">
     {questions.map((q, i) => (
       <div class="question">
@@ -82,7 +112,7 @@ const { title, img, questions, results } = quiz;
         <div class="next-quiz">
           <h3 style="text-align:center;">🎯 جرب اختبار تاني!</h3>
           <a href="/tests/${q.slug}" class="quiz-card tilt-card">
-            <img class="img" src="${q.img}" alt="${q.title}" />
+            <img class="img" src="${q.img}" alt="اختبار ${q.title} مضحك" />
             <div class="content">
               <p class="card-title">${q.title}</p>
               <p>${q.desc}</p>
