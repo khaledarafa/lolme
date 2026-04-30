@@ -1,0 +1,104 @@
+---
+// src/pages/play/[slug].astro
+import Layout from "../../layouts/Layout.astro";
+import { playGames } from "../../data/playGames.js";
+
+export async function getStaticPaths() {
+  return playGames.map((game) => ({
+    params: { slug: game.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const game = playGames.find((g) => g.slug === slug);
+---
+
+<Layout 
+  title={game?.title} 
+  description={game?.desc}
+>
+
+{!game && <p>❌ اللعبة مش موجودة</p>}
+
+{game && (
+  <>
+    <h1 class="game-title">
+  {game.title} 🎮
+</h1>
+
+    {/* <p>{game.desc}</p> */}
+
+    <!-- 🎮 اللعبة -->
+    <div class="game-container">
+  <iframe 
+  src={game.embed} 
+  loading="lazy"
+  allowfullscreen
+></iframe>
+</div>
+{/* <div id="rotate-screen">
+  📱 لف الموبايل بالعرض عشان تلعب 😏🔥
+</div>
+
+<div class="game-wrapper">
+  <iframe src={game.embed}></iframe>
+</div> */}
+
+    <!-- 🧠 SEO نصي -->
+    {/* <div class="seo-text">
+      <h2>🎮 معلومات عن اللعبة</h2>
+      <p>
+        {game.title} هي لعبة ممتعة تقدر تلعبها مباشرة من المتصفح بدون تحميل.
+        مناسبة للموبايل وسهلة وسريعة.
+      </p>
+    </div> */}
+<div class="seo-text">
+  <h2>🎮 معلومات عن {game.title}</h2>
+
+  <p>
+    {game.title} هي واحدة من أفضل ألعاب الأونلاين اللي تقدر تلعبها مباشرة من المتصفح بدون تحميل.
+    اللعبة مناسبة للموبايل والكمبيوتر، وسهلة وسريعة لأي حد عايز يقضي وقت ممتع.
+  </p>
+
+  <p>
+    لو بتدور على {game.keywords.join("، ")}،
+    فهتلاقي تجربة ممتعة وتحدي حقيقي يخليك تلعب أكتر من مرة.
+  </p>
+
+  <h3>🕹️ طريقة اللعب</h3>
+  <p>
+    استخدم الشاشة أو الماوس للتحكم، وحاول تحقق أعلى نتيجة ممكنة.
+  </p>
+</div>
+    <!-- 🔥 ألعاب تانية -->
+<h3>🎮 جرب ألعاب تانية</h3>
+
+<div class="home-grid">
+  {playGames
+    .filter(g => g.slug !== slug) // 👈 نشيل اللعبة الحالية
+    .slice(0, 3)
+    .map(g => (
+      <a href={`/play/${g.slug}`} class="home-card tilt-card">
+        <img src={g.img} alt={g.title} />
+        <div class="content">
+          <h3>{g.title}</h3>
+          <p>{g.desc}</p>
+        </div>
+      </a>
+    ))}
+</div>
+  </>
+)}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Game",
+  "name": "{game.title}",
+  "description": "{game.desc}",
+  "genre": "Arcade",
+  "operatingSystem": "Any",
+  "applicationCategory": "Game",
+  "url": "https://yourdomain.com/play/{slug}"
+}
+</script>
+</Layout>

@@ -56,6 +56,11 @@ const homeButtons = [
     slug: "/gaming",
     img: "/images/moncellence-live.webp",
   },
+  {
+    title: "🎮 ألعاب تلعبها فورًا",
+    slug: "/play",
+    img: "/play/rush/images/rush-menu-scene.png",
+  },
   // { title: "📸 اعمل ميميز دلوقتي", slug: "/meme", img: "/images/meme.webp" },
   // { title: "🔥 روّست صاحبك", slug: "/roast", img: "/images/roast.webp" },
   // { title: "🤣 صور مضحكة", slug: "/funnyImages", img: "/images/funny.webp" },
@@ -81,6 +86,19 @@ const homeButtons = [
     <div class="emoji" style="font-size:2rem;">🥳</div>
   </div>
 
+  <!-- <section class="real-games-section">
+  <h2>🎮 ألعاب تلعبها فورًا</h2>
+
+  <div class="home-grid">
+    <a href="/play/rush" class="home-card">
+      <img src="/play/rush/images/rush-menu-scene.png" />
+      <h3>🧠 rush</h3>
+    </a>
+  </div>
+
+  <a href="/play" class="play-btn">🎮 كل الألعاب</a>
+</section> -->
+
   <!-- 🎮 اللعب -->
   <section class="play-section">
     <h2>🎮 العب مع صحابك الآن</h2>
@@ -102,17 +120,11 @@ const homeButtons = [
     <p class="game-desc">🔥 لعبة أسئلة متنوعة… كل جولة بتخليك تضحك أكتر 😏</p>
   </section>
 
-  <!-- 🧠 الفئات (لوحدها بقى 👇) -->
-  <section class="categories-section">
-    <h2>🧠 من الكورة للأفلام للمعلومات… اختار وورّي صحابك مستواك 😏🔥</h2>
-    <div id="home-categories" class="home-grid"></div>
-  </section>
-
-  <section class="seo-games">
+  <!-- <section class="seo-games">
     <h2>🔥 اختبارات ممكن تعجبك</h2>
     <div id="seo-games-list" class="home-grid"></div>
     <a href="/games" class="play-btn"> 🔥 شوف كل الاختبارات </a>
-  </section>
+  </section> -->
 
   <!-- 😂 محتوى ترفيهي -->
   <section class="fun-section">
@@ -130,6 +142,12 @@ const homeButtons = [
         ))
       }
     </div>
+  </section>
+
+  <!-- 🧠 الفئات (لوحدها بقى 👇) -->
+  <section class="categories-section">
+    <h2>🧠 من الكورة للأفلام للمعلومات… اختار وورّي صحابك مستواك 😏🔥</h2>
+    <div id="home-categories" class="home-grid"></div>
   </section>
 
   <!-- 📰 مقالات -->

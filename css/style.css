@@ -4372,3 +4372,79 @@ textarea.hint::placeholder {
   background: #00ff99;
   color: #000;
 }
+
+/* =================================== play.astro ======================= */
+.game-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
+  aspect-ratio: 3 / 2;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.game-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+@media (max-width: 600px) {
+  .game-container {
+    width: 100%;
+    height: 70vh;
+    aspect-ratio: unset;
+  }
+}
+/* #rotate-screen {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  color: #fff;
+  font-size: 22px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.game-wrapper {
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
+  aspect-ratio: 3 / 2;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.game-wrapper iframe {
+  width: 100%;
+  height: 80vh;
+  border: none;
+}
+
+@media (orientation: portrait) {
+  #rotate-screen {
+    display: flex;
+  }
+
+  .game-wrapper {
+    display: none;
+  }
+} */
+
+.device-note {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: rgba(255, 200, 0, 0.1);
+  border: 1px solid rgba(255, 200, 0, 0.3);
+  color: #ffd86b;
+  text-align: center;
+  font-size: 14px;
+}
+.seo-text{
+  text-align: right;
+}

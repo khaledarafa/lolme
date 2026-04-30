@@ -96,57 +96,6 @@ description="أفضل مودات Euro Truck Simulator 2 التي أستخدمه�
 <script src="/js/mods-filter.js" defer></script>
 </Layout>
 
-<!-- ---
-export const prerender = false;
-import Layout from "../../layouts/Layout.astro";
-import { mods } from "../../data/gaming/mods.js";
----
-
-<Layout
-title="مودات Euro Truck Simulator 2 | أفضل مودات ETS2"
-description="أفضل مودات Euro Truck Simulator 2 التي أستخدمها في اللعبة مثل الإضاءة والمرايات والإكسسوارات وتحسين القيادة."
->
-
-<main class="tests-page">
-
-<section class="intro">
-
-<p class="page-desc">
-أفضل مودات Euro Truck Simulator 2 التي أستخدمها لتحسين الإضاءة والكابينة وتجربة القيادة.
-</p>
-
-<p class="cta-line">👇 المودات اللي بستخدمها في اللعبة</p>
-
-</section>
-<section class="home-grid">
-
-{mods.map((mod, i) => (
-
-<a href={mod.link} target="_blank" class="home-card tilt-card">
-
-<img
-src={mod.img}
-alt={mod.title}
-loading={i < 3 ? "eager" : "lazy"}
-/>
-
-<div class="content">
-<h3>{mod.title}</h3>
-<p>{mod.desc}</p>
-</div>
-
-</a>
-))}
-
-</section>
-
-</main>
-
-<script src="/js/tilt-cards.js" defer></script>
-
-</Layout> -->
-
-
 <style>
   .home-grid {
     display: grid;
