@@ -14,55 +14,35 @@ document.addEventListener("DOMContentLoaded", () => {
   grids.forEach(grid => {
     const cards = Array.from(grid.querySelectorAll(":scope > *"));
 
-    ads.forEach(ad => {
-      if (ad.every) {
-        cards.forEach((card, i) => {
-          if (i > 0 && i % ad.every === 0) {
-            const box = document.createElement("div");
-            box.className = "grid-ad-box tilt-card";
-
-            const inner = document.createElement("div");
-            inner.className = "ad-tilt-inner";
-
-            // inner.innerHTML = `
-            //   <a href="${ad.link}" onclick="event.preventDefault(); window.open('${ad.link}', '_blank');" class="ad-link">
-            //     ${ad.video
-            //                 ? `<video src="${ad.video}" autoplay loop muted playsinline></video>`
-            //                 : ad.img
-            //                   ? `<img src="${ad.img}" />`
-            //                   : `<div class="ad-placeholder">مساحتك الإعلانية هنا 😂🔥</div>`
-            //               }
-            //     <div class="ad-label">📢 إعلان</div>
-            //   </a>
-            // `;
-            inner.innerHTML = `
-  <a href="${ad.link}" target="_blank" class="ad-link">
+cards.forEach((card, i) => {
+  if (i > 0 && i % 4 === 0) {
     
-    <div class="ad-media">
-      ${
-        ad.video
-          ? `<video src="${ad.video}" autoplay loop muted playsinline></video>`
-          : ad.img
-          ? `<img src="${ad.img}" />`
-          : `<div class="ad-placeholder">إعلان</div>`
-      }
-    </div>
+    const adIndex = Math.floor(i / 4) % ads.length;
+const ad = ads[adIndex]; // 👈 اختيار إعلان مختلف كل مرة
 
-    <div class="ad-body">
-      <h4>${ad.title || "إعلان"}</h4>
-      <p>${ad.desc || ""}</p>
-      ${ad.cta ? `<button>${ad.cta}</button>` : ""}
-    </div>
+    const box = document.createElement("div");
+    box.className = "grid-ad-box tilt-card";
 
-    <span class="ad-badge">📢 إعلان</span>
+    const inner = document.createElement("div");
+    inner.className = "ad-tilt-inner";
 
-  </a>
-`;
-            box.appendChild(inner);
-            card.insertAdjacentElement("beforebegin", box);
-          }
-        });
-      }
-    });
+    inner.innerHTML = `
+      <a href="${ad.link}" target="_blank" class="ad-link">
+        <div class="ad-media">
+          ${ad.img ? `<img src="${ad.img}" />` : ""}
+        </div>
+        <div class="ad-body">
+          <h4>${ad.title}</h4>
+          <p>${ad.desc}</p>
+          ${ad.cta ? `<button>${ad.cta}</button>` : ""}
+        </div>
+        <span class="ad-badge">📢 إعلان</span>
+      </a>
+    `;
+
+    box.appendChild(inner);
+    card.insertAdjacentElement("beforebegin", box);
+  }
+});
   });
 });

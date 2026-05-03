@@ -793,7 +793,8 @@ h2 {
 .ad-placeholder {
   width: 100%;
   max-width: 900px;
-  height: 130px;
+  height: auto;
+  display: block;
   min-height: 150px;
   background: #111;
   border-radius: 14px;
@@ -912,16 +913,6 @@ h2 {
   object-fit: cover;
 }
 
-.grid-ad-box {
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-  /* background: var(--card); */
-  border: 1px solid var(--border-color);
-  transition: 0.3s;
-  box-shadow: 0 4px 10px var(--shadow-color);
-}
-
 .grid-ad-box:hover {
   transform: translateY(-5px);
 }
@@ -930,7 +921,10 @@ h2 {
   border-radius: 12px;
   overflow: hidden;
   background: var(--card);
-  border: 1px solid var(--border-color);
+  /* box-shadow: 0 4px 10px var(--shadow-color); */
+  /* border: 2px solid var(--border-color); */
+  border: 2px solid #00ff88;
+  box-shadow: 0 0 10px rgba(0,255,136,0.3);
   transition: 0.3s;
   position: relative;
 }
@@ -955,13 +949,18 @@ h2 {
 
 .ad-body h4 {
   color: #22c55e;
-  font-size: 15px;
+  font-size: 1.4rem;
   margin-bottom: 5px;
 }
 
 .ad-body p {
-  font-size: 13px;
+  font-size: 1.1rem;
   opacity: 0.8;
+}
+
+.ad-link,
+.ad-link * {
+  text-decoration: none !important;
 }
 
 /* زرار */

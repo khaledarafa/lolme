@@ -33,7 +33,7 @@ description="أفضل مودات Euro Truck Simulator 2 التي أستخدمه�
 <!-- 🚌 باصات -->
 <div id="bus" class="mod-section">
   <h2>🚌 مودات الباصات</h2>
-  <div class="home-grid">
+  <div class="home-grid grid">
     {busMods.map((mod, i) => (
       <a href={mod.link} target="_blank" class="home-card tilt-card">
         <img 
@@ -53,7 +53,7 @@ description="أفضل مودات Euro Truck Simulator 2 التي أستخدمه�
 <!-- 🚙 عربيات -->
 <div id="cars" class="mod-section" style="display:none;">
   <h2>🚙 مودات العربيات</h2>
-  <div class="home-grid">
+  <div class="home-grid grid">
     {carMods.map((mod, i) => (
       <a href={mod.link} target="_blank" class="home-card tilt-card">
         <img 
@@ -73,7 +73,7 @@ description="أفضل مودات Euro Truck Simulator 2 التي أستخدمه�
 <!-- 🔧 عام -->
 <div id="general" class="mod-section" style="display:none;">
   <h2>🔧 مودات عامة وتحسينات</h2>
-  <div class="home-grid">
+  <div class="home-grid grid">
     {generalMods.map((mod) => (
       <a href={mod.link} target="_blank" class="home-card tilt-card">
         <img 

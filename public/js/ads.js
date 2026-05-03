@@ -1,9 +1,10 @@
 // public/js/ads.js
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => {
-    insertAds();
-  }, 200);
-});
+// document.addEventListener("DOMContentLoaded", () => {
+//   setTimeout(() => {
+//     insertAds();
+//   }, 200);
+// });
+document.addEventListener("DOMContentLoaded", insertAds);
 
 function insertAds() {
   const configEl = document.getElementById("ads-config");
