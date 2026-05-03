@@ -60,6 +60,11 @@ const homeButtons = [
     title: "🎮 ألعاب تلعبها فورًا",
     slug: "/play",
     img: "/play/rush/images/rush-menu-scene.png",
+  },  {
+    slug: "/tests/wealth",
+    title: "اختبار عقلية الثراء ✨🧠💰",
+    desc: "جاوب على شوية أسئلة بسيطة وهتعرف دماغك رايحة للوفرة… ولا لسه حابسة نفسها في الندرة 😂💸",
+    img: "/images/wealth-350.webp",
   },
   // { title: "📸 اعمل ميميز دلوقتي", slug: "/meme", img: "/images/meme.webp" },
   // { title: "🔥 روّست صاحبك", slug: "/roast", img: "/images/roast.webp" },
@@ -124,7 +129,7 @@ const homeButtons = [
   <section class="fun-section">
     <h2>😂 جرب حاجة تضحكك</h2>
 
-    <div class="home-grid">
+    <div class="home-grid grid">
       {
         homeButtons.map((btn, i) => (
           <a href={btn.slug} class="home-card tilt-card">
