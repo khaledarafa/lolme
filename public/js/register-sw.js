@@ -2,12 +2,19 @@
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
-      if (window.location.hostname !== "localhost") {
-        const reg = await navigator.serviceWorker.register("/service-worker.js");
-        console.log("SW registered:", reg);
+      if (location.hostname !== "localhost") {
+
+        const version = Date.now(); // 🔥 ده اللي بيفرق
+
+        await navigator.serviceWorker.register(
+          `/service-worker.js?v=${version}`
+        );
+
+        console.log("✅ SW registered:", version);
+
       }
     } catch (err) {
-      console.error("SW register failed", err);
+      console.error("❌ SW register failed", err);
     }
   });
 }

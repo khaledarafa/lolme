@@ -131,17 +131,6 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
   </head>
 
   <body>
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("/service-worker.js")
-            .then(() => console.log("✅ Service Worker registered"))
-            .catch((err) => console.error("❌ SW registration failed:", err));
-        });
-      }
-    </script>
-
     <main>
       <!-- الهيدر الثابت -->
       <!-- <header class="page-header" style=" display:flex; justify-content:space-between; align-items:center; width:100%; max-width:1000px; margin:0 auto; padding:0.5rem 1rem; background:transparent; " > -->
