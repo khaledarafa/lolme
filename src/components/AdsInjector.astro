@@ -6,7 +6,13 @@ import AdBox from "./AdBox.astro";
 // const ua = Astro.request.headers.get("user-agent") || "";
 // const isMobile = /(Mobile|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop)/i.test(ua);
 
-const { showTop = true, showBottom = true, showSide = true, showFloating = true } = Astro.props;
+const v = Date.now();
+const {
+  showTop = true,
+  showBottom = true,
+  showSide = true,
+  showFloating = true,
+} = Astro.props;
 ---
 
 {/* TOP */}
@@ -73,11 +79,15 @@ const { showTop = true, showBottom = true, showSide = true, showFloating = true 
 )} -->
 
 {/* BOTTOM — نسخة واحدة فقط */}
-{showBottom && adsConfig.bottom?.length > 0 && (
-  <div class="ad-bottom">
-    {adsConfig.bottom.map(ad => <AdBox ad={ad} />)}
-  </div>
-)}
+{
+  showBottom && adsConfig.bottom?.length > 0 && (
+    <div class="ad-bottom">
+      {adsConfig.bottom.map((ad) => (
+        <AdBox ad={ad} />
+      ))}
+    </div>
+  )
+}
 
 {/* CONFIG + SCRIPTS */}
 <script
@@ -87,8 +97,8 @@ const { showTop = true, showBottom = true, showSide = true, showFloating = true 
     .replace(/</g, "\\u003c")
     .replace(/>/g, "\\u003e")
     .replace(/&/g, "\\u0026")}
-></script>
+/>
 
-<script type="module" src="/js/ads.js"></script>
-<script type="module" src="/js/adsGrid.js"></script>
-  <script src="/js/tilt-cards.js" defer></script>
+<script type="module" src={`/js/ads.js?v=${v}`}></script>
+<script type="module" src={`/js/adsGrid.js?v=${v}`}></script>
+<script type="module" src={`/js/tilt-cards.js?v=${v}`}></script>

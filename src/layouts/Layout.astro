@@ -4,7 +4,8 @@ import Footer from "../components/Footer.astro";
 import Analytics from "@vercel/analytics/astro";
 import AdsInjector from "../components/AdsInjector.astro";
 const { title = "", description, img, ogImage } = Astro.props;
-import "../../css/style.css";
+// import "../../css/style.css";
+const v = Date.now();
 
 // لو مفيش ogImage → نستخدم img
 const makeAbsolute = (url: string = ""): string =>
@@ -58,6 +59,7 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
     <link rel="canonical" href={`https://lolme.cc${Astro.url.pathname}`} />
     <link rel="preload" href="/favicon.webp" as="image" />
 
+    <link rel="stylesheet" href={`/css/style.css?v=${v}`} />
     <!-- OG TAGS -->
     <meta
       property="og:title"
@@ -229,7 +231,7 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
     </div>
     <Footer />
 
-    <script type="module" src="/js/ads-system.js"></script>
+    <script type="module" src={`/js/ads-system.js?v=${Date.now()}`}></script>
 
     <script type="module">
       document.addEventListener("DOMContentLoaded", () => {
