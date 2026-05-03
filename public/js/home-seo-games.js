@@ -1,3 +1,4 @@
+// public/js/home-seo-games.js
 import { db, collection, getDocs } from "/js/firebase.js";
 
 const container = document.getElementById("seo-games-list");
