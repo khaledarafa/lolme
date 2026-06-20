@@ -18,6 +18,18 @@ getDocs(collection(db, "categories")).then((snap) => {
         filterSelect.appendChild(opt);
     });
 });
+function normalizeArabic(text = "") {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[\u064B-\u065F]/g, "") // التشكيل
+    .replace(/[أإآ]/g, "ا")          // الألف
+    .replace(/ى/g, "ي")             // ألف مقصورة
+    .replace(/ة/g, "ه")             // تاء مربوطة
+    .replace(/ؤ/g, "و")             // واو مهموزة
+    .replace(/ئ/g, "ي")             // ياء مهموزة
+    .replace(/ـ/g, "");             // التطويل
+}
 // 🔥 رسم كارت السؤال (المصدر الوحيد)
 function createQuestionCard(data) {
     const id = data.id;
@@ -229,7 +241,15 @@ const val = e.target.value.toLowerCase();
 const selectedCat = filterSelect.value;
 
 const filtered = allQuestions.filter(q => {
-    const matchText = q.text?.toLowerCase().includes(val);
+const searchText = normalizeArabic(val);
+
+const target = normalizeArabic(`
+  ${q.text || ""}
+  ${q.correct || ""}
+  ${q.hint || ""}
+`);
+
+const matchText = target.includes(searchText);
     const matchCat = selectedCat ? q.category === selectedCat : true;
     return matchText && matchCat;
 });
