@@ -23,7 +23,7 @@ import Layout from "../../../layouts/Layout.astro";
         const roomRef = doc(db, "rooms", roomCode);
 
         const container = document.getElementById("results");
-        const counted = {};
+        // const counted = {};
         const winMusic = new Audio("/sounds/win.mp3");
 
         winMusic.volume = 0.6;
@@ -72,6 +72,9 @@ import Layout from "../../../layouts/Layout.astro";
         });
 
         function renderResults(data) {
+
+            const counted = {};
+            
             const answers = data.answers || {};
             const players = data.players || {};
 
