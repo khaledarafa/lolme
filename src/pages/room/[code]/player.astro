@@ -1,464 +1,481 @@
 ---
-// src/pages/room/[code]/player.astro شاشه مشتركه للاعبين سواء هلعب معاهم او قاعد من بورد 
+// src/pages/room/[code]/player.astro شاشه مشتركه للاعبين سواء هلعب معاهم او قاعد من بورد
 const { code } = Astro.params;
 import Layout from "../../../layouts/Layout.astro";
 ---
 
 <Layout>
-    <div class="top-bar" style="display: none !important;">
-        <div class="left">
-            <span>🎮 كود الغرفة: {code}</span>
-            <button id="end-game" class="end-btn">❌ اقفل الروم</button>
-        </div>
-
-        <div class="center">
-            <div id="answer-progress" class="answer-progress"></div>
-            <div id="not-answered-list" class="not-answered"></div>
-        </div>
-
-        <div class="right">
-            <button id="show-results" style="display:none;"
-                >📊 عرض النتائج</button
-            >
-        </div>
+  <div class="top-bar" style="display: none !important;">
+    <div class="left">
+      <span>🎮 كود الغرفة: {code}</span>
+      <button id="end-game" class="end-btn">❌ اقفل الروم</button>
     </div>
 
-    <div id="players-section" data-code={code}></div>
+    <div class="center">
+      <div id="answer-progress" class="answer-progress"></div>
+      <div id="not-answered-list" class="not-answered"></div>
+    </div>
 
-    <!-- <div class="suggest-box">
+    <div class="right">
+      <button id="show-results" style="display:none;">📊 عرض النتائج</button>
+    </div>
+  </div>
+
+  <div id="players-section" data-code={code}></div>
+
+  <!-- <div class="suggest-box">
         <button id="send-suggest-admin">إرسال</button>
         <input id="suggest-input-admin" placeholder="اقترح فئة 😏" />
     </div> -->
 
-    <!-- <div class="suggestions-wrapper">
+  <!-- <div class="suggestions-wrapper">
         <div id="suggestions-list" class="suggestions-list"></div>
     </div> -->
 
-    <div class="board" id="board"></div>
+  <div class="board" id="board"></div>
 
-    <div class="chat-divider">
-        <span>💬 الدردشة</span>
-    </div>
+  <div class="chat-divider">
+    <span>💬 الدردشة</span>
+  </div>
 
-    <div class="suggest-box">
-        <button id="send-chat">إرسال</button>
-        <input id="chat-input" placeholder="اكتب رسالة 😏" />
-    </div>
+  <div class="suggest-box">
+    <button id="send-chat">إرسال</button>
+    <input id="chat-input" placeholder="اكتب رسالة 😏" />
+  </div>
 
-    <div class="suggestions-wrapper">
-        <div id="chat-list" class="suggestions-list"></div>
-    </div>
+  <div class="suggestions-wrapper">
+    <div id="chat-list" class="suggestions-list"></div>
+  </div>
 
-    <div id="question-sheet" class="sheet hidden">
-        <div class="sheet-content" id="sheet-content"></div>
-    </div>
+  <div id="question-sheet" class="sheet hidden">
+    <div class="sheet-content" id="sheet-content"></div>
+  </div>
 
-    <div id="image-modal" class="image-modal hidden">
-        <span id="close-image">❌</span>
-        <img id="modal-img" />
-    </div>
+  <div id="image-modal" class="image-modal hidden">
+    <span id="close-image">❌</span>
+    <img id="modal-img" />
+  </div>
 </Layout>
 
 <script
-    src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
+  src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
 ></script>
 <script type="module">
-    import {
-        db,
-        doc,
-        onSnapshot,
-        updateDoc,
-        getDoc,
-        deleteDoc,
-        getDocs,
-        collection,
-    } from "/js/firebase.js";
+  import {
+    db,
+    doc,
+    onSnapshot,
+    updateDoc,
+    getDoc,
+    deleteDoc,
+    getDocs,
+    collection,
+  } from "/js/firebase.js";
 
-    const roomCode =
-        document.querySelector(".board").dataset?.code ||
-        window.location.pathname.split("/")[2];
+  const roomCode =
+    document.querySelector(".board").dataset?.code ||
+    window.location.pathname.split("/")[2];
 
-    const roomRef = doc(db, "rooms", roomCode);
-    const winSound = new Audio("/sounds/winn.mp3");
-    const loseSound = new Audio("/sounds/lose.mp3");
-    let lastQuestionKey = null;
-    let categoriesMap = {};
-    function normalize(text) {
-        return text
-            .toLowerCase()
-            .trim()
-            .replace(/[\u064B-\u065F]/g, "")
-            .replace(/أ|إ|آ/g, "ا")
-            .replace(/ى/g, "ي")
-            .replace(/ة/g, "ه");
-    }
-
-    function levenshtein(a, b) {
-        const matrix = [];
-
-        for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-        for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-
-        for (let i = 1; i <= b.length; i++) {
-            for (let j = 1; j <= a.length; j++) {
-                if (b[i - 1] === a[j - 1]) {
-                    matrix[i][j] = matrix[i - 1][j - 1];
-                } else {
-                    matrix[i][j] = Math.min(
-                        matrix[i - 1][j - 1] + 1,
-                        matrix[i][j - 1] + 1,
-                        matrix[i - 1][j] + 1,
-                    );
-                }
-            }
-        }
-
-        return matrix[b.length][a.length];
-    }
-
-    // 👑 الدالة الرئيسية
-    function isCorrectAnswer(userAnswer, correctAnswer) {
-        const user = normalize(userAnswer);
-        const correct = normalize(correctAnswer);
-
-        const distance = levenshtein(user, correct);
-
-        return distance <= 1;
-    }
-    async function loadCategoriesMap() {
-        const snap = await getDocs(collection(db, "categories"));
-
-        snap.forEach((doc) => {
-            const cat = doc.data();
-            categoriesMap[cat.slug] = { image: cat.image, name: cat.name };
-        });
-    }
-
-    await loadCategoriesMap();
-
-    function playWinEffect() {
-        winSound.currentTime = 0;
-        winSound.play();
-
-        // 💥 انفجار في النص
-        confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 },
-        });
-
-        // 👉 من اليمين
-        confetti({
-            particleCount: 60,
-            angle: 120,
-            spread: 55,
-            origin: { x: 1 },
-        });
-
-        // 👈 من الشمال
-        confetti({
-            particleCount: 60,
-            angle: 60,
-            spread: 55,
-            origin: { x: 0 },
-        });
-
-        // 🎯 من فوق
-        confetti({
-            particleCount: 80,
-            spread: 100,
-            origin: { y: 0 },
-        });
-
-        // 🌸 ورد (pink vibes 😂)
-        confetti({
-            particleCount: 50,
-            spread: 80,
-            colors: ["#ff69b4", "#ffc0cb", "#ff1493"],
-        });
-
-        // 🔁 شغل مستمر (حلاوة بقى)
-        const duration = 1500;
-        const end = Date.now() + duration;
-
-        (function frame() {
-            confetti({
-                particleCount: 4,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0 },
-            });
-            confetti({
-                particleCount: 4,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1 },
-            });
-
-            if (Date.now() < end) {
-                requestAnimationFrame(frame);
-            }
-        })();
-    }
-
-    function playLoseEffect() {
-        loseSound.currentTime = 0;
-        loseSound.play();
-
-        document.body.classList.add("shake");
-        setTimeout(() => {
-            document.body.classList.remove("shake");
-        }, 300);
-    }
-    const board = document.getElementById("board");
-    let playerId = localStorage.getItem("player_" + roomCode);
-
-    // ✅ عند الخروج
-    window.addEventListener("beforeunload", () => {
-        if (playerId) {
-            updateDoc(roomRef, {
-                [`players.${playerId}.lastSeen`]: Date.now(),
-            });
-        }
-    });
-
-    // ✅ عند الدخول
-    (async () => {
-        if (!playerId) return;
-
-        const snap = await getDoc(roomRef);
-        const data = snap.data();
-
-        if (!data) return;
-
-        await updateDoc(roomRef, {
-            [`players.${playerId}`]: {
-                name: data.players?.[playerId]?.name || "لاعب 😏",
-                score: data.players?.[playerId]?.score || 0,
-                lastSeen: Date.now(),
-            },
-        });
-    })();
-
-    let lastCount = 0;
-    const msgSound = new Audio("/sounds/msg.mp3");
-    let soundEnabled = false;
-
-    document.addEventListener("click", () => {
-        if (!soundEnabled) {
-            msgSound
-                .play()
-                .then(() => {
-                    msgSound.pause();
-                    msgSound.currentTime = 0;
-                    soundEnabled = true;
-                })
-                .catch(() => {});
-        }
-    });
-
-    onSnapshot(roomRef, (snap) => {
-        const data = snap.data();
-        
-if (data.showResults) {
-    if (!window.location.pathname.includes("results")) {
-        window.location.href = `/room/${roomCode}/results`;
-    }
-    return;
+  const roomRef = doc(db, "rooms", roomCode);
+  const winSound = new Audio("/sounds/winn.mp3");
+  const loseSound = new Audio("/sounds/lose.mp3");
+  let lastQuestionKey = null;
+  let categoriesMap = {};
+function normalize(text) {
+    return text
+        .toLowerCase()
+        .trim()
+        .replace(/[\u064B-\u065F]/g, "")
+        .replace(/أ|إ|آ/g, "ا")
+        .replace(/ى/g, "ي")
+        .replace(/ة/g, "ه")
+        .replace(/ؤ/g, "و")
+        .replace(/ئ/g, "ي");
 }
-        const sheet = document.getElementById("question-sheet");
-        const currentQ = data.currentQuestion;
 
-        if (currentQ) {
-            const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
+  function levenshtein(a, b) {
+    const matrix = [];
 
-            const hintBox = document.getElementById("hint-box");
+    for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
 
-            if (hintBox && data.hints?.[key]) {
-                const cat = data.gamePlan[currentQ.categoryIndex];
-                const q = cat.questions[currentQ.questionIndex];
-
-                hintBox.innerText = q.hint || "❌ مفيش تلميح";
-                hintBox.style.display = "block";
-            }
-        }
-
-        if (!currentQ) {
-            sheet.classList.remove("show");
-            lastQuestionKey = null;
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        if (b[i - 1] === a[j - 1]) {
+          matrix[i][j] = matrix[i - 1][j - 1];
         } else {
-            const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
-
-            if (key !== lastQuestionKey) {
-                lastQuestionKey = key;
-
-                // 🔥 هنا نفتح الشيت من gamePlan مش من Firebase
-                const cat = data.gamePlan[currentQ.categoryIndex];
-                const q = cat.questions[currentQ.questionIndex];
-
-                openQuestion(
-                    cat,
-                    currentQ.questionIndex,
-                    currentQ.categoryIndex,
-                );
-            }
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1,
+            matrix[i][j - 1] + 1,
+            matrix[i - 1][j] + 1
+          );
         }
-        const progressBox = document.getElementById("answer-progress");
-        const notAnsweredBox = document.getElementById("not-answered-list");
+      }
+    }
 
-        let totalPlayers = Object.keys(data.players || {}).length;
-        let answeredPlayers = 0;
-        let notAnsweredNames = [];
+    return matrix[b.length][a.length];
+  }
 
-        progressBox.classList.remove("green", "red", "waiting");
+  // 👑 الدالة الرئيسية
+  // function isCorrectAnswer(userAnswer, correctAnswer) {
+  //     const user = normalize(userAnswer);
+  //     const correct = normalize(correctAnswer);
 
-        if (!currentQ) {
-            // ⚪ مفيش سؤال
-            progressBox.innerText = "🎯 اختار سؤال الأول";
-            progressBox.classList.add("waiting");
-            notAnsweredBox.innerText = "";
-        } else {
-            const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
-            const answersForQ = data.answers?.[key] || {};
+  //     const distance = levenshtein(user, correct);
 
-            const answeredIds = Object.keys(answersForQ);
-            answeredPlayers = answeredIds.length;
+  //     return distance <= 1;
+  // }
+  function extractNumbers(text = "") {
+    return text.match(/\d+/g) || [];
+  }
 
-            // 👇 نجيب اللي ما جاوبوش
-            Object.entries(data.players || {}).forEach(([id, player]) => {
-                if (!answeredIds.includes(id)) {
-                    notAnsweredNames.push(player.name);
-                }
-            });
+  function isCorrectAnswer(userAnswer, correctAnswer) {
+    const user = normalize(userAnswer);
+    const correct = normalize(correctAnswer);
 
-            if (answeredPlayers === totalPlayers && totalPlayers > 0) {
-                // 🟢 كله جاوب
-                progressBox.innerText = "🔥 كل اللعيبة جاوبت";
-                progressBox.classList.add("green");
-            } else {
-                // 🔴 في ناس لسه
-                progressBox.innerText = `⚠️ جاوب ${answeredPlayers} من ${totalPlayers}`;
-                progressBox.classList.add("red");
-            }
+    // 🔥 لو في أرقام نقارنها الأول
+    const userNums = extractNumbers(user);
+    const correctNums = extractNumbers(correct);
 
-            // 👇 أسماء اللي لسه
-            notAnsweredBox.innerText = notAnsweredNames.length
-                ? `⏳ مستني: ${notAnsweredNames.join(" - ")}`
-                : "";
+    if (
+      userNums.length &&
+      correctNums.length &&
+      userNums.join(",") === correctNums.join(",")
+    ) {
+      return true;
+    }
+
+    const distance = levenshtein(user, correct);
+
+    return distance <= 1;
+  }
+  async function loadCategoriesMap() {
+    const snap = await getDocs(collection(db, "categories"));
+
+    snap.forEach((doc) => {
+      const cat = doc.data();
+      categoriesMap[cat.slug] = { image: cat.image, name: cat.name };
+    });
+  }
+
+  await loadCategoriesMap();
+
+  function playWinEffect() {
+    winSound.currentTime = 0;
+    winSound.play();
+
+    // 💥 انفجار في النص
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
+
+    // 👉 من اليمين
+    confetti({
+      particleCount: 60,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1 },
+    });
+
+    // 👈 من الشمال
+    confetti({
+      particleCount: 60,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0 },
+    });
+
+    // 🎯 من فوق
+    confetti({
+      particleCount: 80,
+      spread: 100,
+      origin: { y: 0 },
+    });
+
+    // 🌸 ورد (pink vibes 😂)
+    confetti({
+      particleCount: 50,
+      spread: 80,
+      colors: ["#ff69b4", "#ffc0cb", "#ff1493"],
+    });
+
+    // 🔁 شغل مستمر (حلاوة بقى)
+    const duration = 1500;
+    const end = Date.now() + duration;
+
+    (function frame() {
+      confetti({
+        particleCount: 4,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+      });
+      confetti({
+        particleCount: 4,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    })();
+  }
+
+  function playLoseEffect() {
+    loseSound.currentTime = 0;
+    loseSound.play();
+
+    document.body.classList.add("shake");
+    setTimeout(() => {
+      document.body.classList.remove("shake");
+    }, 300);
+  }
+  const board = document.getElementById("board");
+  let playerId = localStorage.getItem("player_" + roomCode);
+
+  // ✅ عند الخروج
+  window.addEventListener("beforeunload", () => {
+    if (playerId) {
+      updateDoc(roomRef, {
+        [`players.${playerId}.lastSeen`]: Date.now(),
+      });
+    }
+  });
+
+  // ✅ عند الدخول
+  (async () => {
+    if (!playerId) return;
+
+    const snap = await getDoc(roomRef);
+    const data = snap.data();
+
+    if (!data) return;
+
+    await updateDoc(roomRef, {
+      [`players.${playerId}`]: {
+        name: data.players?.[playerId]?.name || "لاعب 😏",
+        score: data.players?.[playerId]?.score || 0,
+        lastSeen: Date.now(),
+      },
+    });
+  })();
+
+  let lastCount = 0;
+  const msgSound = new Audio("/sounds/msg.mp3");
+  let soundEnabled = false;
+
+  document.addEventListener("click", () => {
+    if (!soundEnabled) {
+      msgSound
+        .play()
+        .then(() => {
+          msgSound.pause();
+          msgSound.currentTime = 0;
+          soundEnabled = true;
+        })
+        .catch(() => {});
+    }
+  });
+
+  onSnapshot(roomRef, (snap) => {
+    const data = snap.data();
+
+    if (data.showResults) {
+      if (!window.location.pathname.includes("results")) {
+        window.location.href = `/room/${roomCode}/results`;
+      }
+      return;
+    }
+    const sheet = document.getElementById("question-sheet");
+    const currentQ = data.currentQuestion;
+
+    if (currentQ) {
+      const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
+
+      const hintBox = document.getElementById("hint-box");
+
+      if (hintBox && data.hints?.[key]) {
+        const cat = data.gamePlan[currentQ.categoryIndex];
+        const q = cat.questions[currentQ.questionIndex];
+
+        hintBox.innerText = q.hint || "❌ مفيش تلميح";
+        hintBox.style.display = "block";
+      }
+    }
+
+    if (!currentQ) {
+      sheet.classList.remove("show");
+      lastQuestionKey = null;
+    } else {
+      const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
+
+      if (key !== lastQuestionKey) {
+        lastQuestionKey = key;
+
+        // 🔥 هنا نفتح الشيت من gamePlan مش من Firebase
+        const cat = data.gamePlan[currentQ.categoryIndex];
+        const q = cat.questions[currentQ.questionIndex];
+
+        openQuestion(cat, currentQ.questionIndex, currentQ.categoryIndex);
+      }
+    }
+    const progressBox = document.getElementById("answer-progress");
+    const notAnsweredBox = document.getElementById("not-answered-list");
+
+    let totalPlayers = Object.keys(data.players || {}).length;
+    let answeredPlayers = 0;
+    let notAnsweredNames = [];
+
+    progressBox.classList.remove("green", "red", "waiting");
+
+    if (!currentQ) {
+      // ⚪ مفيش سؤال
+      progressBox.innerText = "🎯 اختار سؤال الأول";
+      progressBox.classList.add("waiting");
+      notAnsweredBox.innerText = "";
+    } else {
+      const key = `${currentQ.categoryIndex}_${currentQ.questionIndex}`;
+      const answersForQ = data.answers?.[key] || {};
+
+      const answeredIds = Object.keys(answersForQ);
+      answeredPlayers = answeredIds.length;
+
+      // 👇 نجيب اللي ما جاوبوش
+      Object.entries(data.players || {}).forEach(([id, player]) => {
+        if (!answeredIds.includes(id)) {
+          notAnsweredNames.push(player.name);
         }
-        const messages = data.suggestions || [];
-        const list = document.getElementById("chat-list");
+      });
 
-        if (list) {
-            list.innerHTML = messages
-                .map((m) => {
-                    const isMe = m.player === playerId;
+      if (answeredPlayers === totalPlayers && totalPlayers > 0) {
+        // 🟢 كله جاوب
+        progressBox.innerText = "🔥 كل اللعيبة جاوبت";
+        progressBox.classList.add("green");
+      } else {
+        // 🔴 في ناس لسه
+        progressBox.innerText = `⚠️ جاوب ${answeredPlayers} من ${totalPlayers}`;
+        progressBox.classList.add("red");
+      }
 
-                    return `
+      // 👇 أسماء اللي لسه
+      notAnsweredBox.innerText = notAnsweredNames.length
+        ? `⏳ مستني: ${notAnsweredNames.join(" - ")}`
+        : "";
+    }
+    const messages = data.suggestions || [];
+    const list = document.getElementById("chat-list");
+
+    if (list) {
+      list.innerHTML = messages
+        .map((m) => {
+          const isMe = m.player === playerId;
+
+          return `
                 <div class="suggest-item ${isMe ? "me" : ""}">
                     <span class="name">${m.playerName}</span>
                     <span class="text">${m.text}</span>
                 </div>
             `;
-                })
-                .join("");
+        })
+        .join("");
 
-            list.scrollTop = list.scrollHeight;
-        }
+      list.scrollTop = list.scrollHeight;
+    }
 
-        if (list) {
-            list.innerHTML = messages
-                .map((m) => {
-                    const name =
-                        m.playerName ||
-                        data.players?.[m.player]?.name ||
-                        "لاعب 😏";
+    if (list) {
+      list.innerHTML = messages
+        .map((m) => {
+          const name =
+            m.playerName || data.players?.[m.player]?.name || "لاعب 😏";
 
-                    return `
+          return `
                 <div class="suggest-item">
                     <span class="name">${name}</span>
                     <span class="text">${m.text}</span>
                 </div>
             `;
-                })
-                .join("");
+        })
+        .join("");
 
-            list.scrollTop = list.scrollHeight;
-        }
+      list.scrollTop = list.scrollHeight;
+    }
 
-        // 🔊 صوت
-        if (lastCount !== 0 && messages.length > lastCount) {
-            const lastMsg = messages[messages.length - 1];
+    // 🔊 صوت
+    if (lastCount !== 0 && messages.length > lastCount) {
+      const lastMsg = messages[messages.length - 1];
 
-            if (lastMsg.player !== playerId) {
-                msgSound.currentTime = 0;
-                msgSound.play().catch(() => {});
-            }
-        }
+      if (lastMsg.player !== playerId) {
+        msgSound.currentTime = 0;
+        msgSound.play().catch(() => {});
+      }
+    }
 
-        lastCount = messages.length;
+    lastCount = messages.length;
 
-        const gamePlan = data.gamePlan || [];
-        // if (playerId !== data.hostId) {
-        //     window.location.href = `/room/${roomCode}/player`;
-        // }
+    const gamePlan = data.gamePlan || [];
+    // if (playerId !== data.hostId) {
+    //     window.location.href = `/room/${roomCode}/player`;
+    // }
 
-        const totalQuestions = data.gamePlan?.reduce((total, cat) => {
-            return total + (cat.questions?.length || 0);
-        }, 0);
+    const totalQuestions = data.gamePlan?.reduce((total, cat) => {
+      return total + (cat.questions?.length || 0);
+    }, 0);
 
-        const answeredCount = Object.keys(data.answeredQuestions || {}).length;
+    const answeredCount = Object.keys(data.answeredQuestions || {}).length;
 
-        // 👇 لو كل الأسئلة اتجاوبت
-        if (answeredCount >= totalQuestions && totalQuestions > 0) {
-            document.getElementById("show-results").style.display =
-                "inline-block";
-        } else {
-            document.getElementById("show-results").style.display = "none";
-        }
+    // 👇 لو كل الأسئلة اتجاوبت
+    if (answeredCount >= totalQuestions && totalQuestions > 0) {
+      document.getElementById("show-results").style.display = "inline-block";
+    } else {
+      document.getElementById("show-results").style.display = "none";
+    }
 
-        board.innerHTML = "";
+    board.innerHTML = "";
 
-        // const section = document.getElementById("players-section");
+    // const section = document.getElementById("players-section");
 
-        // const playersCount = Object.keys(data.players || {}).length;
+    // const playersCount = Object.keys(data.players || {}).length;
 
-        // section.innerHTML = `
-        //     <div class="players-card compact">
+    // section.innerHTML = `
+    //     <div class="players-card compact">
 
-        //         <div class="players-header">
-        //         👥 ${playersCount}
-        //         ${playerId === data.hostId ? " | 👑 هوست" : " | 🎮 لاعب"}
-        //         </div>
+    //         <div class="players-header">
+    //         👥 ${playersCount}
+    //         ${playerId === data.hostId ? " | 👑 هوست" : " | 🎮 لاعب"}
+    //         </div>
 
-        //         <div class="players-list">
-        //         ${Object.entries(data.players || {})
-        //             .map(
-        //                 ([id, player]) => `
-        //             <span class="player-chip ${id === playerId ? "me" : ""}">
-        //             ${player.name} ${id === data.hostId ? "👑" : ""}
-        //             </span>
-        //         `,
-        //             )
-        //             .join("")}
-        //         </div>
+    //         <div class="players-list">
+    //         ${Object.entries(data.players || {})
+    //             .map(
+    //                 ([id, player]) => `
+    //             <span class="player-chip ${id === playerId ? "me" : ""}">
+    //             ${player.name} ${id === data.hostId ? "👑" : ""}
+    //             </span>
+    //         `,
+    //             )
+    //             .join("")}
+    //         </div>
 
-        //     </div>
-        // `;
+    //     </div>
+    // `;
 
-        async function openQuestion(cat, index, catIndex) {
-            const sheet = document.getElementById("question-sheet");
-            const content = document.getElementById("sheet-content");
+    async function openQuestion(cat, index, catIndex) {
+      const sheet = document.getElementById("question-sheet");
+      const content = document.getElementById("sheet-content");
 
-            const question = cat.questions[index];
-            const imageHtml = question.image
-                ? `<img src="${question.image}" class="question-img" />`
-                : "";
+      const question = cat.questions[index];
+      const imageHtml = question.image
+        ? `<img src="${question.image}" class="question-img" />`
+        : "";
 
-            if (!question) return;
+      if (!question) return;
 
-            if (question.type === "text") {
-                content.innerHTML = `
+      if (question.type === "text") {
+        content.innerHTML = `
         <div class="question-box">
 
             ${imageHtml}
@@ -478,8 +495,8 @@ if (data.showResults) {
             <button id="close-sheet">❌ قفل</button>
         </div>
     `;
-            } else {
-                content.innerHTML = `
+      } else {
+        content.innerHTML = `
         <div class="question-box">
 
             ${imageHtml}
@@ -488,14 +505,14 @@ if (data.showResults) {
 
             <div class="answers">
                 ${question.options
-                    .map(
-                        (opt) => `
+                  .map(
+                    (opt) => `
                     <button class="answer-btn" data-answer="${opt}">
                         ${opt}
                     </button>
-                `,
-                    )
-                    .join("")}
+                `
+                  )
+                  .join("")}
             </div>
 
             <div id="feedback"></div>
@@ -506,263 +523,261 @@ if (data.showResults) {
             <button id="close-sheet">❌ قفل</button>
         </div>
     `;
-            }
-            setTimeout(() => {
-                const qImg = document.querySelector(".question-img");
+      }
+      setTimeout(() => {
+        const qImg = document.querySelector(".question-img");
 
-                if (qImg) {
-                    qImg.addEventListener("click", () => {
-                        const modal = document.getElementById("image-modal");
-                        const modalImg = document.getElementById("modal-img");
+        if (qImg) {
+          qImg.addEventListener("click", () => {
+            const modal = document.getElementById("image-modal");
+            const modalImg = document.getElementById("modal-img");
 
-                        modalImg.src = qImg.src;
-                        modal.classList.remove("hidden");
-                    });
-                }
-            }, 0);
-            let answered = false;
+            modalImg.src = qImg.src;
+            modal.classList.remove("hidden");
+          });
+        }
+      }, 0);
+      let answered = false;
 
-            // 👇 text question
-            const sendBtn = document.getElementById("send-answer");
+      // 👇 text question
+      const sendBtn = document.getElementById("send-answer");
 
-            if (sendBtn) {
-                sendBtn.addEventListener("click", async () => {
-                    if (answered) return;
+      if (sendBtn) {
+        sendBtn.addEventListener("click", async () => {
+          if (answered) return;
 
-                    const input = document.getElementById("text-answer");
-                    const answer = input.value.trim();
+          const input = document.getElementById("text-answer");
+          const answer = input.value.trim();
 
-                    if (!answer) return;
+          if (!answer) return;
 
-                    answered = true;
+          answered = true;
 
-                    const playerId = localStorage.getItem("player_" + roomCode);
-                    const correctAnswer = cat.questions[index]?.correct;
+          const playerId = localStorage.getItem("player_" + roomCode);
+          const correctAnswer = cat.questions[index]?.correct;
 
-                    const answeredKey = `${catIndex}_${index}`;
+          const answeredKey = `${catIndex}_${index}`;
 
-                    await updateDoc(roomRef, {
-                        [`answers.${answeredKey}.${playerId}`]: {
-                            answer,
-                            correctAnswer,
-                            category: cat.category,
-                            questionIndex: index,
-                            time: Date.now(),
-                        },
-                        [`answeredQuestions.${answeredKey}`]: true,
-                    });
+          await updateDoc(roomRef, {
+            [`answers.${answeredKey}.${playerId}`]: {
+              answer,
+              correctAnswer,
+              category: cat.category,
+              questionIndex: index,
+              time: Date.now(),
+            },
+            [`answeredQuestions.${answeredKey}`]: true,
+          });
 
-                    const feedback = document.getElementById("feedback");
+          const feedback = document.getElementById("feedback");
 
-                    const user = normalize(answer);
-                    const correct = normalize(correctAnswer);
+          const user = normalize(answer);
+          const correct = normalize(correctAnswer);
 
-                    if (user === correct) {
-                        playWinEffect();
-                        feedback.innerHTML = `
+          if (user === correct) {
+            playWinEffect();
+            feedback.innerHTML = `
             <div class="feedback-box success">
                 🔥 صح 100% يا وحش!
             </div>
             `;
-                    } else if (isCorrectAnswer(answer, correctAnswer)) {
-                        playWinEffect();
-                        feedback.innerHTML = `
+          } else if (isCorrectAnswer(answer, correctAnswer)) {
+            playWinEffect();
+            feedback.innerHTML = `
             <div class="feedback-box success">
                 😏 قريبة فشخ… هنعديها!
             </div>
             `;
-                    } else {
-                        playLoseEffect();
-                        feedback.innerHTML = `
+          } else {
+            playLoseEffect();
+            feedback.innerHTML = `
             <div class="feedback-box error">
                 ❌ غلط يا نجم 😏
                 <br><br>
                 <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
             </div>
             `;
-                    }
+          }
 
-                    // 🔥 تحسين UX
-                    input.disabled = true;
-                    sendBtn.disabled = true;
-                });
+          // 🔥 تحسين UX
+          input.disabled = true;
+          sendBtn.disabled = true;
+        });
+      }
+      document.querySelectorAll(".answer-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          if (answered) return;
+          answered = true;
+
+          const answer = btn.dataset.answer;
+          const playerId = localStorage.getItem("player_" + roomCode);
+
+          // 👇 الصح بقى
+          const correctAnswer = cat.questions[index]?.correct;
+
+          // 👇 نفس المفتاح اللي في البورد
+          const answeredKey = `${catIndex}_${index}`;
+          if (!playerId) {
+            alert("❌ في مشكلة في اللاعب يا نجم");
+            return;
+          }
+          await updateDoc(roomRef, {
+            [`answers.${answeredKey}.${playerId}`]: {
+              answer,
+              correctAnswer,
+              category: cat.category,
+              questionIndex: index,
+              time: Date.now(),
+            },
+            [`answeredQuestions.${answeredKey}`]: true,
+          });
+
+          const feedback = document.getElementById("feedback");
+
+          document.querySelectorAll(".answer-btn").forEach((b) => {
+            b.disabled = true;
+
+            const btnAnswer = b.dataset.answer;
+
+            // ✅ الإجابة الصح دايمًا أخضر
+            if (btnAnswer === correctAnswer) {
+              b.style.background = "#22c55e";
+              b.style.color = "#000";
             }
-            document.querySelectorAll(".answer-btn").forEach((btn) => {
-                btn.addEventListener("click", async () => {
-                    if (answered) return;
-                    answered = true;
 
-                    const answer = btn.dataset.answer;
-                    const playerId = localStorage.getItem("player_" + roomCode);
+            // ❌ اللي الأدمن اختاره وكان غلط
+            else if (btnAnswer === answer) {
+              b.style.background = "#ef4444";
+              b.style.color = "#fff";
+            }
 
-                    // 👇 الصح بقى
-                    const correctAnswer = cat.questions[index]?.correct;
+            // 👇 باقي الاختيارات باهتة
+            else {
+              b.style.opacity = "0.4";
+            }
+          });
 
-                    // 👇 نفس المفتاح اللي في البورد
-                    const answeredKey = `${catIndex}_${index}`;
-                    if (!playerId) {
-                        alert("❌ في مشكلة في اللاعب يا نجم");
-                        return;
-                    }
-                    await updateDoc(roomRef, {
-                        [`answers.${answeredKey}.${playerId}`]: {
-                            answer,
-                            correctAnswer,
-                            category: cat.category,
-                            questionIndex: index,
-                            time: Date.now(),
-                        },
-                        [`answeredQuestions.${answeredKey}`]: true,
-                    });
-
-                    const feedback = document.getElementById("feedback");
-
-                    document.querySelectorAll(".answer-btn").forEach((b) => {
-                        b.disabled = true;
-
-                        const btnAnswer = b.dataset.answer;
-
-                        // ✅ الإجابة الصح دايمًا أخضر
-                        if (btnAnswer === correctAnswer) {
-                            b.style.background = "#22c55e";
-                            b.style.color = "#000";
-                        }
-
-                        // ❌ اللي الأدمن اختاره وكان غلط
-                        else if (btnAnswer === answer) {
-                            b.style.background = "#ef4444";
-                            b.style.color = "#fff";
-                        }
-
-                        // 👇 باقي الاختيارات باهتة
-                        else {
-                            b.style.opacity = "0.4";
-                        }
-                    });
-
-                    // 🔥 ده اللي كان ناقصك بصراحة
-                    if (answer === correctAnswer) {
-                        playWinEffect();
-                        feedback.innerHTML = `
+          // 🔥 ده اللي كان ناقصك بصراحة
+          if (answer === correctAnswer) {
+            playWinEffect();
+            feedback.innerHTML = `
 <div class="feedback-box success">
     🔥 صح يا بطل!
 </div>
 `;
-                        feedback.style.color = "#22c55e";
-                    } else {
-                        playLoseEffect();
+            feedback.style.color = "#22c55e";
+          } else {
+            playLoseEffect();
 
-                        feedback.innerHTML = `
+            feedback.innerHTML = `
 <div class="feedback-box error">
     ❌ غلط يا نجم 😏
     <br><br>
     <span class="correct-answer">✅ الإجابة الصحيحة: ${correctAnswer}</span>
 </div>
 `;
-                    }
+          }
 
-                    feedback.style.textAlign = "center";
-                    feedback.style.marginTop = "10px";
-                    feedback.style.fontWeight = "bold";
-                });
-            });
-            sheet.classList.add("show");
+          feedback.style.textAlign = "center";
+          feedback.style.marginTop = "10px";
+          feedback.style.fontWeight = "bold";
+        });
+      });
+      sheet.classList.add("show");
 
-            document.getElementById("close-sheet").onclick = () => {
-                sheet.classList.remove("show");
-            };
-        }
+      document.getElementById("close-sheet").onclick = () => {
+        sheet.classList.remove("show");
+      };
+    }
 
-        gamePlan.forEach((cat, catIndex) => {
-            const col = document.createElement("div");
-            col.className = "column";
+    gamePlan.forEach((cat, catIndex) => {
+      const col = document.createElement("div");
+      col.className = "column";
 
-            // 👇 اسم الفئة
-            const title = document.createElement("div");
-            title.className = "category-card";
+      // 👇 اسم الفئة
+      const title = document.createElement("div");
+      title.className = "category-card";
 
-            // title.style.backgroundImage = `url(${categoryImages[cat.category]})`;
+      // title.style.backgroundImage = `url(${categoryImages[cat.category]})`;
 
-            const realCat = cat.category;
+      const realCat = cat.category;
 
-            title.innerHTML = `
+      title.innerHTML = `
     <img src="${categoriesMap[realCat]?.image}" />
     <div class="overlay">
         ${categoriesMap[realCat]?.name || realCat}
     </div>
 `;
-            col.appendChild(title);
+      col.appendChild(title);
 
-            // 👇 الكروت (قيم ثابتة)
-            cat.questions.forEach((_, i) => {
-                const card = document.createElement("div");
-                card.className = "card";
-                card.innerText = "❓";
+      // 👇 الكروت (قيم ثابتة)
+      cat.questions.forEach((_, i) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerText = "❓";
 
-                const answeredKey = `${catIndex}_${i}`;
-                const isAnswered = data.answeredQuestions?.[answeredKey];
+        const answeredKey = `${catIndex}_${i}`;
+        const isAnswered = data.answeredQuestions?.[answeredKey];
 
-                if (isAnswered) {
-                    card.style.opacity = "0.3";
-                    card.style.pointerEvents = "none";
-                    card.innerText = "✔️";
-                } else {
-                }
+        if (isAnswered) {
+          card.style.opacity = "0.3";
+          card.style.pointerEvents = "none";
+          card.innerText = "✔️";
+        } else {
+        }
 
-                col.appendChild(card);
-            });
+        col.appendChild(card);
+      });
 
-            board.appendChild(col);
-        });
+      board.appendChild(col);
     });
+  });
 
-    // إرسال
-    document
-        .getElementById("send-chat")
-        ?.addEventListener("click", async () => {
-            const input = document.getElementById("chat-input");
-            const text = input.value.trim();
-            if (!text) return;
+  // إرسال
+  document.getElementById("send-chat")?.addEventListener("click", async () => {
+    const input = document.getElementById("chat-input");
+    const text = input.value.trim();
+    if (!text) return;
 
-            const snap = await getDoc(roomRef);
-            const data = snap.data();
+    const snap = await getDoc(roomRef);
+    const data = snap.data();
 
-            const newMsg = {
-                text,
-                player: playerId,
-                playerName: data.players?.[playerId]?.name || "لاعب 😏",
-                time: Date.now(),
-            };
-
-            await updateDoc(roomRef, {
-                suggestions: [...(data.suggestions || []), newMsg],
-            });
-
-            input.value = "";
-        });
-
-    const endBtn = document.getElementById("end-game");
-
-    endBtn?.addEventListener("click", async () => {
-        if (!confirm("متأكد إنك عايز تقفل الروم؟ 😏")) return;
-
-        // 👇 ده الجديد
-        localStorage.removeItem("counted_room");
-
-        await deleteDoc(roomRef);
-        window.location.href = "/";
-    });
-
-    document.getElementById("close-image").onclick = () => {
-        document.getElementById("image-modal").classList.add("hidden");
+    const newMsg = {
+      text,
+      player: playerId,
+      playerName: data.players?.[playerId]?.name || "لاعب 😏",
+      time: Date.now(),
     };
-    document
-        .getElementById("show-results")
-        ?.addEventListener("click", async () => {
-            await updateDoc(roomRef, {
-                showResults: true,
-            });
 
-            window.location.href = `/room/${roomCode}/results`;
-        });
+    await updateDoc(roomRef, {
+      suggestions: [...(data.suggestions || []), newMsg],
+    });
+
+    input.value = "";
+  });
+
+  const endBtn = document.getElementById("end-game");
+
+  endBtn?.addEventListener("click", async () => {
+    if (!confirm("متأكد إنك عايز تقفل الروم؟ 😏")) return;
+
+    // 👇 ده الجديد
+    localStorage.removeItem("counted_room");
+
+    await deleteDoc(roomRef);
+    window.location.href = "/";
+  });
+
+  document.getElementById("close-image").onclick = () => {
+    document.getElementById("image-modal").classList.add("hidden");
+  };
+  document
+    .getElementById("show-results")
+    ?.addEventListener("click", async () => {
+      await updateDoc(roomRef, {
+        showResults: true,
+      });
+
+      window.location.href = `/room/${roomCode}/results`;
+    });
 </script>

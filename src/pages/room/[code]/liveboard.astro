@@ -69,15 +69,17 @@ import Layout from "../../../layouts/Layout.astro";
     const loseSound = new Audio("/sounds/lose.mp3");
     let lastQuestionKey = null;
     let categoriesMap = {};
-    function normalize(text) {
-        return text
-            .toLowerCase()
-            .trim()
-            .replace(/[\u064B-\u065F]/g, "")
-            .replace(/أ|إ|آ/g, "ا")
-            .replace(/ى/g, "ي")
-            .replace(/ة/g, "ه");
-    }
+function normalize(text) {
+    return text
+        .toLowerCase()
+        .trim()
+        .replace(/[\u064B-\u065F]/g, "")
+        .replace(/أ|إ|آ/g, "ا")
+        .replace(/ى/g, "ي")
+        .replace(/ة/g, "ه")
+        .replace(/ؤ/g, "و")
+        .replace(/ئ/g, "ي");
+}
 
     function levenshtein(a, b) {
         const matrix = [];
@@ -103,14 +105,37 @@ import Layout from "../../../layouts/Layout.astro";
     }
 
     // 👑 الدالة الرئيسية
-    function isCorrectAnswer(userAnswer, correctAnswer) {
-        const user = normalize(userAnswer);
-        const correct = normalize(correctAnswer);
+    // function isCorrectAnswer(userAnswer, correctAnswer) {
+    //     const user = normalize(userAnswer);
+    //     const correct = normalize(correctAnswer);
 
-        const distance = levenshtein(user, correct);
+    //     const distance = levenshtein(user, correct);
 
-        return distance <= 1;
+    //     return distance <= 1;
+    // }
+    function extractNumbers(text = "") {
+    return text.match(/\d+/g) || [];
+}
+
+function isCorrectAnswer(userAnswer, correctAnswer) {
+    const user = normalize(userAnswer);
+    const correct = normalize(correctAnswer);
+
+    const userNums = extractNumbers(user);
+    const correctNums = extractNumbers(correct);
+
+    if (
+        userNums.length &&
+        correctNums.length &&
+        userNums.join(",") === correctNums.join(",")
+    ) {
+        return true;
     }
+
+    const distance = levenshtein(user, correct);
+
+    return distance <= 1;
+}
     async function loadCategoriesMap() {
         const snap = await getDocs(collection(db, "categories"));
 

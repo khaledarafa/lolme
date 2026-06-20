@@ -72,15 +72,17 @@ import Layout from "../../../layouts/Layout.astro";
     const roomRef = doc(db, "rooms", roomCode);
     const winSound = new Audio("/sounds/winn.mp3");
     const loseSound = new Audio("/sounds/lose.mp3");
-    function normalize(text) {
-        return text
-            .toLowerCase()
-            .trim()
-            .replace(/[\u064B-\u065F]/g, "")
-            .replace(/أ|إ|آ/g, "ا")
-            .replace(/ى/g, "ي")
-            .replace(/ة/g, "ه");
-    }
+function normalize(text) {
+    return text
+        .toLowerCase()
+        .trim()
+        .replace(/[\u064B-\u065F]/g, "")
+        .replace(/أ|إ|آ/g, "ا")
+        .replace(/ى/g, "ي")
+        .replace(/ة/g, "ه")
+        .replace(/ؤ/g, "و")
+        .replace(/ئ/g, "ي");
+}
 
     function levenshtein(a, b) {
         const matrix = [];
@@ -113,6 +115,7 @@ import Layout from "../../../layouts/Layout.astro";
 
         return distance <= 1;
     }
+    
     let categoriesMap = {};
     let currentQuestion = null;
 
