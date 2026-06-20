@@ -17,9 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
 cards.forEach((card, i) => {
   if (i > 0 && i % 4 === 0) {
     
-    const adIndex = Math.floor(i / 4) % ads.length;
-const ad = ads[adIndex]; // 👈 اختيار إعلان مختلف كل مرة
-
+//     const adIndex = Math.floor(i / 4) % ads.length;
+// const ad = ads[adIndex]; // 👈 اختيار إعلان مختلف كل مرة
+const ad = ads[Math.floor(Math.random() * ads.length)];
     const box = document.createElement("div");
     box.className = "grid-ad-box tilt-card";
 
