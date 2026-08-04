@@ -4,7 +4,7 @@ export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 
 const title = "المقالات";
-const description = "أحدث مقالات الميمز والترفيه والالعاب";
+const description = "أحدث المقالات الخفيفة والمسلية على LOLME";
 
 const articles = [
   {
@@ -101,15 +101,18 @@ const articles = [
 const selectedCategory = Astro.url.searchParams.get("cat");
 const filteredArticles = selectedCategory
   ? articles.filter(a => a.category === selectedCategory)
-  : articles;
+  : articles.filter(a => a.category === "funny");
+// const filteredArticles = selectedCategory
+//   ? articles.filter(a => a.category === selectedCategory)
+//   : articles;
 ---
 
 <Layout {title} {description}>
   <section style="text-align:center; padding: 20px;">
     <h1>📰 أحدث مقالات LOLME</h1>
-    <p>اضحك وتعلم عن عالم الميمز والضحك بطريقة خفيفة ومجنونة 😎</p>
+<p>مقالات خفيفة ومسلية عن النكت، المواقف المضحكة، وأفكار ترفيهية هتخليك تبتسم 😄</p>
   </section>
-<div class="categories">
+<!-- <div class="categories">
 
 <a href="/articles" class={!selectedCategory ? "active" : ""}>الكل</a>
 
@@ -125,7 +128,7 @@ const filteredArticles = selectedCategory
 🤣 نكت
 </a>
 
-</div>
+</div> -->
 <main class="articles-grid">
   {
     filteredArticles.map((article, i) => (

@@ -8,6 +8,7 @@ interface ArticleFrontmatter {
   description?: string;
   image?: string;
   date?: string;
+  category?: string;
 }
 
 interface ArticleWithSlug extends ArticleFrontmatter {
@@ -32,6 +33,7 @@ for (const [path, loader] of Object.entries(modules)) {
     description: fm.description ?? "",
     image: fm.image ?? "/images/default-article.webp",
     date: fm.date ?? "2000-01-01",
+    category: fm.category ?? "funny",
   });
 }
 
@@ -40,8 +42,10 @@ articles.sort((a, b) => {
   const db = new Date(b.date ?? "2000-01-01").getTime();
   return db - da;
 });
-
-const latestArticles: ArticleWithSlug[] = articles.slice(0, 5);
+const latestArticles: ArticleWithSlug[] = articles
+  .filter(article => article.category !== "gaming")
+  .slice(0, 5);
+// const latestArticles: ArticleWithSlug[] = articles.slice(0, 5);
 
 // home buttons
 const homeButtons = [
@@ -51,16 +55,17 @@ const homeButtons = [
     img: "/images/tests.webp",
   },
   { title: "🤣 نكت مضحكة", slug: "/jokes", img: "/images/jokes.webp" },
+  // {
+  //   title: "🎮 ركن الجيمنج",
+  //   slug: "/gaming",
+  //   img: "/images/moncellence-live.webp",
+  // },
+  // {
+  //   title: "🎮 ألعاب تلعبها فورًا",
+  //   slug: "/play",
+  //   img: "/play/rush/images/rush-menu-scene.png",
+  // },
   {
-    title: "🎮 ركن الجيمنج",
-    slug: "/gaming",
-    img: "/images/moncellence-live.webp",
-  },
-  {
-    title: "🎮 ألعاب تلعبها فورًا",
-    slug: "/play",
-    img: "/play/rush/images/rush-menu-scene.png",
-  },  {
     slug: "/tests/wealth",
     title: "اختبار عقلية الثراء ✨🧠💰",
     desc: "جاوب على شوية أسئلة بسيطة وهتعرف دماغك رايحة للوفرة… ولا لسه حابسة نفسها في الندرة 😂💸",
@@ -148,13 +153,12 @@ const homeButtons = [
     <h2>🧠 من الكورة للأفلام للمعلومات… اختار وورّي صحابك مستواك 😏🔥</h2>
     <div id="home-categories" class="home-grid"></div>
   </section>
-  
+
   <section class="seo-games">
     <h2>🔥 اختبارات ممكن تعجبك</h2>
     <div id="seo-games-list" class="home-grid"></div>
     <a href="/games" class="play-btn"> 🔥 شوف كل الاختبارات </a>
   </section>
-
 
   <!-- 📰 مقالات -->
   <section class="articles-section">
