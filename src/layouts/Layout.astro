@@ -2,7 +2,7 @@
 // src/layouts/Layout.astro lolme.cc
 import Footer from "../components/Footer.astro";
 import Analytics from "@vercel/analytics/astro";
-// import AdsInjector from "../components/AdsInjector.astro";
+import AdsInjector from "../components/AdsInjector.astro";
 const { title = "", description, img, ogImage } = Astro.props;
 // import "../../css/style.css";
 const v = Date.now();
@@ -41,7 +41,7 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
     <meta
       name="description"
       content={description ||
-        "🎮 ألعاب جماعية أونلاين + 🧠 اختبارات خفيفة + 😂 محتوى ترفيهي… العب مع أصحابك أو جرّب اختبارات ممتعة واكتشف حاجات جديدة عن نفسك 😏🔥"}
+        "اختبارات شخصية، نكت مضحكة، ومقالات خفيفة تساعدك تكتشف نفسك وتستمتع بوقتك."}
     />
 
     <!-- TITLE -->
@@ -143,11 +143,11 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
           <a id="nav-home" href="/">🏠 الرئيسية</a>
           <span class="divider">|</span>
           <a id="nav-articles" href="/articles">📚 المقالات</a>
-          <span class="divider">|</span>
-          <a href="/games">🎮 تصفّح الاختبارات</a>
-          <span id="toggle-theme" style="cursor:pointer; font-size:1.5rem;">
+          <!-- <span class="divider">|</span> -->
+          <!-- <a href="/games">🎮 تصفّح الاختبارات</a> -->
+          <!-- <span id="toggle-theme" style="cursor:pointer; font-size:1.5rem;">
             🌙
-          </span>
+          </span> -->
         </nav>
 
         <!-- اليسار: اللوجو -->
@@ -193,25 +193,26 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
       }
 
       <!-- إعلان فوق -->
-      <!-- <AdsInjector
+
+      <AdsInjector
         showTop={true}
         showSide={true}
         showFloating={true}
         showBottom={false}
-      /> -->
-
+      />
       <!-- محتوى الصفحة -->
       <div class="page-content article">
         <slot />
       </div>
 
       <!-- إعلان تحت -->
-      <!-- <AdsInjector
+
+      <AdsInjector
         showTop={false}
         showSide={false}
         showFloating={false}
         showBottom={true}
-      /> -->
+      />
     </main>
 
     <!-- ديسكتوب -->

@@ -4073,7 +4073,7 @@ textarea.hint::placeholder {
   max-width: 728px;
   height: 120px;
   margin: 30px auto;
-  background: #e5e5e5;
+  /* background: #e5e5e5; */
   border: 2px dashed #999;
   border-radius: 12px;
   overflow: hidden;

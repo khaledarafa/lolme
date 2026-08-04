@@ -15,7 +15,8 @@ function insertAds() {
   if (!midAds.length) return;
 
   const paragraphs = document.querySelectorAll(
-    ".article-container p, .article-container h2, .jokes-page p, .jokes-page li"
+    // ".article-container p, .article-container h2, .jokes-page p, .jokes-page li"
+    ".article-container p, .article-container h2"
   );
 
   paragraphs.forEach((el, index) => {
