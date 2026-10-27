@@ -1,4 +1,67 @@
 ---
+type AdItem = {
+  id: string;
+  title?: string;
+  desc?: string;
+  img?: string;
+  video?: string;
+  link: string;
+  cta?: string;
+  closeable?: boolean;
+  desktop?: boolean;
+  every?: number;
+};
+
+const { ad } = Astro.props as { ad: AdItem };
+---
+
+<div
+  class="ad-wrapper ad-tilt in-content-ad-box grid-ad-box"
+  data-ad-id={ad.id}
+  data-closeable={ad.closeable ? "1" : "0"}
+>
+  <a href={ad.link} target="_blank" rel="noopener noreferrer" class="ad-link">
+    <div class="ad-media">
+      {
+        ad.video ? (
+          <video
+            src={ad.video}
+            autoplay
+            loop
+            muted
+            playsinline
+            aria-label={ad.title || "إعلان"}
+          />
+        ) : ad.img ? (
+          <img
+            src={ad.img}
+            alt={ad.title || "إعلان"}
+            loading="lazy"
+            decoding="async"
+          />
+        ) : null
+      }
+    </div>
+
+    {
+      (ad.title || ad.desc || ad.cta) && (
+        <div class="ad-body">
+          {ad.title && <h4>{ad.title}</h4>}
+          {ad.desc && <p>{ad.desc}</p>}
+          {ad.cta && (
+            <button type="button" class="ad-cta" tabindex="-1">
+              {ad.cta}
+            </button>
+          )}
+        </div>
+      )
+    }
+
+    <span class="ad-badge">📢 إعلان</span>
+  </a>
+</div>
+
+<!-- ---
 // src/components/AdBox.astro
 type AdItem = { id: string; img?: string; video?: string; link: string; closeable?: boolean; desktop?: boolean; every?: number; };
 
@@ -6,25 +69,6 @@ const { ad } = Astro.props as { ad: AdItem };
 ---
 
 <div class="ad-wrapper ad-tilt" data-ad-id={ad.id} data-closeable={ad.closeable ? "1" : "0"} style="position:relative;" >
-  <!-- {ad.closeable && (
-    <button 
-      class="ad-close-btn" 
-      onclick="sessionStorage.setItem('ad_closed_${ad.id}', '1'); this.parentElement.remove()"
-      style="
-      position:absolute; 
-      top:5px; 
-      right:5px; 
-      background:#0008; 
-      border:none; 
-      color:#fff; 
-      font-size:14px; 
-      padding:3px 6px; 
-      border-radius:4px; 
-      cursor:pointer;
-      z-index:10;
-      "
-    >✕</button>
-  )} -->
 
 <div >
   {ad.video ? (
@@ -46,5 +90,4 @@ const { ad } = Astro.props as { ad: AdItem };
     <div class="ad-placeholder">مساحتك الإعلانية هنا 😂🔥</div>
   )}
 </div>
-</div>
-
+</div> -->

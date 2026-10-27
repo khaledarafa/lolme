@@ -1,10 +1,29 @@
 ---
-// src/components/AdsInjector.astro
+// src/components/AdsInjector.astro              ٢٧-١٠-٢٦
 import { adsConfig } from "../data/adsConfig.js";
 import AdBox from "./AdBox.astro";
 
-// const ua = Astro.request.headers.get("user-agent") || "";
-// const isMobile = /(Mobile|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop)/i.test(ua);
+const ua = Astro.request.headers.get("user-agent") || "";
+const isMobile = /(Mobile|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop)/i.test(ua);
+
+type AdItem = {
+  id: string;
+  title?: string;
+  desc?: string;
+  img?: string;
+  video?: string;
+  link: string;
+  cta?: string;
+  closeable?: boolean;
+  desktop?: boolean;
+  every?: number;
+};
+
+const pickRandomAd = (ads: AdItem[]): AdItem | null => {
+  if (!ads.length) return null;
+
+  return ads[Math.floor(Math.random() * ads.length)];
+};
 
 const v = Date.now();
 const {
@@ -15,27 +34,36 @@ const {
 } = Astro.props;
 ---
 
+
 {/* TOP */}
-<!-- {showTop && adsConfig.top?.length > 0 && (
-  <div class="ad-top">
-    {adsConfig.top.map(ad => <AdBox ad={ad} />)}
-  </div>
-)} -->
+<!-- {
+  showTop && adsConfig.top?.length > 0 && (
+    <div class="ad-top ad-top-compact">
+      <AdBox ad={pickRandomAd(adsConfig.top)} />
+    </div>
+  )
+} -->
 
-{/* SIDE RIGHT */}
-<!-- {!isMobile && showSide && adsConfig.sideRight?.length > 0 && (
-  <div class="ad-right ad-side">
 
-    <span class="side-close-btn" onclick=" event.stopPropagation(); const sideRight = this.closest('.ad-right'); if (sideRight) sideRight.remove(); " > ✖ </span>
+{/* SIDE RIGHT — إعلان عشوائي واحد */}
+{
+  !isMobile && showSide && adsConfig.sideRight?.length > 0 && (
+    <div class="ad-right ad-side side-random-pending">
+      <span
+        class="side-close-btn"
+        onclick="event.stopPropagation(); this.closest('.ad-right')?.remove()"
+      >
+        ✖
+      </span>
 
-    {adsConfig.sideRight.map(ad => (
-      <div class="side-box">
-        <AdBox ad={ad} />
-      </div>
-    ))}
-
-  </div>
-)} -->
+      {adsConfig.sideRight.map((ad) => (
+        <div class="side-box" data-side-ad>
+          <AdBox ad={ad} />
+        </div>
+      ))}
+    </div>
+  )
+}
 
 <!-- {!isMobile && showSide && adsConfig.sideRight?.length > 0 && (
   <div class="ad-right">
@@ -43,20 +71,25 @@ const {
   </div>
 )} -->
 
-{/* SIDE LEFT */}
-<!-- {!isMobile && showSide && adsConfig.sideLeft?.length > 0 && (
-  <div class="ad-left ad-side">
+{/* SIDE LEFT — إعلان عشوائي واحد */}
+{
+  !isMobile && showSide && adsConfig.sideLeft?.length > 0 && (
+    <div class="ad-left ad-side side-random-pending">
+      <span
+        class="side-close-btn"
+        onclick="event.stopPropagation(); this.closest('.ad-left')?.remove()"
+      >
+        ✖
+      </span>
 
-    <span class="side-close-btn" onclick=" event.stopPropagation(); const sideLeft = this.closest('.ad-left'); if (sideLeft) sideLeft.remove(); " > ✖ </span>
-
-    {adsConfig.sideLeft.map(ad => (
-      <div class="side-box">
-        <AdBox ad={ad} />
-      </div>
-    ))}
-
-  </div>
-)} -->
+      {adsConfig.sideLeft.map((ad) => (
+        <div class="side-box" data-side-ad>
+          <AdBox ad={ad} />
+        </div>
+      ))}
+    </div>
+  )
+}
 
 <!-- {!isMobile && showSide && adsConfig.sideLeft?.length > 0 && (
   <div class="ad-left">
@@ -64,27 +97,37 @@ const {
   </div>
 )} -->
 
-{/* FLOATING */}
-<!-- {!isMobile && showFloating && adsConfig.floating?.length > 0 && (
-  <div class="ad-floating">
-    {adsConfig.floating.map(ad => (
-      <div class="float-box">
-        {ad.closeable && (
-          <span class="close-btn" onclick="this.parentElement.style.display='none'">✖</span>
-        )}
-        <AdBox ad={ad} />
+{/* FLOATING — إعلان عشوائي واحد مع زر إغلاق */}
+{
+  !isMobile &&
+    showFloating &&
+    adsConfig.floating?.length > 0 && (
+      <div class="ad-floating floating-pending">
+        {adsConfig.floating.map((ad) => (
+          <div class="float-box" data-floating-ad>
+            {ad.closeable && (
+              <button
+                type="button"
+                class="close-btn"
+                aria-label="إغلاق الإعلان"
+                onclick="this.closest('.float-box').remove()"
+              >
+                ✕
+              </button>
+            )}
+
+            <AdBox ad={ad} />
+          </div>
+        ))}
       </div>
-    ))}
-  </div>
-)} -->
+    )
+}
 
 {/* BOTTOM — نسخة واحدة فقط */}
 {
   showBottom && adsConfig.bottom?.length > 0 && (
     <div class="ad-bottom">
-      {adsConfig.bottom.map((ad) => (
-        <AdBox ad={ad} />
-      ))}
+      <AdBox ad={pickRandomAd(adsConfig.bottom)} />
     </div>
   )
 }
@@ -99,6 +142,73 @@ const {
     .replace(/&/g, "\\u0026")}
 />
 
+<script>
+  function initFloatingAds() {
+    document.querySelectorAll(".ad-floating").forEach((container) => {
+      const ads = Array.from(
+        container.querySelectorAll("[data-floating-ad]")
+      );
+
+      if (!ads.length) return;
+
+      // اختيار إعلان عشوائي واحد
+      const randomIndex = Math.floor(Math.random() * ads.length);
+      const selectedAd = ads[randomIndex];
+
+      // حذف بقية الإعلانات
+      ads.forEach((ad, index) => {
+        if (index !== randomIndex) {
+          ad.remove();
+        }
+      });
+
+      // إظهار الإعلان المختار
+      container.classList.remove("floating-pending");
+      selectedAd.classList.add("is-selected");
+    });
+  }
+
+  function initSideAds() {
+    document
+      .querySelectorAll(".ad-right, .ad-left")
+      .forEach((container) => {
+        const ads = Array.from(
+          container.querySelectorAll("[data-side-ad]")
+        );
+
+        if (!ads.length) {
+          container.classList.remove("side-random-pending");
+          return;
+        }
+
+        // اختيار إعلان عشوائي واحد لكل جانب
+        const randomIndex = Math.floor(Math.random() * ads.length);
+
+        // حذف بقية الإعلانات
+        ads.forEach((ad, index) => {
+          if (index !== randomIndex) {
+            ad.remove();
+          }
+        });
+
+        // إظهار الإعلان المختار
+        container.classList.remove("side-random-pending");
+      });
+  }
+
+  function initAllAds() {
+    initFloatingAds();
+    initSideAds();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAllAds, {
+      once: true,
+    });
+  } else {
+    initAllAds();
+  }
+</script>
 <script type="module" src={`/js/ads.js?v=${v}`}></script>
 <script type="module" src={`/js/adsGrid.js?v=${v}`}></script>
 <script type="module" src={`/js/tilt-cards.js?v=${v}`}></script>
