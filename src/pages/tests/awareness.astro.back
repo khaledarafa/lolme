@@ -1,6 +1,7 @@
 ---
 export const prerender = true;
 import Layout from "../../layouts/Layout.astro";
+import AdvertiseBanner from "../../components/AdvertiseBanner.astro";
 import { otherQuizzes } from "../../data/otherQuizzes.js";
 
 const title = "اعرف درجة وعيك... بطريقة lolme 😂";
@@ -82,6 +83,7 @@ const questions: Question[] = shuffle([
         </div>
       ))}
       <button type="submit">شوف النتيجة 🔮</button>
+      <AdvertiseBanner />
     </form>
 
     <div id="result" class="hidden"></div>

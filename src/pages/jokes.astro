@@ -2,6 +2,7 @@
 // jokes2.astro
 export const prerender = false;
 import Layout from "../layouts/Layout.astro";
+import AdvertiseBanner from "../components/AdvertiseBanner.astro";
 const siteEmoji = "/images/site-emoji.png";
 
 const jokes = [
@@ -175,6 +176,7 @@ const jokes10 = [
   
   <div class="jokes-page card">
 
+
     <h1>نكت مضحكة جديدة <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h1>
     <h3> الضحك وسيلة رائعة لتخفيف الضغط اليومي وإخراج الطاقة السلبية. استمتع بمجموعة من أظرف النكت التي ستجعلك تبتسم بصوت عالي، أنت ومن حولك. كل نكتة هنا قصيرة وسهلة الهضم، مثالية لمشاركة المرح مع الأصدقاء أو العائلة. <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> </h3>
     <!-- <ul> {jokes.map((joke) => <li>{joke}</li>)} </ul> -->
@@ -184,13 +186,9 @@ const jokes10 = [
         </li>
       ))}
     </ul>
-    
+    <AdvertiseBanner slot="jokes-1" />
   </div>
-
-    <div id="ad-container" class="new-ad-space ad-box">
-      🚀 مساحتك الإعلانية هنا
-    </div>
-
+  
   <div class="jokes-page">
     <h2>نكت مضحكة جدا برضه <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
     <h3> اجعل يومك مليء بالمرح مع هذه النكت الطريفة! هذه المجموعة تجمع بين الفكاهة اليومية والمواقف الغريبة التي تجعل الضحك لا يتوقف. مثالية لقضاء وقت ممتع مع الأصدقاء أو لرفع معنوياتك في أي لحظة. <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h3>
@@ -199,23 +197,14 @@ const jokes10 = [
       <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li>)} </ul>
   </div>
 
-
-    <div id="ad-container" class="new-ad-space ad-box">
-      🚀 مساحتك الإعلانية هنا
-    </div>
-    
   <div class="jokes-page card">
     <h2>نكت إوعى وشك <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
     <h3> هنا تجد النكت الغريبة والمفاجئة التي تخطف الأنفاس وتجبرك على الضحك فورًا! هذه النكت قصيرة لكنها مؤثرة، ستجعل مزاجك أفضل بسرعة، سواء كنت بمفردك أو مع من تحب من العائلة والأصدقاء. <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> </h3>
     <ul> {jokes3.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
+    <AdvertiseBanner slot="jokes-2" />
   </div>
-  
-
-    <div id="ad-container" class="new-ad-space ad-box">
-      🚀 مساحتك الإعلانية هنا
-    </div>
     
   <div class="jokes-page">
     <h2>نكت جامدااااا <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
@@ -225,11 +214,6 @@ const jokes10 = [
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
   </div>
   
-
-    <div id="ad-container" class="new-ad-space ad-box">
-      🚀 مساحتك الإعلانية هنا
-    </div>
-    
   <div class="jokes-page card">
     <h2>نكت إوعى تضحك جامد <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
     <h3>
@@ -240,13 +224,9 @@ const jokes10 = [
     <ul> {jokes5.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
+    <AdvertiseBanner slot="jokes-3" />
   </div>
-  
 
-    <div id="ad-container" class="new-ad-space ad-box">
-      🚀 مساحتك الإعلانية هنا
-    </div>
-    
   <div class="jokes-page">
     <h2>نكت خفيفة دم <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
     <h3>
@@ -259,12 +239,7 @@ const jokes10 = [
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
   </div>
- 
 
-    <div id="ad-container" class="new-ad-space ad-box">
-      🚀 مساحتك الإعلانية هنا
-    </div>
-     
   <div class="jokes-page card">
     <h2>نكت جرب تضحك جامد <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
     <h3> 
@@ -274,13 +249,10 @@ const jokes10 = [
     <ul> {jokes7.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
+    <AdvertiseBanner slot="jokes-4" />
   </div>
 
-
-    <div id="ad-container" class="new-ad-space ad-box">
-      🚀 مساحتك الإعلانية هنا
-    </div>
-      
+  
   <div class="jokes-page">
     <h2>نكت تموت من الضحك 😂 <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
     <h3>
@@ -290,11 +262,7 @@ const jokes10 = [
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
   </div>
-  
-    <div id="ad-container" class="new-ad-space ad-box">
-      🚀 مساحتك الإعلانية هنا
-    </div>
-    
+
   <div class="jokes-page card">
     <h2>اخر نكت تضحك اوى وكفاية كدز بقز <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
     <h3> 
@@ -304,12 +272,10 @@ const jokes10 = [
     <ul> {jokes9.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
+
+    <AdvertiseBanner slot="jokes-5" />
   </div>
-  
-    <div id="ad-container" class="new-ad-space ad-box">
-      🚀 مساحتك الإعلانية هنا
-    </div>
-    
+
   <div class="jokes-page">
     <h2>نكت فيها لعب بالكلمات ومواقف غريبة كلها دمها خفيف زي الشعب المصري 💪 😂 <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
     <h3>
@@ -318,12 +284,9 @@ const jokes10 = [
     <ul> {jokes10.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
           <br />
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
+  <AdvertiseBanner slot="jokes-6" />
   </div>
 
-    <div id="ad-container" class="new-ad-space ad-box">
-      🚀 مساحتك الإعلانية هنا
-    </div>
-    
 
     <script src="/js/tilt-cards.js" defer></script>
   </Layout>

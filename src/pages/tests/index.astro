@@ -2,6 +2,7 @@
 // src/pages/tests/index.astro
 export const prerender = true;
 import Layout from "../../layouts/Layout.astro";
+import AdvertiseBanner from "../../components/AdvertiseBanner.astro";
 import { quizzes } from "../../data/quizzes/index.js";
 // import AdsInjector from "../../components/AdsInjector.astro";
 ---
@@ -18,6 +19,8 @@ import { quizzes } from "../../data/quizzes/index.js";
       <h2 class="cta-line">خلينا نلعب شوية 😎 👇</h2>
     </section>
 
+    <AdvertiseBanner />
+    
     <section class="grid">
       {quizzes.map((quiz, i) => (
         <a href={`/tests/${quiz.slug}`} class="quiz-card tilt-card">

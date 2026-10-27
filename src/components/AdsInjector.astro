@@ -1,10 +1,21 @@
 ---
 // src/components/AdsInjector.astro              ٢٧-١٠-٢٦
+
+// نظام الإعلانات	الملف المسؤول
+// البانر العريض أسفل الصفحة	public/js/ads-system.js
+// الإعلانات العائمة Floating	AdsInjector.astro وadsConfig.floating
+// الإعلانات الجانبية يمين وشمال	AdsInjector.astro وadsConfig.sideRight/sideLeft
+// الإعلان أعلى الصفحة وأسفلها	AdsInjector.astro وadsConfig.top/bottom
+// الإعلانات داخل المقالات	public/js/ads.js
+// الإعلانات داخل شبكات الكروت	public/js/adsGrid.js
+// شكل وتصميم الإعلانات	AdBox.astro وstyle.css
+
 import { adsConfig } from "../data/adsConfig.js";
 import AdBox from "./AdBox.astro";
 
 const ua = Astro.request.headers.get("user-agent") || "";
-const isMobile = /(Mobile|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop)/i.test(ua);
+const isMobile =
+  /(Mobile|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop)/i.test(ua);
 
 type AdItem = {
   id: string;
@@ -34,7 +45,6 @@ const {
 } = Astro.props;
 ---
 
-
 {/* TOP */}
 <!-- {
   showTop && adsConfig.top?.length > 0 && (
@@ -43,7 +53,6 @@ const {
     </div>
   )
 } -->
-
 
 {/* SIDE RIGHT — إعلان عشوائي واحد */}
 {
@@ -65,12 +74,6 @@ const {
   )
 }
 
-<!-- {!isMobile && showSide && adsConfig.sideRight?.length > 0 && (
-  <div class="ad-right">
-    {adsConfig.sideRight.map(ad => <AdBox ad={ad} />)}
-  </div>
-)} -->
-
 {/* SIDE LEFT — إعلان عشوائي واحد */}
 {
   !isMobile && showSide && adsConfig.sideLeft?.length > 0 && (
@@ -91,46 +94,82 @@ const {
   )
 }
 
-<!-- {!isMobile && showSide && adsConfig.sideLeft?.length > 0 && (
-  <div class="ad-left">
-    {adsConfig.sideLeft.map(ad => <AdBox ad={ad} />)}
-  </div>
-)} -->
-
 {/* FLOATING — إعلان عشوائي واحد مع زر إغلاق */}
 {
-  !isMobile &&
-    showFloating &&
-    adsConfig.floating?.length > 0 && (
-      <div class="ad-floating floating-pending">
-        {adsConfig.floating.map((ad) => (
-          <div class="float-box" data-floating-ad>
-            {ad.closeable && (
-              <button
-                type="button"
-                class="close-btn"
-                aria-label="إغلاق الإعلان"
-                onclick="this.closest('.float-box').remove()"
-              >
-                ✕
-              </button>
-            )}
+  !isMobile && showFloating && adsConfig.floating?.length > 0 && (
+    <div class="ad-floating floating-pending">
+      {adsConfig.floating.map((ad) => (
+        <div class="float-box" data-floating-ad>
+          {ad.closeable && (
+            <button
+              type="button"
+              class="close-btn"
+              aria-label="إغلاق الإعلان"
+              onclick="this.closest('.float-box').remove()"
+            >
+              ✕
+            </button>
+          )}
 
-            <AdBox ad={ad} />
-          </div>
-        ))}
-      </div>
-    )
+          <AdBox ad={ad} />
+        </div>
+      ))}
+    </div>
+  )
 }
 
-{/* BOTTOM — نسخة واحدة فقط */}
+
+{/* إعلان حجز المساحة العائمة على الكمبيوتر والموبايل */}
 {
+  showFloating && (
+    <div id="mobile-floating-ad" class="promo-floating-ad">
+      <div class="promo-floating-ad__content" dir="rtl">
+        <button
+          type="button"
+          class="promo-floating-ad__close"
+          aria-label="إغلاق الإعلان"
+        >
+          ✕
+        </button>
+
+        <span class="promo-floating-ad__label">
+          📢 فرصة للمعلنين
+        </span>
+
+        <strong class="promo-floating-ad__title">
+          أعلن على LOLME 🚀
+        </strong>
+
+        <p>روّج لمشروعك أمام زوار الموقع.</p>
+
+        <div class="promo-floating-ad__footer">
+          <span class="promo-floating-ad__price">
+            149 جنيه / 30 يومًا
+          </span>
+
+          <a
+            href="https://wa.me/201002008305?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%D8%8C%20%D8%A3%D9%86%D8%A7%20%D9%85%D9%87%D8%AA%D9%85%20%D8%A8%D8%AD%D8%AC%D8%B2%20%D8%A7%D9%84%D8%A5%D8%B9%D9%84%D8%A7%D9%86%20%D8%A7%D9%84%D8%B9%D8%A7%D8%A6%D9%85%20%D8%B9%D9%84%D9%89%20LOLME%20%D8%A8%D8%B3%D8%B9%D8%B1%20149%20%D8%AC%D9%86%D9%8A%D9%87%20%D9%84%D9%85%D8%AF%D8%A9%2030%20%D9%8A%D9%88%D9%85%D8%A7%D9%8B."
+            target="_blank"
+            rel="noopener noreferrer"
+            class="promo-floating-ad__button"
+          >
+            احجز مساحتك الإعلانية ←
+          </a>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
+{/* BOTTOM — نسخة واحدة فقط */}
+<!-- {
   showBottom && adsConfig.bottom?.length > 0 && (
     <div class="ad-bottom">
       <AdBox ad={pickRandomAd(adsConfig.bottom)} />
     </div>
   )
-}
+} -->
 
 {/* CONFIG + SCRIPTS */}
 <script
@@ -145,9 +184,7 @@ const {
 <script>
   function initFloatingAds() {
     document.querySelectorAll(".ad-floating").forEach((container) => {
-      const ads = Array.from(
-        container.querySelectorAll("[data-floating-ad]")
-      );
+      const ads = Array.from(container.querySelectorAll("[data-floating-ad]"));
 
       if (!ads.length) return;
 
@@ -169,36 +206,77 @@ const {
   }
 
   function initSideAds() {
-    document
-      .querySelectorAll(".ad-right, .ad-left")
-      .forEach((container) => {
-        const ads = Array.from(
-          container.querySelectorAll("[data-side-ad]")
-        );
+    document.querySelectorAll(".ad-right, .ad-left").forEach((container) => {
+      const ads = Array.from(container.querySelectorAll("[data-side-ad]"));
 
-        if (!ads.length) {
-          container.classList.remove("side-random-pending");
-          return;
-        }
-
-        // اختيار إعلان عشوائي واحد لكل جانب
-        const randomIndex = Math.floor(Math.random() * ads.length);
-
-        // حذف بقية الإعلانات
-        ads.forEach((ad, index) => {
-          if (index !== randomIndex) {
-            ad.remove();
-          }
-        });
-
-        // إظهار الإعلان المختار
+      if (!ads.length) {
         container.classList.remove("side-random-pending");
+        return;
+      }
+
+      // اختيار إعلان عشوائي واحد لكل جانب
+      const randomIndex = Math.floor(Math.random() * ads.length);
+
+      // حذف بقية الإعلانات
+      ads.forEach((ad, index) => {
+        if (index !== randomIndex) {
+          ad.remove();
+        }
       });
+
+      // إظهار الإعلان المختار
+      container.classList.remove("side-random-pending");
+    });
   }
 
   function initAllAds() {
     initFloatingAds();
     initSideAds();
+  }
+
+  function initPromoFloatingAd() {
+    const ad = document.getElementById("mobile-floating-ad");
+    if (!ad || ad.dataset.initialized === "1") return;
+
+    ad.dataset.initialized = "1";
+
+    const closedKey = "lolme-promo-floating-closed";
+
+    try {
+      if (sessionStorage.getItem(closedKey) === "1") return;
+    } catch {}
+
+    ad.querySelector(".promo-floating-ad__close")?.addEventListener(
+      "click",
+      () => {
+        try {
+          sessionStorage.setItem(closedKey, "1");
+        } catch {}
+
+        ad.classList.remove("is-visible");
+        ad.classList.add("is-closing");
+
+        ad.addEventListener(
+          "animationend",
+          () => {
+            ad.remove();
+          },
+          { once: true },
+        );
+      },
+    );
+
+    window.setTimeout(() => {
+      if (ad.isConnected) ad.classList.add("is-visible");
+    }, 1800);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initPromoFloatingAd, {
+      once: true,
+    });
+  } else {
+    initPromoFloatingAd();
   }
 
   if (document.readyState === "loading") {

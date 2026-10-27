@@ -109,6 +109,24 @@ const homeButtons = [
   <a href="/play" class="play-btn">🎮 كل الألعاب</a>
 </section> -->
 
+  <!-- 😂 محتوى ترفيهي -->
+  <section class="fun-section">
+    <h2>😂 جرب حاجة تضحكك</h2>
+
+    <div class="home-grid grid">
+      {
+        homeButtons.map((btn, i) => (
+          <a href={btn.slug} class="home-card tilt-card">
+            <img src={btn.img} alt={btn.title} />
+            <div class="content">
+              <h3>{btn.title}</h3>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
   <!-- 🎮 اللعب -->
   <section class="play-section">
     <h2>🎮 العب مع صحابك الآن</h2>
@@ -129,25 +147,6 @@ const homeButtons = [
 
     <p class="game-desc">🔥 لعبة أسئلة متنوعة… كل جولة بتخليك تضحك أكتر 😏</p>
   </section>
-
-  <!-- 😂 محتوى ترفيهي -->
-  <section class="fun-section">
-    <h2>😂 جرب حاجة تضحكك</h2>
-
-    <div class="home-grid grid">
-      {
-        homeButtons.map((btn, i) => (
-          <a href={btn.slug} class="home-card tilt-card">
-            <img src={btn.img} alt={btn.title} />
-            <div class="content">
-              <h3>{btn.title}</h3>
-            </div>
-          </a>
-        ))
-      }
-    </div>
-  </section>
-
   <!-- 🧠 الفئات (لوحدها بقى 👇) -->
   <section class="categories-section">
     <h2>🧠 من الكورة للأفلام للمعلومات… اختار وورّي صحابك مستواك 😏🔥</h2>

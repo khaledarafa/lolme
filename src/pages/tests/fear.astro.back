@@ -1,4 +1,5 @@
 ---
+// src/pages/tests/fear.astro
 export const prerender = true;
 import Layout from "../../layouts/Layout.astro";
 import { otherQuizzes } from "../../data/otherQuizzes.js";

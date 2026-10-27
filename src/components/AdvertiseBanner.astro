@@ -1,0 +1,221 @@
+---
+// src/components/AdvertiseBanner.astro           27-10-26
+const { slot = "jokes-1", placement = "default" } = Astro.props;
+
+const ads = {
+  "jokes-1": {
+    price: 299,
+    position: "المساحة الإعلانية الأولى — بداية صفحة النكت",
+    detail: "ظهور مميز في الجزء الأول من الصفحة.",
+  },
+  "jokes-2": {
+    price: 249,
+    position: "المساحة الإعلانية الثانية — الثلث الأول",
+    detail: "إعلانك وسط مجموعات النكت.",
+  },
+  "jokes-3": {
+    price: 199,
+    position: "المساحة الإعلانية الثالثة — منتصف الصفحة",
+    detail: "مساحة إعلانية في منتصف المحتوى.",
+  },
+  "jokes-4": {
+    price: 179,
+    position: "المساحة الإعلانية الرابعة — بعد منتصف الصفحة",
+    detail: "روّج لمنتجك وسط محتوى النكت.",
+  },
+  "jokes-5": {
+    price: 149,
+    position: "المساحة الإعلانية الخامسة — الثلث الأخير",
+    detail: "مساحة إعلانية بسعر اقتصادي.",
+  },
+  "jokes-6": {
+    price: 129,
+    position: "المساحة الإعلانية السادسة — نهاية الصفحة",
+    detail: "مساحة إعلانية اقتصادية.",
+  },
+  "tests": {
+    price: 249,
+    position: "المساحة الإعلانية في الاختبارات — نهاية الصفحة",
+    detail: "مساحة إعلانية مع الاختبارات.",
+  },
+};
+
+const slotKey = String(slot);
+const currentSlot =
+  ads[slotKey as keyof typeof ads] ?? ads["jokes-1"];
+
+const whatsappMessage = [
+  "أهلاً، أنا مهتم بالإعلان على LOLME.",
+  `رقم المساحة: ${slotKey}`,
+  `مكان الإعلان: ${currentSlot.position}`,
+  `السعر: ${currentSlot.price} جنيه لمدة 30 يومًا.`,
+  "ممكن أعرف تفاصيل الحجز؟",
+].join("\n");
+
+const whatsappUrl =
+  `https://wa.me/201002008305?text=${encodeURIComponent(whatsappMessage)}`;
+---
+
+<aside
+  class:list={["advertise-banner", `advertise-banner--${placement}`]}
+  aria-label={`الإعلان على LOLME — ${currentSlot.position}`}
+>
+  <div class="advertise-banner__content">
+    <span class="advertise-banner__eyebrow">
+      📢 فرصة للمعلنين
+    </span>
+
+    <h2>أعلن على LOLME</h2>
+
+    <p>{currentSlot.position}</p>
+    <p>{currentSlot.detail}</p>
+
+    <div class="advertise-banner__offer">
+      <strong>{currentSlot.price} جنيه</strong>
+      <span>اشتراك إعلاني لمدة 30 يومًا</span>
+    </div>
+
+    <a
+      class="advertise-banner__button"
+      href={whatsappUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      احجز مساحتك الإعلانية
+      <span aria-hidden="true">←</span>
+    </a>
+  </div>
+
+  <div class="advertise-banner__art" aria-hidden="true">
+    <span>😂</span>
+    <span>🎮</span>
+    <span>🚀</span>
+  </div>
+</aside>
+
+<style>
+  .advertise-banner {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: calc(100% - 30px);
+    max-width: 728px;
+    margin: 30px auto;
+    padding: 24px;
+    overflow: hidden;
+    direction: rtl;
+    text-align: right;
+    color: #fff;
+    background: linear-gradient(120deg, #111827, #312e81 65%, #6d28d9);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    animation: none;
+    transform: none;
+  }
+
+  .advertise-banner__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .advertise-banner__eyebrow {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #fde68a;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .advertise-banner h2 {
+    margin: 0 0 8px;
+    color: #fff;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+  }
+
+  .advertise-banner p {
+    margin: 0 0 16px;
+    color: #e5e7eb;
+    line-height: 1.7;
+  }
+
+  .advertise-banner__offer {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .advertise-banner__offer strong {
+    color: #fde68a;
+    font-size: 1.65rem;
+  }
+
+  .advertise-banner__offer span {
+    color: #e5e7eb;
+    font-size: 0.95rem;
+  }
+
+  .advertise-banner__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    background: #16a34a;
+    color: #fff !important;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease;
+  }
+
+  .advertise-banner__button:hover {
+    background: #15803d;
+  }
+
+  .advertise-banner__art {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-shrink: 0;
+    font-size: 2.2rem;
+  }
+
+  .advertise-banner__art span:nth-child(2) {
+    font-size: 3rem;
+  }
+
+  @media (max-width: 480px) {
+    .advertise-banner {
+      gap: 10px;
+      padding: 18px 14px;
+    }
+
+    .advertise-banner__art {
+      font-size: 1.5rem;
+    }
+
+    .advertise-banner__art span:nth-child(2) {
+      font-size: 2rem;
+    }
+
+    .advertise-banner p {
+      font-size: 0.9rem;
+    }
+
+    .advertise-banner__offer strong {
+      font-size: 1.35rem;
+    }
+
+    .advertise-banner__button {
+      padding: 11px 12px;
+      font-size: 0.9rem;
+    }
+  }
+</style>

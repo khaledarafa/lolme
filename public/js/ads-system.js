@@ -1,12 +1,12 @@
-// public/js/ads-system.js
+// public/js/ads-system.js   اعلانات الموبايل من تحت
 const ads = [
-  {
-    id: "myad1",
-    image: "https://lolme.cc/default-og.png",
-    link: "https://lolme.cc",
-    title: "ضحكني",
-    views: 0,
-  },
+  // {
+  //   id: "myad1",
+  //   image: "https://lolme.cc/default-og.png",
+  //   link: "https://lolme.cc",
+  //   title: "ضحكني",
+  //   views: 0,
+  // },
   {
     id: "ad2",
     image: "https://monce.cc/images/oglogo.webp",
@@ -24,57 +24,57 @@ const ads = [
     // cta: "🎧 استمع الآن",
     // every: 4,
   },
-   {
-      id: "grid5",
-      title: "غيّر طريقة تفكيرك 🧠",
-      desc: "مقالات عن الوعي والمال وقانون الجذب",
-      img: "/ads/blog-index-og.png",
-      link: "https://monce.cc/blog",
-      cta: "ابدأ القراءة",
-      every: 4,
-    },
-    {
-      id: "wafra11",
-      title: "🚪 باب الوفرة مفتوح... بس هل أنت مستعد؟",
-      desc: "رحلة عملية لفهم المعتقدات التي تشكل واقعك المالي",
-      img: "/ads/wafra-350.webp",
-      link: "https://monce.cc/wafra",
-      cta: "ابدأ الرحلة",
-      every: 4,
-    },
+  {
+    id: "grid5",
+    title: "غيّر طريقة تفكيرك 🧠",
+    desc: "مقالات عن الوعي والمال وقانون الجذب",
+    img: "/ads/blog-index-og.png",
+    link: "https://monce.cc/blog",
+    cta: "ابدأ القراءة",
+    every: 4,
+  },
+  {
+    id: "wafra11",
+    title: "🚪 باب الوفرة مفتوح... بس هل أنت مستعد؟",
+    desc: "رحلة عملية لفهم المعتقدات التي تشكل واقعك المالي",
+    img: "/ads/wafra-350.webp",
+    link: "https://monce.cc/wafra",
+    cta: "ابدأ الرحلة",
+    every: 4,
+  },
 
-    //  =======================================.  🎤 إعلان قناة Moncellence
-    {
-      id: "moncellence-channel",
-      title: "🎤 اكتشف عالم Moncellence",
-      desc: "أغاني توكيدات، تطوير الذات، الوفرة والثراء والمزيد.",
-      img: "/ads/moncellence-channel.webp",
-      link: "https://www.youtube.com/@Moncellence",
-      cta: "▶️ شاهد القناة",
-      every: 4,
-    },
+  //  =======================================.  🎤 إعلان قناة Moncellence
+  {
+    id: "moncellence-channel",
+    title: "🎤 اكتشف عالم Moncellence",
+    desc: "أغاني توكيدات، تطوير الذات، الوفرة والثراء والمزيد.",
+    img: "/ads/moncellence-channel.webp",
+    link: "https://www.youtube.com/@Moncellence",
+    cta: "▶️ شاهد القناة",
+    every: 4,
+  },
 
-    // // ✨ إعلان أغاني التوكيدات
-    {
-      id: "moncellence-affirmations",
-      title: "✨ توكيداتك في شكل أغاني",
-      desc: "اكتشف طريقة مختلفة للاستماع إلى أغاني التوكيدات وتطوير الذات.",
-      img: "/ads/moncellence-affirmations.webp",
-      link: "https://www.youtube.com/@Moncellence/videos",
-      cta: "🎶 اكتشف الأغاني",
-      every: 4,
-    },
+  // // ✨ إعلان أغاني التوكيدات
+  {
+    id: "moncellence-affirmations",
+    title: "✨ توكيداتك في شكل أغاني",
+    desc: "اكتشف طريقة مختلفة للاستماع إلى أغاني التوكيدات وتطوير الذات.",
+    img: "/ads/moncellence-affirmations.webp",
+    link: "https://www.youtube.com/@Moncellence/videos",
+    cta: "🎶 اكتشف الأغاني",
+    every: 4,
+  },
 
-    // // 🔥 إعلان الموسيقى الإلكترونية
-    {
-      id: "moncellence-edm",
-      title: "🔥 Moncellence Music",
-      desc: "اكتشف الموسيقى الإلكترونية والأغاني المختلفة على القناة.",
-      img: "/ads/moncellence-edm.webp",
-      link: "https://www.youtube.com/@Moncellence/videos",
-      cta: "🎧 استمع الآن",
-      every: 4,
-    },
+  // // 🔥 إعلان الموسيقى الإلكترونية
+  {
+    id: "moncellence-edm",
+    title: "🔥 Moncellence Music",
+    desc: "اكتشف الموسيقى الإلكترونية والأغاني المختلفة على القناة.",
+    img: "/ads/moncellence-edm.webp",
+    link: "https://www.youtube.com/@Moncellence/videos",
+    cta: "🎧 استمع الآن",
+    every: 4,
+  },
 ];
 
 // 🎯 توزيع عادل + راندوم
