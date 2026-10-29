@@ -1,0 +1,43 @@
+
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="حسابي" description="إدارة حسابك في LOLME">
+  <section class="account-card">
+    <h2>👤 حسابي في LOLME</h2>
+    <p id="account-status">جاري التحقق من تسجيل الدخول...</p>
+
+    <div id="account-details" hidden>
+      <p>البريد الإلكتروني: <strong id="account-email"></strong></p>
+      <p>طريقة الدخول: <strong id="account-provider"></strong></p>
+      <button id="logout-button" type="button">تسجيل الخروج</button>
+    </div>
+  </section>
+
+  <script type="module" src="/js/account.js"></script>
+
+  <style>
+    .account-card {
+      max-width: 540px;
+      margin: 24px auto;
+      padding: 26px;
+      border: 1px solid #374151;
+      border-radius: 18px;
+      background: #17212f;
+      color: #fff;
+      overflow-wrap: anywhere;
+    }
+
+    .account-card button {
+      padding: 12px 20px;
+      border: 0;
+      border-radius: 9px;
+      background: #16c765;
+      color: #06140b;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</Layout>

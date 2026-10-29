@@ -1,0 +1,190 @@
+
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="إنشاء حساب جديد"
+  description="أنشئ حسابك في LOLME"
+>
+  <section class="auth-card">
+    <h2>🎉 انضم إلى LOLME</h2>
+    <p class="intro">أنشئ حسابك وخلّي تجربتك أسهل.</p>
+
+    <form id="register-form">
+      <label for="register-email">البريد الإلكتروني</label>
+      <input
+        id="register-email"
+        type="email"
+        autocomplete="email"
+        placeholder="name@example.com"
+        required
+      />
+
+      <label for="register-password">كلمة المرور</label>
+      <input
+        id="register-password"
+        type="password"
+        autocomplete="new-password"
+        minlength="8"
+        placeholder="8 أحرف على الأقل"
+        required
+      />
+
+      <button type="submit" id="register-submit">إنشاء حساب</button>
+    </form>
+
+    <div class="separator">أو</div>
+
+    <button type="button" id="google-register" class="google-btn">
+      🌐 التسجيل باستخدام Google
+    </button>
+
+    <p id="auth-message" role="status" aria-live="polite"></p>
+
+    <p class="auth-links">
+      عندك حساب بالفعل؟ <a href="/login">سجّل الدخول</a>
+    </p>
+  </section>
+
+  <script>
+    import {
+      auth,
+      createUserWithEmailAndPassword,
+      signInWithPopup,
+      googleProvider
+    } from "../../public/js/firebase.js";
+
+    const form = document.getElementById("register-form");
+    const email = document.getElementById("register-email");
+    const password = document.getElementById("register-password");
+    const submit = document.getElementById("register-submit");
+    const googleBtn = document.getElementById("google-register");
+    const message = document.getElementById("auth-message");
+
+    function showError(error) {
+      const errors = {
+        "auth/email-already-in-use": "البريد الإلكتروني مسجّل بالفعل. جرّب تسجيل الدخول.",
+        "auth/invalid-email": "البريد الإلكتروني غير صحيح.",
+        "auth/weak-password": "كلمة المرور ضعيفة. استخدم 8 أحرف على الأقل.",
+        "auth/popup-closed-by-user": "أغلقت نافذة Google قبل إكمال العملية.",
+        "auth/popup-blocked": "المتصفح منع نافذة Google. اسمح بالنوافذ المنبثقة وحاول مجددًا.",
+        "auth/network-request-failed": "تعذر الاتصال. تحقق من الإنترنت وحاول مرة أخرى."
+      };
+
+      message.textContent =
+        errors[error.code] || "تعذر إنشاء الحساب. حاول مرة أخرى.";
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      submit.disabled = true;
+      message.textContent = "جاري إنشاء الحساب...";
+
+      try {
+        await createUserWithEmailAndPassword(
+          auth,
+          email.value.trim(),
+          password.value
+        );
+
+        window.location.href = "/account";
+      } catch (error) {
+        showError(error);
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    googleBtn.addEventListener("click", async () => {
+      googleBtn.disabled = true;
+      message.textContent = "جاري الاتصال بـ Google...";
+
+      try {
+        await signInWithPopup(auth, googleProvider);
+        window.location.href = "/account";
+      } catch (error) {
+        showError(error);
+      } finally {
+        googleBtn.disabled = false;
+      }
+    });
+  </script>
+
+  <style>
+    .auth-card {
+      max-width: 440px;
+      margin: 24px auto;
+      padding: 26px;
+      border: 1px solid #374151;
+      border-radius: 18px;
+      background: #17212f;
+      color: #fff;
+      box-shadow: 0 8px 30px #0002;
+    }
+
+    .auth-card h2,
+    .intro {
+      text-align: center;
+    }
+
+    .intro {
+      color: #cbd5e1;
+      margin-bottom: 24px;
+    }
+
+    .auth-card form {
+      display: grid;
+      gap: 10px;
+    }
+
+    .auth-card input {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #475569;
+      border-radius: 9px;
+      background: #0f1723;
+      color: #fff;
+      font: inherit;
+      margin-bottom: 8px;
+    }
+
+    .auth-card button {
+      width: 100%;
+      padding: 12px;
+      border: 0;
+      border-radius: 9px;
+      background: #16c765;
+      color: #06140b;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .auth-card button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .auth-card .google-btn {
+      background: #fff;
+      color: #222;
+    }
+
+    .separator,
+    .auth-links {
+      text-align: center;
+      margin-top: 18px;
+    }
+
+    .auth-card a {
+      color: #16c765;
+    }
+
+    #auth-message {
+      overflow-wrap: anywhere;
+      line-height: 1.7;
+    }
+  </style>
+</Layout>

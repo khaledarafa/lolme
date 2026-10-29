@@ -5,21 +5,29 @@ import Addc from "../../components/admin/addc.astro";
 import Addq from "../../components/admin/addq.astro";
 import Rooms from "../../components/admin/rooms.astro";
 import Editq from "../../components/admin/editq.astro";
+import Feedback from "../../components/admin/feedback.astro";
+import Ads from "../../components/admin/ads.astro";
 ---
 
 <Layout title="لوحة التحكم">
   <!-- 🔥 Tabs فوق -->
   <div class="top-tabs">
+    <button data-tab="ads">📢 إدارة الإعلانات</button>
     <button data-tab="addq" class="active">➕ إضافة سؤال</button>
     <button data-tab="edit">✏️ تعديل الأسئلة</button>
     <button data-tab="addc">📁 إضافة فئة</button>
     <button data-tab="review">✅ مراجعة</button>
+    <button data-tab="feedback">💬 اقتراحات الزوار</button>
     <button data-tab="rooms">🎮 الغرف</button>
   </div>
 
   <!-- 🔥 Content -->
   <main class="admin-content">
     <div class="content-inner">
+      <div id="ads" class="tab">
+        <Ads />
+      </div>
+      
       <div id="addq" class="tab active">
         <Addq />
       </div>
@@ -36,6 +44,10 @@ import Editq from "../../components/admin/editq.astro";
         <Review />
       </div>
 
+      <div id="feedback" class="tab">
+        <Feedback />
+      </div>
+      
       <div id="rooms" class="tab">
         <Rooms />
       </div>

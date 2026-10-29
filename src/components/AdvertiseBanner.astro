@@ -1,5 +1,4 @@
 ---
-// src/components/AdvertiseBanner.astro           27-10-26
 const { slot = "jokes-1", placement = "default" } = Astro.props;
 
 const ads = {
@@ -33,37 +32,35 @@ const ads = {
     position: "المساحة الإعلانية السادسة — نهاية الصفحة",
     detail: "مساحة إعلانية اقتصادية.",
   },
-  "tests": {
+  tests: {
     price: 249,
     position: "المساحة الإعلانية في الاختبارات — نهاية الصفحة",
     detail: "مساحة إعلانية مع الاختبارات.",
   },
-};
+} as const;
 
 const slotKey = String(slot);
-const currentSlot =
-  ads[slotKey as keyof typeof ads] ?? ads["jokes-1"];
+const currentSlot = ads[slotKey as keyof typeof ads] ?? ads["jokes-1"];
 
 const whatsappMessage = [
-  "أهلاً، أنا مهتم بالإعلان على LOLME.",
-  `رقم المساحة: ${slotKey}`,
-  `مكان الإعلان: ${currentSlot.position}`,
+  `${slotKey}`,
+  "أنا مهتم بالإعلان على ",
+  `${currentSlot.position}`,
   `السعر: ${currentSlot.price} جنيه لمدة 30 يومًا.`,
   "ممكن أعرف تفاصيل الحجز؟",
 ].join("\n");
 
-const whatsappUrl =
-  `https://wa.me/201002008305?text=${encodeURIComponent(whatsappMessage)}`;
+const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsappMessage)}`;
 ---
 
 <aside
   class:list={["advertise-banner", `advertise-banner--${placement}`]}
   aria-label={`الإعلان على LOLME — ${currentSlot.position}`}
+  data-ad-slot={slotKey}
+  data-ad-type="house"
 >
   <div class="advertise-banner__content">
-    <span class="advertise-banner__eyebrow">
-      📢 فرصة للمعلنين
-    </span>
+    <span class="advertise-banner__eyebrow"> 📢 فرصة للمعلنين </span>
 
     <h2>أعلن على LOLME</h2>
 
@@ -80,6 +77,9 @@ const whatsappUrl =
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
+      data-ad-booking-click
+      data-ad-slot={slotKey}
+      data-ad-type="house"
     >
       احجز مساحتك الإعلانية
       <span aria-hidden="true">←</span>
@@ -91,7 +91,259 @@ const whatsappUrl =
     <span>🎮</span>
     <span>🚀</span>
   </div>
+
+  <div class="advertiser-creative" hidden>
+    <div class="advertiser-label">
+      <span>📢 إعلان</span>
+      <span>محتوى إعلاني</span>
+    </div>
+
+    <div class="advertiser-slideshow">
+      <div class="advertiser-creative__link">
+        <img
+          class="advertiser-creative__image"
+          alt="محتوى إعلاني"
+          draggable="false"
+        />
+      </div>
+
+      <div class="advertiser-dots" aria-label="التنقل بين صور الإعلان"></div>
+    </div>
+
+    <div class="advertiser-copy" dir="rtl">
+      <h3 class="advertiser-headline" hidden></h3>
+
+      <p class="advertiser-description" hidden></p>
+
+      <a
+        class="advertiser-cta"
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer sponsored"
+        hidden></a>
+    </div>
+  </div>
 </aside>
+
+<script is:inline type="module">
+  import { db, collection, query, where, getDocs } from "/js/firebase.js";
+
+  async function loadCampaign(banner) {
+    if (banner.dataset.campaignLoaded === "true") return;
+    banner.dataset.campaignLoaded = "true";
+
+    const slotId = banner.dataset.adSlot;
+
+    try {
+      const campaignsQuery = query(
+        collection(db, "adCampaigns"),
+        where("slotId", "==", slotId),
+        where("status", "==", "active"),
+      );
+
+      const snapshot = await getDocs(campaignsQuery);
+      const now = Date.now();
+
+      const campaigns = snapshot.docs
+        .map((item) => ({ id: item.id, ...item.data() }))
+        .filter((ad) => {
+          const start = ad.startAt?.toDate?.()?.getTime();
+          const end = ad.endAt?.toDate?.()?.getTime();
+          const images = Array.isArray(ad.imageUrls)
+            ? ad.imageUrls
+            : ad.imageUrl
+              ? [ad.imageUrl]
+              : [];
+
+          return (
+            Number.isFinite(start) &&
+            Number.isFinite(end) &&
+            start <= now &&
+            end > now &&
+            images.length > 0 &&
+            images.every((url) => {
+              try {
+                return ["https:", "http:"].includes(new URL(url).protocol);
+              } catch {
+                return false;
+              }
+            }) &&
+            typeof ad.targetUrl === "string"
+          );
+        })
+        .sort(
+          (a, b) =>
+            (b.createdAt?.toDate?.()?.getTime() || 0) -
+            (a.createdAt?.toDate?.()?.getTime() || 0),
+        );
+
+      const campaign = campaigns[0];
+      if (!campaign) return;
+
+      const images = Array.isArray(campaign.imageUrls)
+        ? campaign.imageUrls
+        : [campaign.imageUrl];
+
+      const targetUrl = new URL(campaign.targetUrl);
+      if (!["https:", "http:"].includes(targetUrl.protocol)) return;
+
+      const creative = banner.querySelector(".advertiser-creative");
+      const fallback = banner.querySelector(".advertise-banner__content");
+      const art = banner.querySelector(".advertise-banner__art");
+
+      const image = creative?.querySelector(".advertiser-creative__image");
+      const imageLink = creative?.querySelector(".advertiser-creative__link");
+      const dots = creative?.querySelector(".advertiser-dots");
+      const headline = creative?.querySelector(".advertiser-headline");
+      const description = creative?.querySelector(".advertiser-description");
+      const cta = creative?.querySelector(".advertiser-cta");
+      const label = banner.querySelector(".advertiser-label");
+
+      if (label) {
+        label.hidden = false;
+      }
+      if (!creative || !image || !imageLink || !dots) return;
+
+      // imageLink.href = targetUrl.href;
+      imageLink.dataset.adCampaignId = campaign.id;
+      imageLink.dataset.adSlot = slotId;
+      imageLink.dataset.adType = "advertiser";
+
+      if (campaign.headline?.trim()) {
+        headline.textContent = campaign.headline.trim();
+        headline.hidden = false;
+      } else {
+        headline.hidden = true;
+      }
+
+      if (campaign.description?.trim()) {
+        description.textContent = campaign.description.trim();
+        description.hidden = false;
+      } else {
+        description.hidden = true;
+      }
+
+      if (campaign.buttonText?.trim()) {
+        cta.textContent = campaign.buttonText.trim();
+        cta.href = targetUrl.href;
+        cta.hidden = false;
+        cta.dataset.adCampaignId = campaign.id;
+        cta.dataset.adSlot = slotId;
+        cta.dataset.adType = "advertiser";
+      } else {
+        cta.hidden = true;
+      }
+
+      dots.replaceChildren();
+
+      let currentIndex = 0;
+      let rotationTimer;
+      let failed = false;
+
+      function showImage(index, first = false) {
+        const nextImage = new Image();
+        nextImage.src = images[index];
+
+        nextImage.onload = () => {
+          if (failed) return;
+
+          if (!first) image.classList.add("is-fading");
+
+          window.setTimeout(
+            () => {
+              if (failed) return;
+
+              image.src = images[index];
+              image.alt =
+                campaign.headline?.trim() ||
+                `إعلان ${campaign.advertiserName || ""}`;
+
+              image.onload = () => image.classList.remove("is-fading");
+              image.onerror = () => {
+                failed = true;
+                if (rotationTimer) window.clearInterval(rotationTimer);
+                creative.hidden = true;
+                fallback.hidden = false;
+                if (art) art.hidden = false;
+                banner.dataset.adType = "house";
+              };
+
+              dots.querySelectorAll("button").forEach((dot, i) => {
+                dot.classList.toggle("is-active", i === index);
+              });
+
+              currentIndex = index;
+            },
+            first ? 0 : 250,
+          );
+        };
+
+        nextImage.onerror = () => {
+          console.error("[LOLME Ads] فشل تحميل صورة:", images[index]);
+        };
+      }
+
+      images.forEach((_, index) => {
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "advertiser-dot";
+        dot.setAttribute("aria-label", `عرض الصورة ${index + 1}`);
+
+        dot.addEventListener("click", () => {
+          if (rotationTimer) window.clearInterval(rotationTimer);
+          showImage(index);
+          startRotation();
+        });
+
+        dots.append(dot);
+      });
+
+      function startRotation() {
+        if (rotationTimer) window.clearInterval(rotationTimer);
+        if (images.length < 2) return;
+
+        rotationTimer = window.setInterval(() => {
+          showImage((currentIndex + 1) % images.length);
+        }, 4500);
+      }
+
+      showImage(0, true);
+
+      image.onerror = () => {
+        failed = true;
+        if (rotationTimer) window.clearInterval(rotationTimer);
+        creative.hidden = true;
+        fallback.hidden = false;
+        if (art) art.hidden = false;
+        banner.dataset.adType = "house";
+      };
+
+      if (fallback) fallback.hidden = true;
+      if (art) art.hidden = true;
+
+      creative.hidden = false;
+      banner.dataset.adType = "advertiser";
+      banner.dataset.adCampaignId = campaign.id;
+
+      startRotation();
+    } catch (error) {
+      console.error("[LOLME Ads] تعذر تحميل الحملة:", slotId, error);
+    }
+  }
+
+  document
+    .querySelectorAll(".advertise-banner[data-ad-slot]")
+    .forEach((banner) => loadCampaign(banner));
+
+  document
+    .querySelectorAll(".advertise-banner[data-ad-slot]")
+    .forEach((banner) => {
+      loadCampaign(banner);
+    });
+</script>
+
+<script is:inline type="module" src="/js/ad-analytics.js"></script>
+<script is:inline type="module" src="/js/ad-mouse-glow.js"></script>
 
 <style>
   .advertise-banner {
@@ -191,6 +443,21 @@ const whatsappUrl =
     font-size: 3rem;
   }
 
+  .advertiser-creative {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .advertiser-creative__link {
+    display: block;
+    width: 100%;
+    line-height: 0;
+  }
+
+  .advertise-banner [hidden] {
+    display: none !important;
+  }
+
   @media (max-width: 480px) {
     .advertise-banner {
       gap: 10px;
@@ -218,4 +485,801 @@ const whatsappUrl =
       font-size: 0.9rem;
     }
   }
+
+  /* شارة الإعلان الخارجي فقط */
+  .advertise-banner {
+    position: relative;
+  }
+
+  .advertiser-creative {
+    position: relative;
+  }
+
+  .advertiser-label {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    left: auto;
+    bottom: auto;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 5px 9px;
+    background: rgba(17, 24, 39, 0.9);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .advertiser-label span:last-child {
+    color: #fde68a;
+  }
+
+  .advertise-banner .advertiser-label[hidden] {
+    display: none !important;
+  }
+
+  .advertise-banner[data-ad-type="advertiser"] {
+    display: block;
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .advertise-banner[data-ad-type="advertiser"] .advertise-banner__content,
+  .advertise-banner[data-ad-type="advertiser"] .advertise-banner__art {
+    display: none !important;
+  }
+
+  .advertiser-creative {
+    width: 100%;
+  }
+
+  .advertiser-slideshow {
+    position: relative;
+    width: calc(100% - 32px);
+    margin: 16px auto 0;
+    overflow: hidden;
+    border-radius: 10px;
+    box-sizing: border-box;
+  }
+
+  .advertiser-creative__link {
+    display: block;
+    width: 100%;
+    line-height: 0;
+  }
+
+  .advertiser-creative__image {
+    display: block;
+    width: 100%;
+    height: 280px;
+    /* max-height: 320px; */
+    object-fit: contain;
+    object-position: center;
+    padding: 0;
+    box-sizing: border-box;
+    border-radius: 10px;
+    transition: opacity 250ms ease-in-out;
+  }
+
+  .advertiser-creative__image.is-fading {
+    opacity: 0;
+  }
+
+  .advertiser-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    z-index: 2;
+  }
+
+  .advertiser-dot {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border: 1px solid white;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+  }
+
+  .advertiser-dot.is-active {
+    background: white;
+    transform: scale(1.2);
+  }
+
+  .advertiser-copy {
+    padding: 16px 20px 20px;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .advertiser-headline {
+    margin: 0 0 10px;
+    color: #fff;
+    font-size: 1.35rem;
+    line-height: 1.6;
+  }
+
+  .advertiser-description {
+    margin: 0 0 14px;
+    color: #e5e7eb;
+    font-size: 1rem;
+    line-height: 1.9;
+    white-space: pre-wrap;
+  }
+
+  .advertiser-cta {
+    display: inline-block;
+    padding: 10px 16px;
+    border-radius: 9px;
+    background: #16a34a;
+    color: #fff !important;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .advertise-banner [hidden] {
+    display: none !important;
+  }
+
+  @media (max-width: 480px) {
+    .advertiser-slideshow {
+      width: calc(100% - 20px);
+      margin-top: 10px;
+    }
+
+    .advertiser-creative__image {
+      height: 200px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .advertiser-creative__image {
+      transition: none;
+    }
+  }
+
+  /* إعلان المعلن: إخفاء محتوى إعلان LOLME الأصلي */
+  .advertise-banner[data-ad-type="advertiser"] {
+    display: block;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .advertise-banner[data-ad-type="advertiser"] .advertise-banner__content,
+  .advertise-banner[data-ad-type="advertiser"] .advertise-banner__art {
+    display: none !important;
+  }
+
+  .advertise-banner[data-ad-type="advertiser"] .advertiser-creative {
+    width: 100%;
+  }
+
+  .advertise-banner[data-ad-type="advertiser"] .advertiser-creative__link {
+    display: block;
+    width: 100%;
+  }
+
+  .advertise-banner[data-ad-type="advertiser"] .advertiser-creative__image {
+    display: block;
+    width: 100%;
+    /* max-height: 320px; */
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* إصلاح نقاط الصور المنشأة بواسطة JavaScript */
+  :global(.advertise-banner .advertiser-dots) {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    z-index: 3;
+  }
+
+  :global(.advertise-banner .advertiser-dots button.advertiser-dot) {
+    box-sizing: border-box !important;
+    display: block !important;
+    flex: 0 0 7px !important;
+
+    width: 7px !important;
+    height: 7px !important;
+    min-width: 7px !important;
+    min-height: 7px !important;
+    max-width: 7px !important;
+    max-height: 7px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    background: rgba(255, 255, 255, 0.55) !important;
+    box-shadow: none !important;
+
+    font-size: 0 !important;
+    line-height: 0 !important;
+    cursor: pointer;
+    transition:
+      background 180ms ease,
+      transform 180ms ease;
+  }
+
+  :global(.advertise-banner .advertiser-dots button.advertiser-dot.is-active) {
+    background: #fff !important;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5) !important;
+    transform: scale(1.2);
+  }
+
+  /* ✨ توهج يتبع مؤشر الماوس */
+  .advertise-banner {
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+    --glow-opacity: 0;
+
+    position: relative;
+    isolation: isolate;
+  }
+
+  .advertise-banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+
+    background: radial-gradient(
+      circle 180px at var(--mouse-x) var(--mouse-y),
+      rgba(192, 132, 252, 0.32),
+      rgba(139, 92, 246, 0.12) 45%,
+      transparent 75%
+    );
+
+    opacity: var(--glow-opacity);
+    transition: opacity 180ms ease;
+  }
+
+  /* الحفاظ على المحتوى فوق طبقة التوهج */
+  .advertise-banner > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* إضاءة خفيفة حول حدود الإعلان */
+  .advertise-banner:hover {
+    border-color: rgba(192, 132, 252, 0.75);
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.18),
+      0 0 22px rgba(139, 92, 246, 0.18);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .advertise-banner {
+      transition:
+        border-color 200ms ease,
+        box-shadow 200ms ease;
+    }
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .advertise-banner::before {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .advertise-banner,
+    .advertise-banner::before {
+      transition: none;
+    }
+  }
+
+  .advertiser-creative {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .advertiser-label {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: fit-content;
+    padding: 5px 9px;
+    color: #fff;
+    background: rgba(17, 24, 39, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .advertiser-label span:last-child {
+    color: #fde68a;
+  }
+
+  .advertise-banner .advertiser-label[hidden] {
+    display: none !important;
+  }
 </style>
+
+<!-- ---
+const { slot = "jokes-1", placement = "default" } = Astro.props;
+
+const ads = {
+  "jokes-1": {
+    price: 299,
+    position: "المساحة الإعلانية الأولى — بداية صفحة النكت",
+    detail: "ظهور مميز في الجزء الأول من الصفحة.",
+  },
+  "jokes-2": {
+    price: 249,
+    position: "المساحة الإعلانية الثانية — الثلث الأول",
+    detail: "إعلانك وسط مجموعات النكت.",
+  },
+  "jokes-3": {
+    price: 199,
+    position: "المساحة الإعلانية الثالثة — منتصف الصفحة",
+    detail: "مساحة إعلانية في منتصف المحتوى.",
+  },
+  "jokes-4": {
+    price: 179,
+    position: "المساحة الإعلانية الرابعة — بعد منتصف الصفحة",
+    detail: "روّج لمنتجك وسط محتوى النكت.",
+  },
+  "jokes-5": {
+    price: 149,
+    position: "المساحة الإعلانية الخامسة — الثلث الأخير",
+    detail: "مساحة إعلانية بسعر اقتصادي.",
+  },
+  "jokes-6": {
+    price: 129,
+    position: "المساحة الإعلانية السادسة — نهاية الصفحة",
+    detail: "مساحة إعلانية اقتصادية.",
+  },
+  tests: {
+    price: 249,
+    position: "المساحة الإعلانية في الاختبارات — نهاية الصفحة",
+    detail: "مساحة إعلانية مع الاختبارات.",
+  },
+} as const;
+
+const slotKey = String(slot);
+const currentSlot = ads[slotKey as keyof typeof ads] ?? ads["jokes-1"];
+
+const whatsappMessage = [
+  `${slotKey}`,
+  "أنا مهتم بالإعلان على ",
+  `${currentSlot.position}`,
+  `السعر: ${currentSlot.price} جنيه لمدة 30 يومًا.`,
+  "ممكن أعرف تفاصيل الحجز؟",
+].join("\n");
+
+const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsappMessage)}`;
+---
+
+<aside
+  class:list={["advertise-banner", `advertise-banner--${placement}`]}
+  aria-label={`الإعلان على LOLME — ${currentSlot.position}`}
+  data-ad-slot={slotKey}
+  data-ad-type="house"
+>
+  <div class="advertise-banner__content">
+    <span class="advertise-banner__eyebrow"> 📢 فرصة للمعلنين </span>
+
+    <h2>أعلن على LOLME</h2>
+
+    <p>{currentSlot.position}</p>
+    <p>{currentSlot.detail}</p>
+
+    <div class="advertise-banner__offer">
+      <strong>{currentSlot.price} جنيه</strong>
+      <span>اشتراك إعلاني لمدة 30 يومًا</span>
+    </div>
+
+    <a
+      class="advertise-banner__button"
+      href={whatsappUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-ad-booking-click
+      data-ad-slot={slotKey}
+      data-ad-type="house"
+    >
+      احجز مساحتك الإعلانية
+      <span aria-hidden="true">←</span>
+    </a>
+  </div>
+
+  <div class="advertise-banner__art" aria-hidden="true">
+    <span>😂</span>
+    <span>🎮</span>
+    <span>🚀</span>
+  </div>
+  <div class="advertiser-label" hidden>
+    <span>📢 إعلان</span>
+    <span>محتوى إعلاني</span>
+  </div>
+  
+  <div class="advertiser-creative" hidden>
+    <div class="advertiser-slideshow">
+      <a
+        class="advertiser-creative__link"
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer sponsored"
+        data-ad-booking-click
+        data-ad-slot={slotKey}
+        data-ad-type="advertiser"
+      >
+        <img class="advertiser-creative__image" alt="إعلان" />
+      </a>
+
+      <div class="advertiser-dots" aria-label="صور الإعلان"></div>
+    </div>
+
+    <div class="advertiser-copy" dir="rtl">
+      <h3 class="advertiser-headline" hidden></h3>
+      <p class="advertiser-description" hidden></p>
+
+      <a
+        class="advertiser-cta"
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer sponsored"
+        hidden
+      ></a>
+    </div>
+  </div>
+
+</aside>
+
+<script is:inline type="module">
+  import { db, collection, query, where, getDocs } from "/js/firebase.js";
+
+  async function loadCampaign(banner) {
+    if (banner.dataset.campaignLoaded === "true") return;
+    banner.dataset.campaignLoaded = "true";
+
+    const slotId = banner.dataset.adSlot;
+
+    try {
+      console.log("[LOLME Ads] جاري البحث عن حملة للمساحة:", slotId);
+
+      const campaignsQuery = query(
+        collection(db, "adCampaigns"),
+        where("slotId", "==", slotId),
+        where("status", "==", "active"),
+      );
+
+      const snapshot = await getDocs(campaignsQuery);
+      const now = Date.now();
+
+      const campaigns = snapshot.docs
+        .map((item) => ({
+          id: item.id,
+          ...item.data(),
+        }))
+        .filter((campaign) => {
+          const start = campaign.startAt?.toDate?.()?.getTime();
+          const end = campaign.endAt?.toDate?.()?.getTime();
+
+          return (
+            Number.isFinite(start) &&
+            Number.isFinite(end) &&
+            start <= now &&
+            end > now &&
+            typeof campaign.imageUrl === "string" &&
+            typeof campaign.targetUrl === "string"
+          );
+        })
+        .sort((a, b) => {
+          const aCreated = a.createdAt?.toDate?.()?.getTime() || 0;
+          const bCreated = b.createdAt?.toDate?.()?.getTime() || 0;
+          return bCreated - aCreated;
+        });
+
+      console.log("[LOLME Ads] الحملات المؤهلة:", slotId, campaigns.length);
+
+      const campaign = campaigns[0];
+      if (!campaign) return;
+
+      let imageUrl;
+      let targetUrl;
+
+      try {
+        imageUrl = new URL(campaign.imageUrl);
+        targetUrl = new URL(campaign.targetUrl);
+      } catch {
+        console.error("[LOLME Ads] رابط صورة أو وجهة غير صالح:", campaign.id);
+        return;
+      }
+
+      if (!["https:", "http:"].includes(imageUrl.protocol)) return;
+      if (!["https:", "http:"].includes(targetUrl.protocol)) return;
+
+      const content = banner.querySelector(".advertise-banner__content");
+      const art = banner.querySelector(".advertise-banner__art");
+      const creative = banner.querySelector(".advertiser-creative");
+      const link = creative?.querySelector(".advertiser-creative__link");
+      const image = creative?.querySelector(".advertiser-creative__image");
+
+      if (!content || !creative || !link || !image) return;
+
+      image.onload = () => {
+        content.hidden = true;
+        if (art) art.hidden = true;
+
+        creative.hidden = false;
+        banner.dataset.adType = "advertiser";
+
+        const label = banner.querySelector(".advertiser-label");
+        if (label) label.hidden = false;
+        banner.dataset.adCampaignId = campaign.id;
+
+        link.href = targetUrl.href;
+        link.dataset.adCampaignId = campaign.id;
+        link.dataset.adSlot = slotId;
+        link.dataset.adType = "advertiser";
+      };
+
+      image.onerror = () => {
+        console.error("[LOLME Ads] فشل تحميل صورة الحملة:", campaign.id);
+        image.removeAttribute("src");
+      };
+
+      link.href = targetUrl.href;
+      link.dataset.adCampaignId = campaign.id;
+      link.dataset.adSlot = slotId;
+      link.dataset.adType = "advertiser";
+      image.alt = `إعلان ${campaign.advertiserName || ""}`;
+      image.src = imageUrl.href;
+    } catch (error) {
+      console.error("[LOLME Ads] تعذر قراءة Firestore للمساحة:", slotId, error);
+    }
+  }
+
+  document
+    .querySelectorAll(".advertise-banner[data-ad-slot]")
+    .forEach((banner) => {
+      loadCampaign(banner);
+    });
+</script>
+
+<script is:inline type="module" src="/js/ad-analytics.js"></script>
+
+<style>
+  .advertise-banner {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: calc(100% - 30px);
+    max-width: 728px;
+    margin: 30px auto;
+    padding: 24px;
+    overflow: hidden;
+    direction: rtl;
+    text-align: right;
+    color: #fff;
+    background: linear-gradient(120deg, #111827, #312e81 65%, #6d28d9);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    animation: none;
+    transform: none;
+  }
+
+  .advertise-banner__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .advertise-banner__eyebrow {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #fde68a;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .advertise-banner h2 {
+    margin: 0 0 8px;
+    color: #fff;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+  }
+
+  .advertise-banner p {
+    margin: 0 0 16px;
+    color: #e5e7eb;
+    line-height: 1.7;
+  }
+
+  .advertise-banner__offer {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .advertise-banner__offer strong {
+    color: #fde68a;
+    font-size: 1.65rem;
+  }
+
+  .advertise-banner__offer span {
+    color: #e5e7eb;
+    font-size: 0.95rem;
+  }
+
+  .advertise-banner__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    background: #16a34a;
+    color: #fff !important;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease;
+  }
+
+  .advertise-banner__button:hover {
+    background: #15803d;
+  }
+
+  .advertise-banner__art {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-shrink: 0;
+    font-size: 2.2rem;
+  }
+
+  .advertise-banner__art span:nth-child(2) {
+    font-size: 3rem;
+  }
+
+  .advertiser-creative {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .advertiser-creative__link {
+    display: block;
+    width: 100%;
+    line-height: 0;
+  }
+
+  .advertiser-creative__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 320px;
+    object-fit: contain;
+  }
+
+  .advertise-banner [hidden] {
+    display: none !important;
+  }
+
+  @media (max-width: 480px) {
+    .advertise-banner {
+      gap: 10px;
+      padding: 18px 14px;
+    }
+
+    .advertise-banner__art {
+      font-size: 1.5rem;
+    }
+
+    .advertise-banner__art span:nth-child(2) {
+      font-size: 2rem;
+    }
+
+    .advertise-banner p {
+      font-size: 0.9rem;
+    }
+
+    .advertise-banner__offer strong {
+      font-size: 1.35rem;
+    }
+
+    .advertise-banner__button {
+      padding: 11px 12px;
+      font-size: 0.9rem;
+    }
+  }
+
+  /* شارة الإعلان الخارجي فقط */
+  .advertise-banner {
+    position: relative;
+  }
+
+  .advertiser-label {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    direction: rtl;
+    padding: 6px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 7px;
+    background: rgba(17, 24, 39, 0.88);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+    pointer-events: none;
+  }
+
+  .advertiser-label span:last-child {
+    color: #fde68a;
+  }
+
+  .advertise-banner .advertiser-label[hidden] {
+    display: none !important;
+  }
+
+  /* إعلان المعلن: إخفاء محتوى إعلان LOLME الأصلي */
+  .advertise-banner[data-ad-type="advertiser"] {
+    display: block;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .advertise-banner[data-ad-type="advertiser"] .advertise-banner__content,
+  .advertise-banner[data-ad-type="advertiser"] .advertise-banner__art {
+    display: none !important;
+  }
+
+  .advertise-banner[data-ad-type="advertiser"] .advertiser-creative {
+    width: 100%;
+  }
+
+  .advertise-banner[data-ad-type="advertiser"] .advertiser-creative__link {
+    display: block;
+    width: 100%;
+  }
+
+  .advertise-banner[data-ad-type="advertiser"] .advertiser-creative__image {
+    display: block;
+    width: 100%;
+    max-height: 320px;
+    height: auto;
+    object-fit: contain;
+  }
+</style> -->

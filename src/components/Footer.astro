@@ -3,13 +3,32 @@
 ---
 
 <footer class="site-footer">
-  <div class="footer-content">
+  <!-- <div class="footer-content">
     <form id="feedback-form" action="https://formspree.io/f/xjkawjzw" method="POST" >
       <label for="feedback">شاركنا رأيك أو اقتراحك:</label>
       <textarea name="message" id="feedback" placeholder="اكتب رسالتك هنا..." required></textarea>
       <button type="submit">إرسال</button>
     </form>
-  </div>
+  </div> -->
+  <div class="footer-content">
+  <form id="feedback-form">
+    <label for="feedback">شاركنا رأيك أو اقتراحك:</label>
+
+    <textarea
+      name="message"
+      id="feedback"
+      placeholder="اكتب رسالتك هنا..."
+      maxlength="2000"
+      required
+    ></textarea>
+
+    <button type="submit" id="feedback-submit">إرسال</button>
+
+    <p id="feedback-result" role="status" aria-live="polite"></p>
+  </form>
+</div>
+
+<script type="module" src="/js/feedback.js"></script>
   <div class="footer-ads">
     <p>📢 حابب تعلن على LOLME؟</p>
     <a 

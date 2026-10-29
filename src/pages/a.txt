@@ -51,6 +51,60 @@ description="مونسيسي هو عالمك لتغيير الوعي وتحقيق
 
 ---
 
+khaledarafa@Khaleds-Mac-mini lolme % node -v
+v20.18.3
+khaledarafa@Khaleds-Mac-mini lolme % npm -v
+11.2.0
+khaledarafa@Khaleds-Mac-mini lolme % mkdir -p ~/lolme-admin-tools
+khaledarafa@Khaleds-Mac-mini lolme % mkdir -p ~/firebase-keys
+khaledarafa@Khaleds-Mac-mini lolme % chmod 700 ~/firebase-keys
+khaledarafa@Khaleds-Mac-mini lolme % chmod 600 ~/firebase-keys/lolme-admin.json
+khaledarafa@Khaleds-Mac-mini lolme % cd ~/lolme-admin-tools
+npm init -y
+npm install firebase-admin
+Wrote to /Users/khaledarafa/lolme-admin-tools/package.json:
+
+{
+  "name": "lolme-admin-tools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
+
+
+
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+npm warn deprecated uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+
+added 178 packages, and audited 179 packages in 39s
+
+27 packages are looking for funding
+  run `npm fund` for details
+
+8 moderate severity vulnerabilities
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+khaledarafa@Khaleds-Mac-mini lolme-admin-tools % export GOOGLE_APPLICATION_CREDENTIALS="$HOME/firebase-keys/lolme-admin.json"
+
+node ~/lolme-admin-tools/set-admin.cjs "fj6x2YxW7aYDnoRyTcGJ16hSn3H2"
+Admin claim assigned successfully.
+Account email: arafaarranger@gmail.com
+
+------------------------------------
+
 ## خلّينا نحط أرقام واضحة 👇
 
 ## 🟢 المرحلة 1: بداية محترمة (لسه بتبني)

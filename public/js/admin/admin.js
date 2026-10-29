@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (tabId === "addq") window.initAddQ?.();
       if (tabId === "addc") window.initAddC?.();
       if (tabId === "edit") window.loadQuestionsBatch?.();
+      if (tabId === "ads") window.initAds?.();
     });
   });
 

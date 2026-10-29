@@ -1,5 +1,18 @@
+// public/js/firebase.js
 // 🔥 Firebase Core
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+// 🔐 Firebase Authentication
+import {
+  getAuth,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  sendPasswordResetEmail,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 // 🔥 Firestore
 import {
@@ -19,7 +32,7 @@ import {
   increment,
   orderBy,
   limit,
-  startAfter, getCountFromServer,
+  startAfter, getCountFromServer, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // 🔥 Storage
@@ -45,6 +58,9 @@ const firebaseConfig = {
 // 🔥 INIT
 const app = initializeApp(firebaseConfig);
 
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
+
 // 🔥 EXPORT SERVICES
 export const db = getFirestore(app);
 export const storage = getStorage(app);
@@ -69,8 +85,18 @@ export {
   limit,
   startAfter,
   getCountFromServer,
+  serverTimestamp
 };
 
+export {
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  sendPasswordResetEmail,
+  onAuthStateChanged
+};
 
 // 🔥 EXPORT FUNCTIONS (Storage)
 export {

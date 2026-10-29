@@ -1,0 +1,52 @@
+
+<section class="feedback-admin">
+  <h2>💬 إدارة اقتراحات الزوار</h2>
+  <p id="feedback-admin-status">جاري تحميل الاقتراحات...</p>
+  <div id="feedback-admin-list"></div>
+</section>
+
+<style>
+  .feedback-admin {
+    width: 100%;
+  }
+
+  #feedback-admin-list {
+    display: grid;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .feedback-admin-card {
+    background: #111827;
+    color: #f9fafb;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    padding: 16px;
+    overflow-wrap: anywhere;
+  }
+
+  .feedback-admin-message {
+    white-space: pre-wrap;
+    line-height: 1.8;
+  }
+
+  .feedback-admin-meta {
+    color: #9ca3af;
+    font-size: 13px;
+  }
+
+  .feedback-admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .feedback-admin-actions button {
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 7px;
+    cursor: pointer;
+  }
+</style>
+
+<script type="module" src="/js/admin/feedback.js"></script>

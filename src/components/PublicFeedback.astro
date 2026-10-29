@@ -1,0 +1,108 @@
+
+<section class="public-feedback" aria-labelledby="public-feedback-title" dir="rtl" >
+  <h2 id="public-feedback-title">💬 آراء واقتراحات الزوار</h2>
+
+  <div id="public-feedback-list" aria-live="polite">
+    جاري تحميل التعليقات...
+  </div>
+</section>
+
+<style>
+  .public-feedback {
+    margin: 28px 0;
+  }
+
+  #public-feedback-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .public-feedback-card {
+    padding: 14px;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  .public-feedback-message {
+    white-space: pre-wrap;
+    line-height: 1.8;
+    margin: 0;
+  }
+
+  .public-feedback-date {
+    color: #888;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  .public-feedback {
+  width: min(100% - 32px, 900px);
+  margin: 28px auto;
+  padding: 24px 0;
+  clear: both;
+  text-align: right;
+  box-sizing: border-box;
+}
+
+.public-feedback h2 {
+  margin: 0 0 20px;
+  text-align: right;
+}
+
+#public-feedback-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 12px;
+}
+
+.public-feedback-card {
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 14px;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+  background: #1b2432;
+}
+
+.public-feedback-message {
+  white-space: pre-wrap;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.public-feedback-date {
+  color: #aaa;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.public-feedback-more {
+  display: block;
+  margin: 18px auto 28px;
+  padding: 11px 24px;
+  border: 1px solid #16a34a;
+  border-radius: 10px;
+  background: #101923;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.public-feedback-more:hover {
+  background: #166534;
+}
+
+.public-feedback-more:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.public-feedback-more[hidden] {
+  display: none;
+}
+</style>
+
+<script type="module" src="/js/public-feedback.js"></script>
