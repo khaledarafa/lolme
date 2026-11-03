@@ -58,6 +58,7 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
   aria-label={`الإعلان على LOLME — ${currentSlot.position}`}
   data-ad-slot={slotKey}
   data-ad-type="house"
+  data-ad-ready="false"
 >
   <div class="advertise-banner__content">
     <span class="advertise-banner__eyebrow"> 📢 فرصة للمعلنين </span>
@@ -78,8 +79,6 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
       target="_blank"
       rel="noopener noreferrer"
       data-ad-booking-click
-      data-ad-slot={slotKey}
-      data-ad-type="house"
     >
       احجز مساحتك الإعلانية
       <span aria-hidden="true">←</span>
@@ -120,16 +119,25 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
         href="#"
         target="_blank"
         rel="noopener noreferrer sponsored"
-        hidden></a>
+        data-ad-campaign-click
+        hidden
+      ></a>
     </div>
   </div>
 </aside>
 
 <script is:inline type="module">
-  import { db, collection, query, where, getDocs } from "/js/firebase.js";
+  import {
+    db,
+    collection,
+    query,
+    where,
+    getDocs
+  } from "/js/firebase.js";
 
   async function loadCampaign(banner) {
     if (banner.dataset.campaignLoaded === "true") return;
+
     banner.dataset.campaignLoaded = "true";
 
     const slotId = banner.dataset.adSlot;
@@ -138,21 +146,25 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
       const campaignsQuery = query(
         collection(db, "adCampaigns"),
         where("slotId", "==", slotId),
-        where("status", "==", "active"),
+        where("status", "==", "active")
       );
 
       const snapshot = await getDocs(campaignsQuery);
       const now = Date.now();
 
       const campaigns = snapshot.docs
-        .map((item) => ({ id: item.id, ...item.data() }))
-        .filter((ad) => {
-          const start = ad.startAt?.toDate?.()?.getTime();
-          const end = ad.endAt?.toDate?.()?.getTime();
-          const images = Array.isArray(ad.imageUrls)
-            ? ad.imageUrls
-            : ad.imageUrl
-              ? [ad.imageUrl]
+        .map((item) => ({
+          id: item.id,
+          ...item.data()
+        }))
+        .filter((campaign) => {
+          const start = campaign.startAt?.toDate?.()?.getTime();
+          const end = campaign.endAt?.toDate?.()?.getTime();
+
+          const images = Array.isArray(campaign.imageUrls)
+            ? campaign.imageUrls
+            : campaign.imageUrl
+              ? [campaign.imageUrl]
               : [];
 
           return (
@@ -163,143 +175,177 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
             images.length > 0 &&
             images.every((url) => {
               try {
-                return ["https:", "http:"].includes(new URL(url).protocol);
+                return ["https:", "http:"].includes(
+                  new URL(url).protocol
+                );
               } catch {
                 return false;
               }
             }) &&
-            typeof ad.targetUrl === "string"
+            typeof campaign.targetUrl === "string"
           );
         })
         .sort(
           (a, b) =>
             (b.createdAt?.toDate?.()?.getTime() || 0) -
-            (a.createdAt?.toDate?.()?.getTime() || 0),
+            (a.createdAt?.toDate?.()?.getTime() || 0)
         );
 
       const campaign = campaigns[0];
-      if (!campaign) return;
+
+      const content = banner.querySelector(
+        ".advertise-banner__content"
+      );
+      const art = banner.querySelector(
+        ".advertise-banner__art"
+      );
+      const creative = banner.querySelector(
+        ".advertiser-creative"
+      );
+      const image = creative?.querySelector(
+        ".advertiser-creative__image"
+      );
+      const dots = creative?.querySelector(
+        ".advertiser-dots"
+      );
+      const headline = creative?.querySelector(
+        ".advertiser-headline"
+      );
+      const description = creative?.querySelector(
+        ".advertiser-description"
+      );
+      const cta = creative?.querySelector(
+        ".advertiser-cta"
+      );
+      const label = banner.querySelector(
+        ".advertiser-label"
+      );
+
+      if (!content || !creative || !image || !dots) {
+        banner.dataset.adReady = "true";
+        return;
+      }
+
+      // لا توجد حملة: الإعلان الداخلي هو الإعلان النهائي
+      if (!campaign) {
+        banner.dataset.adType = "house";
+        banner.dataset.adReady = "true";
+        return;
+      }
 
       const images = Array.isArray(campaign.imageUrls)
         ? campaign.imageUrls
         : [campaign.imageUrl];
 
-      const targetUrl = new URL(campaign.targetUrl);
-      if (!["https:", "http:"].includes(targetUrl.protocol)) return;
+      let targetUrl;
 
-      const creative = banner.querySelector(".advertiser-creative");
-      const fallback = banner.querySelector(".advertise-banner__content");
-      const art = banner.querySelector(".advertise-banner__art");
+      try {
+        targetUrl = new URL(campaign.targetUrl);
 
-      const image = creative?.querySelector(".advertiser-creative__image");
-      const imageLink = creative?.querySelector(".advertiser-creative__link");
-      const dots = creative?.querySelector(".advertiser-dots");
-      const headline = creative?.querySelector(".advertiser-headline");
-      const description = creative?.querySelector(".advertiser-description");
-      const cta = creative?.querySelector(".advertiser-cta");
-      const label = banner.querySelector(".advertiser-label");
+        if (!["https:", "http:"].includes(targetUrl.protocol)) {
+          throw new Error("Invalid target URL");
+        }
+      } catch {
+        console.error(
+          "[LOLME Ads] رابط وجهة الحملة غير صالح:",
+          campaign.id
+        );
 
-      if (label) {
-        label.hidden = false;
+        banner.dataset.adReady = "true";
+        return;
       }
-      if (!creative || !image || !imageLink || !dots) return;
 
-      // imageLink.href = targetUrl.href;
-      imageLink.dataset.adCampaignId = campaign.id;
-      imageLink.dataset.adSlot = slotId;
-      imageLink.dataset.adType = "advertiser";
+      const campaignId = campaign.id;
 
-      if (campaign.headline?.trim()) {
+      // تجهيز بيانات الحملة قبل إظهار الإعلان
+      banner.dataset.adType = "advertiser";
+      banner.dataset.adCampaignId = campaignId;
+
+      if (headline && campaign.headline?.trim()) {
         headline.textContent = campaign.headline.trim();
         headline.hidden = false;
-      } else {
-        headline.hidden = true;
       }
 
-      if (campaign.description?.trim()) {
+      if (description && campaign.description?.trim()) {
         description.textContent = campaign.description.trim();
         description.hidden = false;
-      } else {
-        description.hidden = true;
       }
 
-      if (campaign.buttonText?.trim()) {
+      if (cta && campaign.buttonText?.trim()) {
         cta.textContent = campaign.buttonText.trim();
         cta.href = targetUrl.href;
+        cta.dataset.adCampaignId = campaignId;
+        cta.dataset.adCampaignClick = "";
         cta.hidden = false;
-        cta.dataset.adCampaignId = campaign.id;
-        cta.dataset.adSlot = slotId;
-        cta.dataset.adType = "advertiser";
-      } else {
-        cta.hidden = true;
       }
+
+      let currentIndex = 0;
+      let rotationTimer = null;
+      let failed = false;
 
       dots.replaceChildren();
 
-      let currentIndex = 0;
-      let rotationTimer;
-      let failed = false;
-
-      function showImage(index, first = false) {
+      function showImage(index) {
         const nextImage = new Image();
         nextImage.src = images[index];
 
         nextImage.onload = () => {
           if (failed) return;
 
-          if (!first) image.classList.add("is-fading");
+          image.classList.add("is-fading");
 
-          window.setTimeout(
-            () => {
-              if (failed) return;
+          window.setTimeout(() => {
+            if (failed) return;
 
-              image.src = images[index];
-              image.alt =
-                campaign.headline?.trim() ||
-                `إعلان ${campaign.advertiserName || ""}`;
+            image.src = images[index];
+            image.alt =
+              campaign.headline?.trim() ||
+              `إعلان ${campaign.advertiserName || ""}`;
 
-              image.onload = () => image.classList.remove("is-fading");
-              image.onerror = () => {
-                failed = true;
-                if (rotationTimer) window.clearInterval(rotationTimer);
-                creative.hidden = true;
-                fallback.hidden = false;
-                if (art) art.hidden = false;
-                banner.dataset.adType = "house";
-              };
+            image.classList.remove("is-fading");
 
-              dots.querySelectorAll("button").forEach((dot, i) => {
-                dot.classList.toggle("is-active", i === index);
-              });
+            dots.querySelectorAll("button").forEach((dot, i) => {
+              dot.classList.toggle("is-active", i === index);
+            });
 
-              currentIndex = index;
-            },
-            first ? 0 : 250,
-          );
+            currentIndex = index;
+          }, 250);
         };
 
         nextImage.onerror = () => {
-          console.error("[LOLME Ads] فشل تحميل صورة:", images[index]);
+          console.error(
+            "[LOLME Ads] فشل تحميل الصورة:",
+            images[index]
+          );
+          showFallback();
         };
       }
 
-      images.forEach((_, index) => {
-        const dot = document.createElement("button");
-        dot.type = "button";
-        dot.className = "advertiser-dot";
-        dot.setAttribute("aria-label", `عرض الصورة ${index + 1}`);
+      function showFallback() {
+        if (failed) return;
 
-        dot.addEventListener("click", () => {
-          if (rotationTimer) window.clearInterval(rotationTimer);
-          showImage(index);
-          startRotation();
-        });
+        failed = true;
 
-        dots.append(dot);
-      });
+        if (rotationTimer) {
+          window.clearInterval(rotationTimer);
+        }
+
+        creative.hidden = true;
+        content.hidden = false;
+
+        if (art) art.hidden = false;
+        if (label) label.hidden = true;
+
+        banner.dataset.adType = "house";
+        banner.dataset.adCampaignId = "";
+        banner.dataset.adReady = "true";
+      }
 
       function startRotation() {
-        if (rotationTimer) window.clearInterval(rotationTimer);
+        if (rotationTimer) {
+          window.clearInterval(rotationTimer);
+        }
+
         if (images.length < 2) return;
 
         rotationTimer = window.setInterval(() => {
@@ -307,43 +353,73 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
         }, 4500);
       }
 
-      showImage(0, true);
+      images.forEach((_, index) => {
+        const dot = document.createElement("button");
 
-      image.onerror = () => {
-        failed = true;
-        if (rotationTimer) window.clearInterval(rotationTimer);
-        creative.hidden = true;
-        fallback.hidden = false;
-        if (art) art.hidden = false;
-        banner.dataset.adType = "house";
+        dot.type = "button";
+        dot.className = "advertiser-dot";
+        dot.setAttribute(
+          "aria-label",
+          `عرض الصورة ${index + 1}`
+        );
+
+        dot.addEventListener("click", () => {
+          if (rotationTimer) {
+            window.clearInterval(rotationTimer);
+          }
+
+          showImage(index);
+          startRotation();
+        });
+
+        dots.append(dot);
+      });
+
+      image.onerror = showFallback;
+
+      // تحميل أول صورة قبل إظهار الإعلان
+      const firstImage = new Image();
+
+      firstImage.onload = () => {
+        if (failed) return;
+
+        image.src = images[0];
+        image.alt =
+          campaign.headline?.trim() ||
+          `إعلان ${campaign.advertiserName || ""}`;
+
+        content.hidden = true;
+
+        if (art) art.hidden = true;
+        if (label) label.hidden = false;
+
+        creative.hidden = false;
+
+        // الإعلان أصبح جاهزًا للتتبع الآن
+        banner.dataset.adReady = "true";
+
+        startRotation();
       };
 
-      if (fallback) fallback.hidden = true;
-      if (art) art.hidden = true;
+      firstImage.onerror = showFallback;
+      firstImage.src = images[0];
 
-      creative.hidden = false;
-      banner.dataset.adType = "advertiser";
-      banner.dataset.adCampaignId = campaign.id;
-
-      startRotation();
     } catch (error) {
-      console.error("[LOLME Ads] تعذر تحميل الحملة:", slotId, error);
+      console.error(
+        "[LOLME Ads] تعذر تحميل الحملة:",
+        slotId,
+        error
+      );
+
+      banner.dataset.adType = "house";
+      banner.dataset.adReady = "true";
     }
   }
 
   document
     .querySelectorAll(".advertise-banner[data-ad-slot]")
     .forEach((banner) => loadCampaign(banner));
-
-  document
-    .querySelectorAll(".advertise-banner[data-ad-slot]")
-    .forEach((banner) => {
-      loadCampaign(banner);
-    });
 </script>
-
-<script is:inline type="module" src="/js/ad-analytics.js"></script>
-<script is:inline type="module" src="/js/ad-mouse-glow.js"></script>
 
 <style>
   .advertise-banner {
@@ -826,460 +902,3 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
     display: none !important;
   }
 </style>
-
-<!-- ---
-const { slot = "jokes-1", placement = "default" } = Astro.props;
-
-const ads = {
-  "jokes-1": {
-    price: 299,
-    position: "المساحة الإعلانية الأولى — بداية صفحة النكت",
-    detail: "ظهور مميز في الجزء الأول من الصفحة.",
-  },
-  "jokes-2": {
-    price: 249,
-    position: "المساحة الإعلانية الثانية — الثلث الأول",
-    detail: "إعلانك وسط مجموعات النكت.",
-  },
-  "jokes-3": {
-    price: 199,
-    position: "المساحة الإعلانية الثالثة — منتصف الصفحة",
-    detail: "مساحة إعلانية في منتصف المحتوى.",
-  },
-  "jokes-4": {
-    price: 179,
-    position: "المساحة الإعلانية الرابعة — بعد منتصف الصفحة",
-    detail: "روّج لمنتجك وسط محتوى النكت.",
-  },
-  "jokes-5": {
-    price: 149,
-    position: "المساحة الإعلانية الخامسة — الثلث الأخير",
-    detail: "مساحة إعلانية بسعر اقتصادي.",
-  },
-  "jokes-6": {
-    price: 129,
-    position: "المساحة الإعلانية السادسة — نهاية الصفحة",
-    detail: "مساحة إعلانية اقتصادية.",
-  },
-  tests: {
-    price: 249,
-    position: "المساحة الإعلانية في الاختبارات — نهاية الصفحة",
-    detail: "مساحة إعلانية مع الاختبارات.",
-  },
-} as const;
-
-const slotKey = String(slot);
-const currentSlot = ads[slotKey as keyof typeof ads] ?? ads["jokes-1"];
-
-const whatsappMessage = [
-  `${slotKey}`,
-  "أنا مهتم بالإعلان على ",
-  `${currentSlot.position}`,
-  `السعر: ${currentSlot.price} جنيه لمدة 30 يومًا.`,
-  "ممكن أعرف تفاصيل الحجز؟",
-].join("\n");
-
-const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsappMessage)}`;
----
-
-<aside
-  class:list={["advertise-banner", `advertise-banner--${placement}`]}
-  aria-label={`الإعلان على LOLME — ${currentSlot.position}`}
-  data-ad-slot={slotKey}
-  data-ad-type="house"
->
-  <div class="advertise-banner__content">
-    <span class="advertise-banner__eyebrow"> 📢 فرصة للمعلنين </span>
-
-    <h2>أعلن على LOLME</h2>
-
-    <p>{currentSlot.position}</p>
-    <p>{currentSlot.detail}</p>
-
-    <div class="advertise-banner__offer">
-      <strong>{currentSlot.price} جنيه</strong>
-      <span>اشتراك إعلاني لمدة 30 يومًا</span>
-    </div>
-
-    <a
-      class="advertise-banner__button"
-      href={whatsappUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      data-ad-booking-click
-      data-ad-slot={slotKey}
-      data-ad-type="house"
-    >
-      احجز مساحتك الإعلانية
-      <span aria-hidden="true">←</span>
-    </a>
-  </div>
-
-  <div class="advertise-banner__art" aria-hidden="true">
-    <span>😂</span>
-    <span>🎮</span>
-    <span>🚀</span>
-  </div>
-  <div class="advertiser-label" hidden>
-    <span>📢 إعلان</span>
-    <span>محتوى إعلاني</span>
-  </div>
-  
-  <div class="advertiser-creative" hidden>
-    <div class="advertiser-slideshow">
-      <a
-        class="advertiser-creative__link"
-        href="#"
-        target="_blank"
-        rel="noopener noreferrer sponsored"
-        data-ad-booking-click
-        data-ad-slot={slotKey}
-        data-ad-type="advertiser"
-      >
-        <img class="advertiser-creative__image" alt="إعلان" />
-      </a>
-
-      <div class="advertiser-dots" aria-label="صور الإعلان"></div>
-    </div>
-
-    <div class="advertiser-copy" dir="rtl">
-      <h3 class="advertiser-headline" hidden></h3>
-      <p class="advertiser-description" hidden></p>
-
-      <a
-        class="advertiser-cta"
-        href="#"
-        target="_blank"
-        rel="noopener noreferrer sponsored"
-        hidden
-      ></a>
-    </div>
-  </div>
-
-</aside>
-
-<script is:inline type="module">
-  import { db, collection, query, where, getDocs } from "/js/firebase.js";
-
-  async function loadCampaign(banner) {
-    if (banner.dataset.campaignLoaded === "true") return;
-    banner.dataset.campaignLoaded = "true";
-
-    const slotId = banner.dataset.adSlot;
-
-    try {
-      console.log("[LOLME Ads] جاري البحث عن حملة للمساحة:", slotId);
-
-      const campaignsQuery = query(
-        collection(db, "adCampaigns"),
-        where("slotId", "==", slotId),
-        where("status", "==", "active"),
-      );
-
-      const snapshot = await getDocs(campaignsQuery);
-      const now = Date.now();
-
-      const campaigns = snapshot.docs
-        .map((item) => ({
-          id: item.id,
-          ...item.data(),
-        }))
-        .filter((campaign) => {
-          const start = campaign.startAt?.toDate?.()?.getTime();
-          const end = campaign.endAt?.toDate?.()?.getTime();
-
-          return (
-            Number.isFinite(start) &&
-            Number.isFinite(end) &&
-            start <= now &&
-            end > now &&
-            typeof campaign.imageUrl === "string" &&
-            typeof campaign.targetUrl === "string"
-          );
-        })
-        .sort((a, b) => {
-          const aCreated = a.createdAt?.toDate?.()?.getTime() || 0;
-          const bCreated = b.createdAt?.toDate?.()?.getTime() || 0;
-          return bCreated - aCreated;
-        });
-
-      console.log("[LOLME Ads] الحملات المؤهلة:", slotId, campaigns.length);
-
-      const campaign = campaigns[0];
-      if (!campaign) return;
-
-      let imageUrl;
-      let targetUrl;
-
-      try {
-        imageUrl = new URL(campaign.imageUrl);
-        targetUrl = new URL(campaign.targetUrl);
-      } catch {
-        console.error("[LOLME Ads] رابط صورة أو وجهة غير صالح:", campaign.id);
-        return;
-      }
-
-      if (!["https:", "http:"].includes(imageUrl.protocol)) return;
-      if (!["https:", "http:"].includes(targetUrl.protocol)) return;
-
-      const content = banner.querySelector(".advertise-banner__content");
-      const art = banner.querySelector(".advertise-banner__art");
-      const creative = banner.querySelector(".advertiser-creative");
-      const link = creative?.querySelector(".advertiser-creative__link");
-      const image = creative?.querySelector(".advertiser-creative__image");
-
-      if (!content || !creative || !link || !image) return;
-
-      image.onload = () => {
-        content.hidden = true;
-        if (art) art.hidden = true;
-
-        creative.hidden = false;
-        banner.dataset.adType = "advertiser";
-
-        const label = banner.querySelector(".advertiser-label");
-        if (label) label.hidden = false;
-        banner.dataset.adCampaignId = campaign.id;
-
-        link.href = targetUrl.href;
-        link.dataset.adCampaignId = campaign.id;
-        link.dataset.adSlot = slotId;
-        link.dataset.adType = "advertiser";
-      };
-
-      image.onerror = () => {
-        console.error("[LOLME Ads] فشل تحميل صورة الحملة:", campaign.id);
-        image.removeAttribute("src");
-      };
-
-      link.href = targetUrl.href;
-      link.dataset.adCampaignId = campaign.id;
-      link.dataset.adSlot = slotId;
-      link.dataset.adType = "advertiser";
-      image.alt = `إعلان ${campaign.advertiserName || ""}`;
-      image.src = imageUrl.href;
-    } catch (error) {
-      console.error("[LOLME Ads] تعذر قراءة Firestore للمساحة:", slotId, error);
-    }
-  }
-
-  document
-    .querySelectorAll(".advertise-banner[data-ad-slot]")
-    .forEach((banner) => {
-      loadCampaign(banner);
-    });
-</script>
-
-<script is:inline type="module" src="/js/ad-analytics.js"></script>
-
-<style>
-  .advertise-banner {
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    width: calc(100% - 30px);
-    max-width: 728px;
-    margin: 30px auto;
-    padding: 24px;
-    overflow: hidden;
-    direction: rtl;
-    text-align: right;
-    color: #fff;
-    background: linear-gradient(120deg, #111827, #312e81 65%, #6d28d9);
-    border: 1px solid rgba(139, 92, 246, 0.4);
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-    animation: none;
-    transform: none;
-  }
-
-  .advertise-banner__content {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .advertise-banner__eyebrow {
-    display: inline-block;
-    margin-bottom: 8px;
-    color: #fde68a;
-    font-size: 0.9rem;
-    font-weight: 700;
-  }
-
-  .advertise-banner h2 {
-    margin: 0 0 8px;
-    color: #fff;
-    font-size: clamp(1.4rem, 3vw, 1.9rem);
-  }
-
-  .advertise-banner p {
-    margin: 0 0 16px;
-    color: #e5e7eb;
-    line-height: 1.7;
-  }
-
-  .advertise-banner__offer {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 18px;
-  }
-
-  .advertise-banner__offer strong {
-    color: #fde68a;
-    font-size: 1.65rem;
-  }
-
-  .advertise-banner__offer span {
-    color: #e5e7eb;
-    font-size: 0.95rem;
-  }
-
-  .advertise-banner__button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px 18px;
-    border-radius: 10px;
-    background: #16a34a;
-    color: #fff !important;
-    font-weight: 700;
-    text-decoration: none;
-    transition: background 0.2s ease;
-  }
-
-  .advertise-banner__button:hover {
-    background: #15803d;
-  }
-
-  .advertise-banner__art {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    flex-shrink: 0;
-    font-size: 2.2rem;
-  }
-
-  .advertise-banner__art span:nth-child(2) {
-    font-size: 3rem;
-  }
-
-  .advertiser-creative {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .advertiser-creative__link {
-    display: block;
-    width: 100%;
-    line-height: 0;
-  }
-
-  .advertiser-creative__image {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-height: 320px;
-    object-fit: contain;
-  }
-
-  .advertise-banner [hidden] {
-    display: none !important;
-  }
-
-  @media (max-width: 480px) {
-    .advertise-banner {
-      gap: 10px;
-      padding: 18px 14px;
-    }
-
-    .advertise-banner__art {
-      font-size: 1.5rem;
-    }
-
-    .advertise-banner__art span:nth-child(2) {
-      font-size: 2rem;
-    }
-
-    .advertise-banner p {
-      font-size: 0.9rem;
-    }
-
-    .advertise-banner__offer strong {
-      font-size: 1.35rem;
-    }
-
-    .advertise-banner__button {
-      padding: 11px 12px;
-      font-size: 0.9rem;
-    }
-  }
-
-  /* شارة الإعلان الخارجي فقط */
-  .advertise-banner {
-    position: relative;
-  }
-
-  .advertiser-label {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    z-index: 5;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    direction: rtl;
-    padding: 6px 10px;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 7px;
-    background: rgba(17, 24, 39, 0.88);
-    color: #fff;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.4;
-    pointer-events: none;
-  }
-
-  .advertiser-label span:last-child {
-    color: #fde68a;
-  }
-
-  .advertise-banner .advertiser-label[hidden] {
-    display: none !important;
-  }
-
-  /* إعلان المعلن: إخفاء محتوى إعلان LOLME الأصلي */
-  .advertise-banner[data-ad-type="advertiser"] {
-    display: block;
-    padding: 0;
-    overflow: hidden;
-  }
-
-  .advertise-banner[data-ad-type="advertiser"] .advertise-banner__content,
-  .advertise-banner[data-ad-type="advertiser"] .advertise-banner__art {
-    display: none !important;
-  }
-
-  .advertise-banner[data-ad-type="advertiser"] .advertiser-creative {
-    width: 100%;
-  }
-
-  .advertise-banner[data-ad-type="advertiser"] .advertiser-creative__link {
-    display: block;
-    width: 100%;
-  }
-
-  .advertise-banner[data-ad-type="advertiser"] .advertiser-creative__image {
-    display: block;
-    width: 100%;
-    max-height: 320px;
-    height: auto;
-    object-fit: contain;
-  }
-</style> -->

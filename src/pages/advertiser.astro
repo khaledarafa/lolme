@@ -1,0 +1,474 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="لوحة المعلن"
+  description="تابع حملاتك الإعلانية وأداء إعلاناتك على LOLME"
+>
+  <section class="advertiser-dashboard" dir="rtl">
+    <header class="dashboard-header">
+      <div>
+        <span class="dashboard-eyebrow">LOLME ADVERTISER</span>
+        <h2>📊 لوحة المعلن</h2>
+        <p>تابع أداء حملاتك الإعلانية من مكان واحد.</p>
+      </div>
+      <button id="advertiser-logout" type="button"> تسجيل الخروج </button>
+    </header>
+
+    <div id="advertiser-status" class="dashboard-message">
+      جاري التحقق من الحساب...
+    </div>
+
+    <div id="advertiser-content" hidden>
+      <div class="advertiser-welcome">
+        <div>
+          <span>مرحبًا بك</span>
+          <h3 id="advertiser-name">المعلن</h3>
+          <p id="advertiser-email"></p>
+        </div>
+        <span class="account-badge">حساب معلن</span>
+      </div>
+
+      <div class="advertiser-stats">
+        <article class="stat-card">
+          <span>مرات الظهور</span>
+          <strong id="total-impressions">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>الزوار المختلفون</span>
+          <strong id="total-unique-visitors">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>النقرات</span>
+          <strong id="total-clicks">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>معدل النقر CTR</span>
+          <strong id="total-ctr">0%</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>الحملات</span>
+          <strong id="total-campaigns">0</strong>
+        </article>
+      </div>
+
+      <section class="stats-guide">
+        <div class="stats-guide-header">
+          <span>📈</span>
+          <div>
+            <h3>كيف نحسب إحصائيات إعلانك؟</h3>
+            <p>توضيح مبسط للأرقام التي تظهر في لوحة التحكم.</p>
+          </div>
+        </div>
+
+        <div class="stats-guide-grid">
+          <article class="stats-guide-item">
+            <strong>👁️ مرات الظهور</strong>
+            <p>
+              إجمالي عدد مرات مشاهدة إعلانك. تُحتسب مشاهدة جديدة في كل مرة يظهر
+              فيها الإعلان بنسبة 50% على الأقل لمدة ثانية متواصلة. ويمكن احتساب
+              أكثر من مشاهدة من الزائر نفسه.
+            </p>
+          </article>
+
+          <article class="stats-guide-item">
+            <strong>👥 الزوار المختلفون</strong>
+            <p>
+              عدد المتصفحات المختلفة التي شاهدت إعلانك خلال فترة الحملة. يُحتسب
+              الزائر مرة واحدة فقط، حتى لو شاهد الإعلان مرات عديدة.
+            </p>
+          </article>
+
+          <article class="stats-guide-item">
+            <strong>🖱️ النقرات</strong>
+            <p>
+              عدد مرات النقر على رابط إعلانك. يتم تسجيل النقرة عند ضغط الزائر
+              على رابط الإعلان.
+            </p>
+          </article>
+
+          <article class="stats-guide-item">
+            <strong>📊 معدل النقر (CTR)</strong>
+            <p>
+              النسبة المئوية للنقرات مقارنة بمرات الظهور. كلما ارتفع المعدل،
+              زادت نسبة التفاعل مع إعلانك.
+            </p>
+          </article>
+        </div>
+
+        <div class="stats-guide-note">
+          <strong>💡 مثال توضيحي:</strong>
+          <p>
+            إذا شاهد 100 زائر مختلف إعلانك، وشاهده بعضهم أكثر من مرة، فقد تكون
+            النتيجة 250 مرة ظهور و100 زائر مختلف. هذا يعني أن الإعلان ظهر 250
+            مرة أمام 100 زائر مختلف.
+          </p>
+        </div>
+
+        <div class="stats-guide-footer">
+          يتم تحديث الإحصائيات عند تحميل لوحة التحكم أو الضغط على زر التحديث.
+          وقد تختلف الأرقام عن عدد الأشخاص الحقيقيين؛ لأن القياس يعتمد على
+          المتصفح أو الجهاز المستخدم.
+        </div>
+      </section>
+
+      <section class="campaign-section">
+        <div class="section-heading">
+          <div>
+            <h3>📢 حملاتي الإعلانية</h3>
+            <p>تفاصيل الحملات المسجلة على حسابك.</p>
+          </div>
+          <button id="advertiser-refresh" type="button"> ↻ تحديث </button>
+        </div>
+
+        <div id="advertiser-campaigns"></div>
+      </section>
+    </div>
+  </section>
+
+  <script type="module" src="/js/advertiser.js"></script>
+
+  <style>
+    .advertiser-dashboard {
+      max-width: 1100px;
+      margin: 25px auto;
+      padding: clamp(14px, 3vw, 28px);
+      color: #f9fafb;
+      background: #1e293b;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 18px;
+      box-sizing: border-box;
+    }
+
+    .dashboard-header,
+    .section-heading,
+    .advertiser-welcome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .dashboard-header h2 {
+      margin: 7px 0;
+      color: #fff;
+    }
+
+    .dashboard-header p,
+    .section-heading p {
+      color: #94a3b8;
+      margin: 5px 0;
+    }
+
+    .dashboard-eyebrow {
+      color: #a78bfa;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .advertiser-dashboard button {
+      border: 0;
+      border-radius: 9px;
+      padding: 10px 15px;
+      background: #4f46e5;
+      color: white;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .advertiser-dashboard button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    #advertiser-logout {
+      background: #374151;
+    }
+
+    .dashboard-message {
+      margin: 20px 0;
+      padding: 14px;
+      border-radius: 10px;
+      background: #111827;
+      color: #cbd5e1;
+      line-height: 1.8;
+    }
+
+    .advertiser-welcome {
+      padding: 20px;
+      margin: 22px 0;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 13px;
+    }
+
+    .advertiser-welcome h3 {
+      margin: 5px 0;
+      color: #fde68a;
+    }
+
+    .advertiser-welcome p {
+      margin: 0;
+      color: #94a3b8;
+      overflow-wrap: anywhere;
+    }
+
+    .account-badge {
+      padding: 7px 12px;
+      color: #86efac;
+      background: #14532d;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .advertiser-stats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin: 20px 0 30px;
+    }
+
+    .stat-card {
+      padding: 20px 12px;
+      text-align: center;
+      background: #273449;
+      border: 1px solid #374151;
+      border-radius: 12px;
+    }
+
+    .stat-card span {
+      display: block;
+      color: #cbd5e1;
+      font-size: 0.9rem;
+    }
+
+    .stat-card strong {
+      display: block;
+      margin-top: 10px;
+      color: #4ade80;
+      font-size: 1.7rem;
+    }
+
+    .campaign-section {
+      margin-top: 25px;
+    }
+
+    .section-heading {
+      margin-bottom: 18px;
+    }
+
+    .section-heading h3 {
+      margin: 0;
+      color: #fde68a;
+    }
+
+    #advertiser-campaigns {
+      display: grid;
+      gap: 15px;
+    }
+
+    .advertiser-campaign-card {
+      padding: 18px;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 13px;
+      min-width: 0;
+    }
+
+    .advertiser-campaign-card h4 {
+      margin: 0 0 8px;
+      color: #fde68a;
+      overflow-wrap: anywhere;
+    }
+
+    .campaign-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+
+    .campaign-numbers {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .campaign-number {
+      padding: 12px;
+      text-align: center;
+      background: #273449;
+      border-radius: 9px;
+    }
+
+    .campaign-number span {
+      display: block;
+      color: #94a3b8;
+      font-size: 0.82rem;
+    }
+
+    .campaign-number strong {
+      display: block;
+      margin-top: 5px;
+      color: #4ade80;
+      font-size: 1.2rem;
+    }
+
+    .campaign-details {
+      margin-top: 15px;
+      padding-top: 13px;
+      border-top: 1px solid #374151;
+    }
+
+    .campaign-details summary {
+      color: #a78bfa;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .campaign-details table {
+      width: 100%;
+      margin-top: 12px;
+      border-collapse: collapse;
+      text-align: center;
+    }
+
+    .campaign-details th,
+    .campaign-details td {
+      padding: 9px 5px;
+      border-bottom: 1px solid #374151;
+      font-size: 0.85rem;
+    }
+
+    .campaign-details th {
+      color: #fde68a;
+    }
+
+    .campaign-empty {
+      padding: 25px;
+      text-align: center;
+      color: #cbd5e1;
+      background: #111827;
+      border-radius: 12px;
+      line-height: 1.9;
+    }
+
+    @media (max-width: 650px) {
+      .advertiser-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .campaign-numbers {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .campaign-details {
+        overflow-x: auto;
+      }
+    }
+
+    .stats-guide {
+  margin: 25px 0 30px;
+  padding: 22px;
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 14px;
+}
+
+.stats-guide-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stats-guide-header > span {
+  font-size: 28px;
+}
+
+.stats-guide-header h3 {
+  margin: 0 0 5px;
+  color: #fde68a;
+}
+
+.stats-guide-header p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: .9rem;
+}
+
+.stats-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.stats-guide-item {
+  padding: 15px;
+  background: #273449;
+  border: 1px solid #374151;
+  border-radius: 10px;
+}
+
+.stats-guide-item strong {
+  display: block;
+  margin-bottom: 9px;
+  color: #a78bfa;
+}
+
+.stats-guide-item p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: .9rem;
+  line-height: 1.9;
+}
+
+.stats-guide-note {
+  margin-top: 15px;
+  padding: 15px;
+  background: rgba(22, 199, 101, .07);
+  border: 1px solid rgba(22, 199, 101, .25);
+  border-radius: 10px;
+}
+
+.stats-guide-note strong {
+  color: #4ade80;
+}
+
+.stats-guide-note p {
+  margin: 7px 0 0;
+  color: #cbd5e1;
+  font-size: .9rem;
+  line-height: 1.9;
+}
+
+.stats-guide-footer {
+  margin-top: 15px;
+  color: #94a3b8;
+  font-size: .82rem;
+  line-height: 1.8;
+}
+
+@media (max-width: 650px) {
+  .stats-guide-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-guide {
+    padding: 16px;
+  }
+}
+  </style>
+</Layout>

@@ -2,7 +2,7 @@
 // 🔥 Firebase Core
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-// 🔐 Firebase Authentication
+// Firebase Authentication
 import {
   getAuth,
   GoogleAuthProvider,
@@ -14,7 +14,7 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// 🔥 Firestore
+// Firestore
 import {
   getFirestore,
   doc,
@@ -32,10 +32,12 @@ import {
   increment,
   orderBy,
   limit,
-  startAfter, getCountFromServer, serverTimestamp
+  startAfter,
+  getCountFromServer,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// 🔥 Storage
+// Storage
 import {
   getStorage,
   ref,
@@ -43,6 +45,11 @@ import {
   getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
+// Cloud Functions
+import {
+  getFunctions,
+  httpsCallable
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
 // 🔥 CONFIG
 const firebaseConfig = {
@@ -54,19 +61,20 @@ const firebaseConfig = {
   appId: "1:113741468899:web:6ab8ae0720d0dad060a1d6"
 };
 
-
-// 🔥 INIT
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
+// Services
 export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
-
-// 🔥 EXPORT SERVICES
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+export const googleProvider = new GoogleAuthProvider();
 
+// Cloud Functions - نفس منطقة النشر
+export const functions = getFunctions(app, "us-central1");
+export { httpsCallable };
 
-// 🔥 EXPORT FUNCTIONS (Firestore)
+// Firestore exports
 export {
   doc,
   collection,
@@ -88,6 +96,7 @@ export {
   serverTimestamp
 };
 
+// Authentication exports
 export {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
@@ -98,7 +107,7 @@ export {
   onAuthStateChanged
 };
 
-// 🔥 EXPORT FUNCTIONS (Storage)
+// Storage exports
 export {
   ref,
   uploadBytes,

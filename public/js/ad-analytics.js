@@ -1,81 +1,220 @@
-
 import {
   db,
   collection,
   addDoc,
   serverTimestamp,
+  functions,
+  httpsCallable,
 } from "/js/firebase.js";
 
 const EVENTS_COLLECTION = "adEvents";
-
-// منع تسجيل الظهور أكثر من مرة لنفس العنصر أثناء تحميل الصفحة
-const observedElements = new WeakSet();
-
-// تقليل تكرار النقرات المتتالية على نفس المساحة
-const lastClicks = new Map();
 const CLICK_COOLDOWN_MS = 3000;
 
-async function recordAdEvent({ slotId, adType, eventType }) {
-  if (!slotId || !["house", "advertiser"].includes(adType)) return;
-  if (!["impression", "click"].includes(eventType)) return;
+const trackAdEvent = httpsCallable(functions, "trackAdEvent");
+
+const houseImpressions = new WeakSet();
+const lastClicks = new Map();
+
+// حالة ظهور كل إعلان داخل الصفحة.
+const impressionStates = new WeakMap();
+
+function getVisitorId() {
+  const storageKey = "lolme_ad_visitor_id";
+
+  try {
+    let visitorId = localStorage.getItem(storageKey);
+
+    if (!visitorId) {
+      visitorId =
+        typeof crypto.randomUUID === "function"
+          ? crypto.randomUUID()
+          : Array.from(
+              crypto.getRandomValues(new Uint8Array(24)),
+              (byte) => byte.toString(16).padStart(2, "0"),
+            ).join("");
+
+      localStorage.setItem(storageKey, visitorId);
+    }
+
+    return visitorId;
+  } catch (error) {
+    console.warn("تعذر إنشاء معرف الزائر:", error);
+    return null;
+  }
+}
+
+const visitorId = getVisitorId();
+
+async function recordHouseAdEvent({ slotId, eventType }) {
+  if (!slotId || !["impression", "click"].includes(eventType)) {
+    return;
+  }
 
   try {
     await addDoc(collection(db, EVENTS_COLLECTION), {
       slotId,
-      adType,
+      adType: "house",
       eventType,
       pagePath: window.location.pathname.slice(0, 200),
       createdAt: serverTimestamp(),
     });
   } catch (error) {
-    console.warn("تعذر تسجيل إحصائية الإعلان:", error);
+    console.warn("تعذر تسجيل إحصائية الإعلان الداخلي:", error);
+  }
+}
+
+async function recordAdvertiserEvent({ campaignId, eventType }) {
+  if (!campaignId || !visitorId) return;
+
+  try {
+    const result = await trackAdEvent({
+      campaignId,
+      eventType,
+      visitorId,
+      pagePath: window.location.pathname.slice(0, 200),
+    });
+
+    console.log("[AD DEBUG] Cloud Function response:", result.data);
+
+    return result.data;
+  } catch (error) {
+    console.warn("تعذر تسجيل إحصائية حملة الإعلان:", error);
   }
 }
 
 function getAdData(element) {
   return {
     slotId: element.dataset.adSlot,
-    // house = إعلان خاص بـ LOLME
-    // advertiser = إعلان معلن خارجي
     adType: element.dataset.adType || "house",
+    campaignId: element.dataset.adCampaignId || "",
   };
 }
 
-function setupImpressionTracking() {
-  const banners = document.querySelectorAll("[data-ad-slot]");
+function processImpression(element) {
+  if (element.dataset.adReady !== "true") return;
 
+  const { slotId, adType, campaignId } = getAdData(element);
+
+  if (adType === "advertiser") {
+    if (!campaignId || !visitorId) return;
+
+    void recordAdvertiserEvent({
+      campaignId,
+      eventType: "impression",
+    });
+
+    return;
+  }
+
+  if (adType === "house") {
+    if (!slotId || houseImpressions.has(element)) return;
+
+    houseImpressions.add(element);
+
+    void recordHouseAdEvent({
+      slotId,
+      eventType: "impression",
+    });
+  }
+}
+
+function observeBanner(element) {
+  if (!impressionObserver) return;
+
+  impressionObserver.unobserve(element);
+  impressionObserver.observe(element);
+}
+
+let impressionObserver = null;
+
+function setupImpressionTracking() {
   if (!("IntersectionObserver" in window)) return;
 
-  const observer = new IntersectionObserver(
+  impressionObserver = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-
         const element = entry.target;
 
-        // احتساب الظهور عندما يظهر 50% من المساحة على الأقل
-        if (entry.intersectionRatio < 0.5) continue;
+        let state = impressionStates.get(element);
 
-        if (!observedElements.has(element)) {
-          observedElements.add(element);
-          const { slotId, adType } = getAdData(element);
+        if (!state) {
+          state = {
+            timer: null,
+            visible: false,
+            counted: false,
+          };
 
-          void recordAdEvent({
-            slotId,
-            adType,
-            eventType: "impression",
-          });
+          impressionStates.set(element, state);
         }
 
-        observer.unobserve(element);
+        const qualifies =
+          entry.isIntersecting &&
+          entry.intersectionRatio >= 0.5 &&
+          element.dataset.adReady === "true";
+
+        if (!qualifies) {
+          state.visible = false;
+
+          if (state.timer !== null) {
+            clearTimeout(state.timer);
+            state.timer = null;
+          }
+
+          // السماح بمشاهدة جديدة عند ظهور الإعلان مرة أخرى.
+          state.counted = false;
+
+          continue;
+        }
+
+        state.visible = true;
+
+        // لا نكرر المشاهدة ما دام الإعلان ظاهرًا.
+        if (state.counted || state.timer !== null) continue;
+
+        state.timer = setTimeout(() => {
+          state.timer = null;
+
+          if (!state.visible) return;
+          if (element.dataset.adReady !== "true") return;
+
+          state.counted = true;
+          processImpression(element);
+        }, 1000);
       }
     },
     {
-      threshold: [0.5],
-    }
+      threshold: [0, 0.5],
+    },
   );
 
-  banners.forEach((banner) => observer.observe(banner));
+  document.querySelectorAll("[data-ad-slot]").forEach((banner) => {
+    impressionObserver.observe(banner);
+  });
+}
+
+function setupCampaignMutationTracking() {
+  const mutationObserver = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (
+        mutation.type === "attributes" &&
+        mutation.target instanceof Element &&
+        mutation.target.matches("[data-ad-slot]")
+      ) {
+        observeBanner(mutation.target);
+      }
+    }
+  });
+
+  document.querySelectorAll("[data-ad-slot]").forEach((banner) => {
+    mutationObserver.observe(banner, {
+      attributes: true,
+      attributeFilter: [
+        "data-ad-type",
+        "data-ad-campaign-id",
+        "data-ad-ready",
+      ],
+    });
+  });
 }
 
 function setupClickTracking() {
@@ -85,15 +224,52 @@ function setupClickTracking() {
       const target =
         event.target instanceof Element ? event.target : null;
 
-      const link = target?.closest("[data-ad-booking-click]");
-      if (!link) return;
+      if (!target) return;
 
-      const slotId = link.dataset.adSlot;
-      const adType = link.dataset.adType || "house";
+      const advertiserLink = target.closest(
+        "a[data-ad-campaign-click]",
+      );
 
-      if (!slotId) return;
+      if (advertiserLink) {
+        const banner = advertiserLink.closest("[data-ad-slot]");
 
-      const key = `${adType}:${slotId}`;
+        if (!banner || banner.dataset.adReady !== "true") return;
+
+        const { campaignId, adType } = getAdData(banner);
+
+        if (adType !== "advertiser" || !campaignId) return;
+
+        const key = `advertiser:${campaignId}`;
+        const now = Date.now();
+        const previousClick = lastClicks.get(key) || 0;
+
+        if (now - previousClick < CLICK_COOLDOWN_MS) return;
+
+        lastClicks.set(key, now);
+
+        void recordAdvertiserEvent({
+          campaignId,
+          eventType: "click",
+        });
+
+        return;
+      }
+
+      const houseLink = target.closest(
+        "a[data-ad-booking-click]",
+      );
+
+      if (!houseLink) return;
+
+      const banner = houseLink.closest("[data-ad-slot]");
+
+      if (!banner || banner.dataset.adReady !== "true") return;
+
+      const { slotId, adType } = getAdData(banner);
+
+      if (adType !== "house" || !slotId) return;
+
+      const key = `house:${slotId}`;
       const now = Date.now();
       const previousClick = lastClicks.get(key) || 0;
 
@@ -101,19 +277,18 @@ function setupClickTracking() {
 
       lastClicks.set(key, now);
 
-      // لا نؤخر انتقال الزائر إلى واتساب
-      void recordAdEvent({
+      void recordHouseAdEvent({
         slotId,
-        adType,
         eventType: "click",
       });
     },
-    true
+    true,
   );
 }
 
 function initAdAnalytics() {
   setupImpressionTracking();
+  setupCampaignMutationTracking();
   setupClickTracking();
 }
 

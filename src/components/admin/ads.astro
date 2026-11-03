@@ -2,6 +2,91 @@
   <h2>📢 إدارة الإعلانات</h2>
   <p>أنشئ حملات إعلانية بصور متعددة، وابحث عن حملات كل معلن بالاسم أو البريد الإلكتروني.</p>
 
+  <section class="ad-stats" aria-labelledby="ad-stats-title">
+  <div class="ad-stats-header">
+    <div>
+      <h3 id="ad-stats-title">📊 إحصائيات الإعلانات</h3>
+      <p>متابعة أداء الحملات الإعلانية على LOLME</p>
+    </div>
+    <button type="button" id="ad-stats-refresh">↻ تحديث الإحصائيات</button>
+  </div>
+
+  <div class="ad-stats-filters">
+    <div>
+      <label for="ad-stats-start">من تاريخ</label>
+      <input type="date" id="ad-stats-start" />
+    </div>
+    <div>
+      <label for="ad-stats-end">إلى تاريخ</label>
+      <input type="date" id="ad-stats-end" />
+    </div>
+  </div>
+
+  <p id="ad-stats-message" role="status">جارٍ تحميل الإحصائيات...</p>
+
+  <div class="ad-stats-cards">
+    <article class="ad-stat-card">
+      <span>مرات الظهور</span>
+      <strong id="stat-impressions">—</strong>
+    </article>
+    <article class="ad-stat-card">
+      <span>النقرات</span>
+      <strong id="stat-clicks">—</strong>
+    </article>
+    <article class="ad-stat-card">
+      <span>الزوار الفريدون يوميًا*</span>
+      <strong id="stat-visitors">—</strong>
+    </article>
+    <article class="ad-stat-card">
+      <span>معدل النقر CTR</span>
+      <strong id="stat-ctr">—</strong>
+    </article>
+  </div>
+
+  <div class="ad-stats-panel">
+    <h4>الأداء اليومي</h4>
+    <div id="ad-stats-chart" class="ad-stats-chart"></div>
+  </div>
+
+  <div class="ad-stats-panel">
+    <h4>أداء الحملات</h4>
+    <div class="ad-stats-table-wrap">
+      <table class="ad-stats-table">
+        <thead>
+          <tr>
+            <th>الحملة</th>
+            <th>المساحة</th>
+            <th>الظهور</th>
+            <th>النقرات</th>
+            <th>CTR</th>
+          </tr>
+        </thead>
+        <div class="ad-stats-panel">
+          <h4>أداء المعلنين</h4>
+
+          <div class="ad-stats-table-wrap">
+            <table class="ad-stats-table">
+              <thead>
+                <tr>
+                  <th>المعلن</th>
+                  <th>عدد الحملات</th>
+                  <th>مرات الظهور</th>
+                  <th>النقرات</th>
+                  <th>CTR</th>
+                  <th>التفاصيل</th>
+                </tr>
+              </thead>
+
+              <tbody id="ad-stats-campaigns"></tbody>
+            </table>
+          </div>
+        </div>
+      </table>
+    </div>
+  </div>
+  <small>* مجموع الزوار الفريدين اليومي، وليس عدد الأشخاص المختلفين عبر كامل الفترة.</small>
+</section>
+
   <form id="ad-campaign-form">
     <input type="hidden" id="campaign-id" />
 
@@ -342,6 +427,235 @@
   .ad-campaign-card .ad-campaign-images img { height: 90px; }
   .ad-filter-row { grid-template-columns: minmax(0, 1fr); }
   .ad-campaign-actions button { font-size: 0.85rem; }
+}
+
+/* ===== Ad Statistics ===== */
+.ad-stats {
+  margin: 24px 0;
+  padding: 20px;
+  background: #111827;
+  border: 1px solid #475569;
+  border-radius: 15px;
+}
+
+.ad-stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ad-stats-header h3 {
+  margin: 0;
+  color: #fde68a;
+}
+
+.ad-stats-header p,
+.ad-stats > small {
+  color: #94a3b8;
+  line-height: 1.8;
+}
+
+#ad-stats-refresh {
+  color: white;
+  background: #4f46e5;
+}
+
+.ad-stats-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.ad-stats-filters input {
+  width: 100%;
+  box-sizing: border-box;
+  color: #111827;
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.ad-stats-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.ad-stat-card {
+  padding: 17px 12px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.ad-stat-card span {
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.ad-stat-card strong {
+  color: #4ade80;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  overflow-wrap: anywhere;
+}
+
+.ad-stats-panel {
+  margin-top: 18px;
+  padding: 16px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+}
+
+.ad-stats-panel h4 {
+  margin: 0 0 16px;
+  color: #fde68a;
+}
+
+.ad-stats-chart {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  min-height: 180px;
+  overflow-x: auto;
+  padding: 12px 4px;
+}
+
+.ad-chart-day {
+  flex: 1 0 38px;
+  min-width: 38px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  gap: 6px;
+  height: 165px;
+}
+
+.ad-chart-bars {
+  height: 125px;
+  display: flex;
+  align-items: end;
+  gap: 4px;
+}
+
+.ad-chart-bar {
+  width: 12px;
+  min-height: 2px;
+  border-radius: 4px 4px 0 0;
+}
+
+.ad-chart-impressions {
+  background: #8b5cf6;
+}
+
+.ad-chart-clicks {
+  background: #22c55e;
+}
+
+.ad-chart-day small {
+  color: #cbd5e1;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.ad-chart-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: #cbd5e1;
+  font-size: 0.85rem;
+}
+
+.ad-chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ad-chart-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.ad-stats-table-wrap {
+  overflow-x: auto;
+}
+
+.ad-stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #e5e7eb;
+  white-space: nowrap;
+}
+
+.ad-stats-table th,
+.ad-stats-table td {
+  padding: 12px;
+  text-align: right;
+  border-bottom: 1px solid #475569;
+}
+
+.ad-stats-table th {
+  color: #fde68a;
+}
+
+@media (max-width: 700px) {
+  .ad-stats-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ad-stats-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .ad-stats {
+    padding: 12px;
+  }
+}
+
+.ad-stats-details-button {
+  padding: 7px 12px;
+  color: white;
+  background: #4f46e5;
+  border-radius: 7px;
+  white-space: nowrap;
+}
+
+.ad-advertiser-details {
+  padding: 15px;
+  background: #111827;
+  border: 1px solid #475569;
+  border-radius: 10px;
+}
+
+.ad-advertiser-details > strong {
+  display: block;
+  margin-bottom: 12px;
+  color: #fde68a;
+}
+
+.ad-stats-inner-table {
+  min-width: 600px;
+}
+
+.ad-stats-table tr[hidden] {
+  display: none;
+}
+
+.ad-stats-inner-table th,
+.ad-stats-inner-table td {
+  padding: 9px;
+  font-size: 0.88rem;
 }
 </style>
 

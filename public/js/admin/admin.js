@@ -6,9 +6,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const passwords = {
     // ditq: "000",
     // addq: "000",
-    addc: "1111111",
-    review: "1111111",
-    rooms: "1111111"
+    addc:   "111111",
+    review: "111111",
+    rooms:  "111111"
   };
 
   const unlockedTabs = JSON.parse(localStorage.getItem("admin_tabs") || "{}");
