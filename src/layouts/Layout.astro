@@ -130,7 +130,28 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
       });
     </script>
   </head>
-<script type="module" src="/js/auth-nav.js"></script>
+  <script type="module" src="/js/auth-nav.js"></script>
+
+<!-- 📊 LOLME Live Stats Ticker -->
+<a
+  href="/#site-stats"
+  class="site-stats-ticker"
+  dir="rtl"
+  aria-label="إحصائيات LOLME، اضغط لمعرفة فرص الإعلان"
+  title="اضغط لمعرفة فرص الإعلان على LOLME"
+>
+  <div class="ticker-label">
+    📊 LOLME بالأرقام
+    <span> | أعلن معنا</span>
+  </div>
+
+  <div class="ticker-window">
+    <div class="ticker-track" id="site-stats-track">
+      <span class="ticker-item">جاري تحميل إحصائيات LOLME...</span>
+    </div>
+  </div>
+</a>
+
   <body>
     <main>
       <!-- الهيدر الثابت -->
@@ -143,7 +164,8 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
         >
           <a id="nav-home" href="/">🏠 الرئيسية</a>
           <span class="divider">|</span>
-          <a id="nav-articles" href="/articles">📚 المقالات</a>
+          <a id="nav-articles" href="/jokes">😂 النكت</a>
+          <!-- <a id="nav-articles" href="/articles">📚 المقالات</a> -->
           <span class="divider">|</span>
           <a id="account-nav-link" href="/login">👤 دخول</a>
           <!-- <span class="divider">|</span> -->
@@ -255,6 +277,62 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
       });
     </script>
 
+<script type="module">
+  import { functions, httpsCallable } from "/js/firebase.js";
+
+  const getStats = httpsCallable(functions, "getGa4PublicStats");
+  const track = document.getElementById("site-stats-track");
+
+  const number = (value) =>
+    new Intl.NumberFormat("ar-EG").format(Number(value || 0));
+
+  async function updateSiteTicker() {
+    if (!track) return;
+
+    try {
+      const response = await getStats();
+      const stats = response.data;
+      const sections = stats.sections || {};
+
+      const items = [
+        `👀 ${number(stats.pageViews)} مشاهدة صفحة`,
+        `👥 ${number(stats.activeUsers)} مستخدم نشط`,
+        `🔄 ${number(stats.sessions)} جلسة زيارة`,
+        `🆕 ${number(stats.newUsers)} مستخدم جديد`,
+        `🏠 الرئيسية: ${number(sections.home)}`,
+        `🤣 النكت: ${number(sections.jokes)}`,
+        `🧠 الاختبارات: ${number(sections.tests)}`,
+        `📅 ${stats.period || "آخر 30 يومًا"}`,
+      ];
+
+      track.replaceChildren();
+
+      // تكرار المجموعة مرتين لاستمرار الحركة
+      for (let i = 0; i < 2; i++) {
+        const group = document.createElement("div");
+        group.className = "ticker-group";
+
+        items.forEach((item) => {
+          const span = document.createElement("span");
+          span.className = "ticker-item";
+          span.dir = "rtl";
+          span.textContent = item;
+          group.appendChild(span);
+        });
+
+        track.appendChild(group);
+      }
+
+    } catch (error) {
+      console.error("LOLME GA4 public stats:", error);
+      track.textContent = "إحصائيات LOLME غير متاحة حاليًا";
+    }
+  }
+
+  updateSiteTicker();
+  setInterval(updateSiteTicker, 15 * 60 * 1000);
+</script>
+
     <Analytics />
 
     <!-- موبايل -->
@@ -262,28 +340,29 @@ const finalOg = makeAbsolute(ogImage || img || "/images/default-og.webp");
     <script is:inline type="module" src="/js/ad-analytics.js"></script>
     <script is:inline type="module" src="/js/ad-mouse-glow.js"></script>
   </body>
+
+
+  <style>
+    .page-title {
+      max-width: 1000px; /* نفس عرض المقال */
+      margin: 20px auto; /* يسنتر الـ div داخل الصفحة */
+      text-align: center; /* يسنتر النصوص داخل الـ div */
+      padding: 0 15px; /* مسافة داخلية بسيطة */
+    }
+
+    .page-title h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .page-title .description {
+      font-size: 1.1rem;
+      color: var(--accent-color);
+      line-height: 1.6;
+    }
+
+    .logo {
+      vertical-align: middle;
+    }
+  </style>
 </html>
-
-<style>
-  .page-title {
-    max-width: 1000px; /* نفس عرض المقال */
-    margin: 20px auto; /* يسنتر الـ div داخل الصفحة */
-    text-align: center; /* يسنتر النصوص داخل الـ div */
-    padding: 0 15px; /* مسافة داخلية بسيطة */
-  }
-
-  .page-title h1 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-  }
-
-  .page-title .description {
-    font-size: 1.1rem;
-    color: var(--accent-color);
-    line-height: 1.6;
-  }
-
-  .logo {
-    vertical-align: middle;
-  }
-</style>

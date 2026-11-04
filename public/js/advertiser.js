@@ -198,6 +198,73 @@ function renderPlacementStats(placements = []) {
   return container;
 }
 
+function renderCountryStats(countries = []) {
+  const container = document.createElement("section");
+  container.className = "country-stats";
+
+  container.append(makeElement("h4", "🌍 الجمهور حسب الدولة"));
+
+  if (!countries.length) {
+    container.append(
+      makeElement(
+        "p",
+        "ستظهر إحصائيات الدول بعد تسجيل مشاهدات جديدة للإعلان.",
+        "country-empty",
+      ),
+    );
+
+    return container;
+  }
+
+  function getCountryName(countryCode) {
+    if (!countryCode || countryCode === "XX") {
+      return "غير محدد";
+    }
+
+    try {
+      return (
+        new Intl.DisplayNames(["ar"], {
+          type: "region",
+        }).of(countryCode) || countryCode
+      );
+    } catch {
+      return countryCode;
+    }
+  }
+
+  const table = document.createElement("table");
+  const thead = document.createElement("thead");
+  const header = document.createElement("tr");
+
+  ["الدولة", "مرات الظهور", "الزوار المختلفون", "النقرات"].forEach((label) => {
+    header.append(makeElement("th", label));
+  });
+
+  thead.append(header);
+
+  const tbody = document.createElement("tbody");
+
+  for (const country of countries) {
+    const countryCode = country.countryCode || "XX";
+
+    const row = document.createElement("tr");
+
+    row.append(
+      getCountryName(countryCode),
+      makeElement("td", formatNumber(country.impressions)),
+      makeElement("td", formatNumber(country.uniqueVisitors)),
+      makeElement("td", formatNumber(country.clicks)),
+    );
+
+    tbody.append(row);
+  }
+
+  table.append(thead, tbody);
+  container.append(table);
+
+  return container;
+}
+
 function renderCampaigns(campaigns) {
   campaignsContainer.replaceChildren();
 
@@ -341,6 +408,8 @@ function renderCampaigns(campaigns) {
     // أداء الإعلان حسب مكان ظهوره
     expanded.append(renderPlacementStats(campaign.placements || []));
 
+    // الجمهور حسب الدولة
+    expanded.append(renderCountryStats(campaign.countries || []));
     accordion.append(summary, expanded);
     card.append(accordion);
     campaignsContainer.append(card);

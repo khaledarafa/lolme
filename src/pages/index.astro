@@ -43,7 +43,7 @@ articles.sort((a, b) => {
   return db - da;
 });
 const latestArticles: ArticleWithSlug[] = articles
-  .filter(article => article.category !== "gaming")
+  .filter((article) => article.category !== "gaming")
   .slice(0, 5);
 // const latestArticles: ArticleWithSlug[] = articles.slice(0, 5);
 
@@ -95,19 +95,6 @@ const homeButtons = [
     <div class="emoji" style="left:80%;">🤪</div>
     <div class="emoji" style="font-size:2rem;">🥳</div>
   </div>
-
-  <!-- <section class="real-games-section">
-  <h2>🎮 ألعاب تلعبها فورًا</h2>
-
-  <div class="home-grid">
-    <a href="/play/rush" class="home-card">
-      <img src="/play/rush/images/rush-menu-scene.png" />
-      <h3>🧠 rush</h3>
-    </a>
-  </div>
-
-  <a href="/play" class="play-btn">🎮 كل الألعاب</a>
-</section> -->
 
   <!-- 😂 محتوى ترفيهي -->
   <section class="fun-section">
@@ -176,10 +163,230 @@ const homeButtons = [
     </div>
   </section>
 
+  <!-- 📊 إحصائيات LOLME -->
+  <section class="site-stats-section" id="site-stats">
+    <div class="stats-heading">
+      <span class="stats-eyebrow">📈 LOLME COMMUNITY</span>
+      <h2>LOLME بالأرقام</h2>
+      <p>مجتمع ترفيهي بيكبر كل يوم.. ودي أرقام زيارات موقعنا.</p>
+    </div>
+
+    <div class="stats-main-grid">
+      <div class="stat-card">
+        <span class="stat-icon">👀</span>
+        <strong id="stat-page-views">—</strong>
+        <span>إجمالي مشاهدات الصفحات</span>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-icon">👥</span>
+        <strong id="stat-unique-visitors">—</strong>
+        <span>مستخدمون نشطون خلال آخر 30 يومًا</span>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-icon">🔄</span>
+        <strong id="stat-sessions">—</strong>
+        <span>جلسات الزيارة خلال آخر 30 يومًا</span>
+      </div>
+    </div>
+
+    <div class="stats-sections">
+      <h3>📍 توزيع الزيارات حسب الأقسام</h3>
+
+      <div class="stats-section-row">
+        <span>🏠 الرئيسية</span>
+        <strong id="stat-home">—</strong>
+        <small>مشاهدة صفحة</small>
+      </div>
+
+      <div class="stats-section-row">
+        <span>🤣 النكت</span>
+        <strong id="stat-jokes">—</strong>
+        <small id="stat-jokes-unique">— زائر فريد</small>
+      </div>
+
+      <div class="stats-section-row">
+        <span>🧠 الاختبارات</span>
+        <strong id="stat-tests">—</strong>
+        <small id="stat-tests-unique">— زائر فريد</small>
+      </div>
+    </div>
+
+    <div class="stats-top-tests">
+      <h3>🔥 الاختبارات الأكثر مشاهدة</h3>
+      <div id="stats-top-tests-list">
+        <p>جاري تحميل الإحصائيات...</p>
+      </div>
+    </div>
+<!-- 🚀 دعوة المعلنين -->
+<aside class="stats-ad-cta" dir="rtl">
+
+  <div class="stats-ad-cta__content">
+
+    <span class="stats-ad-cta__eyebrow">
+      📢 فرصة للمعلنين
+    </span>
+
+    <h2>LOLME بيكبر كل يوم.. كبر معانا! 🚀</h2>
+
+    <p>
+      مجتمعنا بيزيد، وزياراتنا بتكبر، ودي فرصتك تكون من أوائل
+      العلامات التجارية اللي تكبر معانا وتوصل لجمهور LOLME.
+    </p>
+
+    <div class="stats-ad-cta__highlight">
+      <strong>متستناش لما نكبر أكتر.. ابدأ معانا من دلوقتي!</strong>
+    </div>
+
+    <a class="stats-ad-cta__button" href="/advertise">
+  اكتشف المساحات الإعلانية
+  <span aria-hidden="true">←</span>
+</a>
+
+  </div>
+
+  <div class="stats-ad-cta__art" aria-hidden="true">
+    <span>📈</span>
+    <span>🚀</span>
+    <span>😂</span>
+  </div>
+
+</aside>
+    <p class="stats-update-note" id="stats-update-note">
+      جاري تحديث الإحصائيات...
+    </p>
+  </section>
+
+  <!-- <section class="real-games-section">
+  <h2>🎮 ألعاب تلعبها فورًا</h2>
+
+  <div class="home-grid">
+    <a href="/play/rush" class="home-card">
+      <img src="/play/rush/images/rush-menu-scene.png" />
+      <h3>🧠 rush</h3>
+    </a>
+  </div>
+
+  <a href="/play" class="play-btn">🎮 كل الألعاب</a>
+</section> -->
+
   <!-- scripts -->
   <script type="module" src="/js/install-btn.js"></script>
   <script src="/js/tilt-cards.js" defer></script>
   <script type="module" src="/js/codes.js"></script>
-  <script type="module" src="/js/home-categories.js"></script>
-  <script type="module" src="/js/home-seo-games.js"></script>
+  <!-- <script type="module" src="/js/home-categories.js"></script> -->
+  <!-- <script type="module" src="/js/home-seo-games.js"></script> -->
+  <script type="module">
+    import { functions, httpsCallable } from "/js/firebase.js";
+
+    const getStats = httpsCallable(functions, "getGa4PublicStats");
+
+    const numberFormat = new Intl.NumberFormat("ar-EG", {
+      maximumFractionDigits: 0,
+      minimumFractionDigits: 0,
+    });
+
+    function setText(id, value) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.textContent = Math.round(Number(value) || 0)
+          .toLocaleString("ar-EG")
+          .replace(/[٬,]/g, "");
+      }
+    }
+
+    function setLabel(id, value) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.textContent = value;
+      }
+    }
+
+    async function loadSiteStats() {
+      const note = document.getElementById("stats-update-note");
+
+      try {
+        const response = await getStats();
+        const stats = response.data;
+
+        // الإحصائيات العامة
+        setText("stat-page-views", stats.pageViews);
+
+        // المستخدمون النشطون خلال آخر 30 يومًا
+        setText("stat-unique-visitors", stats.activeUsers);
+
+        // لا تتوفر بيانات آخر 5 دقائق من تقرير GA4
+        setText("stat-sessions", stats.sessions);
+
+        // توزيع مشاهدات الأقسام
+        const sections = stats.sections || {};
+
+        setText("stat-home", sections.home);
+
+        setText("stat-jokes", sections.jokes);
+
+        setText("stat-tests", sections.tests);
+
+        // أكثر الاختبارات مشاهدة
+        const topTestsList = document.getElementById("stats-top-tests-list");
+
+        if (topTestsList) {
+          topTestsList.replaceChildren();
+
+          const tests = (stats.topTests || []).filter((test) => {
+            const path = String(test.path || "").replace(/\/+$/, "") || "/";
+            return path !== "/tests";
+          });
+
+          if (tests.length) {
+            tests.forEach((test, index) => {
+              const path = String(test.path || "/tests");
+              const safePath = path.startsWith("/tests/") ? path : "/tests";
+
+              const link = document.createElement("a");
+              link.href = safePath;
+              link.className = "top-test-row";
+
+              const rank = document.createElement("span");
+              rank.textContent = `#${index + 1}`;
+
+              const name = document.createElement("span");
+              name.textContent =
+                path.replace(/^\/tests\/?/, "").replace(/\/$/, "") ||
+                "صفحة الاختبارات";
+
+              const views = document.createElement("strong");
+              views.textContent = Math.round(
+                Number(test.pageViews) || 0,
+              ).toLocaleString("ar-EG");
+
+              link.append(rank, name, views);
+              topTestsList.appendChild(link);
+            });
+          } else {
+            topTestsList.textContent = "لا توجد بيانات اختبارات كافية حاليًا.";
+          }
+        }
+
+        // تاريخ ومدة الإحصائيات
+        if (note) {
+          note.textContent =
+            `${stats.period || "آخر 30 يومًا مكتملًا"} — آخر تحديث: ` +
+            new Date().toLocaleTimeString("ar-EG");
+        }
+      } catch (error) {
+        console.error("GA4 Site statistics error:", error);
+
+        if (note) {
+          note.textContent = "تعذر تحميل الإحصائيات حاليًا.";
+        }
+      }
+    }
+
+    loadSiteStats();
+
+    // تحديث كل 15 دقيقة
+    setInterval(loadSiteStats, 15 * 60 * 1000);
+  </script>
 </Layout>

@@ -1,14 +1,201 @@
 const { setGlobalOptions } = require("firebase-functions");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { initializeApp } = require("firebase-admin/app");
-const { getFirestore, FieldValue } = require("firebase-admin/firestore");
+const {
+  getFirestore,
+  FieldValue,
+  Timestamp,
+} = require("firebase-admin/firestore");
 const { createHash } = require("crypto");
+
+const { BetaAnalyticsDataClient } = require("@google-analytics/data");
+
+const analyticsDataClient = new BetaAnalyticsDataClient();
+
+const GA4_PROPERTY_ID = "508035818";
 
 setGlobalOptions({ maxInstances: 10 });
 
 initializeApp();
 
 const db = getFirestore();
+
+const SITE_SECTIONS = ["home", "jokes", "tests"];
+
+/**
+ * Normalizes a page path by removing query strings and trailing slashes.
+ *
+ * @param {string} path - The original page path.
+ * @return {string|null} The normalized path or null if invalid.
+ */
+function normalizeSitePath(path) {
+  if (typeof path !== "string") return null;
+
+  let normalized = path.split("?")[0].split("#")[0].trim();
+
+  if (!normalized.startsWith("/")) return null;
+
+  if (normalized.length > 300) return null;
+
+  if (normalized.length > 1) {
+    normalized = normalized.replace(/\/+$/, "");
+  }
+
+  return normalized;
+}
+
+/**
+ * Validates a page path against the allowed analytics sections.
+ *
+ * @param {string} pageType - The analytics section.
+ * @param {string} path - The requested page path.
+ * @return {string|null} The validated path or null if invalid.
+ */
+function validateSitePage(pageType, path) {
+  const normalizedPath = normalizeSitePath(path);
+
+  if (!normalizedPath || !SITE_SECTIONS.includes(pageType)) {
+    return null;
+  }
+
+  if (pageType === "home" && normalizedPath !== "/") {
+    return null;
+  }
+
+  if (pageType === "jokes" && normalizedPath !== "/jokes") {
+    return null;
+  }
+
+  if (
+    pageType === "tests" &&
+    normalizedPath !== "/tests" &&
+    !normalizedPath.startsWith("/tests/")
+  ) {
+    return null;
+  }
+
+  return normalizedPath;
+}
+
+/**
+ * Returns public GA4 statistics for the last 30 complete days.
+ * Results are cached in Firestore for 15 minutes.
+ */
+exports.getGa4PublicStats = onCall(async () => {
+  const cacheRef = db.collection("siteStats").doc("ga4_public_cache");
+  const cacheSnap = await cacheRef.get();
+
+  // Reuse cached data for 15 minutes.
+  if (cacheSnap.exists) {
+    const cached = cacheSnap.data();
+    const updatedAt = cached.updatedAt?.toMillis?.() || 0;
+
+    if (cached.stats && Date.now() - updatedAt < 15 * 60 * 1000) {
+      return cached.stats;
+    }
+  }
+
+  try {
+    const property = `properties/${GA4_PROPERTY_ID}`;
+
+    // Main audience report.
+    const [summaryResponse] = await analyticsDataClient.runReport({
+      property,
+      dateRanges: [
+        {
+          startDate: "30daysAgo",
+          endDate: "yesterday",
+        },
+      ],
+      metrics: [
+        { name: "activeUsers" },
+        { name: "sessions" },
+        { name: "screenPageViews" },
+        { name: "newUsers" },
+      ],
+    });
+
+    // Page views by page path.
+    const [pagesResponse] = await analyticsDataClient.runReport({
+      property,
+      dateRanges: [
+        {
+          startDate: "30daysAgo",
+          endDate: "yesterday",
+        },
+      ],
+      dimensions: [{ name: "pagePath" }],
+      metrics: [{ name: "screenPageViews" }],
+      orderBys: [
+        {
+          metric: { metricName: "screenPageViews" },
+          desc: true,
+        },
+      ],
+      limit: 1000,
+    });
+
+    const summary = summaryResponse.rows?.[0]?.metricValues || [];
+
+    const activeUsers = Number(summary[0]?.value || 0);
+    const sessions = Number(summary[1]?.value || 0);
+    const pageViews = Number(summary[2]?.value || 0);
+    const newUsers = Number(summary[3]?.value || 0);
+
+    const pages = (pagesResponse.rows || []).map((row) => ({
+      path: row.dimensionValues?.[0]?.value || "/",
+      pageViews: Number(row.metricValues?.[0]?.value || 0),
+    }));
+
+    const sections = {
+      home: 0,
+      jokes: 0,
+      tests: 0,
+    };
+
+    for (const page of pages) {
+      const path = page.path.replace(/\/+$/, "") || "/";
+
+      if (path === "/") {
+        sections.home += page.pageViews;
+      } else if (path === "/jokes") {
+        sections.jokes += page.pageViews;
+      } else if (path === "/tests" || path.startsWith("/tests/")) {
+        sections.tests += page.pageViews;
+      }
+    }
+
+    const topTests = pages
+      .filter((page) => page.path.startsWith("/tests/"))
+      .slice(0, 10);
+
+    const stats = {
+      period: "آخر 30 يومًا مكتملًا",
+      activeUsers,
+      sessions,
+      pageViews,
+      newUsers,
+      sections,
+      topPages: pages.slice(0, 10),
+      topTests,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await cacheRef.set({
+      stats,
+      updatedAt: Timestamp.now(),
+    });
+
+    return stats;
+  } catch (error) {
+    console.error("GA4 public statistics error:", error);
+
+    throw new HttpsError(
+      "internal",
+      "تعذر تحميل إحصائيات Google Analytics حاليًا.",
+    );
+  }
+});
 
 /**
  * ربط الحملات القديمة بحساب الأدمن الحالي.
@@ -166,6 +353,11 @@ exports.trackAdEvent = onCall({ maxInstances: 10 }, async (request) => {
   const visitorId = data.visitorId;
   const pagePath = data.pagePath;
 
+  const countryCode =
+    typeof data.countryCode === "string" && /^[A-Z]{2}$/.test(data.countryCode)
+      ? data.countryCode
+      : "XX";
+
   if (
     typeof campaignId !== "string" ||
     !/^[a-zA-Z0-9_-]{1,150}$/.test(campaignId) ||
@@ -237,6 +429,10 @@ exports.trackAdEvent = onCall({ maxInstances: 10 }, async (request) => {
   // إحصائيات الحملة الإجمالية.
   const campaignStatsRef = db.collection("adCampaignStats").doc(campaignId);
 
+  const countryStatsRef = campaignStatsRef
+    .collection("countries")
+    .doc(countryCode);
+
   // إحصائيات اليوم.
   const dailyStatsRef = campaignStatsRef.collection("days").doc(day);
 
@@ -247,7 +443,7 @@ exports.trackAdEvent = onCall({ maxInstances: 10 }, async (request) => {
     let visitorSnap = null;
     let guardSnap = null;
 
-    // قراءة البيانات المطلوبة قبل الكتابة.
+    // أولاً: قراءة البيانات المطلوبة.
     if (eventType === "impression") {
       visitorSnap = await transaction.get(visitorRef);
     } else {
@@ -281,20 +477,29 @@ exports.trackAdEvent = onCall({ maxInstances: 10 }, async (request) => {
       date: day,
     };
 
-    // بيانات مكان الظهور داخل مستند اليوم نفسه.
     const placementUpdates = {
       pagePath,
     };
 
+    // إحصائيات الدولة.
+    const countryUpdates = {
+      campaignId,
+      advertiserUid: campaign.advertiserUid,
+      countryCode,
+      updatedAt: FieldValue.serverTimestamp(),
+    };
+
     if (eventType === "impression") {
-      // إجمالي مرات ظهور الحملة.
       dailyUpdates.impressions = increment;
+      countryUpdates.impressions = increment;
 
       // أول مشاهدة لهذا الزائر في الحملة بالكامل.
       if (!visitorSnap.exists) {
         dailyUpdates.uniqueVisitors = increment;
+        countryUpdates.uniqueVisitors = increment;
 
         transaction.create(visitorRef, {
+          countryCode,
           createdAt: FieldValue.serverTimestamp(),
         });
 
@@ -308,28 +513,31 @@ exports.trackAdEvent = onCall({ maxInstances: 10 }, async (request) => {
         );
       }
 
-      // مرات الظهور حسب الصفحة.
       placementUpdates.impressions = increment;
     } else {
-      // إجمالي نقرات الحملة.
       dailyUpdates.clicks = increment;
+      countryUpdates.clicks = increment;
 
-      // منع تكرار النقرة.
       transaction.set(guardRef, {
         lastEventAt: FieldValue.serverTimestamp(),
       });
 
-      // النقرات حسب الصفحة.
       placementUpdates.clicks = increment;
     }
 
-    // دمج إحصائيات الصفحة مع إحصائيات اليوم.
     dailyUpdates.placements = {
       [placementKey]: placementUpdates,
     };
 
-    // كتابة واحدة لمستند الإحصائيات اليومية.
-    transaction.set(dailyStatsRef, dailyUpdates, { merge: true });
+    // حفظ إحصائيات الدولة.
+    transaction.set(countryStatsRef, countryUpdates, {
+      merge: true,
+    });
+
+    // حفظ الإحصائيات اليومية.
+    transaction.set(dailyStatsRef, dailyUpdates, {
+      merge: true,
+    });
 
     // حفظ سجل الحدث.
     transaction.create(eventRef, {
@@ -338,6 +546,7 @@ exports.trackAdEvent = onCall({ maxInstances: 10 }, async (request) => {
       slotId: campaign.slotId,
       eventType,
       pagePath,
+      countryCode,
       visitorHash,
       placementKey,
       createdAt: FieldValue.serverTimestamp(),
@@ -356,6 +565,7 @@ exports.trackAdEvent = onCall({ maxInstances: 10 }, async (request) => {
 /**
  * إرجاع لوحة إحصائيات المعلن الحالي فقط.
  */
+
 exports.getAdvertiserDashboard = onCall(
   { maxInstances: 10 },
   async (request) => {
@@ -385,10 +595,13 @@ exports.getAdvertiserDashboard = onCall(
           .collection("adCampaignStats")
           .doc(campaignDoc.id);
 
-        const [campaignStatsSnap, daysSnapshot] = await Promise.all([
-          campaignStatsRef.get(),
-          campaignStatsRef.collection("days").get(),
-        ]);
+        // قراءة الإحصائيات الإجمالية واليومية وإحصائيات الدول
+        const [campaignStatsSnap, daysSnapshot, countriesSnapshot] =
+          await Promise.all([
+            campaignStatsRef.get(),
+            campaignStatsRef.collection("days").get(),
+            campaignStatsRef.collection("countries").get(),
+          ]);
 
         const campaignStats = campaignStatsSnap.exists
           ? campaignStatsSnap.data()
@@ -454,6 +667,20 @@ exports.getAdvertiserDashboard = onCall(
           }))
           .sort((a, b) => b.impressions - a.impressions);
 
+        // إحصائيات الجمهور حسب الدولة
+        const countries = countriesSnapshot.docs
+          .map((countryDoc) => {
+            const data = countryDoc.data();
+
+            return {
+              countryCode: countryDoc.id,
+              impressions: Number(data.impressions) || 0,
+              uniqueVisitors: Number(data.uniqueVisitors) || 0,
+              clicks: Number(data.clicks) || 0,
+            };
+          })
+          .sort((a, b) => b.impressions - a.impressions);
+
         const uniqueVisitors = Number(campaignStats.uniqueVisitors) || 0;
 
         return {
@@ -499,6 +726,9 @@ exports.getAdvertiserDashboard = onCall(
 
           // إحصائيات كل صفحة على حدة
           placements,
+
+          // إحصائيات الجمهور حسب الدولة
+          countries,
         };
       }),
     );

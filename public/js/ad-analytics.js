@@ -16,6 +16,30 @@ const trackAdEvent = httpsCallable(functions, "trackAdEvent");
 const houseImpressions = new WeakSet();
 const lastClicks = new Map();
 
+// تحميل الدولة مرة واحدة فقط لكل تحميل صفحة.
+let countryCodePromise = null;
+
+function getAdCountryCode() {
+  if (!countryCodePromise) {
+    countryCodePromise = fetch("/api/ad-country.json", {
+      cache: "no-store",
+    })
+      .then((response) => {
+        if (!response.ok) return null;
+        return response.json();
+      })
+      .then((location) => {
+        return typeof location?.country === "string" &&
+          /^[A-Z]{2}$/.test(location.country)
+          ? location.country
+          : "XX";
+      })
+      .catch(() => "XX");
+  }
+
+  return countryCodePromise;
+}
+
 // حالة ظهور كل إعلان داخل الصفحة.
 const impressionStates = new WeakMap();
 
@@ -29,9 +53,8 @@ function getVisitorId() {
       visitorId =
         typeof crypto.randomUUID === "function"
           ? crypto.randomUUID()
-          : Array.from(
-              crypto.getRandomValues(new Uint8Array(24)),
-              (byte) => byte.toString(16).padStart(2, "0"),
+          : Array.from(crypto.getRandomValues(new Uint8Array(24)), (byte) =>
+              byte.toString(16).padStart(2, "0"),
             ).join("");
 
       localStorage.setItem(storageKey, visitorId);
@@ -68,11 +91,14 @@ async function recordAdvertiserEvent({ campaignId, eventType }) {
   if (!campaignId || !visitorId) return;
 
   try {
+    const countryCode = await getAdCountryCode();
+
     const result = await trackAdEvent({
       campaignId,
       eventType,
       visitorId,
       pagePath: window.location.pathname.slice(0, 200),
+      countryCode,
     });
 
     console.log("[AD DEBUG] Cloud Function response:", result.data);
@@ -209,11 +235,7 @@ function setupCampaignMutationTracking() {
   document.querySelectorAll("[data-ad-slot]").forEach((banner) => {
     mutationObserver.observe(banner, {
       attributes: true,
-      attributeFilter: [
-        "data-ad-type",
-        "data-ad-campaign-id",
-        "data-ad-ready",
-      ],
+      attributeFilter: ["data-ad-type", "data-ad-campaign-id", "data-ad-ready"],
     });
   });
 }
@@ -222,14 +244,11 @@ function setupClickTracking() {
   document.addEventListener(
     "click",
     (event) => {
-      const target =
-        event.target instanceof Element ? event.target : null;
+      const target = event.target instanceof Element ? event.target : null;
 
       if (!target) return;
 
-      const advertiserLink = target.closest(
-        "a[data-ad-campaign-click]",
-      );
+      const advertiserLink = target.closest("a[data-ad-campaign-click]");
 
       if (advertiserLink) {
         const banner = advertiserLink.closest("[data-ad-slot]");
@@ -256,9 +275,7 @@ function setupClickTracking() {
         return;
       }
 
-      const houseLink = target.closest(
-        "a[data-ad-booking-click]",
-      );
+      const houseLink = target.closest("a[data-ad-booking-click]");
 
       if (!houseLink) return;
 
