@@ -1,10 +1,10 @@
-const {setGlobalOptions} = require("firebase-functions");
-const {onCall, HttpsError} = require("firebase-functions/v2/https");
-const {initializeApp} = require("firebase-admin/app");
-const {getFirestore, FieldValue} = require("firebase-admin/firestore");
-const {createHash} = require("crypto");
+const { setGlobalOptions } = require("firebase-functions");
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { initializeApp } = require("firebase-admin/app");
+const { getFirestore, FieldValue } = require("firebase-admin/firestore");
+const { createHash } = require("crypto");
 
-setGlobalOptions({maxInstances: 10});
+setGlobalOptions({ maxInstances: 10 });
 
 initializeApp();
 
@@ -25,15 +25,15 @@ exports.linkLegacyCampaignsToAdmin = onCall(async (request) => {
 
   if (request.auth.token.email_verified !== true) {
     throw new HttpsError(
-        "failed-precondition",
-        "يجب التحقق من البريد الإلكتروني أولاً.",
+      "failed-precondition",
+      "يجب التحقق من البريد الإلكتروني أولاً.",
     );
   }
 
   const uid = request.auth.uid;
   const email = String(request.auth.token.email || "")
-      .trim()
-      .toLowerCase();
+    .trim()
+    .toLowerCase();
 
   const snapshot = await db.collection("adCampaigns").get();
 
@@ -45,21 +45,21 @@ exports.linkLegacyCampaignsToAdmin = onCall(async (request) => {
     }
 
     const campaignEmail = String(data.advertiserEmail || "")
-        .trim()
-        .toLowerCase();
+      .trim()
+      .toLowerCase();
 
     return !campaignEmail || campaignEmail === email;
   });
 
   if (unassigned.length > 450) {
     throw new HttpsError(
-        "resource-exhausted",
-        "عدد الحملات كبير، نحتاج تقسيم عملية الربط.",
+      "resource-exhausted",
+      "عدد الحملات كبير، نحتاج تقسيم عملية الربط.",
     );
   }
 
   if (unassigned.length === 0) {
-    return {success: true, linkedCount: 0};
+    return { success: true, linkedCount: 0 };
   }
 
   const batch = db.batch();
@@ -89,20 +89,20 @@ exports.linkAdvertiserCampaigns = onCall(async (request) => {
 
   if (request.auth.token.email_verified !== true) {
     throw new HttpsError(
-        "failed-precondition",
-        "يجب التحقق من بريدك الإلكتروني أولاً.",
+      "failed-precondition",
+      "يجب التحقق من بريدك الإلكتروني أولاً.",
     );
   }
 
   const uid = request.auth.uid;
   const email = String(request.auth.token.email || "")
-      .trim()
-      .toLowerCase();
+    .trim()
+    .toLowerCase();
 
   if (!email) {
     throw new HttpsError(
-        "failed-precondition",
-        "لا يوجد بريد إلكتروني مرتبط بالحساب.",
+      "failed-precondition",
+      "لا يوجد بريد إلكتروني مرتبط بالحساب.",
     );
   }
 
@@ -112,21 +112,21 @@ exports.linkAdvertiserCampaigns = onCall(async (request) => {
     const data = campaignDoc.data();
 
     const campaignEmail = String(data.advertiserEmail || "")
-        .trim()
-        .toLowerCase();
+      .trim()
+      .toLowerCase();
 
     return !data.advertiserUid && campaignEmail === email;
   });
 
   if (unassigned.length > 450) {
     throw new HttpsError(
-        "resource-exhausted",
-        "عدد الحملات كبير، نحتاج تقسيم عملية الربط.",
+      "resource-exhausted",
+      "عدد الحملات كبير، نحتاج تقسيم عملية الربط.",
     );
   }
 
   if (unassigned.length === 0) {
-    return {success: true, linkedCount: 0};
+    return { success: true, linkedCount: 0 };
   }
 
   const batch = db.batch();
@@ -158,7 +158,7 @@ exports.linkAdvertiserCampaigns = onCall(async (request) => {
  * clicks:
  * منع تكرار النقرات خلال 10 ثوانٍ.
  */
-exports.trackAdEvent = onCall({maxInstances: 10}, async (request) => {
+exports.trackAdEvent = onCall({ maxInstances: 10 }, async (request) => {
   const data = request.data || {};
 
   const campaignId = data.campaignId;
@@ -176,10 +176,7 @@ exports.trackAdEvent = onCall({maxInstances: 10}, async (request) => {
     pagePath.length > 200 ||
     !pagePath.startsWith("/")
   ) {
-    throw new HttpsError(
-      "invalid-argument",
-      "بيانات الحدث غير صحيحة.",
-    );
+    throw new HttpsError("invalid-argument", "بيانات الحدث غير صحيحة.");
   }
 
   const campaignRef = db.collection("adCampaigns").doc(campaignId);
@@ -192,13 +189,15 @@ exports.trackAdEvent = onCall({maxInstances: 10}, async (request) => {
   const campaign = campaignSnap.data();
   const now = Date.now();
 
-  const start = campaign.startAt &&
-    typeof campaign.startAt.toMillis === "function" ?
-    campaign.startAt.toMillis() : null;
+  const start =
+    campaign.startAt && typeof campaign.startAt.toMillis === "function"
+      ? campaign.startAt.toMillis()
+      : null;
 
-  const end = campaign.endAt &&
-    typeof campaign.endAt.toMillis === "function" ?
-    campaign.endAt.toMillis() : null;
+  const end =
+    campaign.endAt && typeof campaign.endAt.toMillis === "function"
+      ? campaign.endAt.toMillis()
+      : null;
 
   if (
     campaign.status !== "active" ||
@@ -208,49 +207,47 @@ exports.trackAdEvent = onCall({maxInstances: 10}, async (request) => {
     start > now ||
     end <= now
   ) {
-    throw new HttpsError(
-      "failed-precondition",
-      "الحملة غير نشطة حاليًا.",
-    );
+    throw new HttpsError("failed-precondition", "الحملة غير نشطة حاليًا.");
   }
 
   // تاريخ اليوم بتوقيت UTC.
   const day = new Date().toISOString().slice(0, 10);
 
-  // بصمة الزائر الخاصة بهذه الحملة.
+  // بصمة الزائر على مستوى الحملة.
   const visitorHash = createHash("sha256")
-      .update(`${campaignId}:${visitorId}`)
-      .digest("hex");
+    .update(`${campaignId}:${visitorId}`)
+    .digest("hex");
 
-  // سجل الزائر على مستوى الحملة بالكامل، وليس اليوم.
+  // مفتاح ثابت لكل صفحة داخل الحملة.
+  const placementKey = createHash("sha256")
+    .update(pagePath)
+    .digest("hex")
+    .slice(0, 20);
+
+  // سجل الزائر على مستوى الحملة.
   const visitorRef = db
-      .collection("adCampaignStats")
-      .doc(campaignId)
-      .collection("visitors")
-      .doc(visitorHash);
+    .collection("adCampaignStats")
+    .doc(campaignId)
+    .collection("visitors")
+    .doc(visitorHash);
 
   // سجل منع تكرار النقرات.
-  const guardRef = db
-      .collection("adEventGuards")
-      .doc(`${visitorHash}_click`);
+  const guardRef = db.collection("adEventGuards").doc(`${visitorHash}_click`);
 
   // إحصائيات الحملة الإجمالية.
-  const campaignStatsRef = db
-      .collection("adCampaignStats")
-      .doc(campaignId);
+  const campaignStatsRef = db.collection("adCampaignStats").doc(campaignId);
 
   // إحصائيات اليوم.
-  const dailyStatsRef = campaignStatsRef
-      .collection("days")
-      .doc(day);
+  const dailyStatsRef = campaignStatsRef.collection("days").doc(day);
 
+  // سجل الحدث.
   const eventRef = db.collection("adEvents").doc();
 
   const result = await db.runTransaction(async (transaction) => {
-    // قراءة المستندات قبل أي كتابة.
     let visitorSnap = null;
     let guardSnap = null;
 
+    // قراءة البيانات المطلوبة قبل الكتابة.
     if (eventType === "impression") {
       visitorSnap = await transaction.get(visitorRef);
     } else {
@@ -284,11 +281,16 @@ exports.trackAdEvent = onCall({maxInstances: 10}, async (request) => {
       date: day,
     };
 
+    // بيانات مكان الظهور داخل مستند اليوم نفسه.
+    const placementUpdates = {
+      pagePath,
+    };
+
     if (eventType === "impression") {
-      // كل مشاهدة جديدة تُحسب.
+      // إجمالي مرات ظهور الحملة.
       dailyUpdates.impressions = increment;
 
-      // أول مشاهدة لهذا الزائر في الحملة فقط.
+      // أول مشاهدة لهذا الزائر في الحملة بالكامل.
       if (!visitorSnap.exists) {
         dailyUpdates.uniqueVisitors = increment;
 
@@ -297,25 +299,39 @@ exports.trackAdEvent = onCall({maxInstances: 10}, async (request) => {
         });
 
         transaction.set(
-            campaignStatsRef,
-            {
-              ...baseUpdates,
-              uniqueVisitors: increment,
-            },
-            {merge: true},
+          campaignStatsRef,
+          {
+            ...baseUpdates,
+            uniqueVisitors: increment,
+          },
+          { merge: true },
         );
       }
+
+      // مرات الظهور حسب الصفحة.
+      placementUpdates.impressions = increment;
     } else {
+      // إجمالي نقرات الحملة.
       dailyUpdates.clicks = increment;
 
+      // منع تكرار النقرة.
       transaction.set(guardRef, {
         lastEventAt: FieldValue.serverTimestamp(),
       });
+
+      // النقرات حسب الصفحة.
+      placementUpdates.clicks = increment;
     }
 
-    transaction.set(dailyStatsRef, dailyUpdates, {merge: true});
+    // دمج إحصائيات الصفحة مع إحصائيات اليوم.
+    dailyUpdates.placements = {
+      [placementKey]: placementUpdates,
+    };
 
-    // حفظ كل مشاهدة أو نقرة مقبولة.
+    // كتابة واحدة لمستند الإحصائيات اليومية.
+    transaction.set(dailyStatsRef, dailyUpdates, { merge: true });
+
+    // حفظ سجل الحدث.
     transaction.create(eventRef, {
       campaignId,
       advertiserUid: campaign.advertiserUid,
@@ -323,10 +339,11 @@ exports.trackAdEvent = onCall({maxInstances: 10}, async (request) => {
       eventType,
       pagePath,
       visitorHash,
+      placementKey,
       createdAt: FieldValue.serverTimestamp(),
     });
 
-    return {recorded: true};
+    return { recorded: true };
   });
 
   return {
@@ -340,13 +357,10 @@ exports.trackAdEvent = onCall({maxInstances: 10}, async (request) => {
  * إرجاع لوحة إحصائيات المعلن الحالي فقط.
  */
 exports.getAdvertiserDashboard = onCall(
-  {maxInstances: 10},
+  { maxInstances: 10 },
   async (request) => {
     if (!request.auth) {
-      throw new HttpsError(
-        "unauthenticated",
-        "يجب تسجيل الدخول أولاً.",
-      );
+      throw new HttpsError("unauthenticated", "يجب تسجيل الدخول أولاً.");
     }
 
     if (request.auth.token.email_verified !== true) {
@@ -359,30 +373,35 @@ exports.getAdvertiserDashboard = onCall(
     const uid = request.auth.uid;
 
     const snapshot = await db
-        .collection("adCampaigns")
-        .where("advertiserUid", "==", uid)
-        .get();
+      .collection("adCampaigns")
+      .where("advertiserUid", "==", uid)
+      .get();
 
     const campaigns = await Promise.all(
-        snapshot.docs.map(async (campaignDoc) => {
-          const campaign = campaignDoc.data();
+      snapshot.docs.map(async (campaignDoc) => {
+        const campaign = campaignDoc.data();
 
-          const campaignStatsRef = db
-              .collection("adCampaignStats")
-              .doc(campaignDoc.id);
+        const campaignStatsRef = db
+          .collection("adCampaignStats")
+          .doc(campaignDoc.id);
 
-          const [campaignStatsSnap, daysSnapshot] = await Promise.all([
-            campaignStatsRef.get(),
-            campaignStatsRef.collection("days").get(),
-          ]);
+        const [campaignStatsSnap, daysSnapshot] = await Promise.all([
+          campaignStatsRef.get(),
+          campaignStatsRef.collection("days").get(),
+        ]);
 
-          const campaignStats = campaignStatsSnap.exists ?
-            campaignStatsSnap.data() : {};
+        const campaignStats = campaignStatsSnap.exists
+          ? campaignStatsSnap.data()
+          : {};
 
-          let impressions = 0;
-          let clicks = 0;
+        let impressions = 0;
+        let clicks = 0;
 
-          const dailyStats = daysSnapshot.docs.map((dayDoc) => {
+        // تجميع إحصائيات كل صفحة على حدة
+        const placementsMap = new Map();
+
+        const dailyStats = daysSnapshot.docs
+          .map((dayDoc) => {
             const data = dayDoc.data();
 
             const dayImpressions = Number(data.impressions) || 0;
@@ -392,57 +411,120 @@ exports.getAdvertiserDashboard = onCall(
             impressions += dayImpressions;
             clicks += dayClicks;
 
+            // قراءة إحصائيات أماكن ظهور الإعلان داخل اليوم
+            const dailyPlacements = data.placements || {};
+
+            for (const placement of Object.values(dailyPlacements)) {
+              const pagePath = placement.pagePath || "/";
+
+              if (!placementsMap.has(pagePath)) {
+                placementsMap.set(pagePath, {
+                  pagePath,
+                  impressions: 0,
+                  clicks: 0,
+                });
+              }
+
+              const item = placementsMap.get(pagePath);
+
+              item.impressions += Number(placement.impressions) || 0;
+              item.clicks += Number(placement.clicks) || 0;
+            }
+
             return {
               date: dayDoc.id,
               impressions: dayImpressions,
               uniqueVisitors: dayUniqueVisitors,
               clicks: dayClicks,
             };
-          }).sort((a, b) => a.date.localeCompare(b.date));
+          })
+          .sort((a, b) => a.date.localeCompare(b.date));
 
-          const uniqueVisitors =
-            Number(campaignStats.uniqueVisitors) || 0;
+        // تحويل إحصائيات الصفحات إلى مصفوفة جاهزة للواجهة
+        const placements = Array.from(placementsMap.values())
+          .map((item) => ({
+            pagePath: item.pagePath,
+            impressions: item.impressions,
+            clicks: item.clicks,
+            uniqueVisitors: null,
+            ctr:
+              item.impressions > 0
+                ? Number(((item.clicks / item.impressions) * 100).toFixed(2))
+                : 0,
+          }))
+          .sort((a, b) => b.impressions - a.impressions);
 
-          return {
-            id: campaignDoc.id,
-            advertiserName: campaign.advertiserName || "",
-            slotId: campaign.slotId || "",
-            status: campaign.status || "paused",
-            headline: campaign.headline || "",
-            startAt: campaign.startAt?.toMillis?.() ?? null,
-            endAt: campaign.endAt?.toMillis?.() ?? null,
-            impressions,
-            uniqueVisitors,
-            clicks,
-            ctr: impressions > 0 ?
-              Number(((clicks / impressions) * 100).toFixed(2)) : 0,
-            dailyStats,
-          };
-        }),
+        const uniqueVisitors = Number(campaignStats.uniqueVisitors) || 0;
+
+        return {
+          id: campaignDoc.id,
+          advertiserName: campaign.advertiserName || "",
+          slotId: campaign.slotId || "",
+          status: campaign.status || "paused",
+          headline: campaign.headline || "",
+          startAt: campaign.startAt?.toMillis?.() ?? null,
+          endAt: campaign.endAt?.toMillis?.() ?? null,
+
+          // البيانات المالية للحملة
+          monthlyPrice: Number(campaign.monthlyPrice) || 0,
+          durationDays:
+            Number(campaign.durationDays) ||
+            (campaign.startAt && campaign.endAt
+              ? Math.ceil(
+                  (campaign.endAt.toMillis() - campaign.startAt.toMillis()) /
+                    86400000,
+                )
+              : 0),
+          totalPrice: Number(campaign.totalPrice) || 0,
+          paidAmount: Number(campaign.paidAmount) || 0,
+          paymentStatus: campaign.paymentStatus || "unpaid",
+          paymentMethod: campaign.paymentMethod || "",
+          paidAt: campaign.paidAt
+            ? typeof campaign.paidAt.toMillis === "function"
+              ? campaign.paidAt.toMillis()
+              : new Date(campaign.paidAt).getTime()
+            : null,
+
+          // إجمالي إحصائيات الحملة
+          impressions,
+          uniqueVisitors,
+          clicks,
+          ctr:
+            impressions > 0
+              ? Number(((clicks / impressions) * 100).toFixed(2))
+              : 0,
+
+          // الإحصائيات اليومية
+          dailyStats,
+
+          // إحصائيات كل صفحة على حدة
+          placements,
+        };
+      }),
     );
 
-    campaigns.sort(
-        (a, b) => (b.startAt || 0) - (a.startAt || 0),
-    );
+    // ترتيب الحملات من الأحدث إلى الأقدم
+    campaigns.sort((a, b) => (b.startAt || 0) - (a.startAt || 0));
 
+    // إجمالي إحصائيات كل الحملات
     const totals = campaigns.reduce(
-        (result, campaign) => {
-          result.impressions += campaign.impressions;
-          result.uniqueVisitors += campaign.uniqueVisitors;
-          result.clicks += campaign.clicks;
-          return result;
-        },
-        {
-          impressions: 0,
-          uniqueVisitors: 0,
-          clicks: 0,
-        },
+      (result, campaign) => {
+        result.impressions += campaign.impressions;
+        result.uniqueVisitors += campaign.uniqueVisitors;
+        result.clicks += campaign.clicks;
+        return result;
+      },
+      {
+        impressions: 0,
+        uniqueVisitors: 0,
+        clicks: 0,
+      },
     );
 
-    totals.ctr = totals.impressions > 0 ?
-      Number(
-          ((totals.clicks / totals.impressions) * 100).toFixed(2),
-      ) : 0;
+    totals.ctr =
+      totals.impressions > 0
+        ? Number(((totals.clicks / totals.impressions) * 100).toFixed(2))
+        : 0;
 
     return {
       success: true,
