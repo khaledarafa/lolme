@@ -5,32 +5,67 @@ const ads = {
   "jokes-1": {
     price: 299,
     position: "المساحة الإعلانية الأولى — بداية صفحة النكت",
-    detail: "ظهور مميز في الجزء الأول من الصفحة.",
+    detail: "ظهور مميز في بداية الصفحة، قبل مجموعات النكت.",
   },
+
   "jokes-2": {
     price: 249,
-    position: "المساحة الإعلانية الثانية — الثلث الأول",
-    detail: "إعلانك وسط مجموعات النكت.",
+    position: "المساحة الإعلانية الثانية — الجزء الأول",
+    detail: "إعلانك وسط بداية محتوى النكت.",
   },
+
   "jokes-3": {
     price: 199,
-    position: "المساحة الإعلانية الثالثة — منتصف الصفحة",
-    detail: "مساحة إعلانية في منتصف المحتوى.",
+    position: "المساحة الإعلانية الثالثة — الثلث الأول",
+    detail: "مساحة إعلانية بين مجموعات النكت.",
   },
+
   "jokes-4": {
     price: 179,
-    position: "المساحة الإعلانية الرابعة — بعد منتصف الصفحة",
-    detail: "روّج لمنتجك وسط محتوى النكت.",
+    position: "المساحة الإعلانية الرابعة — قبل المنتصف",
+    detail: "روّج لمنتجك وسط محتوى ترفيهي.",
   },
+
   "jokes-5": {
     price: 149,
-    position: "المساحة الإعلانية الخامسة — الثلث الأخير",
-    detail: "مساحة إعلانية بسعر اقتصادي.",
+    position: "المساحة الإعلانية الخامسة — منتصف الصفحة",
+    detail: "مساحة إعلانية في منتصف محتوى الصفحة.",
   },
+
   "jokes-6": {
     price: 129,
-    position: "المساحة الإعلانية السادسة — نهاية الصفحة",
-    detail: "مساحة إعلانية اقتصادية.",
+    position: "المساحة الإعلانية السادسة — بعد المنتصف",
+    detail: "مساحة إعلانية بسعر اقتصادي.",
+  },
+
+  "jokes-7": {
+    price: 119,
+    position: "المساحة الإعلانية السابعة — الجزء الثاني",
+    detail: "إعلانك بين مجموعات النكت في الجزء الثاني.",
+  },
+
+  "jokes-8": {
+    price: 109,
+    position: "المساحة الإعلانية الثامنة — الثلث الأخير",
+    detail: "مساحة إعلانية اقتصادية وسط المحتوى.",
+  },
+
+  "jokes-9": {
+    price: 99,
+    position: "المساحة الإعلانية التاسعة — الجزء الأخير",
+    detail: "فرصة إعلانية بسعر مناسب.",
+  },
+
+  "jokes-10": {
+    price: 89,
+    position: "المساحة الإعلانية العاشرة — قبل النهاية",
+    detail: "مساحة إعلانية اقتصادية في الجزء الأخير.",
+  },
+
+  "jokes-11": {
+    price: 79,
+    position: "المساحة الإعلانية الحادية عشرة — نهاية الصفحة",
+    detail: "أقل سعر إعلاني ضمن مساحات صفحة النكت.",
   },
   tests: {
     price: 249,
@@ -120,20 +155,13 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
         target="_blank"
         rel="noopener noreferrer sponsored"
         data-ad-campaign-click
-        hidden
-      ></a>
+        hidden></a>
     </div>
   </div>
 </aside>
 
 <script is:inline type="module">
-  import {
-    db,
-    collection,
-    query,
-    where,
-    getDocs
-  } from "/js/firebase.js";
+  import { db, collection, query, where, getDocs } from "/js/firebase.js";
 
   async function loadCampaign(banner) {
     if (banner.dataset.campaignLoaded === "true") return;
@@ -146,7 +174,7 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
       const campaignsQuery = query(
         collection(db, "adCampaigns"),
         where("slotId", "==", slotId),
-        where("status", "==", "active")
+        where("status", "==", "active"),
       );
 
       const snapshot = await getDocs(campaignsQuery);
@@ -155,7 +183,7 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
       const campaigns = snapshot.docs
         .map((item) => ({
           id: item.id,
-          ...item.data()
+          ...item.data(),
         }))
         .filter((campaign) => {
           const start = campaign.startAt?.toDate?.()?.getTime();
@@ -175,9 +203,7 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
             images.length > 0 &&
             images.every((url) => {
               try {
-                return ["https:", "http:"].includes(
-                  new URL(url).protocol
-                );
+                return ["https:", "http:"].includes(new URL(url).protocol);
               } catch {
                 return false;
               }
@@ -188,38 +214,20 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
         .sort(
           (a, b) =>
             (b.createdAt?.toDate?.()?.getTime() || 0) -
-            (a.createdAt?.toDate?.()?.getTime() || 0)
+            (a.createdAt?.toDate?.()?.getTime() || 0),
         );
 
       const campaign = campaigns[0];
 
-      const content = banner.querySelector(
-        ".advertise-banner__content"
-      );
-      const art = banner.querySelector(
-        ".advertise-banner__art"
-      );
-      const creative = banner.querySelector(
-        ".advertiser-creative"
-      );
-      const image = creative?.querySelector(
-        ".advertiser-creative__image"
-      );
-      const dots = creative?.querySelector(
-        ".advertiser-dots"
-      );
-      const headline = creative?.querySelector(
-        ".advertiser-headline"
-      );
-      const description = creative?.querySelector(
-        ".advertiser-description"
-      );
-      const cta = creative?.querySelector(
-        ".advertiser-cta"
-      );
-      const label = banner.querySelector(
-        ".advertiser-label"
-      );
+      const content = banner.querySelector(".advertise-banner__content");
+      const art = banner.querySelector(".advertise-banner__art");
+      const creative = banner.querySelector(".advertiser-creative");
+      const image = creative?.querySelector(".advertiser-creative__image");
+      const dots = creative?.querySelector(".advertiser-dots");
+      const headline = creative?.querySelector(".advertiser-headline");
+      const description = creative?.querySelector(".advertiser-description");
+      const cta = creative?.querySelector(".advertiser-cta");
+      const label = banner.querySelector(".advertiser-label");
 
       if (!content || !creative || !image || !dots) {
         banner.dataset.adReady = "true";
@@ -246,10 +254,7 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
           throw new Error("Invalid target URL");
         }
       } catch {
-        console.error(
-          "[LOLME Ads] رابط وجهة الحملة غير صالح:",
-          campaign.id
-        );
+        console.error("[LOLME Ads] رابط وجهة الحملة غير صالح:", campaign.id);
 
         banner.dataset.adReady = "true";
         return;
@@ -313,10 +318,7 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
         };
 
         nextImage.onerror = () => {
-          console.error(
-            "[LOLME Ads] فشل تحميل الصورة:",
-            images[index]
-          );
+          console.error("[LOLME Ads] فشل تحميل الصورة:", images[index]);
           showFallback();
         };
       }
@@ -358,10 +360,7 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
 
         dot.type = "button";
         dot.className = "advertiser-dot";
-        dot.setAttribute(
-          "aria-label",
-          `عرض الصورة ${index + 1}`
-        );
+        dot.setAttribute("aria-label", `عرض الصورة ${index + 1}`);
 
         dot.addEventListener("click", () => {
           if (rotationTimer) {
@@ -385,8 +384,7 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
 
         image.src = images[0];
         image.alt =
-          campaign.headline?.trim() ||
-          `إعلان ${campaign.advertiserName || ""}`;
+          campaign.headline?.trim() || `إعلان ${campaign.advertiserName || ""}`;
 
         content.hidden = true;
 
@@ -403,13 +401,8 @@ const whatsappUrl = `https://wa.me/201002008305?text=${encodeURIComponent(whatsa
 
       firstImage.onerror = showFallback;
       firstImage.src = images[0];
-
     } catch (error) {
-      console.error(
-        "[LOLME Ads] تعذر تحميل الحملة:",
-        slotId,
-        error
-      );
+      console.error("[LOLME Ads] تعذر تحميل الحملة:", slotId, error);
 
       banner.dataset.adType = "house";
       banner.dataset.adReady = "true";

@@ -1,3 +1,4 @@
+// public/js/ad-analytics.js
 import {
   db,
   collection,

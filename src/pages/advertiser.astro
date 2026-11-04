@@ -380,95 +380,746 @@ import Layout from "../layouts/Layout.astro";
     }
 
     .stats-guide {
-  margin: 25px 0 30px;
-  padding: 22px;
-  background: #111827;
-  border: 1px solid #374151;
-  border-radius: 14px;
+      margin: 25px 0 30px;
+      padding: 22px;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 14px;
+    }
+
+    .stats-guide-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stats-guide-header > span {
+      font-size: 28px;
+    }
+
+    .stats-guide-header h3 {
+      margin: 0 0 5px;
+      color: #fde68a;
+    }
+
+    .stats-guide-header p {
+      margin: 0;
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+
+    .stats-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stats-guide-item {
+      padding: 15px;
+      background: #273449;
+      border: 1px solid #374151;
+      border-radius: 10px;
+    }
+
+    .stats-guide-item strong {
+      display: block;
+      margin-bottom: 9px;
+      color: #a78bfa;
+    }
+
+    .stats-guide-item p {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      line-height: 1.9;
+    }
+
+    .stats-guide-note {
+      margin-top: 15px;
+      padding: 15px;
+      background: rgba(22, 199, 101, 0.07);
+      border: 1px solid rgba(22, 199, 101, 0.25);
+      border-radius: 10px;
+    }
+
+    .stats-guide-note strong {
+      color: #4ade80;
+    }
+
+    .stats-guide-note p {
+      margin: 7px 0 0;
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      line-height: 1.9;
+    }
+
+    .stats-guide-footer {
+      margin-top: 15px;
+      color: #94a3b8;
+      font-size: 0.82rem;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 650px) {
+      .stats-guide-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-guide {
+        padding: 16px;
+      }
+    }
+
+    /* إحصائيات الإعلان حسب مكان ظهوره */
+
+    :global(.placement-stats) {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 22px;
+      padding: 20px;
+      background: #172033;
+      border: 1px solid #374151;
+      border-radius: 14px;
+      text-align: right;
+    }
+
+    :global(.placement-stats > h4) {
+      margin: 0 0 20px;
+      color: #fde68a;
+      font-size: 1.1rem;
+      text-align: right;
+    }
+
+    :global(.placement-card) {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 18px;
+      margin-top: 14px;
+      background: #273449;
+      border: 1px solid #3b4b63;
+      border-radius: 12px;
+      text-align: right;
+    }
+
+    :global(.placement-card h5) {
+      margin: 0 0 16px;
+      padding-bottom: 12px;
+      color: #4ade80;
+      font-size: 1rem;
+      border-bottom: 1px solid #475569;
+    }
+
+    :global(.placement-numbers) {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    :global(.placement-number) {
+      min-width: 0;
+      box-sizing: border-box;
+      padding: 16px 10px;
+      text-align: center;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 10px;
+    }
+
+    :global(.placement-number span) {
+      display: block;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    :global(.placement-number strong) {
+      display: block;
+      margin-top: 9px;
+      color: #4ade80;
+      font-size: 1.5rem;
+      font-weight: 800;
+      direction: ltr;
+    }
+
+    :global(.placement-empty) {
+      padding: 15px;
+      color: #cbd5e1;
+      background: #273449;
+      border-radius: 9px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 650px) {
+      :global(.placement-numbers) {
+        grid-template-columns: 1fr;
+      }
+
+      :global(.placement-stats) {
+        padding: 13px;
+      }
+
+      :global(.placement-card) {
+        padding: 13px;
+      }
+    }
+
+    /* =========================================
+   ADVERTISER DASHBOARD
+   Unified typography and components with Admin
+========================================= */
+
+    .advertiser-dashboard {
+      font-family: inherit;
+      line-height: 1.7;
+    }
+
+    /* العناوين الرئيسية */
+
+    .advertiser-dashboard h2 {
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      line-height: 1.5;
+    }
+
+    .advertiser-dashboard h3 {
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .dashboard-header p,
+    .section-heading p {
+      font-size: 0.92rem;
+      line-height: 1.8;
+    }
+
+    /* البطاقات الرئيسية */
+
+    .stat-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-width: 0;
+      padding: 17px 12px;
+      background: #273449;
+      border: 1px solid #334155;
+      border-radius: 12px;
+    }
+
+    .stat-card span {
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .stat-card strong {
+      margin: 0;
+      color: #4ade80;
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      font-weight: 800;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    /* قسم شرح الإحصائيات */
+
+    .stats-guide {
+      padding: 22px;
+      background: #111827;
+      border: 1px solid #475569;
+      border-radius: 14px;
+    }
+
+    .stats-guide-header h3 {
+      font-size: 1.1rem;
+    }
+
+    .stats-guide-header p {
+      font-size: 0.88rem;
+      line-height: 1.8;
+    }
+
+    .stats-guide-item strong {
+      font-size: 0.95rem;
+    }
+
+    .stats-guide-item p,
+    .stats-guide-note p {
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+
+    .stats-guide-footer {
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
+
+    /* عنوان الحملات */
+
+    .section-heading {
+      margin-bottom: 18px;
+    }
+
+    .section-heading h3 {
+      margin: 0;
+      color: #fde68a;
+      font-size: 1.15rem;
+    }
+
+    .section-heading p {
+      margin: 5px 0;
+    }
+
+    /* بطاقة الحملة */
+
+    :global(.advertiser-campaign-card) {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-sizing: border-box;
+      min-width: 0;
+      padding: 20px;
+      margin: 0;
+      color: #e5e7eb;
+      background: linear-gradient(145deg, #111827, #273449);
+      border: 1px solid #475569;
+      border-radius: 15px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+    }
+
+    :global(.advertiser-campaign-card h4) {
+      margin: 0;
+      padding-bottom: 12px;
+      color: #fde68a;
+      font-size: 1.15rem;
+      line-height: 1.7;
+      border-bottom: 1px solid #475569;
+      overflow-wrap: anywhere;
+    }
+
+    /* معلومات الحملة */
+
+    :global(.campaign-meta) {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      padding: 12px 14px;
+      color: #cbd5e1;
+      background: #172033;
+      border: 1px solid #374151;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    /* أرقام الحملة الرئيسية */
+
+    :global(.campaign-numbers) {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 0;
+    }
+
+    :global(.campaign-number) {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-width: 0;
+      padding: 17px 10px;
+      text-align: center;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 10px;
+    }
+
+    :global(.campaign-number span) {
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    :global(.campaign-number strong) {
+      margin: 0;
+      color: #4ade80;
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1.4;
+      direction: ltr;
+      overflow-wrap: anywhere;
+    }
+
+    /* الأداء اليومي */
+
+    :global(.campaign-details) {
+      margin: 0;
+      padding: 15px;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 10px;
+    }
+
+    :global(.campaign-details summary) {
+      padding: 5px;
+      color: #c4b5fd;
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.8;
+      cursor: pointer;
+    }
+
+    :global(.campaign-details[open] summary) {
+      margin-bottom: 15px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #374151;
+    }
+
+    :global(.campaign-details table) {
+      width: 100%;
+      min-width: 550px;
+      margin-top: 10px;
+      border-collapse: collapse;
+      text-align: center;
+    }
+
+    :global(.campaign-details th),
+    :global(.campaign-details td) {
+      padding: 13px 12px;
+      color: #e5e7eb;
+      border-bottom: 1px solid #475569;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      white-space: nowrap;
+    }
+
+    :global(.campaign-details th) {
+      color: #fde68a;
+    }
+
+    /* تمرير جدول الأداء اليومي */
+
+    :global(.campaign-details[open]) {
+      overflow-x: auto;
+    }
+
+    /* إحصائيات الإعلان حسب الصفحة */
+
+    :global(.placement-stats) {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 18px;
+      background: #172033;
+      border: 1px solid #475569;
+      border-radius: 12px;
+    }
+
+    :global(.placement-stats > h4) {
+      margin: 0;
+      padding-bottom: 12px;
+      color: #fde68a;
+      font-size: 1rem;
+      line-height: 1.7;
+      border-bottom: 1px solid #475569;
+    }
+
+    :global(.placement-card) {
+      box-sizing: border-box;
+      width: 100%;
+      min-width: 0;
+      padding: 17px;
+      margin: 0;
+      background: #273449;
+      border: 1px solid #475569;
+      border-radius: 11px;
+    }
+
+    :global(.placement-card h5) {
+      margin: 0 0 15px;
+      padding-bottom: 12px;
+      color: #4ade80;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      border-bottom: 1px solid #475569;
+    }
+
+    :global(.placement-numbers) {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    :global(.placement-number) {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 0;
+      padding: 13px 6px;
+      text-align: center;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 8px;
+    }
+
+    :global(.placement-number span) {
+      color: #cbd5e1;
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+
+    :global(.placement-number strong) {
+      color: #4ade80;
+      font-size: 1.2rem;
+      font-weight: 800;
+      line-height: 1.4;
+      direction: ltr;
+      overflow-wrap: anywhere;
+    }
+
+    /* رسائل عدم وجود بيانات */
+
+    :global(.campaign-empty),
+    :global(.placement-empty) {
+      padding: 18px;
+      color: #cbd5e1;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      line-height: 1.9;
+    }
+
+    /* تحسين المسافات */
+
+    :global(.advertiser-campaign-card > *) {
+      max-width: 100%;
+    }
+
+    /* الشاشات المتوسطة */
+
+    @media (max-width: 750px) {
+      .advertiser-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      :global(.campaign-numbers) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    /* الموبايل */
+
+    @media (max-width: 450px) {
+      .advertiser-dashboard {
+        padding: 12px;
+      }
+
+      .stats-guide {
+        padding: 12px;
+      }
+
+      :global(.advertiser-campaign-card) {
+        padding: 13px;
+      }
+
+      :global(.placement-stats),
+      :global(.placement-card),
+      :global(.campaign-details) {
+        padding: 12px;
+      }
+
+      :global(.placement-numbers) {
+        grid-template-columns: 1fr;
+      }
+
+      :global(.campaign-meta) {
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+
+    :global(.campaign-schedule) {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      width: 100%;
+    }
+
+    :global(.campaign-date) {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 15px;
+      background: #172033;
+      border: 1px solid #374151;
+      border-radius: 10px;
+      min-width: 0;
+    }
+
+    :global(.campaign-date span) {
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    :global(.campaign-date strong) {
+      color: #e5e7eb;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 500px) {
+      :global(.campaign-schedule) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* تفاصيل الحجز والدفع */
+    :global(.campaign-financial) {
+      padding: 18px;
+      background: #172033;
+      border: 1px solid #475569;
+      border-radius: 12px;
+    }
+
+    :global(.campaign-financial h5) {
+      margin: 0 0 15px;
+      padding-bottom: 12px;
+      color: #fde68a;
+      font-size: 1rem;
+      border-bottom: 1px solid #475569;
+    }
+
+    :global(.campaign-financial-grid) {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    :global(.campaign-financial-item) {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+      padding: 13px;
+      background: #273449;
+      border: 1px solid #374151;
+      border-radius: 9px;
+    }
+
+    :global(.campaign-financial-item span) {
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    :global(.campaign-financial-item strong) {
+      color: #4ade80;
+      font-size: 1rem;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 650px) {
+      :global(.campaign-financial-grid) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    
+:global(.campaign-accordion) {
+  width: 100%;
 }
 
-.stats-guide-header {
+:global(.campaign-accordion-summary) {
+  display: block;
+  cursor: pointer;
+  list-style: none;
+  padding: 16px;
+  border-radius: 12px;
+  background: #172033;
+}
+
+:global(.campaign-accordion-summary::-webkit-details-marker) {
+  display: none;
+}
+
+:global(.campaign-accordion-header) {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
 }
 
-.stats-guide-header > span {
-  font-size: 28px;
-}
-
-.stats-guide-header h3 {
-  margin: 0 0 5px;
+:global(.campaign-accordion-header h4) {
+  margin: 0;
   color: #fde68a;
 }
 
-.stats-guide-header p {
-  margin: 0;
-  color: #94a3b8;
-  font-size: .9rem;
-}
-
-.stats-guide-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.stats-guide-item {
-  padding: 15px;
-  background: #273449;
-  border: 1px solid #374151;
-  border-radius: 10px;
-}
-
-.stats-guide-item strong {
-  display: block;
-  margin-bottom: 9px;
-  color: #a78bfa;
-}
-
-.stats-guide-item p {
-  margin: 0;
-  color: #cbd5e1;
-  font-size: .9rem;
-  line-height: 1.9;
-}
-
-.stats-guide-note {
-  margin-top: 15px;
-  padding: 15px;
-  background: rgba(22, 199, 101, .07);
-  border: 1px solid rgba(22, 199, 101, .25);
-  border-radius: 10px;
-}
-
-.stats-guide-note strong {
+:global(.campaign-accordion-status) {
   color: #4ade80;
+  font-size: 0.85rem;
 }
 
-.stats-guide-note p {
-  margin: 7px 0 0;
-  color: #cbd5e1;
-  font-size: .9rem;
-  line-height: 1.9;
+:global(.campaign-accordion-hint) {
+  color: #c4b5fd;
+  font-size: 0.85rem;
 }
 
-.stats-guide-footer {
-  margin-top: 15px;
-  color: #94a3b8;
-  font-size: .82rem;
-  line-height: 1.8;
+:global(.campaign-accordion[open] .campaign-accordion-hint) {
+  font-size: 0;
 }
 
-@media (max-width: 650px) {
-  .stats-guide-grid {
-    grid-template-columns: 1fr;
+:global(.campaign-accordion[open] .campaign-accordion-hint::after) {
+  content: "⌃ إخفاء التفاصيل";
+  font-size: 0.85rem;
+}
+
+:global(.campaign-accordion-content) {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  border-top: 1px solid #374151;
+}
+
+:global(.campaign-accordion-summary .campaign-numbers) {
+  margin-bottom: 0;
+}
+
+:global(.campaign-accordion-summary:hover) {
+  background: #1e293b;
+}
+
+:global(.campaign-accordion-summary:focus-visible) {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  :global(.campaign-accordion-summary) {
+    padding: 12px;
   }
 
-  .stats-guide {
-    padding: 16px;
+  :global(.campaign-accordion-content) {
+    padding: 12px;
+  }
+
+  :global(.campaign-accordion-header) {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
+
   </style>
 </Layout>

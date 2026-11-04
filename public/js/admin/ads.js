@@ -6,6 +6,8 @@ import {
   doc,
   addDoc,
   getDocs,
+  query,
+  where,
   getDoc,
   setDoc,
   updateDoc,
@@ -15,6 +17,63 @@ import {
 
 const $ = (id) => document.getElementById(id);
 const PAGE_SIZE = 12;
+
+const SLOT_MONTHLY_PRICES = {
+  "jokes-1": 299,
+  "jokes-2": 249,
+  "jokes-3": 199,
+  "jokes-4": 179,
+  "jokes-5": 149,
+  "jokes-6": 129,
+  "jokes-7": 119,
+  "jokes-8": 109,
+  "jokes-9": 99,
+  "jokes-10": 89,
+  "jokes-11": 79,
+  tests: 0,
+};
+
+function updateCampaignPrice() {
+  const slotId = $("ad-slot")?.value || "";
+  const monthlyPrice = SLOT_MONTHLY_PRICES[slotId] ?? 0;
+
+  const startValue = $("ad-start")?.value;
+  const endValue = $("ad-end")?.value;
+
+  let durationDays = 0;
+  let billingPeriods = 0;
+  let totalPrice = 0;
+
+  if (startValue && endValue) {
+    const startAt = new Date(startValue);
+    const endAt = new Date(endValue);
+
+    if (
+      !Number.isNaN(startAt.getTime()) &&
+      !Number.isNaN(endAt.getTime()) &&
+      endAt > startAt
+    ) {
+      durationDays = Math.ceil(
+        (endAt.getTime() - startAt.getTime()) / 86400000,
+      );
+
+      billingPeriods = Math.ceil(durationDays / 30);
+      totalPrice = monthlyPrice * billingPeriods;
+    }
+  }
+
+  if ($("ad-monthly-price")) {
+    $("ad-monthly-price").value = monthlyPrice;
+  }
+
+  if ($("ad-duration-days")) {
+    $("ad-duration-days").value = durationDays;
+  }
+
+  if ($("ad-total-price")) {
+    $("ad-total-price").value = totalPrice;
+  }
+}
 
 let initialized = false;
 let authReadyPromise = null;
@@ -163,6 +222,11 @@ function fillForm(id, data) {
 
   $("ad-slot").value = data.slotId || "jokes-1";
 
+  $("ad-start").value = toLocalDateTime(data.startAt);
+  $("ad-end").value = toLocalDateTime(data.endAt);
+
+  updateCampaignPrice();
+
   const imagesField = $("ad-images") || $("ad-image");
 
   if (imagesField) {
@@ -182,8 +246,6 @@ function fillForm(id, data) {
   }
 
   $("ad-url").value = data.targetUrl || "";
-  $("ad-start").value = toLocalDateTime(data.startAt);
-  $("ad-end").value = toLocalDateTime(data.endAt);
   $("ad-status").value = data.status || "paused";
   $("ad-save").textContent = "حفظ التعديلات";
   $("ad-cancel").hidden = false;
@@ -197,6 +259,33 @@ function fillForm(id, data) {
     behavior: "smooth",
     block: "start",
   });
+
+  if ($("ad-payment-status")) {
+    $("ad-payment-status").value = data.paymentStatus || "unpaid";
+  }
+
+  if ($("ad-payment-method")) {
+    $("ad-payment-method").value = data.paymentMethod || "";
+  }
+
+  if ($("ad-paid-at")) {
+    const paidAt = data.paidAt?.toDate
+      ? data.paidAt.toDate()
+      : data.paidAt
+        ? new Date(data.paidAt)
+        : null;
+
+    $("ad-paid-at").value =
+      paidAt && !Number.isNaN(paidAt.getTime())
+        ? `${paidAt.getFullYear()}-${String(paidAt.getMonth() + 1).padStart(2, "0")}-${String(paidAt.getDate()).padStart(2, "0")}`
+        : "";
+  }
+
+  if ($("ad-payment-status")) {
+    $("ad-payment-status").value = data.paymentStatus || "unpaid";
+  }
+
+  updateCampaignPrice();
 }
 
 async function saveCampaign(event) {
@@ -221,11 +310,14 @@ async function saveCampaign(event) {
 
     const startValue = $("ad-start").value;
     const endValue = $("ad-end").value;
+
     const startAt = new Date(startValue);
     const endAt = new Date(endValue);
+
     const status = $("ad-status").value;
     const campaignId = $("campaign-id").value.trim();
 
+    // التحقق من البيانات الأساسية
     if (!advertiserName) {
       throw new Error("اكتب اسم المعلن.");
     }
@@ -235,6 +327,10 @@ async function saveCampaign(event) {
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(advertiserEmail)
     ) {
       throw new Error("البريد الإلكتروني للمعلن غير صحيح.");
+    }
+
+    if (!slotId) {
+      throw new Error("اختر المساحة الإعلانية.");
     }
 
     if (
@@ -254,10 +350,108 @@ async function saveCampaign(event) {
       throw new Error("حالة الحملة غير صحيحة.");
     }
 
+    // حساب مدة الحملة والسعر
+    const durationDays = Math.ceil(
+      (endAt.getTime() - startAt.getTime()) / 86400000,
+    );
+
+    const monthlyPrice = SLOT_MONTHLY_PRICES[slotId] ?? 0;
+    const billingPeriods = Math.ceil(durationDays / 30);
+    const totalPrice = monthlyPrice * billingPeriods;
+
+    // التحقق من تعارض الحجوزات على نفس المساحة
+    const campaignsQuery = query(
+      collection(db, "adCampaigns"),
+      where("slotId", "==", slotId),
+    );
+
+    const campaignsSnapshot = await getDocs(campaignsQuery);
+
+    for (const campaignDoc of campaignsSnapshot.docs) {
+      // تجاهل الحملة الحالية أثناء التعديل
+      if (campaignDoc.id === campaignId) continue;
+
+      const existing = campaignDoc.data();
+
+      const existingStart = existing.startAt?.toDate
+        ? existing.startAt.toDate()
+        : new Date(existing.startAt);
+
+      const existingEnd = existing.endAt?.toDate
+        ? existing.endAt.toDate()
+        : new Date(existing.endAt);
+
+      if (
+        Number.isNaN(existingStart.getTime()) ||
+        Number.isNaN(existingEnd.getTime())
+      ) {
+        continue;
+      }
+
+      // يوجد تعارض إذا تداخلت الفترتان
+      const hasOverlap = startAt < existingEnd && endAt > existingStart;
+
+      if (hasOverlap) {
+        throw new Error(
+          `لا يمكن الحفظ: المساحة ${slotId} محجوزة بالفعل بحملة أخرى من ${existingStart.toLocaleDateString("ar-EG")} إلى ${existingEnd.toLocaleDateString("ar-EG")}. اختر فترة مختلفة.`,
+        );
+      }
+    }
+
+    // بيانات الدفع
+    const paymentStatus = $("ad-payment-status")?.value || "unpaid";
+
+    const paymentMethod = $("ad-payment-method")?.value || "";
+
+    const paidAtValue = $("ad-paid-at")?.value || "";
+
+    if (!["paid", "unpaid"].includes(paymentStatus)) {
+      throw new Error("حالة الدفع غير صحيحة.");
+    }
+
+    if (paymentStatus === "paid") {
+      if (!paymentMethod) {
+        throw new Error("اختر طريقة الدفع.");
+      }
+
+      if (!paidAtValue) {
+        throw new Error("حدد تاريخ استلام الدفع.");
+      }
+    }
+
+    const paidAmount = paymentStatus === "paid" ? totalPrice : 0;
+
+    const paidAt =
+      paymentStatus === "paid" ? new Date(`${paidAtValue}T12:00:00`) : null;
+
+    // تحديث الحقول الظاهرة في النموذج
+    if ($("ad-monthly-price")) {
+      $("ad-monthly-price").value = monthlyPrice;
+    }
+
+    if ($("ad-duration-days")) {
+      $("ad-duration-days").value = durationDays;
+    }
+
+    if ($("ad-total-price")) {
+      $("ad-total-price").value = totalPrice;
+    }
+
+    // بيانات الحملة
     const campaignData = {
       advertiserName,
       advertiserEmail,
       slotId,
+
+      monthlyPrice,
+      durationDays,
+      totalPrice,
+
+      paymentStatus,
+      paymentMethod: paymentStatus === "paid" ? paymentMethod : "",
+      paidAmount,
+      paidAt,
+
       imageUrls,
       imageUrl: imageUrls[0],
       targetUrl,
@@ -279,6 +473,7 @@ async function saveCampaign(event) {
       campaignData.buttonText = $("ad-button-text").value.trim();
     }
 
+    // حفظ التعديلات أو إنشاء حملة جديدة
     if (campaignId) {
       const campaignRef = doc(db, "adCampaigns", campaignId);
       const existing = await getDoc(campaignRef);
@@ -287,27 +482,22 @@ async function saveCampaign(event) {
         throw new Error("الحملة المطلوب تعديلها غير موجودة.");
       }
 
-      await setDoc(campaignRef, campaignData, { merge: true });
+      await setDoc(campaignRef, campaignData, {
+        merge: true,
+      });
 
-      showMessage(
-        "ad-form-message",
-        "تم تحديث الحملة بنجاح، والبيانات ما زالت في النموذج.",
-      );
+      showMessage("ad-form-message", "تم تحديث الحملة بنجاح.");
     } else {
       const newCampaign = await addDoc(collection(db, "adCampaigns"), {
         ...campaignData,
         createdAt: serverTimestamp(),
       });
 
-      // الاحتفاظ بالبيانات بعد الحفظ، وتحويل النموذج إلى وضع التعديل.
       $("campaign-id").value = newCampaign.id;
       $("ad-save").textContent = "حفظ التعديلات";
       $("ad-cancel").hidden = false;
 
-      showMessage(
-        "ad-form-message",
-        "تم حفظ الحملة. الحقول ما زالت محتفظة ببياناتها.",
-      );
+      showMessage("ad-form-message", "تم حفظ الحملة بنجاح.");
     }
 
     await loadCampaigns();
@@ -670,7 +860,6 @@ async function loadAdStatistics() {
   }
 
   const refreshButton = $("ad-stats-refresh");
-
   if (refreshButton) refreshButton.disabled = true;
 
   showMessage("ad-stats-message", "جارٍ تحميل الإحصائيات...");
@@ -685,49 +874,97 @@ async function loadAdStatistics() {
         );
 
         const days = snapshot.docs
-          .map((item) => item.data())
-          .filter((item) => {
-            const date = item.date;
+          .map((dayDoc) => ({
+            date: dayDoc.id,
+            ...dayDoc.data(),
+          }))
+          .filter((day) => day.date >= startDay && day.date <= endDay)
+          .sort((a, b) => a.date.localeCompare(b.date));
 
-            return (
-              typeof date === "string" && date >= startDay && date <= endDay
-            );
-          });
+        const totals = {
+          impressions: 0,
+          clicks: 0,
+          visitors: 0,
+          daily: {},
+        };
 
-        const totals = days.reduce(
-          (result, day) => {
-            result.impressions += Number(day.impressions || 0);
-            result.clicks += Number(day.clicks || 0);
-            result.visitors += Number(day.uniqueVisitors || 0);
+        const placementsMap = new Map();
 
-            const date = day.date;
+        for (const day of days) {
+          const dayImpressions = Number(day.impressions) || 0;
+          const dayClicks = Number(day.clicks) || 0;
+          const dayVisitors = Number(day.uniqueVisitors) || 0;
 
-            if (!result.daily[date]) {
-              result.daily[date] = {
+          totals.impressions += dayImpressions;
+          totals.clicks += dayClicks;
+          totals.visitors += dayVisitors;
+
+          totals.daily[day.date] = {
+            impressions: dayImpressions,
+            clicks: dayClicks,
+            visitors: dayVisitors,
+          };
+
+          // تجميع إحصائيات الصفحات
+          const dailyPlacements = day.placements || {};
+
+          for (const placement of Object.values(dailyPlacements)) {
+            const pagePath = placement.pagePath || "/";
+
+            if (!placementsMap.has(pagePath)) {
+              placementsMap.set(pagePath, {
+                pagePath,
                 impressions: 0,
                 clicks: 0,
-              };
+                dailyStats: [],
+              });
             }
 
-            result.daily[date].impressions += Number(day.impressions || 0);
+            const item = placementsMap.get(pagePath);
+            const placementImpressions = Number(placement.impressions) || 0;
+            const placementClicks = Number(placement.clicks) || 0;
 
-            result.daily[date].clicks += Number(day.clicks || 0);
+            item.impressions += placementImpressions;
+            item.clicks += placementClicks;
 
-            return result;
-          },
-          {
-            impressions: 0,
-            clicks: 0,
-            visitors: 0,
-            daily: {},
-          },
-        );
+            item.dailyStats.push({
+              date: day.date,
+              impressions: placementImpressions,
+              clicks: placementClicks,
+            });
+          }
+        }
+
+        const placements = Array.from(placementsMap.values())
+          .map((placement) => ({
+            ...placement,
+            ctr:
+              placement.impressions > 0
+                ? Number(
+                    ((placement.clicks / placement.impressions) * 100).toFixed(
+                      2,
+                    ),
+                  )
+                : 0,
+          }))
+          .sort((a, b) => b.impressions - a.impressions);
 
         return {
           id,
           name: data.advertiserName || "معلن بدون اسم",
+          email: data.advertiserEmail || "",
+          advertiserUid: data.advertiserUid || "",
           slotId: data.slotId || "—",
-          ...totals,
+          data,
+          impressions: totals.impressions,
+          clicks: totals.clicks,
+          visitors: totals.visitors,
+          daily: totals.daily,
+          placements,
+          ctr:
+            totals.impressions > 0
+              ? Number(((totals.clicks / totals.impressions) * 100).toFixed(2))
+              : 0,
         };
       }),
     );
@@ -859,22 +1096,19 @@ function renderAdStatsChart(daily) {
 
 function renderCampaignStatsTable(campaigns) {
   const tbody = $("ad-stats-campaigns");
-
   if (!tbody) return;
 
   tbody.replaceChildren();
 
-  // تجميع الحملات حسب هوية المعلن
   const advertisers = new Map();
 
+  // تجميع الحملات حسب هوية المعلن
   for (const campaign of campaigns) {
-    const uid = campaign.data?.advertiserUid || "";
-    const email = String(campaign.data?.advertiserEmail || "")
+    const uid = campaign.advertiserUid || "";
+    const email = String(campaign.email || "")
       .trim()
       .toLowerCase();
 
-    // لا نستخدم الاسم وحده لدمج المعلنين.
-    // عند غياب UID والبريد نترك الحملة مستقلة.
     const key = uid
       ? `uid:${uid}`
       : email
@@ -915,6 +1149,8 @@ function renderCampaignStatsTable(campaigns) {
     return;
   }
 
+  const number = (value) => formatStatNumber(value);
+
   for (const advertiser of sorted) {
     const ctr = advertiser.impressions
       ? (advertiser.clicks / advertiser.impressions) * 100
@@ -924,14 +1160,13 @@ function renderCampaignStatsTable(campaigns) {
 
     row.append(
       safeText("td", advertiser.name || "معلن بدون اسم"),
-      safeText("td", formatStatNumber(advertiser.campaigns.length)),
-      safeText("td", formatStatNumber(advertiser.impressions)),
-      safeText("td", formatStatNumber(advertiser.clicks)),
+      safeText("td", number(advertiser.campaigns.length)),
+      safeText("td", number(advertiser.impressions)),
+      safeText("td", number(advertiser.clicks)),
       safeText("td", `${ctr.toFixed(2)}%`),
     );
 
     const detailsCell = document.createElement("td");
-
     const detailsButton = safeText("button", "عرض الحملات");
 
     detailsButton.type = "button";
@@ -942,65 +1177,193 @@ function renderCampaignStatsTable(campaigns) {
     row.append(detailsCell);
     tbody.append(row);
 
-    // صف تفاصيل مخفي يظهر عند الطلب
+    // صف تفاصيل المعلن
     const detailsRow = document.createElement("tr");
     detailsRow.hidden = true;
 
-    const detailsWrapper = document.createElement("td");
-    detailsWrapper.colSpan = 6;
+    const wrapperCell = document.createElement("td");
+    wrapperCell.colSpan = 6;
 
-    const detailsContainer = document.createElement("div");
-    detailsContainer.className = "ad-advertiser-details";
+    const wrapper = document.createElement("div");
+    wrapper.className = "ad-advertiser-details";
 
-    const detailsTitle = safeText(
-      "strong",
-      `حملات ${advertiser.name || "المعلن"}`,
-    );
+    const title = safeText("strong", `📢 حملات ${advertiser.name || "المعلن"}`);
 
-    detailsContainer.append(detailsTitle);
-
-    const campaignTable = document.createElement("table");
-    campaignTable.className = "ad-stats-table ad-stats-inner-table";
-
-    const thead = document.createElement("thead");
-    const headerRow = document.createElement("tr");
-
-    ["معرّف الحملة", "المساحة", "مرات الظهور", "النقرات", "CTR"].forEach(
-      (label) => {
-        headerRow.append(safeText("th", label));
-      },
-    );
-
-    thead.append(headerRow);
-
-    const campaignBody = document.createElement("tbody");
+    wrapper.append(title);
 
     const sortedCampaigns = [...advertiser.campaigns].sort(
       (a, b) => b.impressions - a.impressions,
     );
 
     for (const campaign of sortedCampaigns) {
+      const campaignBox = document.createElement("section");
+      campaignBox.className = "admin-campaign-performance";
+
+      const campaignTitle = safeText(
+        "h5",
+        campaign.data?.headline || `حملة ${campaign.slotId}`,
+      );
+
+      const campaignMeta = safeText(
+        "p",
+        `المساحة: ${campaign.slotId} | معرّف الحملة: ${campaign.id}`,
+      );
+      campaignMeta.className = "admin-campaign-meta";
+
+      const campaignNumbers = document.createElement("div");
+      campaignNumbers.className = "admin-performance-grid";
+
       const campaignCtr = campaign.impressions
         ? (campaign.clicks / campaign.impressions) * 100
         : 0;
 
-      const campaignRow = document.createElement("tr");
+      const metrics = [
+        ["مرات الظهور", number(campaign.impressions)],
+        ["الزوار المختلفون", number(campaign.visitors)],
+        ["النقرات", number(campaign.clicks)],
+        ["معدل النقر CTR", `${campaignCtr.toFixed(2)}%`],
+      ];
 
-      campaignRow.append(
-        safeText("td", campaign.id),
-        safeText("td", campaign.slotId),
-        safeText("td", formatStatNumber(campaign.impressions)),
-        safeText("td", formatStatNumber(campaign.clicks)),
-        safeText("td", `${campaignCtr.toFixed(2)}%`),
+      for (const [label, value] of metrics) {
+        const metric = document.createElement("div");
+        metric.className = "admin-performance-number";
+
+        metric.append(safeText("span", label), safeText("strong", value));
+
+        campaignNumbers.append(metric);
+      }
+
+      campaignBox.append(campaignTitle, campaignMeta, campaignNumbers);
+
+      // الأداء حسب الصفحة
+      const placementsSection = document.createElement("div");
+      placementsSection.className = "admin-placement-section";
+
+      placementsSection.append(
+        safeText("h6", "📍 أداء الإعلان حسب مكان ظهوره"),
       );
 
-      campaignBody.append(campaignRow);
+      const pageNames = {
+        "/tests": "🧩 صفحة الاختبارات",
+        "/jokes": "😂 صفحة النكت",
+      };
+
+      if (!campaign.placements.length) {
+        placementsSection.append(
+          safeText(
+            "p",
+            "لا توجد إحصائيات مسجلة حسب الصفحة خلال الفترة المحددة.",
+          ),
+        );
+      } else {
+        const placementsGrid = document.createElement("div");
+        placementsGrid.className = "admin-placement-grid";
+
+        for (const placement of campaign.placements) {
+          const placementCard = document.createElement("div");
+          placementCard.className = "admin-placement-card";
+
+          placementCard.append(
+            safeText(
+              "h6",
+              pageNames[placement.pagePath] || `📄 ${placement.pagePath}`,
+            ),
+          );
+
+          const placementNumbers = document.createElement("div");
+          placementNumbers.className = "admin-placement-numbers";
+
+          const placementMetrics = [
+            ["مرات الظهور", number(placement.impressions)],
+            ["النقرات", number(placement.clicks)],
+            ["CTR", `${placement.ctr.toFixed(2)}%`],
+          ];
+
+          for (const [label, value] of placementMetrics) {
+            const metric = document.createElement("div");
+            metric.className = "admin-placement-number";
+
+            metric.append(safeText("span", label), safeText("strong", value));
+
+            placementNumbers.append(metric);
+          }
+
+          placementCard.append(placementNumbers);
+          placementsGrid.append(placementCard);
+        }
+
+        placementsSection.append(placementsGrid);
+      }
+
+      campaignBox.append(placementsSection);
+
+      // الأداء اليومي
+      const dailyDetails = document.createElement("details");
+      dailyDetails.className = "admin-daily-details";
+
+      dailyDetails.append(safeText("summary", "📅 عرض الأداء اليومي"));
+
+      const dailyEntries = Object.entries(campaign.daily || {}).sort(
+        ([a], [b]) => b.localeCompare(a),
+      );
+
+      if (!dailyEntries.length) {
+        dailyDetails.append(
+          safeText("p", "لا توجد بيانات يومية في الفترة المحددة."),
+        );
+      } else {
+        const dailyTableWrap = document.createElement("div");
+        dailyTableWrap.className = "ad-stats-table-wrap";
+
+        const dailyTable = document.createElement("table");
+        dailyTable.className = "ad-stats-table";
+
+        const thead = document.createElement("thead");
+        const header = document.createElement("tr");
+
+        [
+          "التاريخ",
+          "مرات الظهور",
+          "الزوار المختلفون",
+          "النقرات",
+          "CTR",
+        ].forEach((label) => {
+          header.append(safeText("th", label));
+        });
+
+        thead.append(header);
+
+        const dailyBody = document.createElement("tbody");
+
+        for (const [date, values] of dailyEntries) {
+          const dailyCtr = values.impressions
+            ? (values.clicks / values.impressions) * 100
+            : 0;
+
+          const dailyRow = document.createElement("tr");
+
+          dailyRow.append(
+            safeText("td", date),
+            safeText("td", number(values.impressions)),
+            safeText("td", number(values.visitors)),
+            safeText("td", number(values.clicks)),
+            safeText("td", `${dailyCtr.toFixed(2)}%`),
+          );
+
+          dailyBody.append(dailyRow);
+        }
+
+        dailyTable.append(thead, dailyBody);
+        dailyTableWrap.append(dailyTable);
+        dailyDetails.append(dailyTableWrap);
+      }
+
+      campaignBox.append(dailyDetails);
+      wrapper.append(campaignBox);
     }
 
-    campaignTable.append(thead, campaignBody);
-    detailsContainer.append(campaignTable);
-    detailsWrapper.append(detailsContainer);
-    detailsRow.append(detailsWrapper);
+    wrapperCell.append(wrapper);
+    detailsRow.append(wrapperCell);
     tbody.append(detailsRow);
 
     detailsButton.addEventListener("click", () => {
@@ -1074,6 +1437,9 @@ export async function initAds() {
     initializeStatsDates();
 
     $("ad-stats-refresh")?.addEventListener("click", loadAdStatistics);
+    $("ad-slot")?.addEventListener("change", updateCampaignPrice);
+    $("ad-start")?.addEventListener("change", updateCampaignPrice);
+    $("ad-end")?.addEventListener("change", updateCampaignPrice);
     form.addEventListener("submit", saveCampaign);
 
     $("ad-cancel")?.addEventListener("click", () => {

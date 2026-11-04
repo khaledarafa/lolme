@@ -1,121 +1,211 @@
+<!-- src/components/admin/ads.astro -->
 <section class="ads-admin" dir="rtl">
   <h2>📢 إدارة الإعلانات</h2>
-  <p>أنشئ حملات إعلانية بصور متعددة، وابحث عن حملات كل معلن بالاسم أو البريد الإلكتروني.</p>
+  <p>
+    أنشئ حملات إعلانية بصور متعددة، وابحث عن حملات كل معلن بالاسم أو البريد
+    الإلكتروني.
+  </p>
 
   <section class="ad-stats" aria-labelledby="ad-stats-title">
-  <div class="ad-stats-header">
-    <div>
-      <h3 id="ad-stats-title">📊 إحصائيات الإعلانات</h3>
-      <p>متابعة أداء الحملات الإعلانية على LOLME</p>
+    <div class="ad-stats-header">
+      <div>
+        <h3 id="ad-stats-title">📊 إحصائيات الإعلانات</h3>
+        <p>متابعة أداء الحملات الإعلانية على LOLME</p>
+      </div>
+      <button type="button" id="ad-stats-refresh">↻ تحديث الإحصائيات</button>
     </div>
-    <button type="button" id="ad-stats-refresh">↻ تحديث الإحصائيات</button>
-  </div>
 
-  <div class="ad-stats-filters">
-    <div>
-      <label for="ad-stats-start">من تاريخ</label>
-      <input type="date" id="ad-stats-start" />
+    <div class="ad-stats-filters">
+      <div>
+        <label for="ad-stats-start">من تاريخ</label>
+        <input type="date" id="ad-stats-start" />
+      </div>
+      <div>
+        <label for="ad-stats-end">إلى تاريخ</label>
+        <input type="date" id="ad-stats-end" />
+      </div>
     </div>
-    <div>
-      <label for="ad-stats-end">إلى تاريخ</label>
-      <input type="date" id="ad-stats-end" />
+
+    <p id="ad-stats-message" role="status">جارٍ تحميل الإحصائيات...</p>
+
+    <div class="ad-stats-cards">
+      <article class="ad-stat-card">
+        <span>مرات الظهور</span>
+        <strong id="stat-impressions">—</strong>
+      </article>
+      <article class="ad-stat-card">
+        <span>النقرات</span>
+        <strong id="stat-clicks">—</strong>
+      </article>
+      <article class="ad-stat-card">
+        <span>الزوار الفريدون يوميًا*</span>
+        <strong id="stat-visitors">—</strong>
+      </article>
+      <article class="ad-stat-card">
+        <span>معدل النقر CTR</span>
+        <strong id="stat-ctr">—</strong>
+      </article>
     </div>
-  </div>
 
-  <p id="ad-stats-message" role="status">جارٍ تحميل الإحصائيات...</p>
-
-  <div class="ad-stats-cards">
-    <article class="ad-stat-card">
-      <span>مرات الظهور</span>
-      <strong id="stat-impressions">—</strong>
-    </article>
-    <article class="ad-stat-card">
-      <span>النقرات</span>
-      <strong id="stat-clicks">—</strong>
-    </article>
-    <article class="ad-stat-card">
-      <span>الزوار الفريدون يوميًا*</span>
-      <strong id="stat-visitors">—</strong>
-    </article>
-    <article class="ad-stat-card">
-      <span>معدل النقر CTR</span>
-      <strong id="stat-ctr">—</strong>
-    </article>
-  </div>
-
-  <div class="ad-stats-panel">
-    <h4>الأداء اليومي</h4>
-    <div id="ad-stats-chart" class="ad-stats-chart"></div>
-  </div>
-
-  <div class="ad-stats-panel">
-    <h4>أداء الحملات</h4>
-    <div class="ad-stats-table-wrap">
-      <table class="ad-stats-table">
-        <thead>
-          <tr>
-            <th>الحملة</th>
-            <th>المساحة</th>
-            <th>الظهور</th>
-            <th>النقرات</th>
-            <th>CTR</th>
-          </tr>
-        </thead>
-        <div class="ad-stats-panel">
-          <h4>أداء المعلنين</h4>
-
-          <div class="ad-stats-table-wrap">
-            <table class="ad-stats-table">
-              <thead>
-                <tr>
-                  <th>المعلن</th>
-                  <th>عدد الحملات</th>
-                  <th>مرات الظهور</th>
-                  <th>النقرات</th>
-                  <th>CTR</th>
-                  <th>التفاصيل</th>
-                </tr>
-              </thead>
-
-              <tbody id="ad-stats-campaigns"></tbody>
-            </table>
-          </div>
-        </div>
-      </table>
+    <div class="ad-stats-panel">
+      <h4>الأداء اليومي</h4>
+      <div id="ad-stats-chart" class="ad-stats-chart"></div>
     </div>
-  </div>
-  <small>* مجموع الزوار الفريدين اليومي، وليس عدد الأشخاص المختلفين عبر كامل الفترة.</small>
-</section>
+
+    <div class="ad-stats-panel">
+      <h4>أداء الحملات</h4>
+
+      <div class="ad-stats-table-wrap">
+        <table class="ad-stats-table">
+          <thead>
+            <tr>
+              <th>الحملة</th>
+              <th>المساحة</th>
+              <th>الظهور</th>
+              <th>النقرات</th>
+              <th>CTR</th>
+            </tr>
+          </thead>
+          <tbody id="ad-stats-campaign-details"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="ad-stats-panel">
+      <h4>أداء المعلنين</h4>
+
+      <div class="ad-stats-table-wrap">
+        <table class="ad-stats-table">
+          <thead>
+            <tr>
+              <th>المعلن</th>
+              <th>عدد الحملات</th>
+              <th>مرات الظهور</th>
+              <th>النقرات</th>
+              <th>CTR</th>
+              <th>التفاصيل</th>
+            </tr>
+          </thead>
+
+          <tbody id="ad-stats-campaigns"></tbody>
+        </table>
+      </div>
+    </div>
+    <small
+      >* مجموع الزوار الفريدين اليومي، وليس عدد الأشخاص المختلفين عبر كامل
+      الفترة.</small
+    >
+  </section>
 
   <form id="ad-campaign-form">
     <input type="hidden" id="campaign-id" />
 
     <label for="advertiser-name">اسم المعلن</label>
-    <input id="advertiser-name" required maxlength="100" placeholder="مثال: متجر الملابس" />
+    <input
+      id="advertiser-name"
+      required
+      maxlength="100"
+      placeholder="مثال: متجر الملابس"
+    />
 
     <label for="advertiser-email">البريد الإلكتروني للمعلن (اختياري)</label>
-    <input id="advertiser-email" type="email" maxlength="160" placeholder="name@example.com" />
+    <input
+      id="advertiser-email"
+      type="email"
+      maxlength="160"
+      placeholder="name@example.com"
+    />
 
     <label for="ad-slot">المساحة الإعلانية</label>
     <select id="ad-slot" required>
-      <option value="jokes-1">jokes-1 — بداية النكت</option>
-      <option value="jokes-2">jokes-2 — الثلث الأول</option>
-      <option value="jokes-3">jokes-3 — منتصف الصفحة</option>
-      <option value="jokes-4">jokes-4 — بعد المنتصف</option>
-      <option value="jokes-5">jokes-5 — الثلث الأخير</option>
-      <option value="jokes-6">jokes-6 — نهاية الصفحة</option>
+      <option value="jokes-1">jokes-1 — بداية صفحة النكت (299 ج.م)</option>
+      <option value="jokes-2">jokes-2 — الجزء الأول (249 ج.م)</option>
+      <option value="jokes-3">jokes-3 — الثلث الأول (199 ج.م)</option>
+      <option value="jokes-4">jokes-4 — قبل المنتصف (179 ج.م)</option>
+      <option value="jokes-5">jokes-5 — منتصف الصفحة (149 ج.م)</option>
+      <option value="jokes-6">jokes-6 — بعد المنتصف (129 ج.م)</option>
+      <option value="jokes-7">jokes-7 — الجزء الثاني (119 ج.م)</option>
+      <option value="jokes-8">jokes-8 — الثلث الأخير (109 ج.م)</option>
+      <option value="jokes-9">jokes-9 — الجزء الأخير (99 ج.م)</option>
+      <option value="jokes-10">jokes-10 — قبل النهاية (89 ج.م)</option>
+      <option value="jokes-11">jokes-11 — نهاية الصفحة (79 ج.م)</option>
       <option value="tests">tests — الاختبارات</option>
     </select>
 
+<!-- البيانات المالية للحملة -->
+<div class="ad-financial-fields">
+  <h3>💰 بيانات الحجز والدفع</h3>
+
+  <label for="ad-monthly-price">سعر المساحة لفترة 30 يومًا (جنيه)</label>
+  <input
+    id="ad-monthly-price"
+    type="number"
+    min="0"
+    step="1"
+    readonly
+  />
+
+  <label for="ad-duration-days">مدة الحجز (بالأيام)</label>
+  <input
+    id="ad-duration-days"
+    type="number"
+    min="1"
+    readonly
+  />
+
+  <label for="ad-total-price">إجمالي الحملة (جنيه)</label>
+  <input
+    id="ad-total-price"
+    type="number"
+    min="0"
+    readonly
+  />
+
+  <label for="ad-payment-status">حالة الدفع</label>
+  <select id="ad-payment-status">
+    <option value="unpaid">غير مدفوع</option>
+    <option value="paid">مدفوع بالكامل</option>
+  </select>
+
+  <label for="ad-payment-method">طريقة الدفع</label>
+  <select id="ad-payment-method">
+    <option value="">لم يتم الدفع</option>
+    <option value="fawry">فوري</option>
+    <option value="transfer">تحويل بنكي</option>
+    <option value="cash">نقدًا</option>
+  </select>
+
+  <label for="ad-paid-at">تاريخ استلام الدفع</label>
+  <input id="ad-paid-at" type="date" />
+
+  <p>
+    عند تأكيد الدفع بالكامل، سيتم تسجيل إجمالي قيمة الحملة كمبلغ مدفوع.
+  </p>
+</div>
+
     <label for="ad-images">روابط صور الإعلان (كل رابط في سطر)</label>
-    <textarea id="ad-images" rows="5" required placeholder="https://example.com/ad1.jpg&#10;https://example.com/ad2.jpg"></textarea>
+    <textarea
+      id="ad-images"
+      rows="5"
+      required
+      placeholder="https://example.com/ad1.jpg
+                   https://example.com/ad2.jpg"
+    ></textarea>
     <small>الصورة الأولى تظهر أولًا، ثم تتبدل الصور كل 4.5 ثانية.</small>
 
     <label for="ad-headline">عنوان الإعلان (اختياري)</label>
-    <input id="ad-headline" maxlength="160" placeholder="عنوان المنتج أو العرض" />
+    <input
+      id="ad-headline"
+      maxlength="160"
+      placeholder="عنوان المنتج أو العرض"
+    />
 
     <label for="ad-description">وصف الإعلان (اختياري)</label>
-    <textarea id="ad-description" rows="5" maxlength="3000" placeholder="اكتب جملة أو وصفًا طويلًا عن المنتج أو الخدمة"></textarea>
+    <textarea
+      id="ad-description"
+      rows="5"
+      maxlength="3000"
+      placeholder="اكتب جملة أو وصفًا طويلًا عن المنتج أو الخدمة"></textarea>
 
     <label for="ad-button-text">نص زر الإعلان (اختياري)</label>
     <input id="ad-button-text" maxlength="50" placeholder="مثال: اعرف المزيد" />
@@ -147,7 +237,11 @@
 
   <div class="ad-campaign-filters">
     <label for="ad-search">بحث بالاسم أو البريد أو معرّف الحملة</label>
-    <input id="ad-search" type="search" placeholder="اكتب اسم المعلن أو بريده..." />
+    <input
+      id="ad-search"
+      type="search"
+      placeholder="اكتب اسم المعلن أو بريده..."
+    />
 
     <div class="ad-filter-row">
       <div>
@@ -155,11 +249,16 @@
         <select id="ad-filter-slot">
           <option value="all">كل المساحات</option>
           <option value="jokes-1">jokes-1 — بداية النكت</option>
-          <option value="jokes-2">jokes-2 — الثلث الأول</option>
-          <option value="jokes-3">jokes-3 — منتصف الصفحة</option>
-          <option value="jokes-4">jokes-4 — بعد المنتصف</option>
-          <option value="jokes-5">jokes-5 — الثلث الأخير</option>
-          <option value="jokes-6">jokes-6 — نهاية الصفحة</option>
+          <option value="jokes-2">jokes-2 — الجزء الأول</option>
+          <option value="jokes-3">jokes-3 — الثلث الأول</option>
+          <option value="jokes-4">jokes-4 — قبل المنتصف</option>
+          <option value="jokes-5">jokes-5 — منتصف الصفحة</option>
+          <option value="jokes-6">jokes-6 — بعد المنتصف</option>
+          <option value="jokes-7">jokes-7 — الجزء الثاني</option>
+          <option value="jokes-8">jokes-8 — الثلث الأخير</option>
+          <option value="jokes-9">jokes-9 — الجزء الأخير</option>
+          <option value="jokes-10">jokes-10 — قبل النهاية</option>
+          <option value="jokes-11">jokes-11 — نهاية الصفحة</option>
           <option value="tests">tests — الاختبارات</option>
         </select>
       </div>
@@ -181,482 +280,730 @@
 
   <p id="ad-list-message" role="status">جارٍ تحميل الحملات...</p>
   <div id="ad-campaign-list"></div>
-  <nav id="ad-pagination" class="ad-pagination" aria-label="صفحات الحملات"></nav>
+  <nav id="ad-pagination" class="ad-pagination" aria-label="صفحات الحملات">
+  </nav>
 </section>
 
 <style is:global>
-/* ===== لوحة إدارة إعلانات LOLME ===== */
-.ads-admin {
-  direction: rtl;
-  max-width: 1100px;
-  margin: 24px auto;
-  padding: clamp(14px, 3vw, 28px);
-  color: #f9fafb;
-  background: #1e293b;
-  border: 1px solid rgba(139, 92, 246, 0.28);
-  border-radius: 18px;
-  box-sizing: border-box;
-}
-.ads-admin h2 {
-  margin: 0 0 8px;
-  font-size: clamp(1.4rem, 3vw, 1.9rem);
-  color: #fff;
-}
-.ads-admin > p {
-  color: #cbd5e1;
-  line-height: 1.8;
-}
-.ads-admin h3 {
-  margin-top: 26px;
-  color: #fde68a;
-}
-.ads-admin hr {
-  margin: 28px 0;
-  border: 0;
-  border-top: 1px solid #475569;
-}
-.ads-admin form {
-  display: grid;
-  gap: 9px;
-  padding: clamp(14px, 2.5vw, 24px);
-  background: #111827;
-  border: 1px solid #374151;
-  border-radius: 14px;
-}
-.ads-admin label {
-  display: block;
-  margin-top: 7px;
-  color: #e5e7eb;
-  font-weight: 700;
-}
-.ads-admin input,
-.ads-admin select,
-.ads-admin textarea {
-  box-sizing: border-box;
-  display: block;
-  width: 100%;
-  min-width: 0;
-  min-height: 44px;
-  padding: 11px 12px;
-  color: #111827;
-  background: #fff;
-  border: 1px solid #cbd5e1;
-  border-radius: 9px;
-  font: inherit;
-}
-.ads-admin textarea {
-  resize: vertical;
-  line-height: 1.7;
-}
-.ads-admin input:focus,
-.ads-admin select:focus,
-.ads-admin textarea:focus {
-  outline: 2px solid #8b5cf6;
-  outline-offset: 2px;
-}
-.ads-admin small {
-  color: #94a3b8;
-  line-height: 1.7;
-}
-.ad-form-actions,
-.ad-filter-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
-.ads-admin button {
-  cursor: pointer;
-  border: 0;
-  border-radius: 9px;
-  padding: 10px 15px;
-  font: inherit;
-  font-weight: 700;
-  transition: filter 0.2s ease, transform 0.2s ease;
-}
-.ads-admin button:hover:not(:disabled) {
-  filter: brightness(1.08);
-  transform: translateY(-1px);
-}
-.ads-admin button:disabled {
-  cursor: wait;
-  opacity: 0.6;
-}
-#ad-save {
-  background: #16a34a;
-  color: #fff;
-}
-#ad-cancel,
-#ad-refresh {
-  background: #e2e8f0;
-  color: #1e293b;
-}
-#ad-form-message,
-#ad-list-message {
-  min-height: 1.5em;
-  overflow-wrap: anywhere;
-  line-height: 1.7;
-}
-.ad-campaign-filters {
-  padding: 16px;
-  margin-top: 16px;
-  background: #111827;
-  border: 1px solid #374151;
-  border-radius: 14px;
-}
-.ad-campaign-filters > label {
-  margin-top: 0;
-}
-.ad-filter-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-.ad-filter-actions {
-  justify-content: flex-start;
-}
-#ad-campaign-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-  align-items: start;
-  gap: 18px;
-  margin-top: 18px;
-}
-.ad-campaign-card {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  min-width: 0;
-  padding: 17px;
-  margin: 0;
-  overflow: hidden;
-  color: #e5e7eb;
-  background: linear-gradient(145deg, #111827, #273449);
-  border: 1px solid #475569;
-  border-radius: 15px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
-}
-.ad-campaign-card h4 {
-  margin: 0 0 5px;
-  color: #fde68a;
-  font-size: 1.15rem;
-  line-height: 1.7;
-  overflow-wrap: anywhere;
-}
-.ad-campaign-card p {
-  margin: 0;
-  color: #cbd5e1;
-  font-size: 0.92rem;
-  line-height: 1.8;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-.ad-campaign-images {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 8px;
-  width: 100%;
-  margin: 8px 0;
-}
-.ad-campaign-card .ad-campaign-images img {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  height: 105px;
-  max-width: none;
-  max-height: none;
-  min-width: 0;
-  margin: 0;
-  padding: 4px;
-  object-fit: contain;
-  background: #0b1120;
-  border: 1px solid #374151;
-  border-radius: 9px;
-}
-.ad-campaign-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: auto;
-  padding-top: 12px;
-  border-top: 1px solid #374151;
-}
-.ad-campaign-card .ad-campaign-actions button {
-  flex: 1 1 auto;
-  min-width: 90px;
-  margin: 0;
-  padding: 10px 12px;
-  color: #f9fafb;
-  background: #475569;
-  font-size: 0.9rem;
-}
-.ad-campaign-card .ad-campaign-actions .ad-activate { background: #15803d; }
-.ad-campaign-card .ad-campaign-actions .ad-pause { background: #b45309; }
-.ad-campaign-card .ad-campaign-actions .ad-delete { background: #b91c1c; }
-.ad-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 22px;
-}
-.ad-pagination button {
-  color: #fff;
-  background: #4f46e5;
-}
-.ad-pagination button:disabled {
-  color: #94a3b8;
-  background: #334155;
-  cursor: not-allowed;
-}
-.ad-pagination-label {
-  color: #cbd5e1;
-  font-size: 0.95rem;
-}
-@media (max-width: 600px) {
+  /* ===== لوحة إدارة إعلانات LOLME ===== */
   .ads-admin {
-    margin: 10px auto;
-    padding: 12px;
-    border-radius: 12px;
+    direction: rtl;
+    max-width: 1100px;
+    margin: 24px auto;
+    padding: clamp(14px, 3vw, 28px);
+    color: #f9fafb;
+    background: #1e293b;
+    border: 1px solid rgba(139, 92, 246, 0.28);
+    border-radius: 18px;
+    box-sizing: border-box;
   }
-  .ads-admin form { padding: 12px; }
-  #ad-campaign-list { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  .ad-campaign-card { padding: 13px; }
-  .ad-campaign-card .ad-campaign-images img { height: 90px; }
-  .ad-filter-row { grid-template-columns: minmax(0, 1fr); }
-  .ad-campaign-actions button { font-size: 0.85rem; }
-}
-
-/* ===== Ad Statistics ===== */
-.ad-stats {
-  margin: 24px 0;
-  padding: 20px;
-  background: #111827;
-  border: 1px solid #475569;
-  border-radius: 15px;
-}
-
-.ad-stats-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.ad-stats-header h3 {
-  margin: 0;
-  color: #fde68a;
-}
-
-.ad-stats-header p,
-.ad-stats > small {
-  color: #94a3b8;
-  line-height: 1.8;
-}
-
-#ad-stats-refresh {
-  color: white;
-  background: #4f46e5;
-}
-
-.ad-stats-filters {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin: 18px 0;
-}
-
-.ad-stats-filters input {
-  width: 100%;
-  box-sizing: border-box;
-  color: #111827;
-  background: white;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 10px;
-}
-
-.ad-stats-cards {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  margin: 18px 0;
-}
-
-.ad-stat-card {
-  padding: 17px 12px;
-  background: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-}
-
-.ad-stat-card span {
-  color: #cbd5e1;
-  font-size: 0.9rem;
-}
-
-.ad-stat-card strong {
-  color: #4ade80;
-  font-size: clamp(1.3rem, 3vw, 1.8rem);
-  overflow-wrap: anywhere;
-}
-
-.ad-stats-panel {
-  margin-top: 18px;
-  padding: 16px;
-  background: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 12px;
-}
-
-.ad-stats-panel h4 {
-  margin: 0 0 16px;
-  color: #fde68a;
-}
-
-.ad-stats-chart {
-  display: flex;
-  align-items: end;
-  gap: 8px;
-  min-height: 180px;
-  overflow-x: auto;
-  padding: 12px 4px;
-}
-
-.ad-chart-day {
-  flex: 1 0 38px;
-  min-width: 38px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: end;
-  gap: 6px;
-  height: 165px;
-}
-
-.ad-chart-bars {
-  height: 125px;
-  display: flex;
-  align-items: end;
-  gap: 4px;
-}
-
-.ad-chart-bar {
-  width: 12px;
-  min-height: 2px;
-  border-radius: 4px 4px 0 0;
-}
-
-.ad-chart-impressions {
-  background: #8b5cf6;
-}
-
-.ad-chart-clicks {
-  background: #22c55e;
-}
-
-.ad-chart-day small {
-  color: #cbd5e1;
-  font-size: 0.72rem;
-  white-space: nowrap;
-}
-
-.ad-chart-legend {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  color: #cbd5e1;
-  font-size: 0.85rem;
-}
-
-.ad-chart-legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.ad-chart-legend i {
-  width: 10px;
-  height: 10px;
-  border-radius: 3px;
-}
-
-.ad-stats-table-wrap {
-  overflow-x: auto;
-}
-
-.ad-stats-table {
-  width: 100%;
-  border-collapse: collapse;
-  color: #e5e7eb;
-  white-space: nowrap;
-}
-
-.ad-stats-table th,
-.ad-stats-table td {
-  padding: 12px;
-  text-align: right;
-  border-bottom: 1px solid #475569;
-}
-
-.ad-stats-table th {
-  color: #fde68a;
-}
-
-@media (max-width: 700px) {
-  .ad-stats-cards {
+  .ads-admin h2 {
+    margin: 0 0 8px;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    color: #fff;
+  }
+  .ads-admin > p {
+    color: #cbd5e1;
+    line-height: 1.8;
+  }
+  .ads-admin h3 {
+    margin-top: 26px;
+    color: #fde68a;
+  }
+  .ads-admin hr {
+    margin: 28px 0;
+    border: 0;
+    border-top: 1px solid #475569;
+  }
+  .ads-admin form {
+    display: grid;
+    gap: 9px;
+    padding: clamp(14px, 2.5vw, 24px);
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 14px;
+  }
+  .ads-admin label {
+    display: block;
+    margin-top: 7px;
+    color: #e5e7eb;
+    font-weight: 700;
+  }
+  .ads-admin input,
+  .ads-admin select,
+  .ads-admin textarea {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 11px 12px;
+    color: #111827;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    font: inherit;
+  }
+  .ads-admin textarea {
+    resize: vertical;
+    line-height: 1.7;
+  }
+  .ads-admin input:focus,
+  .ads-admin select:focus,
+  .ads-admin textarea:focus {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+  }
+  .ads-admin small {
+    color: #94a3b8;
+    line-height: 1.7;
+  }
+  .ad-form-actions,
+  .ad-filter-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .ads-admin button {
+    cursor: pointer;
+    border: 0;
+    border-radius: 9px;
+    padding: 10px 15px;
+    font: inherit;
+    font-weight: 700;
+    transition:
+      filter 0.2s ease,
+      transform 0.2s ease;
+  }
+  .ads-admin button:hover:not(:disabled) {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+  .ads-admin button:disabled {
+    cursor: wait;
+    opacity: 0.6;
+  }
+  #ad-save {
+    background: #16a34a;
+    color: #fff;
+  }
+  #ad-cancel,
+  #ad-refresh {
+    background: #e2e8f0;
+    color: #1e293b;
+  }
+  #ad-form-message,
+  #ad-list-message {
+    min-height: 1.5em;
+    overflow-wrap: anywhere;
+    line-height: 1.7;
+  }
+  .ad-campaign-filters {
+    padding: 16px;
+    margin-top: 16px;
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 14px;
+  }
+  .ad-campaign-filters > label {
+    margin-top: 0;
+  }
+  .ad-filter-row {
+    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .ad-filter-actions {
+    justify-content: flex-start;
+  }
+  #ad-campaign-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    align-items: start;
+    gap: 18px;
+    margin-top: 18px;
+  }
+  .ad-campaign-card {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    min-width: 0;
+    padding: 17px;
+    margin: 0;
+    overflow: hidden;
+    color: #e5e7eb;
+    background: linear-gradient(145deg, #111827, #273449);
+    border: 1px solid #475569;
+    border-radius: 15px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+  }
+  .ad-campaign-card h4 {
+    margin: 0 0 5px;
+    color: #fde68a;
+    font-size: 1.15rem;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+  .ad-campaign-card p {
+    margin: 0;
+    color: #cbd5e1;
+    font-size: 0.92rem;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .ad-campaign-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px;
+    width: 100%;
+    margin: 8px 0;
+  }
+  .ad-campaign-card .ad-campaign-images img {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 105px;
+    max-width: none;
+    max-height: none;
+    min-width: 0;
+    margin: 0;
+    padding: 4px;
+    object-fit: contain;
+    background: #0b1120;
+    border: 1px solid #374151;
+    border-radius: 9px;
+  }
+  .ad-campaign-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid #374151;
+  }
+  .ad-campaign-card .ad-campaign-actions button {
+    flex: 1 1 auto;
+    min-width: 90px;
+    margin: 0;
+    padding: 10px 12px;
+    color: #f9fafb;
+    background: #475569;
+    font-size: 0.9rem;
+  }
+  .ad-campaign-card .ad-campaign-actions .ad-activate {
+    background: #15803d;
+  }
+  .ad-campaign-card .ad-campaign-actions .ad-pause {
+    background: #b45309;
+  }
+  .ad-campaign-card .ad-campaign-actions .ad-delete {
+    background: #b91c1c;
+  }
+  .ad-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 22px;
+  }
+  .ad-pagination button {
+    color: #fff;
+    background: #4f46e5;
+  }
+  .ad-pagination button:disabled {
+    color: #94a3b8;
+    background: #334155;
+    cursor: not-allowed;
+  }
+  .ad-pagination-label {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+  }
+  @media (max-width: 600px) {
+    .ads-admin {
+      margin: 10px auto;
+      padding: 12px;
+      border-radius: 12px;
+    }
+    .ads-admin form {
+      padding: 12px;
+    }
+    #ad-campaign-list {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+    .ad-campaign-card {
+      padding: 13px;
+    }
+    .ad-campaign-card .ad-campaign-images img {
+      height: 90px;
+    }
+    .ad-filter-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .ad-campaign-actions button {
+      font-size: 0.85rem;
+    }
+  }
+
+  /* ===== Ad Statistics ===== */
+  .ad-stats {
+    margin: 24px 0;
+    padding: 20px;
+    background: #111827;
+    border: 1px solid #475569;
+    border-radius: 15px;
+  }
+
+  .ad-stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .ad-stats-header h3 {
+    margin: 0;
+    color: #fde68a;
+  }
+
+  .ad-stats-header p,
+  .ad-stats > small {
+    color: #94a3b8;
+    line-height: 1.8;
+  }
+
+  #ad-stats-refresh {
+    color: white;
+    background: #4f46e5;
   }
 
   .ad-stats-filters {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 18px 0;
   }
 
-  .ad-stats {
+  .ad-stats-filters input {
+    width: 100%;
+    box-sizing: border-box;
+    color: #111827;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+  .ad-stats-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 18px 0;
+  }
+
+  .ad-stat-card {
+    padding: 17px 12px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .ad-stat-card span {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+  }
+
+  .ad-stat-card strong {
+    color: #4ade80;
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    overflow-wrap: anywhere;
+  }
+
+  .ad-stats-panel {
+    margin-top: 18px;
+    padding: 16px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+  }
+
+  .ad-stats-panel h4 {
+    margin: 0 0 16px;
+    color: #fde68a;
+  }
+
+  .ad-stats-chart {
+    display: flex;
+    align-items: end;
+    gap: 8px;
+    min-height: 180px;
+    overflow-x: auto;
+    padding: 12px 4px;
+  }
+
+  .ad-chart-day {
+    flex: 1 0 38px;
+    min-width: 38px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: end;
+    gap: 6px;
+    height: 165px;
+  }
+
+  .ad-chart-bars {
+    height: 125px;
+    display: flex;
+    align-items: end;
+    gap: 4px;
+  }
+
+  .ad-chart-bar {
+    width: 12px;
+    min-height: 2px;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .ad-chart-impressions {
+    background: #8b5cf6;
+  }
+
+  .ad-chart-clicks {
+    background: #22c55e;
+  }
+
+  .ad-chart-day small {
+    color: #cbd5e1;
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+
+  .ad-chart-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    color: #cbd5e1;
+    font-size: 0.85rem;
+  }
+
+  .ad-chart-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ad-chart-legend i {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+
+  .ad-stats-table-wrap {
+    overflow-x: auto;
+  }
+
+  .ad-stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #e5e7eb;
+    white-space: nowrap;
+  }
+
+  .ad-stats-table th,
+  .ad-stats-table td {
     padding: 12px;
+    text-align: right;
+    border-bottom: 1px solid #475569;
   }
-}
 
-.ad-stats-details-button {
-  padding: 7px 12px;
-  color: white;
-  background: #4f46e5;
-  border-radius: 7px;
-  white-space: nowrap;
-}
+  .ad-stats-table th {
+    color: #fde68a;
+  }
 
-.ad-advertiser-details {
-  padding: 15px;
-  background: #111827;
-  border: 1px solid #475569;
-  border-radius: 10px;
-}
+  @media (max-width: 700px) {
+    .ad-stats-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 
-.ad-advertiser-details > strong {
-  display: block;
-  margin-bottom: 12px;
-  color: #fde68a;
-}
+    .ad-stats-filters {
+      grid-template-columns: 1fr;
+    }
 
-.ad-stats-inner-table {
-  min-width: 600px;
-}
+    .ad-stats {
+      padding: 12px;
+    }
+  }
 
-.ad-stats-table tr[hidden] {
-  display: none;
-}
+  .ad-stats-details-button {
+    padding: 7px 12px;
+    color: white;
+    background: #4f46e5;
+    border-radius: 7px;
+    white-space: nowrap;
+  }
 
-.ad-stats-inner-table th,
-.ad-stats-inner-table td {
-  padding: 9px;
-  font-size: 0.88rem;
-}
+  .ad-advertiser-details {
+    padding: 15px;
+    background: #111827;
+    border: 1px solid #475569;
+    border-radius: 10px;
+  }
+
+  .ad-advertiser-details > strong {
+    display: block;
+    margin-bottom: 12px;
+    color: #fde68a;
+  }
+
+  .ad-stats-inner-table {
+    min-width: 600px;
+  }
+
+  .ad-stats-table tr[hidden] {
+    display: none;
+  }
+
+  .ad-stats-inner-table th,
+  .ad-stats-inner-table td {
+    padding: 9px;
+    font-size: 0.88rem;
+  }
+
+  /* ==================================
+   تفاصيل أداء الحملات والمعلنين
+================================== */
+
+  .ad-advertiser-details {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 22px;
+    background: #111827;
+    border: 1px solid #475569;
+    border-radius: 14px;
+  }
+
+  .ad-advertiser-details > strong {
+    display: block;
+    margin-bottom: 4px;
+    padding-bottom: 15px;
+    color: #fde68a;
+    font-size: 1.15rem;
+    border-bottom: 1px solid #374151;
+  }
+
+  .admin-campaign-performance {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    background: #1e293b;
+    border: 1px solid #475569;
+    border-radius: 13px;
+    min-width: 0;
+  }
+
+  .admin-campaign-performance h5 {
+    margin: 0;
+    padding-bottom: 12px;
+    color: #fde68a;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #475569;
+  }
+
+  .admin-campaign-meta {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 0.88rem;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-performance-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .admin-performance-number {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 17px 10px;
+    text-align: center;
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 10px;
+  }
+
+  .admin-performance-number span {
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .admin-performance-number strong {
+    color: #4ade80;
+    font-size: 1.5rem;
+    font-weight: 800;
+    direction: ltr;
+    overflow-wrap: anywhere;
+  }
+
+  /* أداء الإعلان حسب الصفحة */
+
+  .admin-placement-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 18px;
+    background: #172033;
+    border: 1px solid #475569;
+    border-radius: 12px;
+  }
+
+  .admin-placement-section > h6 {
+    margin: 0;
+    color: #fde68a;
+    font-size: 1rem;
+  }
+
+  .admin-placement-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .admin-placement-card {
+    min-width: 0;
+    padding: 17px;
+    background: #273449;
+    border: 1px solid #475569;
+    border-radius: 11px;
+  }
+
+  .admin-placement-card h6 {
+    margin: 0 0 15px;
+    padding-bottom: 12px;
+    color: #4ade80;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #475569;
+  }
+
+  .admin-placement-numbers {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .admin-placement-number {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+    padding: 13px 6px;
+    text-align: center;
+    background: #111827;
+    border-radius: 8px;
+  }
+
+  .admin-placement-number span {
+    color: #cbd5e1;
+    font-size: 0.78rem;
+    line-height: 1.6;
+  }
+
+  .admin-placement-number strong {
+    color: #4ade80;
+    font-size: 1.2rem;
+    direction: ltr;
+  }
+
+  /* الأداء اليومي */
+
+  .admin-daily-details {
+    padding: 15px;
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 10px;
+  }
+
+  .admin-daily-details summary {
+    color: #c4b5fd;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1.8;
+  }
+
+  .admin-daily-details[open] summary {
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #374151;
+  }
+
+  .admin-daily-details .ad-stats-table {
+    min-width: 550px;
+  }
+
+  .admin-daily-details .ad-stats-table th,
+  .admin-daily-details .ad-stats-table td {
+    padding: 13px 12px;
+    line-height: 1.6;
+  }
+
+  /* زر عرض حملات المعلن */
+
+  .ad-stats-details-button {
+    padding: 9px 15px;
+    color: white;
+    background: #4f46e5;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    white-space: nowrap;
+  }
+
+  /* الشاشات الصغيرة */
+
+  @media (max-width: 750px) {
+    .admin-performance-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-placement-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 450px) {
+    .ad-advertiser-details,
+    .admin-campaign-performance {
+      padding: 12px;
+    }
+
+    .admin-placement-section {
+      padding: 12px;
+    }
+
+    .admin-placement-numbers {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>
 
 <script type="module" src="/js/admin/ads.js"></script>

@@ -1,3 +1,4 @@
+// public/js/advertiser.js
 import {
   auth,
   onAuthStateChanged,
@@ -23,16 +24,38 @@ let currentUser = null;
 const numberFormat = new Intl.NumberFormat("ar-EG");
 
 function formatNumber(value) {
-  return numberFormat.format(Number(value || 0));
+  return Number(value || 0).toLocaleString("ar-EG", {
+    useGrouping: false,
+  });
 }
-
 function formatDate(timestamp) {
   if (!timestamp) return "غير محدد";
 
+  let date;
+
+  if (timestamp instanceof Date) {
+    date = timestamp;
+  } else if (typeof timestamp === "number") {
+    date = new Date(timestamp);
+  } else if (typeof timestamp === "string") {
+    date = new Date(timestamp);
+  } else if (typeof timestamp.toDate === "function") {
+    date = timestamp.toDate();
+  } else if (timestamp.seconds || timestamp._seconds) {
+    date = new Date((timestamp.seconds || timestamp._seconds) * 1000);
+  } else {
+    return "غير محدد";
+  }
+
+  if (Number.isNaN(date.getTime())) return "غير محدد";
+
   return new Intl.DateTimeFormat("ar-EG", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(timestamp));
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
 }
 
 function getCampaignStatus(campaign) {
@@ -116,6 +139,65 @@ function renderDailyStats(campaign) {
   return details;
 }
 
+function renderPlacementStats(placements = []) {
+  const container = document.createElement("section");
+  container.className = "placement-stats";
+
+  const heading = document.createElement("h4");
+  heading.textContent = "📍 أداء الإعلان حسب مكان ظهوره";
+  container.append(heading);
+
+  if (!placements.length) {
+    container.append(
+      makeElement(
+        "p",
+        "لم يتم تسجيل إحصائيات حسب الصفحة حتى الآن. ستظهر البيانات هنا بعد تسجيل مرات ظهور الإعلان ونقراته.",
+        "placement-empty",
+      ),
+    );
+
+    return container;
+  }
+
+  const names = {
+    "/tests": "🧩 صفحة الاختبارات",
+    "/jokes": "😂 صفحة النكت",
+  };
+
+  for (const placement of placements) {
+    const card = document.createElement("div");
+    card.className = "placement-card";
+
+    const title = makeElement(
+      "h5",
+      names[placement.pagePath] || `📄 ${placement.pagePath}`,
+    );
+
+    const stats = document.createElement("div");
+    stats.className = "placement-numbers";
+
+    const items = [
+      ["مرات الظهور", formatNumber(placement.impressions)],
+      ["النقرات", formatNumber(placement.clicks)],
+      ["معدل النقر CTR", `${(Number(placement.ctr) || 0).toFixed(2)}%`],
+    ];
+
+    for (const [label, value] of items) {
+      const item = document.createElement("div");
+      item.className = "placement-number";
+
+      item.append(makeElement("span", label), makeElement("strong", value));
+
+      stats.append(item);
+    }
+
+    card.append(title, stats);
+    container.append(card);
+  }
+
+  return container;
+}
+
 function renderCampaigns(campaigns) {
   campaignsContainer.replaceChildren();
 
@@ -135,24 +217,30 @@ function renderCampaigns(campaigns) {
     const card = document.createElement("article");
     card.className = "advertiser-campaign-card";
 
-    card.append(
+    // البطاقة القابلة للفتح والإغلاق
+    const accordion = document.createElement("details");
+    accordion.className = "campaign-accordion";
+
+    // رأس البطاقة الظاهر دائمًا
+    const summary = document.createElement("summary");
+    summary.className = "campaign-accordion-summary";
+
+    const header = document.createElement("div");
+    header.className = "campaign-accordion-header";
+
+    header.append(
       makeElement("h4", campaign.headline || `حملة ${campaign.slotId}`),
+      makeElement(
+        "span",
+        `${campaign.slotId} · ${getCampaignStatus(campaign)}`,
+        "campaign-accordion-status",
+      ),
+      makeElement("span", "⌄ عرض تفاصيل الحملة", "campaign-accordion-hint"),
     );
 
-    const meta = document.createElement("div");
-    meta.className = "campaign-meta";
+    summary.append(header);
 
-    [
-      `المساحة: ${campaign.slotId}`,
-      `الحالة: ${getCampaignStatus(campaign)}`,
-      `البداية: ${formatDate(campaign.startAt)}`,
-      `النهاية: ${formatDate(campaign.endAt)}`,
-    ].forEach((value) => {
-      meta.append(makeElement("span", value));
-    });
-
-    card.append(meta);
-
+    // إحصائيات مختصرة تظهر دون فتح الحملة
     const numbers = document.createElement("div");
     numbers.className = "campaign-numbers";
 
@@ -160,7 +248,7 @@ function renderCampaigns(campaigns) {
       ["مرات الظهور", formatNumber(campaign.impressions)],
       ["الزوار المختلفون", formatNumber(campaign.uniqueVisitors)],
       ["النقرات", formatNumber(campaign.clicks)],
-      ["CTR", `${campaign.ctr.toFixed(2)}%`],
+      ["CTR", `${(Number(campaign.ctr) || 0).toFixed(2)}%`],
     ].forEach(([label, value]) => {
       const item = document.createElement("div");
       item.className = "campaign-number";
@@ -170,10 +258,105 @@ function renderCampaigns(campaigns) {
       numbers.append(item);
     });
 
-    card.append(numbers);
-    card.append(renderDailyStats(campaign));
+    summary.append(numbers);
 
+    // محتوى الحملة الذي يظهر عند فتحها
+    const expanded = document.createElement("div");
+    expanded.className = "campaign-accordion-content";
+
+    // تواريخ الحملة
+    const schedule = document.createElement("div");
+    schedule.className = "campaign-schedule";
+
+    const startDate = document.createElement("div");
+    startDate.className = "campaign-date start";
+
+    startDate.append(
+      makeElement("span", "🟢 بداية الحملة"),
+      makeElement("strong", formatDate(campaign.startAt)),
+    );
+
+    const endDate = document.createElement("div");
+    endDate.className = "campaign-date end";
+
+    endDate.append(
+      makeElement("span", "🔴 انتهاء الحملة"),
+      makeElement("strong", formatDate(campaign.endAt)),
+    );
+
+    schedule.append(startDate, endDate);
+    expanded.append(schedule);
+
+    // تفاصيل الحجز والدفع
+    const financial = document.createElement("section");
+    financial.className = "campaign-financial";
+
+    financial.append(makeElement("h5", "💰 تفاصيل الحجز والدفع"));
+
+    const paymentMethods = {
+      fawry: "فوري",
+      transfer: "تحويل بنكي",
+      cash: "نقدًا",
+    };
+
+    const paymentStatus =
+      campaign.paymentStatus === "paid" ? "مدفوع بالكامل" : "غير مدفوع";
+
+    const financialRows = [
+      [
+        "سعر المساحة (كل 30 يومًا)",
+        `${formatNumber(campaign.monthlyPrice)} جنيه`,
+      ],
+      ["مدة الحجز", `${formatNumber(campaign.durationDays)} يوم`],
+      ["إجمالي الحملة", `${formatNumber(campaign.totalPrice)} جنيه`],
+      ["المبلغ المدفوع", `${formatNumber(campaign.paidAmount)} جنيه`],
+      ["حالة الدفع", paymentStatus],
+      ["طريقة الدفع", paymentMethods[campaign.paymentMethod] || "—"],
+      [
+        "تاريخ استلام الدفع",
+        campaign.paidAt
+          ? new Date(campaign.paidAt).toLocaleDateString("ar-EG")
+          : "لم يتم تسجيل الدفع",
+      ],
+    ];
+
+    const financialGrid = document.createElement("div");
+    financialGrid.className = "campaign-financial-grid";
+
+    for (const [label, value] of financialRows) {
+      const item = document.createElement("div");
+      item.className = "campaign-financial-item";
+
+      item.append(makeElement("span", label), makeElement("strong", value));
+
+      financialGrid.append(item);
+    }
+
+    financial.append(financialGrid);
+    expanded.append(financial);
+
+    // الأداء اليومي
+    expanded.append(renderDailyStats(campaign));
+
+    // أداء الإعلان حسب مكان ظهوره
+    expanded.append(renderPlacementStats(campaign.placements || []));
+
+    accordion.append(summary, expanded);
+    card.append(accordion);
     campaignsContainer.append(card);
+
+    // فتح حملة واحدة فقط في كل مرة
+    accordion.addEventListener("toggle", () => {
+      if (!accordion.open) return;
+
+      campaignsContainer
+        .querySelectorAll(".campaign-accordion[open]")
+        .forEach((other) => {
+          if (other !== accordion) {
+            other.open = false;
+          }
+        });
+    });
   }
 }
 
