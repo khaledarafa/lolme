@@ -108,10 +108,11 @@
       placeholder="مثال: متجر الملابس"
     />
 
-    <label for="advertiser-email">البريد الإلكتروني للمعلن (اختياري)</label>
+    <label for="advertiser-email">البريد الإلكتروني للمعلن</label>
     <input
       id="advertiser-email"
       type="email"
+      required
       maxlength="160"
       placeholder="name@example.com"
     />
@@ -130,58 +131,49 @@
       <option value="jokes-10">jokes-10 — قبل النهاية (89 ج.م)</option>
       <option value="jokes-11">jokes-11 — نهاية الصفحة (79 ج.م)</option>
       <option value="tests">tests — الاختبارات</option>
+      <option value="floating-right"
+        >floating-right — المساحة العائمة اليمنى (399 ج.م)</option
+      >
+      <option value="floating-left"
+        >floating-left — المساحة العائمة اليسرى (399 ج.م)</option
+      >
+      <option value="floating-main"
+        >floating-main — المساحة العائمة الرئيسية (399 ج.م)</option
+      >
     </select>
 
-<!-- البيانات المالية للحملة -->
-<div class="ad-financial-fields">
-  <h3>💰 بيانات الحجز والدفع</h3>
+    <!-- البيانات المالية للحملة -->
+    <div class="ad-financial-fields">
+      <h3>💰 بيانات الحجز والدفع</h3>
 
-  <label for="ad-monthly-price">سعر المساحة لفترة 30 يومًا (جنيه)</label>
-  <input
-    id="ad-monthly-price"
-    type="number"
-    min="0"
-    step="1"
-    readonly
-  />
+      <label for="ad-monthly-price">سعر المساحة لفترة 30 يومًا (جنيه)</label>
+      <input id="ad-monthly-price" type="number" min="0" step="1" readonly />
 
-  <label for="ad-duration-days">مدة الحجز (بالأيام)</label>
-  <input
-    id="ad-duration-days"
-    type="number"
-    min="1"
-    readonly
-  />
+      <label for="ad-duration-days">مدة الحجز (بالأيام)</label>
+      <input id="ad-duration-days" type="number" min="1" readonly />
 
-  <label for="ad-total-price">إجمالي الحملة (جنيه)</label>
-  <input
-    id="ad-total-price"
-    type="number"
-    min="0"
-    readonly
-  />
+      <label for="ad-total-price">إجمالي الحملة (جنيه)</label>
+      <input id="ad-total-price" type="number" min="0" readonly />
 
-  <label for="ad-payment-status">حالة الدفع</label>
-  <select id="ad-payment-status">
-    <option value="unpaid">غير مدفوع</option>
-    <option value="paid">مدفوع بالكامل</option>
-  </select>
+      <label for="ad-payment-status">حالة الدفع</label>
+      <select id="ad-payment-status">
+        <option value="unpaid">غير مدفوع</option>
+        <option value="paid">مدفوع بالكامل</option>
+      </select>
 
-  <label for="ad-payment-method">طريقة الدفع</label>
-  <select id="ad-payment-method">
-    <option value="">لم يتم الدفع</option>
-    <option value="fawry">فوري</option>
-    <option value="transfer">تحويل بنكي</option>
-    <option value="cash">نقدًا</option>
-  </select>
+      <label for="ad-payment-method">طريقة الدفع</label>
+      <select id="ad-payment-method">
+        <option value="">لم يتم الدفع</option>
+        <option value="fawry">فوري</option>
+        <option value="transfer">تحويل بنكي</option>
+        <option value="cash">نقدًا</option>
+      </select>
 
-  <label for="ad-paid-at">تاريخ استلام الدفع</label>
-  <input id="ad-paid-at" type="date" />
+      <label for="ad-paid-at">تاريخ استلام الدفع</label>
+      <input id="ad-paid-at" type="date" />
 
-  <p>
-    عند تأكيد الدفع بالكامل، سيتم تسجيل إجمالي قيمة الحملة كمبلغ مدفوع.
-  </p>
-</div>
+      <p>عند تأكيد الدفع بالكامل، سيتم تسجيل إجمالي قيمة الحملة كمبلغ مدفوع.</p>
+    </div>
 
     <label for="ad-images">روابط صور الإعلان (كل رابط في سطر)</label>
     <textarea
@@ -260,6 +252,15 @@
           <option value="jokes-10">jokes-10 — قبل النهاية</option>
           <option value="jokes-11">jokes-11 — نهاية الصفحة</option>
           <option value="tests">tests — الاختبارات</option>
+          <option value="floating-right"
+            >floating-right — المساحة العائمة اليمنى</option
+          >
+          <option value="floating-left"
+            >floating-left — المساحة العائمة اليسرى</option
+          >
+          <option value="floating-main"
+            >floating-main — المساحة العائمة الرئيسية</option
+          >
         </select>
       </div>
       <div>

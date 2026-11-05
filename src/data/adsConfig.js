@@ -82,38 +82,38 @@ export const adsConfig = {
     //   closeable: true,
     // },
     //  =======================================.  🎤 إعلان قناة Moncellence
-    {
-      id: "moncellence-channel",
-      title: "🎤 اكتشف عالم Moncellence",
-      desc: "أغاني توكيدات وتطوير الذات والوفرة.",
-      img: "/ads/moncellence-channel.webp",
-      link: "https://www.youtube.com/@Moncellence",
-      cta: "شاهد القناة",
-      every: 5,
-    },
+    // {
+    //   id: "moncellence-channel",
+    //   title: "🎤 اكتشف عالم Moncellence",
+    //   desc: "أغاني توكيدات وتطوير الذات والوفرة.",
+    //   img: "/ads/moncellence-channel.webp",
+    //   link: "https://www.youtube.com/@Moncellence",
+    //   cta: "شاهد القناة",
+    //   every: 5,
+    // },
 
     // // ✨ إعلان أغاني التوكيدات
-    {
-      id: "moncellence-affirmations",
-      title: "✨ توكيداتك في شكل أغاني",
-      desc: "اكتشف طريقة مختلفة للاستماع إلى أغاني التوكيدات وتطوير الذات.",
-      img: "/ads/moncellence-affirmations.webp",
-      link: "https://www.youtube.com/@Moncellence/videos",
-      cta: "🎶 اكتشف الأغاني",
-      every: 5,
-    },
+    // {
+    //   id: "moncellence-affirmations",
+    //   title: "✨ توكيداتك في شكل أغاني",
+    //   desc: "اكتشف طريقة مختلفة للاستماع إلى أغاني التوكيدات وتطوير الذات.",
+    //   img: "/ads/moncellence-affirmations.webp",
+    //   link: "https://www.youtube.com/@Moncellence/videos",
+    //   cta: "🎶 اكتشف الأغاني",
+    //   every: 5,
+    // },
 
     // // 🔥 إعلان الموسيقى الإلكترونية
 
-    {
-      id: "moncellence-edm",
-      title: "🔥 Moncellence Music",
-      desc: "اكتشف الموسيقى الإلكترونية وأغاني التوكيدات على القناة.",
-      img: "/ads/moncellence-edm.webp",
-      link: "https://www.youtube.com/@Moncellence/videos",
-      cta: "🎧 استمع الآن",
-      every: 5,
-    },
+    // {
+    //   id: "moncellence-edm",
+    //   title: "🔥 Moncellence Music",
+    //   desc: "اكتشف الموسيقى الإلكترونية وأغاني التوكيدات على القناة.",
+    //   img: "/ads/moncellence-edm.webp",
+    //   link: "https://www.youtube.com/@Moncellence/videos",
+    //   cta: "🎧 استمع الآن",
+    //   every: 5,
+    // },
   ],
 
   sideLeft: [
@@ -136,27 +136,27 @@ export const adsConfig = {
     },
 
     // // ✨ إعلان أغاني التوكيدات
-    {
-      id: "moncellence-affirmations",
-      title: "✨ توكيداتك في شكل أغاني",
-      desc: "اكتشف طريقة مختلفة للاستماع إلى أغاني التوكيدات وتطوير الذات.",
-      img: "/ads/moncellence-affirmations.webp",
-      link: "https://www.youtube.com/@Moncellence/videos",
-      cta: "🎶 اكتشف الأغاني",
-      every: 5,
-    },
+    // {
+    //   id: "moncellence-affirmations",
+    //   title: "✨ توكيداتك في شكل أغاني",
+    //   desc: "اكتشف طريقة مختلفة للاستماع إلى أغاني التوكيدات وتطوير الذات.",
+    //   img: "/ads/moncellence-affirmations.webp",
+    //   link: "https://www.youtube.com/@Moncellence/videos",
+    //   cta: "🎶 اكتشف الأغاني",
+    //   every: 5,
+    // },
 
     // // 🔥 إعلان الموسيقى الإلكترونية
 
-    {
-      id: "moncellence-edm",
-      title: "🔥 Moncellence Music",
-      desc: "اكتشف الموسيقى الإلكترونية وأغاني التوكيدات على القناة.",
-      img: "/ads/moncellence-edm.webp",
-      link: "https://www.youtube.com/@Moncellence/videos",
-      cta: "🎧 استمع الآن",
-      every: 5,
-    },
+    // {
+    //   id: "moncellence-edm",
+    //   title: "🔥 Moncellence Music",
+    //   desc: "اكتشف الموسيقى الإلكترونية وأغاني التوكيدات على القناة.",
+    //   img: "/ads/moncellence-edm.webp",
+    //   link: "https://www.youtube.com/@Moncellence/videos",
+    //   cta: "🎧 استمع الآن",
+    //   every: 5,
+    // },
   ],
 
   floating: [
@@ -167,47 +167,47 @@ export const adsConfig = {
     //   // video: "/ads/14.mp4",
     //   closeable: true,
     // },
-    {
-      id: "moncellence-channel",
-      title: "🎤 اكتشف عالم Moncellence",
-      desc: "أغاني توكيدات، تطوير الذات، الوفرة والثراء والمزيد.",
-      img: "/ads/moncellence-channel.webp",
-      link: "https://www.youtube.com/@Moncellence",
-      cta: "▶️ شاهد القناة",
-      closeable: true,
-    },
+    // {
+    //   id: "moncellence-channel",
+    //   title: "🎤 اكتشف عالم Moncellence",
+    //   desc: "أغاني توكيدات، تطوير الذات، الوفرة والثراء والمزيد.",
+    //   img: "/ads/moncellence-channel.webp",
+    //   link: "https://www.youtube.com/@Moncellence",
+    //   cta: "▶️ شاهد القناة",
+    //   closeable: true,
+    // },
 
     // ✨ إعلان أغاني التوكيدات
-    {
-      id: "moncellence-affirmations",
-      title: "✨ توكيداتك في شكل أغاني",
-      desc: "اكتشف طريقة مختلفة للاستماع إلى أغاني التوكيدات وتطوير الذات.",
-      img: "/ads/moncellence-affirmations.webp",
-      link: "https://www.youtube.com/@Moncellence/videos",
-      cta: "🎶 اكتشف الأغاني",
-      closeable: true,
-    },
+    // {
+    //   id: "moncellence-affirmations",
+    //   title: "✨ توكيداتك في شكل أغاني",
+    //   desc: "اكتشف طريقة مختلفة للاستماع إلى أغاني التوكيدات وتطوير الذات.",
+    //   img: "/ads/moncellence-affirmations.webp",
+    //   link: "https://www.youtube.com/@Moncellence/videos",
+    //   cta: "🎶 اكتشف الأغاني",
+    //   closeable: true,
+    // },
 
     // 🔥 إعلان الموسيقى الإلكترونية
+    // {
+    //   id: "moncellence-edm",
+    //   title: "🔥 Moncellence Music",
+    //   desc: "اكتشف الموسيقى الإلكترونية والأغاني المختلفة على القناة.",
+    //   img: "/ads/moncellence-edm.webp",
+    //   link: "https://www.youtube.com/@Moncellence/videos",
+    //   cta: "🎧 استمع الآن",
+    //   closeable: true,
+    // },
     {
-      id: "moncellence-edm",
-      title: "🔥 Moncellence Music",
-      desc: "اكتشف الموسيقى الإلكترونية والأغاني المختلفة على القناة.",
-      img: "/ads/moncellence-edm.webp",
-      link: "https://www.youtube.com/@Moncellence/videos",
-      cta: "🎧 استمع الآن",
+      id: "moncellence-millionaire-song",
+      title: "💰 أغنية أنا غني أنا أنا مليونير",
+      desc: "عيش أجواء الوفرة والثراء مع أغنية توكيدات مالية تحفّز عقليتك نحو الغنى.",
+      img: "/ads/ana-ghany.jpg",
+      link: "https://www.youtube.com/watch?v=OIkGo8YbAUw",
+      cta: "🎶 اسمع الأغنية الآن",
+      every: 4,
       closeable: true,
     },
-    {
-  id: "moncellence-millionaire-song",
-  title: "💰 أغنية أنا غني أنا أنا مليونير",
-  desc: "عيش أجواء الوفرة والثراء مع أغنية توكيدات مالية تحفّز عقليتك نحو الغنى.",
-  img: "/ads/ana-ghany.jpg",
-  link: "https://www.youtube.com/watch?v=OIkGo8YbAUw",
-  cta: "🎶 اسمع الأغنية الآن",
-  every: 4,
-  closeable: true,
-},
   ],
 
   // gridAds: [
@@ -268,15 +268,15 @@ export const adsConfig = {
       every: 4,
     },
     {
-  id: "moncellence-millionaire-song",
-  title: "💰 أغنية أنا غني أنا أنا مليونير",
-  desc: "عيش أجواء الوفرة والثراء مع أغنية توكيدات مالية تحفّز عقليتك نحو الغنى.",
-  img: "/ads/ana-ghany.jpg",
-  link: "https://www.youtube.com/watch?v=OIkGo8YbAUw",
-  cta: "🎶 اسمع الأغنية الآن",
-  every: 4,
-  closeable: true,
-},
+      id: "moncellence-millionaire-song",
+      title: "💰 أغنية أنا غني أنا أنا مليونير",
+      desc: "عيش أجواء الوفرة والثراء مع أغنية توكيدات مالية تحفّز عقليتك نحو الغنى.",
+      img: "/ads/ana-ghany.jpg",
+      link: "https://www.youtube.com/watch?v=OIkGo8YbAUw",
+      cta: "🎶 اسمع الأغنية الآن",
+      every: 4,
+      closeable: true,
+    },
     // {
     //   id: "wafra1",
     //   title: "💸 ليه الفلوس بتختفي من حياتك؟",
@@ -425,16 +425,16 @@ export const adsConfig = {
       cta: "🎶 اكتشف الأغاني",
       every: 4,
     },
-{
-  id: "moncellence-millionaire-song",
-  title: "💰 أغنية أنا غني أنا أنا مليونير",
-  desc: "عيش أجواء الوفرة والثراء مع أغنية توكيدات مالية تحفّز عقليتك نحو الغنى.",
-  img: "/ads/ana-ghany.jpg",
-  link: "https://www.youtube.com/watch?v=OIkGo8YbAUw",
-  cta: "🎶 اسمع الأغنية الآن",
-  every: 4,
-  closeable: true,
-},
+    {
+      id: "moncellence-millionaire-song",
+      title: "💰 أغنية أنا غني أنا أنا مليونير",
+      desc: "عيش أجواء الوفرة والثراء مع أغنية توكيدات مالية تحفّز عقليتك نحو الغنى.",
+      img: "/ads/ana-ghany.jpg",
+      link: "https://www.youtube.com/watch?v=OIkGo8YbAUw",
+      cta: "🎶 اسمع الأغنية الآن",
+      every: 4,
+      closeable: true,
+    },
     // // 🔥 إعلان الموسيقى الإلكترونية
     {
       id: "moncellence-edm",

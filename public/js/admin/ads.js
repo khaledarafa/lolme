@@ -1,3 +1,4 @@
+// public/js/admin/ads.js
 import {
   auth,
   onAuthStateChanged,
@@ -13,10 +14,14 @@ import {
   updateDoc,
   deleteDoc,
   serverTimestamp,
+  functions,
+  httpsCallable,
 } from "/js/firebase.js";
 
 const $ = (id) => document.getElementById(id);
 const PAGE_SIZE = 12;
+
+const findAdvertiserByEmail = httpsCallable(functions, "findAdvertiserByEmail");
 
 const SLOT_MONTHLY_PRICES = {
   "jokes-1": 299,
@@ -31,6 +36,9 @@ const SLOT_MONTHLY_PRICES = {
   "jokes-10": 89,
   "jokes-11": 79,
   tests: 0,
+  "floating-right": 399,
+  "floating-left": 399,
+  "floating-main": 399,
 };
 
 function updateCampaignPrice() {
@@ -322,12 +330,32 @@ async function saveCampaign(event) {
       throw new Error("اكتب اسم المعلن.");
     }
 
-    if (
-      advertiserEmail &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(advertiserEmail)
-    ) {
+    if (!advertiserEmail) {
+      throw new Error("اكتب البريد الإلكتروني للمعلن.");
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(advertiserEmail)) {
       throw new Error("البريد الإلكتروني للمعلن غير صحيح.");
     }
+
+    // البحث عن حساب المعلن وربط الحملة بمعرّف حسابه
+    const advertiserResult = await findAdvertiserByEmail({
+      email: advertiserEmail,
+    });
+
+    const advertiser = advertiserResult.data;
+
+    if (!advertiser?.success || !advertiser.uid) {
+      throw new Error("لم يتم العثور على حساب صالح للمعلن.");
+    }
+
+    if (!advertiser.emailVerified) {
+      throw new Error(
+        "يجب أن يتحقق المعلن من بريده الإلكتروني قبل ربط الحملة.",
+      );
+    }
+
+    const advertiserUid = advertiser.uid;
 
     if (!slotId) {
       throw new Error("اختر المساحة الإعلانية.");
@@ -441,6 +469,7 @@ async function saveCampaign(event) {
     const campaignData = {
       advertiserName,
       advertiserEmail,
+      advertiserUid,
       slotId,
 
       monthlyPrice,
@@ -480,6 +509,15 @@ async function saveCampaign(event) {
 
       if (!existing.exists()) {
         throw new Error("الحملة المطلوب تعديلها غير موجودة.");
+      }
+
+      const currentAdvertiserUid = existing.data().advertiserUid || "";
+
+      // منع تغيير مالك حملة مرتبطة بحساب آخر دون إجراء صريح
+      if (currentAdvertiserUid && currentAdvertiserUid !== advertiserUid) {
+        throw new Error(
+          "البريد المدخل تابع لحساب مختلف عن مالك الحملة الحالي. لا يمكن تغيير مالك الحملة بهذه الطريقة.",
+        );
       }
 
       await setDoc(campaignRef, campaignData, {
@@ -1109,11 +1147,7 @@ function renderCampaignStatsTable(campaigns) {
       .trim()
       .toLowerCase();
 
-    const key = uid
-      ? `uid:${uid}`
-      : email
-        ? `email:${email}`
-        : `campaign:${campaign.id}`;
+    const key = uid ? `uid:${uid}` : `unlinked:${campaign.id}`;
 
     if (!advertisers.has(key)) {
       advertisers.set(key, {

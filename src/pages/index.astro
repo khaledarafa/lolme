@@ -145,6 +145,22 @@ const homeButtons = [
     <div id="seo-games-list" class="home-grid"></div>
     <a href="/games" class="play-btn"> 🔥 شوف كل الاختبارات </a>
   </section> -->
+  <section class="featured-tests-section" id="popular-tests">
+    <div class="featured-tests-heading">
+      <span class="featured-tests-badge">🔥 الأكثر شعبية</span>
+      <h2>اختبارات الناس بتجربها!</h2>
+      <p>اختار اختبارًا، جاوب على الأسئلة، واكتشف حاجة جديدة عن نفسك 😂</p>
+    </div>
+
+    <div id="stats-top-tests-list" class="featured-tests-grid">
+      <p class="featured-tests-loading">جاري تحميل الاختبارات...</p>
+    </div>
+
+    <a href="/tests" class="featured-tests-more">
+      شوف كل الاختبارات
+      <span aria-hidden="true">←</span>
+    </a>
+  </section>
 
   <!-- 📰 مقالات -->
   <section class="articles-section">
@@ -168,7 +184,7 @@ const homeButtons = [
     <div class="stats-heading">
       <span class="stats-eyebrow">📈 LOLME COMMUNITY</span>
       <h2>LOLME بالأرقام</h2>
-      <p>مجتمع ترفيهي بيكبر كل يوم.. ودي أرقام زيارات موقعنا.</p>
+      <p>مجتمع ترفيهي بيكبر كل يوم.. ودي أرقام زيارات موقعنا  آخر 30 يومًا.</p>
     </div>
 
     <div class="stats-main-grid">
@@ -213,46 +229,50 @@ const homeButtons = [
       </div>
     </div>
 
-    <div class="stats-top-tests">
+    <div class="stats-countries">
+      <h3>🌍 جمهور LOLME حول العالم</h3>
+      <p class="stats-countries__intro">
+        توزيع المستخدمين النشطين حسب الدولة خلال آخر 30 يومًا
+      </p>
+      <div id="stats-countries-list">
+        <p>جاري تحميل بيانات الدول...</p>
+      </div>
+    </div>
+
+    <!-- <div class="stats-top-tests">
       <h3>🔥 الاختبارات الأكثر مشاهدة</h3>
       <div id="stats-top-tests-list">
         <p>جاري تحميل الإحصائيات...</p>
       </div>
-    </div>
-<!-- 🚀 دعوة المعلنين -->
-<aside class="stats-ad-cta" dir="rtl">
+    </div> -->
+    <!-- 🚀 دعوة المعلنين -->
+    <aside class="stats-ad-cta" dir="rtl">
+      <div class="stats-ad-cta__content">
+        <span class="stats-ad-cta__eyebrow"> 📢 فرصة للمعلنين </span>
 
-  <div class="stats-ad-cta__content">
+        <h2>LOLME بيكبر كل يوم.. كبر معانا! 🚀</h2>
 
-    <span class="stats-ad-cta__eyebrow">
-      📢 فرصة للمعلنين
-    </span>
+        <p>
+          مجتمعنا بيزيد، وزياراتنا بتكبر، ودي فرصتك تكون من أوائل العلامات
+          التجارية اللي تكبر معانا وتوصل لجمهور LOLME.
+        </p>
 
-    <h2>LOLME بيكبر كل يوم.. كبر معانا! 🚀</h2>
+        <div class="stats-ad-cta__highlight">
+          <strong>متستناش لما نكبر أكتر.. ابدأ معانا من دلوقتي!</strong>
+        </div>
 
-    <p>
-      مجتمعنا بيزيد، وزياراتنا بتكبر، ودي فرصتك تكون من أوائل
-      العلامات التجارية اللي تكبر معانا وتوصل لجمهور LOLME.
-    </p>
+        <a class="stats-ad-cta__button" href="/advertise">
+          اكتشف المساحات الإعلانية
+          <span aria-hidden="true">←</span>
+        </a>
+      </div>
 
-    <div class="stats-ad-cta__highlight">
-      <strong>متستناش لما نكبر أكتر.. ابدأ معانا من دلوقتي!</strong>
-    </div>
-
-    <a class="stats-ad-cta__button" href="/advertise">
-  اكتشف المساحات الإعلانية
-  <span aria-hidden="true">←</span>
-</a>
-
-  </div>
-
-  <div class="stats-ad-cta__art" aria-hidden="true">
-    <span>📈</span>
-    <span>🚀</span>
-    <span>😂</span>
-  </div>
-
-</aside>
+      <div class="stats-ad-cta__art" aria-hidden="true">
+        <span>📈</span>
+        <span>🚀</span>
+        <span>😂</span>
+      </div>
+    </aside>
     <p class="stats-update-note" id="stats-update-note">
       جاري تحديث الإحصائيات...
     </p>
@@ -328,44 +348,170 @@ const homeButtons = [
 
         setText("stat-tests", sections.tests);
 
-        // أكثر الاختبارات مشاهدة
+        // توزيع الجمهور حسب الدولة
+        const countriesList = document.getElementById("stats-countries-list");
+
+        if (countriesList) {
+          countriesList.replaceChildren();
+
+          const countries = stats.countries || [];
+          const totalUsers = countries.reduce(
+            (sum, item) => sum + (Number(item.activeUsers) || 0),
+            0,
+          );
+
+          if (countries.length) {
+            countries.forEach((item) => {
+              const row = document.createElement("div");
+              row.className = "stats-country-row";
+
+              const name = document.createElement("span");
+              name.className = "stats-country-name";
+              const countryNames = {
+                Egypt: "مصر",
+                "Saudi Arabia": "السعودية",
+                "United States": "الولايات المتحدة",
+                Syria: "سوريا",
+                Iraq: "العراق",
+                Algeria: "الجزائر",
+                Jordan: "الأردن",
+                Yemen: "اليمن",
+                Germany: "ألمانيا",
+                Lebanon: "لبنان",
+                Israel: "إسرائيل",
+                "United Arab Emirates": "الإمارات",
+                Tunisia: "تونس",
+                Morocco: "المغرب",
+                Türkiye: "تركيا",
+                Turkey: "تركيا",
+                Kuwait: "الكويت",
+                Oman: "عُمان",
+                Sudan: "السودان",
+                Libya: "ليبيا",
+                Palestine: "فلسطين",
+                Qatar: "قطر",
+                Netherlands: "هولندا",
+                Bahrain: "البحرين",
+                Canada: "كندا",
+                France: "فرنسا",
+                China: "الصين",
+                Sweden: "السويد",
+                "United Kingdom": "المملكة المتحدة",
+                Australia: "أستراليا",
+                Iran: "إيران",
+                Italy: "إيطاليا",
+                Belgium: "بلجيكا",
+                India: "الهند",
+              };
+
+              name.textContent = countryNames[item.country] || item.country;
+
+              const count = document.createElement("strong");
+              count.textContent = numberFormat.format(item.activeUsers);
+
+              const percentage = document.createElement("small");
+              const percent = totalUsers
+                ? (Number(item.activeUsers) / totalUsers) * 100
+                : 0;
+              row.style.setProperty("--country-share", `${percent}%`);
+              percentage.textContent = `${percent.toFixed(1)}%`;
+
+              row.append(name, count, percentage);
+              countriesList.appendChild(row);
+            });
+          } else {
+            countriesList.textContent = "لا توجد بيانات دول متاحة حاليًا.";
+          }
+        }
+
+        // 🔥 الاختبارات الأكثر مشاهدة
         const topTestsList = document.getElementById("stats-top-tests-list");
 
         if (topTestsList) {
           topTestsList.replaceChildren();
 
-          const tests = (stats.topTests || []).filter((test) => {
-            const path = String(test.path || "").replace(/\/+$/, "") || "/";
-            return path !== "/tests";
-          });
+          const tests = (stats.topTests || [])
+            .filter((test) => {
+              const path = String(test.path || "").replace(/\/+$/, "") || "/";
+              return path !== "/tests";
+            })
+            .slice(0, 6);
+
+          const testDetails = {
+            wealth: {
+              title: "عقلية الثراء",
+              description: "اكتشف طريقة تفكيرك تجاه المال والوفرة",
+              emoji: "💰",
+            },
+            fear: {
+              title: "اختبار الخوف",
+              description: "اكتشف ما الذي قد يثير خوفك",
+              emoji: "😱",
+            },
+            "if-you-were-food": {
+              title: "لو كنت أكلة؟",
+              description: "اعرف شخصيتك من خلال اختياراتك",
+              emoji: "🍔",
+            },
+            "your-mental-age": {
+              title: "اكتشف عمرك العقلي",
+              description: "هل تفكيرك مناسب لعمرك الحقيقي؟",
+              emoji: "🧠",
+            },
+            peace: {
+              title: "اختبار السلام الداخلي",
+              description: "اكتشف مدى هدوئك وتوازنك",
+              emoji: "☮️",
+            },
+          };
 
           if (tests.length) {
             tests.forEach((test, index) => {
               const path = String(test.path || "/tests");
+              const slug = path.replace(/^\/tests\/?/, "").replace(/\/+$/, "");
               const safePath = path.startsWith("/tests/") ? path : "/tests";
 
-              const link = document.createElement("a");
-              link.href = safePath;
-              link.className = "top-test-row";
+              const details = testDetails[slug] || {
+                title: slug
+                  .split("-")
+                  .filter(Boolean)
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(" "),
+                description: "جرّب الاختبار واكتشف نتيجتك بنفسك!",
+                emoji: "✨",
+              };
+
+              const card = document.createElement("a");
+              card.href = safePath;
+              card.className = "featured-test-card";
+
+              const icon = document.createElement("span");
+              icon.className = "featured-test-icon";
+              icon.textContent = details.emoji;
 
               const rank = document.createElement("span");
+              rank.className = "featured-test-rank";
               rank.textContent = `#${index + 1}`;
 
-              const name = document.createElement("span");
-              name.textContent =
-                path.replace(/^\/tests\/?/, "").replace(/\/$/, "") ||
-                "صفحة الاختبارات";
+              const title = document.createElement("h3");
+              title.textContent = details.title;
 
-              const views = document.createElement("strong");
-              views.textContent = Math.round(
-                Number(test.pageViews) || 0,
-              ).toLocaleString("ar-EG");
+              const description = document.createElement("p");
+              description.textContent = details.description;
 
-              link.append(rank, name, views);
-              topTestsList.appendChild(link);
+              const views = document.createElement("span");
+              views.className = "featured-test-views";
+              views.textContent = `👀 ${numberFormat.format(test.pageViews || 0)} مشاهدة`;
+
+              const action = document.createElement("span");
+              action.className = "featured-test-action";
+              action.textContent = "جرّب الاختبار ←";
+
+              card.append(icon, rank, title, description, views, action);
+              topTestsList.appendChild(card);
             });
           } else {
-            topTestsList.textContent = "لا توجد بيانات اختبارات كافية حاليًا.";
+            topTestsList.textContent = "لا توجد اختبارات متاحة حاليًا.";
           }
         }
 

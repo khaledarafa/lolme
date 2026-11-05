@@ -1,6 +1,7 @@
 const { setGlobalOptions } = require("firebase-functions");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { initializeApp } = require("firebase-admin/app");
+const { getAuth } = require("firebase-admin/auth");
 const {
   getFirestore,
   FieldValue,
@@ -19,6 +20,63 @@ setGlobalOptions({ maxInstances: 10 });
 initializeApp();
 
 const db = getFirestore();
+
+/**
+ * البحث عن حساب المعلن بالبريد الإلكتروني.
+ * متاحة للأدمن فقط.
+ */
+// exports.findAdvertiserByEmail = onCall(
+//   {
+//     cors: [
+//       "http://localhost:4321",
+//       "https://lolme.cc",
+//       "https://www.lolme.cc"
+//     ]
+//   },
+//   async (request) => {
+
+exports.findAdvertiserByEmail = onCall(async (request) => {
+  // التأكد من تسجيل الدخول
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "يجب تسجيل الدخول أولاً.");
+  }
+
+  // التأكد من صلاحية الأدمن
+  if (request.auth.token.admin !== true) {
+    throw new HttpsError("permission-denied", "هذه العملية للأدمن فقط.");
+  }
+
+  const email = String(request.data?.email || "")
+    .trim()
+    .toLowerCase();
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw new HttpsError("invalid-argument", "البريد الإلكتروني غير صحيح.");
+  }
+
+  try {
+    const user = await getAuth().getUserByEmail(email);
+
+    return {
+      success: true,
+      uid: user.uid,
+      email: user.email || email,
+      displayName: user.displayName || "",
+      emailVerified: user.emailVerified,
+    };
+  } catch (error) {
+    if (error.code === "auth/user-not-found") {
+      throw new HttpsError(
+        "not-found",
+        "لا يوجد حساب مسجل بهذا البريد الإلكتروني.",
+      );
+    }
+
+    console.error("Find advertiser error:", error);
+
+    throw new HttpsError("internal", "حدث خطأ أثناء البحث عن حساب المعلن.");
+  }
+});
 
 const SITE_SECTIONS = ["home", "jokes", "tests"];
 
@@ -135,12 +193,40 @@ exports.getGa4PublicStats = onCall(async () => {
       limit: 1000,
     });
 
+    // الجمهور حسب الدولة - آخر 30 يومًا
+    const [countriesResponse] = await analyticsDataClient.runReport({
+      property,
+      dateRanges: [
+        {
+          startDate: "30daysAgo",
+          endDate: "yesterday",
+        },
+      ],
+      dimensions: [{ name: "country" }],
+      metrics: [{ name: "activeUsers" }],
+      orderBys: [
+        {
+          metric: { metricName: "activeUsers" },
+          desc: true,
+        },
+      ],
+      limit: 250000,
+    });
+
     const summary = summaryResponse.rows?.[0]?.metricValues || [];
 
     const activeUsers = Number(summary[0]?.value || 0);
     const sessions = Number(summary[1]?.value || 0);
     const pageViews = Number(summary[2]?.value || 0);
     const newUsers = Number(summary[3]?.value || 0);
+
+    const countries = (countriesResponse.rows || [])
+      .map((row) => ({
+        country: row.dimensionValues?.[0]?.value || "غير محدد",
+        activeUsers: Number(row.metricValues?.[0]?.value || 0),
+      }))
+      .filter((item) => item.country !== "(not set)")
+      .sort((a, b) => b.activeUsers - a.activeUsers);
 
     const pages = (pagesResponse.rows || []).map((row) => ({
       path: row.dimensionValues?.[0]?.value || "/",
@@ -176,6 +262,7 @@ exports.getGa4PublicStats = onCall(async () => {
       pageViews,
       newUsers,
       sections,
+      countries,
       topPages: pages.slice(0, 10),
       topTests,
       updatedAt: new Date().toISOString(),
@@ -370,7 +457,23 @@ exports.trackAdEvent = onCall({ maxInstances: 10 }, async (request) => {
   ) {
     throw new HttpsError("invalid-argument", "بيانات الحدث غير صحيحة.");
   }
+  // التحقق من أن الحدث صادر من صفحة مسموح بها
+  const normalizedPath =
+    pagePath.split("?")[0].split("#")[0].replace(/\/+$/, "") || "/";
 
+  const allowedAdPage =
+    normalizedPath === "/" ||
+    normalizedPath === "/jokes" ||
+    normalizedPath === "/tests" ||
+    normalizedPath.startsWith("/tests/");
+
+  if (!allowedAdPage) {
+    return {
+      success: true,
+      recorded: false,
+      reason: "page-not-allowed",
+    };
+  }
   const campaignRef = db.collection("adCampaigns").doc(campaignId);
   const campaignSnap = await campaignRef.get();
 
@@ -553,6 +656,171 @@ exports.trackAdEvent = onCall({ maxInstances: 10 }, async (request) => {
     });
 
     return { recorded: true };
+  });
+
+  return {
+    success: true,
+    recorded: result.recorded,
+    reason: result.reason || null,
+  };
+});
+
+/**
+ * تسجيل إحصائيات المساحات الإعلانية العائمة الثلاث.
+ * لا يعتمد على تسجيل دخول الزائر.
+ */
+exports.trackFloatingAdEvent = onCall({ maxInstances: 10 }, async (request) => {
+  const data = request.data || {};
+
+  const { slotId, adId, eventType, visitorId, pagePath } = data;
+
+  const allowedSlots = ["floating-right", "floating-left", "floating-main"];
+
+  if (
+    !allowedSlots.includes(slotId) ||
+    !["impression", "click"].includes(eventType) ||
+    typeof visitorId !== "string" ||
+    !/^[a-zA-Z0-9_-]{20,100}$/.test(visitorId) ||
+    typeof pagePath !== "string" ||
+    pagePath.length > 200 ||
+    !pagePath.startsWith("/") ||
+    (adId !== undefined && (typeof adId !== "string" || adId.length > 150))
+  ) {
+    throw new HttpsError(
+      "invalid-argument",
+      "بيانات الإعلان العائم غير صحيحة.",
+    );
+  }
+
+  // التحقق من أن الحدث صادر من صفحة مسموح بها
+  const normalizedPath =
+    pagePath.split("?")[0].split("#")[0].replace(/\/+$/, "") || "/";
+
+  const allowedAdPage =
+    normalizedPath === "/" ||
+    normalizedPath === "/jokes" ||
+    normalizedPath === "/tests" ||
+    normalizedPath.startsWith("/tests/");
+
+  if (!allowedAdPage) {
+    return {
+      success: true,
+      recorded: false,
+      reason: "page-not-allowed",
+    };
+  }
+  const safeAdId = adId || null;
+  const now = Date.now();
+  const day = new Date().toISOString().slice(0, 10);
+
+  // تشفير هوية الزائر قبل تخزينها.
+  const visitorHash = createHash("sha256")
+    .update(`${slotId}:${visitorId}`)
+    .digest("hex");
+
+  const slotRef = db.collection("floatingAdStats").doc(slotId);
+
+  const dailyRef = slotRef.collection("days").doc(day);
+
+  // زائر فريد للمساحة طوال عمرها.
+  const lifetimeVisitorRef = slotRef.collection("visitors").doc(visitorHash);
+
+  // زائر فريد للمساحة خلال اليوم.
+  const dailyVisitorRef = dailyRef.collection("visitors").doc(visitorHash);
+
+  // منع تكرار النقرات لنفس الزائر في نفس المساحة.
+  const clickGuardRef = db
+    .collection("floatingAdEventGuards")
+    .doc(`${visitorHash}_click`);
+
+  const eventRef = db.collection("adEvents").doc();
+
+  const result = await db.runTransaction(async (transaction) => {
+    // جميع القراءات تتم قبل أي كتابة.
+    let lifetimeVisitorSnap = null;
+    let dailyVisitorSnap = null;
+    let guardSnap = null;
+
+    if (eventType === "impression") {
+      [lifetimeVisitorSnap, dailyVisitorSnap] = await Promise.all([
+        transaction.get(lifetimeVisitorRef),
+        transaction.get(dailyVisitorRef),
+      ]);
+    } else {
+      guardSnap = await transaction.get(clickGuardRef);
+
+      if (guardSnap.exists) {
+        const lastEvent = guardSnap.data().lastEventAt?.toMillis?.() || 0;
+
+        if (now - lastEvent < 10000) {
+          return {
+            recorded: false,
+            reason: "cooldown",
+          };
+        }
+      }
+    }
+
+    const increment = FieldValue.increment(1);
+
+    const slotUpdates = {
+      slotId,
+      updatedAt: FieldValue.serverTimestamp(),
+    };
+
+    const dailyUpdates = {
+      slotId,
+      date: day,
+      updatedAt: FieldValue.serverTimestamp(),
+    };
+
+    if (eventType === "impression") {
+      slotUpdates.impressions = increment;
+      dailyUpdates.impressions = increment;
+
+      // زائر جديد للمساحة طوال عمرها.
+      if (!lifetimeVisitorSnap.exists) {
+        slotUpdates.uniqueVisitors = increment;
+
+        transaction.create(lifetimeVisitorRef, {
+          createdAt: FieldValue.serverTimestamp(),
+        });
+      }
+
+      // زائر جديد للمساحة في هذا اليوم.
+      if (!dailyVisitorSnap.exists) {
+        dailyUpdates.uniqueVisitors = increment;
+
+        transaction.create(dailyVisitorRef, {
+          createdAt: FieldValue.serverTimestamp(),
+        });
+      }
+    } else {
+      slotUpdates.clicks = increment;
+      dailyUpdates.clicks = increment;
+
+      transaction.set(clickGuardRef, {
+        lastEventAt: FieldValue.serverTimestamp(),
+      });
+    }
+
+    transaction.set(slotRef, slotUpdates, { merge: true });
+
+    transaction.set(dailyRef, dailyUpdates, { merge: true });
+
+    transaction.create(eventRef, {
+      slotId,
+      adId: safeAdId,
+      adType: "house",
+      eventType,
+      pagePath,
+      visitorHash,
+      createdAt: FieldValue.serverTimestamp(),
+    });
+
+    return {
+      recorded: true,
+    };
   });
 
   return {

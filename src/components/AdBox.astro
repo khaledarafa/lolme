@@ -12,15 +12,36 @@ type AdItem = {
   every?: number;
 };
 
-const { ad } = Astro.props as { ad: AdItem };
+type Props = {
+  ad: AdItem;
+  slotId?: string;
+  adType?: "house" | "advertiser";
+  campaignId?: string;
+};
+
+const { ad, slotId, adType = "house", campaignId } = Astro.props as Props;
+
+const isTracked = Boolean(slotId);
 ---
 
 <div
   class="ad-wrapper ad-tilt in-content-ad-box grid-ad-box"
   data-ad-id={ad.id}
+  data-ad-slot={slotId}
+  data-ad-type={isTracked ? adType : undefined}
+  data-ad-campaign-id={campaignId}
   data-closeable={ad.closeable ? "1" : "0"}
 >
-  <a href={ad.link} target="_blank" rel="noopener noreferrer" class="ad-link">
+  <a
+    href={ad.link}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="ad-link"
+    data-ad-booking-click={isTracked && adType === "house" ? "true" : undefined}
+    data-ad-campaign-click={isTracked && adType === "advertiser"
+      ? "true"
+      : undefined}
+  >
     <div class="ad-media">
       {
         ad.video ? (

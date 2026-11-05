@@ -128,50 +128,170 @@ const whatsappLink = (slot: (typeof slots)[number]) => {
 
   return `https://wa.me/201002008305?text=${encodeURIComponent(message)}`;
 };
+const floatingSpaces = [
+  {
+    id: "floating-right",
+    name: "المساحة العائمة اليمنى",
+    title: "إعلانك على يمين الموقع",
+    detail: "مساحة إعلانية ثابتة على الجانب الأيمن من صفحات الموقع.",
+    position: "يمين الشاشة",
+    icon: "➡️",
+  },
+  {
+    id: "floating-left",
+    name: "المساحة العائمة اليسرى",
+    title: "إعلانك على يسار الموقع",
+    detail: "مساحة إعلانية ثابتة على الجانب الأيسر من صفحات الموقع.",
+    position: "يسار الشاشة",
+    icon: "⬅️",
+  },
+  {
+    id: "floating-main",
+    name: "المساحة العائمة الرئيسية",
+    title: "إعلانك أسفل يمين الموقع",
+    detail:
+      "إعلان عائم ثابت أسفل يمين الشاشة، يظهر أمام زوار الموقع أثناء تصفح الصفحات.",
+    position: "أسفل يمين الشاشة",
+    icon: "📍",
+  },
+];
+
+const floatingWhatsappLink = (space: (typeof floatingSpaces)[number]) => {
+  const message = [
+    `مرحباً، أنا مهتم بحجز ${space.name}.`,
+    `مكان الإعلان: ${space.position}.`,
+    "السعر: 399 جنيه لمدة 30 يومًا.",
+    "أريد معرفة تفاصيل الحجز والتوافر.",
+  ].join("\n");
+
+  return `https://wa.me/201002008305?text=${encodeURIComponent(message)}`;
+};
 ---
 
 <Layout
-  title="أعلن على LOLME | المساحات الإعلانية المتاحة"
-  description="اكتشف المساحات الإعلانية المتاحة على LOLME، أماكن ظهور الإعلانات وأسعار الحجز لمدة 30 يومًا."
+  title="حجز مساحات إعلانية على الإنترنت | أعلن على LOLME"
+  description="احجز مساحة إعلانية على موقع LOLME لمدة 30 يومًا. اختر إعلانًا داخل محتوى النكت والاختبارات أو مساحة عائمة على الكمبيوتر، وتواصل معنا لمعرفة التوافر والأسعار."
 >
   <main class="advertise-page" dir="rtl">
     <section class="advertise-hero">
-      <span class="hero-eyebrow">📢 فرصتك للإعلان على LOLME</span>
+      <span class="hero-eyebrow">📢 مساحات إعلانية متاحة للحجز</span>
 
-      <h1>LOLME بيكبر كل يوم.. إكبر معانا! 🚀</h1>
+      <h1>احجز مساحة إعلانية على LOLME وروّج لمشروعك 🚀</h1>
 
       <p>
-        مجتمعنا بيزيد، وزياراتنا بتكبر، ودي فرصتك تكون من أوائل العلامات
-        التجارية اللي تنضم لرحلتنا.
+        بتدور على مكان تعرض فيه منتجك أو خدمتك لجمهور جديد؟ يوفر لك LOLME مساحات
+        إعلانية داخل صفحات النكت والاختبارات، بالإضافة إلى إعلانات عائمة ثابتة
+        على الكمبيوتر. اختر موضع إعلانك واحجزه لمدة 30 يومًا.
       </p>
 
       <div class="hero-stats">
         <div>
           <strong>12</strong>
-          <span>مساحة إعلانية</span>
+          <span>مساحة داخل المحتوى</span>
+        </div>
+
+        <div>
+          <strong>3</strong>
+          <span>مساحات عائمة للكمبيوتر</span>
         </div>
 
         <div>
           <strong>30</strong>
-          <span>يوم مدة الإعلان</span>
+          <span>يوم مدة الحجز</span>
         </div>
 
         <div>
-          <strong>79 ج</strong>
-          <span>أقل سعر للحجز</span>
+          <strong>15</strong>
+          <span>مساحة إعلانية إجمالًا</span>
         </div>
       </div>
 
       <a href="#available-slots" class="hero-button">
-        اكتشف المساحات المتاحة ↓
+        استعرض المساحات والأسعار ↓
       </a>
     </section>
 
     <section class="advertise-intro">
-      <h2>اختار المكان المناسب لإعلانك</h2>
+      <h2>اختر مكان ظهور إعلانك على LOLME</h2>
       <p>
-        وفرنا لك مجموعة من المساحات الإعلانية داخل صفحات LOLME. تقدر تختار مكان
-        ظهور إعلانك حسب ميزانيتك والموضع اللي يناسبك.
+        نوفر أكثر من طريقة للإعلان عن المنتجات والخدمات والمشروعات. يمكنك اختيار
+        مساحة داخل محتوى الموقع أو حجز إعلان عائم يظهر في موضع ثابت أثناء تصفح
+        الموقع من الكمبيوتر. تختلف الأسعار حسب موضع الإعلان، ويمكنك الاطلاع على
+        التفاصيل قبل التواصل للحجز.
+      </p>
+    </section>
+
+    <section class="floating-spaces-section" id="floating-spaces">
+      <div class="floating-spaces-heading">
+        <span>📢 مساحات مميزة على LOLME</span>
+        <h2>احجز مساحتك الإعلانية العائمة</h2>
+        <p>
+          احجز إعلانًا في موضع ثابت على شاشة الكمبيوتر. تظهر المساحات العائمة في
+          جميع صفحات LOLME أثناء التصفح، ولكل مساحة موضع مستقل وسعر محدد لمدة 30
+          يومًا. هذه المساحات لا تظهر على الهواتف المحمولة.
+        </p>
+      </div>
+
+      <div class="floating-spaces-grid">
+        {
+          floatingSpaces.map((space, index) => (
+            <article
+              class:list={[
+                "floating-space-card",
+                { "floating-space-card--featured": index === 2 },
+              ]}
+            >
+              <div class="floating-space-visual">
+                <div class="floating-space-mockup">
+                  <div class="mockup-header">LOLME 🤣</div>
+                  <div class="mockup-content">
+                    <span>محتوى الموقع</span>
+                    <div
+                      class:list={[
+                        "mockup-ad",
+                        `mockup-ad--${index === 0 ? "right" : index === 1 ? "left" : "main"}`,
+                      ]}
+                    >
+                      <span>📢</span>
+                      إعلانك هنا
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="floating-space-info">
+                <span class="floating-space-number">
+                  المساحة {String(index + 1).padStart(2, "0")}
+                </span>
+
+                <h3>{space.title}</h3>
+                <p>{space.detail}</p>
+
+                <div class="floating-space-position">📍 {space.position}</div>
+
+                <div class="floating-space-price">
+                  <strong>399 جنيه</strong>
+                  <span> / 30 يومًا</span>
+                </div>
+
+                <a
+                  href={floatingWhatsappLink(space)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="floating-space-button"
+                >
+                  احجز هذه المساحة ←
+                </a>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <p class="floating-spaces-note">
+        المساحات العائمة الثلاث تظهر في جميع صفحات LOLME على أجهزة الكمبيوتر
+        فقط، ولكل مساحة موضع ثابت وإحصائيات مستقلة. سعر الحجز 399 جنيهًا لكل
+        مساحة لمدة 30 يومًا.
       </p>
     </section>
 
@@ -182,24 +302,24 @@ const whatsappLink = (slot: (typeof slots)[number]) => {
         <p>11 مكانًا إعلانيًا موزعًا على محتوى الصفحة.</p>
       </div>
 
-<div class="live-preview">
-  <div>
-    <strong>👀 عايز تشوف المساحات على الطبيعة؟</strong>
-    <p>اتفرج على أماكن ظهور الإعلانات بنفسك في صفحة النكت والاختبارات.</p>
-  </div>
+      <div class="live-preview">
+        <div>
+          <strong>👀 عايز تشوف المساحات على الطبيعة؟</strong>
+          <p>اتفرج على أماكن ظهور الإعلانات بنفسك في صفحة النكت والاختبارات.</p>
+        </div>
 
-  <div class="live-preview__buttons">
-    <a href="/jokes" target="_blank" rel="noopener noreferrer">
-      🤣 مشاهدة صفحة النكت
-      <span>↗</span>
-    </a>
+        <div class="live-preview__buttons">
+          <a href="/jokes" target="_blank" rel="noopener noreferrer">
+            🤣 مشاهدة صفحة النكت
+            <span>↗</span>
+          </a>
 
-    <a href="/tests" target="_blank" rel="noopener noreferrer">
-      🧠 مشاهدة صفحة الاختبارات
-      <span>↗</span>
-    </a>
-  </div>
-</div>
+          <a href="/tests" target="_blank" rel="noopener noreferrer">
+            🧠 مشاهدة صفحة الاختبارات
+            <span>↗</span>
+          </a>
+        </div>
+      </div>
       <div class="slots-grid">
         {
           slots
@@ -235,16 +355,16 @@ const whatsappLink = (slot: (typeof slots)[number]) => {
                   rel="noopener noreferrer"
                   class="slot-button"
                 >
-<svg
-  viewBox="0 0 24 24"
-  width="19"
-  height="19"
-  fill="currentColor"
-  aria-hidden="true"
->
-  <path d="M20.52 3.48A11.86 11.86 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.15 1.6 5.96L0 24l6.31-1.65a11.9 11.9 0 0 0 5.73 1.46h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.42-8.44ZM12.05 21.8a9.9 9.9 0 0 1-5.05-1.39l-.36-.21-3.75.98 1-3.65-.24-.38a9.88 9.88 0 1 1 8.4 4.65Zm5.42-7.4c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.8-1.49-1.78-1.67-2.08-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35Z"/>
-</svg>
-احجز عبر واتساب
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="19"
+                    height="19"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M20.52 3.48A11.86 11.86 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.15 1.6 5.96L0 24l6.31-1.65a11.9 11.9 0 0 0 5.73 1.46h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.42-8.44ZM12.05 21.8a9.9 9.9 0 0 1-5.05-1.39l-.36-.21-3.75.98 1-3.65-.24-.38a9.88 9.88 0 1 1 8.4 4.65Zm5.42-7.4c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.8-1.49-1.78-1.67-2.08-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35Z" />
+                  </svg>
+                  احجز عبر واتساب
                 </a>
               </article>
             ))
@@ -286,37 +406,133 @@ const whatsappLink = (slot: (typeof slots)[number]) => {
                 rel="noopener noreferrer"
                 class="slot-button"
               >
-<svg
-  viewBox="0 0 24 24"
-  width="19"
-  height="19"
-  fill="currentColor"
-  aria-hidden="true"
->
-  <path d="M20.52 3.48A11.86 11.86 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.15 1.6 5.96L0 24l6.31-1.65a11.9 11.9 0 0 0 5.73 1.46h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.42-8.44ZM12.05 21.8a9.9 9.9 0 0 1-5.05-1.39l-.36-.21-3.75.98 1-3.65-.24-.38a9.88 9.88 0 1 1 8.4 4.65Zm5.42-7.4c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.8-1.49-1.78-1.67-2.08-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35Z"/>
-</svg>
-احجز عبر واتساب
+                <svg
+                  viewBox="0 0 24 24"
+                  width="19"
+                  height="19"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M20.52 3.48A11.86 11.86 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.15 1.6 5.96L0 24l6.31-1.65a11.9 11.9 0 0 0 5.73 1.46h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.42-8.44ZM12.05 21.8a9.9 9.9 0 0 1-5.05-1.39l-.36-.21-3.75.98 1-3.65-.24-.38a9.88 9.88 0 1 1 8.4 4.65Zm5.42-7.4c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.8-1.49-1.78-1.67-2.08-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35Z" />
+                </svg>
+                احجز عبر واتساب
               </a>
             </article>
           ))
       }
     </section>
 
-<section class="advertise-bottom">
-  <span>🚀</span>
+    <section class="advertise-faq" id="advertising-faq" dir="rtl">
+      <h2>أسئلة شائعة عن حجز المساحات الإعلانية</h2>
 
-  <h2>اختر مساحتك الإعلانية وابدأ مع LOLME!</h2>
+      <div class="advertise-faq__item">
+        <h3>إزاي أحجز مساحة إعلانية على LOLME؟</h3>
+        <p>
+          اختار المساحة المناسبة من الصفحة واضغط على زر الحجز، وسيتم توجيهك إلى
+          واتساب للتواصل معنا ومعرفة التوافر واستكمال تفاصيل الإعلان.
+        </p>
+      </div>
 
-  <p>
-    تصفّح المساحات المتاحة، واختر المكان المناسب لإعلانك،
-    ثم اضغط على زر الحجز في المساحة التي اخترتها للتواصل معنا عبر واتساب.
-  </p>
+      <div class="advertise-faq__item">
+        <h3>مدة الإعلان على الموقع كام يوم؟</h3>
+        <p>
+          مدة الحجز الأساسية 30 يومًا، وتبدأ بعد تأكيد الحجز والاتفاق على موعد
+          نشر الإعلان.
+        </p>
+      </div>
 
-  <a href="#available-slots">
-    اختار مساحتك الإعلانية
-    <span> ↑ </span>
-  </a>
-</section>
+      <div class="advertise-faq__item">
+        <h3>هل الإعلانات العائمة بتظهر على الموبايل؟</h3>
+        <p>
+          لا، المساحات الإعلانية العائمة الثلاث مخصصة لأجهزة الكمبيوتر، بينما
+          تتوفر المساحات الإعلانية داخل محتوى النكت والاختبارات وفق مواضع
+          ظهورها.
+        </p>
+      </div>
+
+      <div class="advertise-faq__item">
+        <h3>أسعار المساحات الإعلانية بتبدأ من كام؟</h3>
+        <p>
+          تبدأ أسعار المساحات داخل المحتوى من 79 جنيهًا لمدة 30 يومًا، وتبلغ
+          أسعار المساحات العائمة 399 جنيهًا للمساحة الواحدة لمدة 30 يومًا.
+        </p>
+      </div>
+
+      <div class="advertise-faq__item">
+        <h3>هل أقدر أحجز أكثر من مساحة إعلانية؟</h3>
+        <p>
+          نعم، يمكنك طلب حجز أكثر من مساحة، ويخضع كل حجز لتأكيد توافر الموضع
+          المطلوب.
+        </p>
+      </div>
+    </section>
+
+    <!-- بيانات FAQ المنظمة لمحركات البحث -->
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "إزاي أحجز مساحة إعلانية على LOLME؟",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "اختار المساحة المناسبة واضغط على زر الحجز للتواصل معنا عبر واتساب ومعرفة التوافر واستكمال تفاصيل الإعلان.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "مدة الإعلان على الموقع كام يوم؟",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "مدة الحجز الأساسية 30 يومًا.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "هل الإعلانات العائمة بتظهر على الموبايل؟",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "لا، المساحات الإعلانية العائمة الثلاث مخصصة لأجهزة الكمبيوتر.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "أسعار المساحات الإعلانية بتبدأ من كام؟",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "تبدأ أسعار المساحات داخل المحتوى من 79 جنيهًا لمدة 30 يومًا، والمساحات العائمة بسعر 399 جنيهًا للمساحة الواحدة لمدة 30 يومًا.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "هل أقدر أحجز أكثر من مساحة إعلانية؟",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "نعم، يمكنك طلب حجز أكثر من مساحة، ويخضع كل حجز لتأكيد توافر الموضع المطلوب.",
+            },
+          },
+        ],
+      })}
+    />
+
+    <section class="advertise-bottom">
+      <span>🚀</span>
+
+      <h2>اختر مساحتك الإعلانية وابدأ مع LOLME!</h2>
+
+      <p>
+        تصفّح المساحات المتاحة، واختر المكان المناسب لإعلانك، ثم اضغط على زر
+        الحجز في المساحة التي اخترتها للتواصل معنا عبر واتساب.
+      </p>
+
+      <a href="#available-slots">
+        اختار مساحتك الإعلانية
+        <span> ↑ </span>
+      </a>
+    </section>
 
     <p class="advertise-note">
       جميع الأسعار بالجنيه المصري، ومدة الحجز 30 يومًا. الحجز يخضع لتأكيد توافر
@@ -584,69 +800,291 @@ const whatsappLink = (slot: (typeof slots)[number]) => {
   }
 
   .live-preview {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  flex-wrap: wrap;
-  margin: 20px 0;
-  padding: 18px 20px;
-  background: rgba(139, 92, 246, 0.08);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  border-radius: 14px;
-}
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+    padding: 18px 20px;
+    background: rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 14px;
+  }
 
-.live-preview strong {
-  color: var(--text-color);
-  font-size: 1rem;
-}
+  .live-preview strong {
+    color: var(--text-color);
+    font-size: 1rem;
+  }
 
-.live-preview p {
-  margin: 6px 0 0;
-  color: var(--text-secondary, #94a3b8);
-  font-size: 0.85rem;
-}
-
-.live-preview__buttons {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.live-preview__buttons a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 11px 16px;
-  background: #6d28d9;
-  color: #fff;
-  border-radius: 9px;
-  text-decoration: none;
-  font-weight: 700;
-  white-space: nowrap;
-  transition: background 0.2s ease;
-}
-
-.live-preview__buttons a:hover {
-  background: #5b21b6;
-}
-
-@media (max-width: 600px) {
-  .live-preview {
-    flex-direction: column;
-    align-items: stretch;
-    text-align: center;
+  .live-preview p {
+    margin: 6px 0 0;
+    color: var(--text-secondary, #94a3b8);
+    font-size: 0.85rem;
   }
 
   .live-preview__buttons {
-    flex-direction: column;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
   }
 
   .live-preview__buttons a {
-    width: 100%;
-    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 16px;
+    background: #6d28d9;
+    color: #fff;
+    border-radius: 9px;
+    text-decoration: none;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background 0.2s ease;
   }
-}
+
+  .live-preview__buttons a:hover {
+    background: #5b21b6;
+  }
+
+  @media (max-width: 600px) {
+    .live-preview {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+    }
+
+    .live-preview__buttons {
+      flex-direction: column;
+    }
+
+    .live-preview__buttons a {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+
+  .floating-spaces-section {
+    margin: 55px 0;
+  }
+
+  .floating-spaces-heading {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .floating-spaces-heading > span {
+    color: #8b5cf6;
+    font-weight: 800;
+  }
+
+  .floating-spaces-heading h2 {
+    margin: 12px 0;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .floating-spaces-heading p {
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.8;
+  }
+
+  .floating-spaces-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .floating-space-card {
+    overflow: hidden;
+    border-radius: 17px;
+    background: var(--card-bg, #1e293b);
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .floating-space-card--featured {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 18px rgba(139, 92, 246, 0.16);
+  }
+
+  .floating-space-visual {
+    padding: 20px;
+    background: linear-gradient(120deg, #111827, #312e81 65%, #6d28d9);
+  }
+
+  .floating-space-mockup {
+    min-height: 155px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    background: #0f172a;
+    color: white;
+  }
+
+  .mockup-header {
+    padding: 9px;
+    text-align: center;
+    font-weight: 800;
+    border-bottom: 1px solid #334155;
+  }
+
+  .mockup-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 105px;
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .mockup-ad {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 75px;
+    min-height: 72px;
+    padding: 7px;
+    box-sizing: border-box;
+    border: 1px solid #a78bfa;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #312e81, #6d28d9);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .mockup-ad--right {
+    right: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .mockup-ad--left {
+    left: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .mockup-ad--main {
+    width: 105px;
+    min-height: 58px;
+    right: 7px;
+    bottom: 7px;
+  }
+
+  .floating-space-info {
+    padding: 20px;
+    text-align: right;
+  }
+
+  .floating-space-number {
+    color: #a78bfa;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .floating-space-info h3 {
+    margin: 10px 0;
+    font-size: 1.1rem;
+  }
+
+  .floating-space-info > p {
+    min-height: 55px;
+    color: var(--text-secondary, #94a3b8);
+    font-size: 0.88rem;
+    line-height: 1.8;
+  }
+
+  .floating-space-position {
+    margin-top: 12px;
+    color: var(--text-secondary, #94a3b8);
+    font-size: 0.82rem;
+  }
+
+  .floating-space-price {
+    margin: 20px 0;
+  }
+
+  .floating-space-price strong {
+    color: #fde047;
+    font-size: 1.5rem;
+  }
+
+  .floating-space-price span {
+    color: var(--text-secondary, #94a3b8);
+    font-size: 0.8rem;
+  }
+
+  .floating-space-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    border-radius: 9px;
+    background: #16a34a;
+    color: white !important;
+    font-weight: 800;
+    text-decoration: none;
+    transition: background 0.2s ease;
+  }
+
+  .floating-space-button:hover {
+    background: #15803d;
+  }
+
+  .floating-spaces-note {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    border-radius: 12px;
+    color: var(--text-secondary, #94a3b8);
+    text-align: center;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 850px) {
+    .floating-spaces-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .floating-space-info > p {
+      min-height: auto;
+    }
+  }
+
+  .advertise-faq {
+    margin: 55px 0;
+  }
+
+  .advertise-faq > h2 {
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .advertise-faq__item {
+    margin-bottom: 14px;
+    padding: 18px 20px;
+    border: 1px solid var(--border-color, rgba(148, 163, 184, 0.2));
+    border-radius: 12px;
+    background: var(--card-bg, var(--bg-color));
+  }
+
+  .advertise-faq__item h3 {
+    margin: 0 0 9px;
+    font-size: 1rem;
+  }
+
+  .advertise-faq__item p {
+    margin: 0;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.9;
+    font-size: 0.92rem;
+  }
 </style>

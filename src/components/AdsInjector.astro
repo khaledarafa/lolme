@@ -1,42 +1,67 @@
 ---
-// src/components/AdsInjector.astro              ٢٧-١٠-٢٦
+// src/components/AdsInjector.astro
 
-// نظام الإعلانات	الملف المسؤول
-// البانر العريض أسفل الصفحة	public/js/ads-system.js
-// الإعلانات العائمة Floating	AdsInjector.astro وadsConfig.floating
-// الإعلانات الجانبية يمين وشمال	AdsInjector.astro وadsConfig.sideRight/sideLeft
-// الإعلان أعلى الصفحة وأسفلها	AdsInjector.astro وadsConfig.top/bottom
-// الإعلانات داخل المقالات	public/js/ads.js
-// الإعلانات داخل شبكات الكروت	public/js/adsGrid.js
-// شكل وتصميم الإعلانات	AdBox.astro وstyle.css
+// نظام الإعلانات
+// البانر العريض أسفل الصفحة: public/js/ads-system.js
+// الإعلانات العائمة: AdsInjector.astro و adsConfig.floating
+// الإعلانات الجانبية: AdsInjector.astro و adsConfig.sideRight/sideLeft
+// الإعلان أعلى وأسفل الصفحة: AdsInjector.astro و adsConfig.top/bottom
+// الإعلانات داخل المقالات: public/js/ads.js
+// الإعلانات داخل شبكات الكروت: public/js/adsGrid.js
+// تصميم الإعلانات: AdBox.astro و style.css
 
-import { adsConfig } from "../data/adsConfig.js";
+// import { adsConfig } from "../data/adsConfig.js";
 import AdBox from "./AdBox.astro";
 
 const ua = Astro.request.headers.get("user-agent") || "";
 const isMobile =
   /(Mobile|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop)/i.test(ua);
 
-type AdItem = {
-  id: string;
-  title?: string;
-  desc?: string;
-  img?: string;
-  video?: string;
-  link: string;
-  cta?: string;
-  closeable?: boolean;
-  desktop?: boolean;
-  every?: number;
-};
+// type AdItem = {
+//   id: string;
+//   title?: string;
+//   desc?: string;
+//   img?: string;
+//   video?: string;
+//   link: string;
+//   cta?: string;
+//   closeable?: boolean;
+//   desktop?: boolean;
+//   every?: number;
+// };
 
-const pickRandomAd = (ads: AdItem[]): AdItem | null => {
-  if (!ads.length) return null;
+// const pickRandomAd = (ads: AdItem[]): AdItem | null => {
+//   if (!ads.length) return null;
+//   return ads[Math.floor(Math.random() * ads.length)];
+// };
 
-  return ads[Math.floor(Math.random() * ads.length)];
-};
+// // الإعلانات الداخلية الاحتياطية
+// const internalFallback =
+//   (
+//     adsConfig as typeof adsConfig & {
+//       internalFallback?: AdItem[];
+//     }
+//   ).internalFallback ?? [];
+
+// // تحديد محتوى كل مساحة حسب الأولوية
+// const resolveSlotAds = (primaryAds?: AdItem[]) => {
+//   if (primaryAds?.length) {
+//     return { ads: primaryAds, type: "house" as const };
+//   }
+
+//   if (internalFallback.length) {
+//     return { ads: internalFallback, type: "internal" as const };
+//   }
+
+//   return { ads: [], type: "reservation" as const };
+// };
+
+// const rightAds = resolveSlotAds(adsConfig.sideRight);
+// const leftAds = resolveSlotAds(adsConfig.sideLeft);
+// const floatingAds = resolveSlotAds(adsConfig.floating);
 
 const v = Date.now();
+
 const {
   showTop = true,
   showBottom = true,
@@ -46,18 +71,26 @@ const {
 ---
 
 {/* TOP */}
-<!-- {
+<!--
+{
   showTop && adsConfig.top?.length > 0 && (
     <div class="ad-top ad-top-compact">
-      <AdBox ad={pickRandomAd(adsConfig.top)} />
+      <AdBox ad={pickRandomAd(adsConfig.top)!} />
     </div>
   )
-} -->
+}
+-->
 
-{/* SIDE RIGHT — إعلان عشوائي واحد */}
+<!-- قبل الفاير -->
+<!-- {/* SIDE RIGHT */}
 {
-  !isMobile && showSide && adsConfig.sideRight?.length > 0 && (
-    <div class="ad-right ad-side side-random-pending">
+  !isMobile && showSide && (
+    <div
+      class="ad-right ad-side side-random-pending"
+      data-ad-slot="floating-right"
+      data-ad-type={rightAds.type}
+      data-ad-ready="false"
+    >
       <span
         class="side-close-btn"
         onclick="event.stopPropagation(); this.closest('.ad-right')?.remove()"
@@ -65,19 +98,37 @@ const {
         ✖
       </span>
 
-      {adsConfig.sideRight.map((ad) => (
-        <div class="side-box" data-side-ad>
-          <AdBox ad={ad} />
+      {rightAds.ads.length > 0 ? (
+        rightAds.ads.map((ad) => (
+          <div class="side-box" data-side-ad>
+            <AdBox ad={ad} slotId="floating-right" />
+          </div>
+        ))
+      ) : (
+        <div class="side-box floating-fallback" data-side-ad>
+          <div class="floating-fallback__content" dir="rtl">
+            <span>📢 مساحة إعلانية متاحة</span>
+            <strong>اعرض إعلانك هنا</strong>
+            <p>روّج لمشروعك أمام زوار LOLME</p>
+            <a class="stats-ad-cta__button" href="/advertise#floating-spaces">
+              احجز المساحة الآن ←
+            </a>
+          </div>
         </div>
-      ))}
+      )}
     </div>
   )
-}
+} -->
 
-{/* SIDE LEFT — إعلان عشوائي واحد */}
+<!-- {/* SIDE LEFT */}
 {
-  !isMobile && showSide && adsConfig.sideLeft?.length > 0 && (
-    <div class="ad-left ad-side side-random-pending">
+  !isMobile && showSide && (
+    <div
+      class="ad-left ad-side side-random-pending"
+      data-ad-slot="floating-left"
+      data-ad-type={leftAds.type}
+      data-ad-ready="false"
+    >
       <span
         class="side-close-btn"
         onclick="event.stopPropagation(); this.closest('.ad-left')?.remove()"
@@ -85,41 +136,184 @@ const {
         ✖
       </span>
 
-      {adsConfig.sideLeft.map((ad) => (
-        <div class="side-box" data-side-ad>
-          <AdBox ad={ad} />
+      {leftAds.ads.length > 0 ? (
+        leftAds.ads.map((ad) => (
+          <div class="side-box" data-side-ad>
+            <AdBox ad={ad} slotId="floating-left" />
+          </div>
+        ))
+      ) : (
+        <div class="side-box floating-fallback" data-side-ad>
+          <div class="floating-fallback__content" dir="rtl">
+            <span>📢 مساحة إعلانية متاحة</span>
+            <strong>اعرض إعلانك هنا</strong>
+            <p>روّج لمشروعك أمام زوار LOLME</p>
+            <a class="stats-ad-cta__button" href="/advertise#floating-spaces">
+              احجز المساحة الآن ←
+            </a>
+          </div>
         </div>
-      ))}
+      )}
     </div>
   )
-}
+} -->
 
-{/* FLOATING — إعلان عشوائي واحد مع زر إغلاق */}
+
+<!-- {/* FLOATING MAIN */}
 {
-  !isMobile && showFloating && adsConfig.floating?.length > 0 && (
-    <div class="ad-floating floating-pending">
-      {adsConfig.floating.map((ad) => (
-        <div class="float-box" data-floating-ad>
-          {ad.closeable && (
-            <button
-              type="button"
-              class="close-btn"
-              aria-label="إغلاق الإعلان"
-              onclick="this.closest('.float-box').remove()"
-            >
-              ✕
-            </button>
-          )}
+  !isMobile && showFloating && (
+    <div
+      class="ad-floating floating-pending"
+      data-ad-slot="floating-main"
+      data-ad-type={floatingAds.type}
+      data-ad-ready="false"
+    >
+      {floatingAds.ads.length > 0 ? (
+        floatingAds.ads.map((ad) => (
+          <div class="float-box" data-floating-ad>
+            {ad.closeable && (
+              <button
+                type="button"
+                class="close-btn"
+                aria-label="إغلاق الإعلان"
+                onclick="this.closest('.ad-floating')?.remove()"
+              >
+                ✕
+              </button>
+            )}
 
-          <AdBox ad={ad} />
+            <AdBox ad={ad} slotId="floating-main" />
+          </div>
+        ))
+      ) : (
+        <div class="float-box floating-fallback" data-floating-ad>
+          <button
+            type="button"
+            class="close-btn"
+            aria-label="إغلاق الإعلان"
+            onclick="this.closest('.ad-floating')?.remove()"
+          >
+            ✕
+          </button>
+
+          <div class="floating-fallback__content" dir="rtl">
+            <span>📢 فرصة للمعلنين</span>
+            <strong>مساحة إعلانية متاحة على LOLME</strong>
+            <p>روّج لمنتجك أو مشروعك أمام زوار الموقع.</p>
+            <a class="stats-ad-cta__button" href="/advertise#floating-spaces">
+              احجز المساحة الآن ←
+            </a>
+          </div>
         </div>
-      ))}
+      )}
+    </div>
+  )
+} -->
+
+
+{/* CONFIG + SCRIPTS */}
+<!-- <script
+  type="application/json"
+  id="ads-config"
+  set:html={JSON.stringify(adsConfig)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026")}
+/> -->
+
+{/* SIDE RIGHT */}
+{
+  !isMobile && showSide && (
+    <div
+      class="ad-right ad-side side-random-pending"
+      data-ad-slot="floating-right"
+      data-ad-type="reservation"
+      data-ad-ready="false"
+    >
+      <span
+        class="side-close-btn"
+        onclick="event.stopPropagation(); this.closest('.ad-right')?.remove()"
+      >
+        ✖
+      </span>
+
+      <div class="side-box floating-fallback" data-side-ad>
+        <div class="floating-fallback__content" dir="rtl">
+          <span>📢 مساحة إعلانية متاحة</span>
+          <strong>اعرض إعلانك هنا</strong>
+          <p>روّج لمشروعك أمام زوار LOLME</p>
+          <a class="stats-ad-cta__button" href="/advertise#floating-spaces">
+            احجز المساحة الآن ←
+          </a>
+        </div>
+      </div>
     </div>
   )
 }
 
+{/* SIDE LEFT */}
+{
+  !isMobile && showSide && (
+    <div
+      class="ad-left ad-side side-random-pending"
+      data-ad-slot="floating-left"
+      data-ad-type="reservation"
+      data-ad-ready="false"
+    >
+      <span
+        class="side-close-btn"
+        onclick="event.stopPropagation(); this.closest('.ad-left')?.remove()"
+      >
+        ✖
+      </span>
 
-{/* إعلان حجز المساحة العائمة على الكمبيوتر والموبايل */}
+      <div class="side-box floating-fallback" data-side-ad>
+        <div class="floating-fallback__content" dir="rtl">
+          <span>📢 مساحة إعلانية متاحة</span>
+          <strong>اعرض إعلانك هنا</strong>
+          <p>روّج لمشروعك أمام زوار LOLME</p>
+          <a class="stats-ad-cta__button" href="/advertise#floating-spaces">
+            احجز المساحة الآن ←
+          </a>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+{/* FLOATING MAIN */}
+{
+  !isMobile && showFloating && (
+    <div
+      class="ad-floating floating-pending"
+      data-ad-slot="floating-main"
+      data-ad-type="reservation"
+      data-ad-ready="false"
+    >
+      <div class="float-box floating-fallback" data-floating-ad>
+        <button
+          type="button"
+          class="close-btn"
+          aria-label="إغلاق الإعلان"
+          onclick="this.closest('.ad-floating')?.remove()"
+        >
+          ✕
+        </button>
+
+        <div class="floating-fallback__content" dir="rtl">
+          <span>📢 فرصة للمعلنين</span>
+          <strong>مساحة إعلانية متاحة على LOLME</strong>
+          <p>روّج لمنتجك أو مشروعك أمام زوار الموقع.</p>
+          <a class="stats-ad-cta__button" href="/advertise#floating-spaces">
+            احجز المساحة الآن ←
+          </a>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+{/* إعلان الحجز الترويجي المستقل */}
 {
   showFloating && (
     <div id="mobile-floating-ad" class="promo-floating-ad">
@@ -132,23 +326,17 @@ const {
           ✕
         </button>
 
-        <span class="promo-floating-ad__label">
-          📢 فرصة للمعلنين
-        </span>
+        <span class="promo-floating-ad__label">📢 فرصة للمعلنين</span>
 
-        <strong class="promo-floating-ad__title">
-          أعلن على LOLME 🚀
-        </strong>
+        <strong class="promo-floating-ad__title">أعلن على LOLME 🚀</strong>
 
         <p>روّج لمشروعك أمام زوار الموقع.</p>
 
         <div class="promo-floating-ad__footer">
-          <span class="promo-floating-ad__price">
-            149 جنيه / 30 يومًا
-          </span>
+          <span class="promo-floating-ad__price">149 جنيه / 30 يومًا</span>
 
           <a
-            href="https://wa.me/201002008305?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%D8%8C%20%D8%A3%D9%86%D8%A7%20%D9%85%D9%87%D8%AA%D9%85%20%D8%A8%D8%AD%D8%AC%D8%B2%20%D8%A7%D9%84%D8%A5%D8%B9%D9%84%D8%A7%D9%86%20%D8%A7%D9%84%D8%B9%D8%A7%D8%A6%D9%85%20%D8%B9%D9%84%D9%89%20LOLME%20%D8%A8%D8%B3%D8%B9%D8%B1%20149%20%D8%AC%D9%86%D9%8A%D9%87%20%D9%84%D9%85%D8%AF%D8%A9%2030%20%D9%8A%D9%88%D9%85%D8%A7%D9%8B."
+            href="https://wa.me/201002008305?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%D8%8C%20%D8%A3%D9%86%D8%A7%20%D9%85%D9%87%D8%AA%D9%85%20%D8%A8%D8%AD%D8%AC%D8%B2%20%D8%A7%D9%84%D8%A5%D8%B9%D9%84%D8%A7%D9%86%20%D8%A7%D9%84%D8%B9%D8%A7%D8%A6%D9%85%20%D8%B9%D9%84%D9%89%20LOLME%20%D8%A8%D8%B3%D8%B9%D8%B1%20149%20%D8%AC%D9%86%D9%8A%D9%87%20%D9%84%D9%85%D8%AF%D8%A9%2030%20%D9%8A%D9%88%D9%85%D8%A7%D9%8B"
             target="_blank"
             rel="noopener noreferrer"
             class="promo-floating-ad__button"
@@ -161,72 +349,67 @@ const {
   )
 }
 
-
-{/* BOTTOM — نسخة واحدة فقط */}
-<!-- {
+{/* BOTTOM */}
+<!--
+{
   showBottom && adsConfig.bottom?.length > 0 && (
     <div class="ad-bottom">
-      <AdBox ad={pickRandomAd(adsConfig.bottom)} />
+      <AdBox ad={pickRandomAd(adsConfig.bottom)!} />
     </div>
   )
-} -->
+}
+-->
 
-{/* CONFIG + SCRIPTS */}
-<script
-  type="application/json"
-  id="ads-config"
-  set:html={JSON.stringify(adsConfig)
-    .replace(/</g, "\\u003c")
-    .replace(/>/g, "\\u003e")
-    .replace(/&/g, "\\u0026")}
-/>
 
 <script>
   function initFloatingAds() {
-    document.querySelectorAll(".ad-floating").forEach((container) => {
-      const ads = Array.from(container.querySelectorAll("[data-floating-ad]"));
+    document
+      .querySelectorAll<HTMLElement>(".ad-floating")
+      .forEach((container) => {
+        const ads = Array.from(
+          container.querySelectorAll<HTMLElement>("[data-floating-ad]"),
+        );
 
-      if (!ads.length) return;
+        if (!ads.length) return;
 
-      // اختيار إعلان عشوائي واحد
-      const randomIndex = Math.floor(Math.random() * ads.length);
-      const selectedAd = ads[randomIndex];
+        const randomIndex = Math.floor(Math.random() * ads.length);
+        const selectedAd = ads[randomIndex];
 
-      // حذف بقية الإعلانات
-      ads.forEach((ad, index) => {
-        if (index !== randomIndex) {
-          ad.remove();
-        }
+        ads.forEach((ad, index) => {
+          if (index !== randomIndex) {
+            ad.remove();
+          }
+        });
+
+        selectedAd.classList.add("is-selected");
+        container.classList.remove("floating-pending");
+        container.dataset.adReady = "true";
       });
-
-      // إظهار الإعلان المختار
-      container.classList.remove("floating-pending");
-      selectedAd.classList.add("is-selected");
-    });
   }
 
   function initSideAds() {
-    document.querySelectorAll(".ad-right, .ad-left").forEach((container) => {
-      const ads = Array.from(container.querySelectorAll("[data-side-ad]"));
+    document
+      .querySelectorAll<HTMLElement>(".ad-right, .ad-left")
+      .forEach((container) => {
+        const ads = Array.from(
+          container.querySelectorAll<HTMLElement>("[data-side-ad]"),
+        );
 
-      if (!ads.length) {
+        if (!ads.length) return;
+
+        const randomIndex = Math.floor(Math.random() * ads.length);
+        const selectedAd = ads[randomIndex];
+
+        ads.forEach((ad, index) => {
+          if (index !== randomIndex) {
+            ad.remove();
+          }
+        });
+
+        selectedAd.classList.add("is-selected");
         container.classList.remove("side-random-pending");
-        return;
-      }
-
-      // اختيار إعلان عشوائي واحد لكل جانب
-      const randomIndex = Math.floor(Math.random() * ads.length);
-
-      // حذف بقية الإعلانات
-      ads.forEach((ad, index) => {
-        if (index !== randomIndex) {
-          ad.remove();
-        }
+        container.dataset.adReady = "true";
       });
-
-      // إظهار الإعلان المختار
-      container.classList.remove("side-random-pending");
-    });
   }
 
   function initAllAds() {
@@ -236,6 +419,7 @@ const {
 
   function initPromoFloatingAd() {
     const ad = document.getElementById("mobile-floating-ad");
+
     if (!ad || ad.dataset.initialized === "1") return;
 
     ad.dataset.initialized = "1";
@@ -267,7 +451,9 @@ const {
     );
 
     window.setTimeout(() => {
-      if (ad.isConnected) ad.classList.add("is-visible");
+      if (ad.isConnected) {
+        ad.classList.add("is-visible");
+      }
     }, 1800);
   }
 
@@ -275,18 +461,18 @@ const {
     document.addEventListener("DOMContentLoaded", initPromoFloatingAd, {
       once: true,
     });
-  } else {
-    initPromoFloatingAd();
-  }
 
-  if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initAllAds, {
       once: true,
     });
   } else {
+    initPromoFloatingAd();
     initAllAds();
   }
 </script>
+
 <script type="module" src={`/js/ads.js?v=${v}`}></script>
 <script type="module" src={`/js/adsGrid.js?v=${v}`}></script>
 <script type="module" src={`/js/tilt-cards.js?v=${v}`}></script>
+<script type="module" src={`/js/floating-ads-analytics.js?v=${v}`}></script>
+<script type="module" src={`/js/ads-slots.js?v=${v}`}></script>

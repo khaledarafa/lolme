@@ -16,6 +16,66 @@ import Layout from "../layouts/Layout.astro";
       <button id="advertiser-logout" type="button"> تسجيل الخروج </button>
     </header>
 
+    <section class="stats-guide">
+      <div class="stats-guide-header">
+        <span>📈</span>
+        <div>
+          <h3>كيف نحسب إحصائيات إعلانك؟</h3>
+          <p>توضيح مبسط للأرقام التي تظهر في لوحة التحكم.</p>
+        </div>
+      </div>
+
+      <div class="stats-guide-grid">
+        <article class="stats-guide-item">
+          <strong>👁️ مرات الظهور</strong>
+          <p>
+            إجمالي عدد مرات مشاهدة إعلانك. تُحتسب مشاهدة جديدة في كل مرة يظهر
+            فيها الإعلان بنسبة 50% على الأقل لمدة ثانية متواصلة. ويمكن احتساب
+            أكثر من مشاهدة من الزائر نفسه.
+          </p>
+        </article>
+
+        <article class="stats-guide-item">
+          <strong>👥 الزوار المختلفون</strong>
+          <p>
+            عدد المتصفحات المختلفة التي شاهدت إعلانك خلال فترة الحملة. يُحتسب
+            الزائر مرة واحدة فقط، حتى لو شاهد الإعلان مرات عديدة.
+          </p>
+        </article>
+
+        <article class="stats-guide-item">
+          <strong>🖱️ النقرات</strong>
+          <p>
+            عدد مرات النقر على رابط إعلانك. يتم تسجيل النقرة عند ضغط الزائر على
+            رابط الإعلان.
+          </p>
+        </article>
+
+        <article class="stats-guide-item">
+          <strong>📊 معدل النقر (CTR)</strong>
+          <p>
+            النسبة المئوية للنقرات مقارنة بمرات الظهور. كلما ارتفع المعدل، زادت
+            نسبة التفاعل مع إعلانك.
+          </p>
+        </article>
+      </div>
+
+      <div class="stats-guide-note">
+        <strong>💡 مثال توضيحي:</strong>
+        <p>
+          إذا شاهد 100 زائر مختلف إعلانك، وشاهده بعضهم أكثر من مرة، فقد تكون
+          النتيجة 250 مرة ظهور و100 زائر مختلف. هذا يعني أن الإعلان ظهر 250 مرة
+          أمام 100 زائر مختلف.
+        </p>
+      </div>
+
+      <div class="stats-guide-footer">
+        يتم تحديث الإحصائيات عند تحميل لوحة التحكم أو الضغط على زر التحديث. وقد
+        تختلف الأرقام عن عدد الأشخاص الحقيقيين؛ لأن القياس يعتمد على المتصفح أو
+        الجهاز المستخدم.
+      </div>
+    </section>
+
     <div id="advertiser-status" class="dashboard-message">
       جاري التحقق من الحساب...
     </div>
@@ -56,66 +116,6 @@ import Layout from "../layouts/Layout.astro";
           <strong id="total-campaigns">0</strong>
         </article>
       </div>
-
-      <section class="stats-guide">
-        <div class="stats-guide-header">
-          <span>📈</span>
-          <div>
-            <h3>كيف نحسب إحصائيات إعلانك؟</h3>
-            <p>توضيح مبسط للأرقام التي تظهر في لوحة التحكم.</p>
-          </div>
-        </div>
-
-        <div class="stats-guide-grid">
-          <article class="stats-guide-item">
-            <strong>👁️ مرات الظهور</strong>
-            <p>
-              إجمالي عدد مرات مشاهدة إعلانك. تُحتسب مشاهدة جديدة في كل مرة يظهر
-              فيها الإعلان بنسبة 50% على الأقل لمدة ثانية متواصلة. ويمكن احتساب
-              أكثر من مشاهدة من الزائر نفسه.
-            </p>
-          </article>
-
-          <article class="stats-guide-item">
-            <strong>👥 الزوار المختلفون</strong>
-            <p>
-              عدد المتصفحات المختلفة التي شاهدت إعلانك خلال فترة الحملة. يُحتسب
-              الزائر مرة واحدة فقط، حتى لو شاهد الإعلان مرات عديدة.
-            </p>
-          </article>
-
-          <article class="stats-guide-item">
-            <strong>🖱️ النقرات</strong>
-            <p>
-              عدد مرات النقر على رابط إعلانك. يتم تسجيل النقرة عند ضغط الزائر
-              على رابط الإعلان.
-            </p>
-          </article>
-
-          <article class="stats-guide-item">
-            <strong>📊 معدل النقر (CTR)</strong>
-            <p>
-              النسبة المئوية للنقرات مقارنة بمرات الظهور. كلما ارتفع المعدل،
-              زادت نسبة التفاعل مع إعلانك.
-            </p>
-          </article>
-        </div>
-
-        <div class="stats-guide-note">
-          <strong>💡 مثال توضيحي:</strong>
-          <p>
-            إذا شاهد 100 زائر مختلف إعلانك، وشاهده بعضهم أكثر من مرة، فقد تكون
-            النتيجة 250 مرة ظهور و100 زائر مختلف. هذا يعني أن الإعلان ظهر 250
-            مرة أمام 100 زائر مختلف.
-          </p>
-        </div>
-
-        <div class="stats-guide-footer">
-          يتم تحديث الإحصائيات عند تحميل لوحة التحكم أو الضغط على زر التحديث.
-          وقد تختلف الأرقام عن عدد الأشخاص الحقيقيين؛ لأن القياس يعتمد على
-          المتصفح أو الجهاز المستخدم.
-        </div>
-      </section>
 
       <section class="campaign-section">
         <div class="section-heading">

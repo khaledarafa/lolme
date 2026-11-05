@@ -76,6 +76,16 @@ function getCampaignStatus(campaign) {
   return "🟢 نشطة";
 }
 
+function getSlotLabel(slotId) {
+  const slots = {
+    "floating-right": "إعلان عائم - الجانب الأيمن",
+    "floating-left": "إعلان عائم - الجانب الأيسر",
+    "floating-main": "إعلان عائم - الرئيسي",
+  };
+
+  return slots[slotId] || slotId || "مساحة إعلانية";
+}
+
 function makeElement(tag, text, className = "") {
   const element = document.createElement(tag);
   element.textContent = text ?? "";
@@ -139,64 +149,64 @@ function renderDailyStats(campaign) {
   return details;
 }
 
-function renderPlacementStats(placements = []) {
-  const container = document.createElement("section");
-  container.className = "placement-stats";
+// function renderPlacementStats(placements = []) {
+//   const container = document.createElement("section");
+//   container.className = "placement-stats";
 
-  const heading = document.createElement("h4");
-  heading.textContent = "📍 أداء الإعلان حسب مكان ظهوره";
-  container.append(heading);
+//   const heading = document.createElement("h4");
+//   heading.textContent = "📍 أداء الإعلان حسب مكان ظهوره";
+//   container.append(heading);
 
-  if (!placements.length) {
-    container.append(
-      makeElement(
-        "p",
-        "لم يتم تسجيل إحصائيات حسب الصفحة حتى الآن. ستظهر البيانات هنا بعد تسجيل مرات ظهور الإعلان ونقراته.",
-        "placement-empty",
-      ),
-    );
+//   if (!placements.length) {
+//     container.append(
+//       makeElement(
+//         "p",
+//         "لم يتم تسجيل إحصائيات حسب الصفحة حتى الآن. ستظهر البيانات هنا بعد تسجيل مرات ظهور الإعلان ونقراته.",
+//         "placement-empty",
+//       ),
+//     );
 
-    return container;
-  }
+//     return container;
+//   }
 
-  const names = {
-    "/tests": "🧩 صفحة الاختبارات",
-    "/jokes": "😂 صفحة النكت",
-  };
+//   const names = {
+//     "/tests": "🧩 صفحة الاختبارات",
+//     "/jokes": "😂 صفحة النكت",
+//   };
 
-  for (const placement of placements) {
-    const card = document.createElement("div");
-    card.className = "placement-card";
+//   for (const placement of placements) {
+//     const card = document.createElement("div");
+//     card.className = "placement-card";
 
-    const title = makeElement(
-      "h5",
-      names[placement.pagePath] || `📄 ${placement.pagePath}`,
-    );
+//     const title = makeElement(
+//       "h5",
+//       names[placement.pagePath] || `📄 ${placement.pagePath}`,
+//     );
 
-    const stats = document.createElement("div");
-    stats.className = "placement-numbers";
+//     const stats = document.createElement("div");
+//     stats.className = "placement-numbers";
 
-    const items = [
-      ["مرات الظهور", formatNumber(placement.impressions)],
-      ["النقرات", formatNumber(placement.clicks)],
-      ["معدل النقر CTR", `${(Number(placement.ctr) || 0).toFixed(2)}%`],
-    ];
+//     const items = [
+//       ["مرات الظهور", formatNumber(placement.impressions)],
+//       ["النقرات", formatNumber(placement.clicks)],
+//       ["معدل النقر CTR", `${(Number(placement.ctr) || 0).toFixed(2)}%`],
+//     ];
 
-    for (const [label, value] of items) {
-      const item = document.createElement("div");
-      item.className = "placement-number";
+//     for (const [label, value] of items) {
+//       const item = document.createElement("div");
+//       item.className = "placement-number";
 
-      item.append(makeElement("span", label), makeElement("strong", value));
+//       item.append(makeElement("span", label), makeElement("strong", value));
 
-      stats.append(item);
-    }
+//       stats.append(item);
+//     }
 
-    card.append(title, stats);
-    container.append(card);
-  }
+//     card.append(title, stats);
+//     container.append(card);
+//   }
 
-  return container;
-}
+//   return container;
+// }
 
 function renderCountryStats(countries = []) {
   const container = document.createElement("section");
@@ -296,10 +306,13 @@ function renderCampaigns(campaigns) {
     header.className = "campaign-accordion-header";
 
     header.append(
-      makeElement("h4", campaign.headline || `حملة ${campaign.slotId}`),
+      makeElement(
+        "h4",
+        campaign.headline || `حملة ${getSlotLabel(campaign.slotId)}`,
+      ),
       makeElement(
         "span",
-        `${campaign.slotId} · ${getCampaignStatus(campaign)}`,
+        `${getSlotLabel(campaign.slotId)} · ${getCampaignStatus(campaign)}`,
         "campaign-accordion-status",
       ),
       makeElement("span", "⌄ عرض تفاصيل الحملة", "campaign-accordion-hint"),
@@ -405,8 +418,8 @@ function renderCampaigns(campaigns) {
     // الأداء اليومي
     expanded.append(renderDailyStats(campaign));
 
-    // أداء الإعلان حسب مكان ظهوره
-    expanded.append(renderPlacementStats(campaign.placements || []));
+    // // أداء الإعلان حسب مكان ظهوره
+    // expanded.append(renderPlacementStats(campaign.placements || []));
 
     // الجمهور حسب الدولة
     expanded.append(renderCountryStats(campaign.countries || []));

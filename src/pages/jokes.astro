@@ -1,5 +1,5 @@
 ---
-// jokes2.astro
+// jokes.astro
 export const prerender = false;
 import Layout from "../layouts/Layout.astro";
 import AdvertiseBanner from "../components/AdvertiseBanner.astro";
@@ -357,7 +357,22 @@ const shuffledJokes10 = shuffleJokes(jokes10);
           <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
   <AdvertiseBanner slot="jokes-11" />
   </div>
+    <section class="jokes-advertise-cta" dir="rtl">
+  <div class="jokes-advertise-cta__content">
+    <span>📢</span>
+    <div>
+      <h2>عندك مشروع أو منتج وعايز تعلن عنه؟</h2>
+      <p>
+        اعرض إعلانك أمام زوار LOLME، واختار المساحة الإعلانية المناسبة
+        لمشروعك وشوف الأسعار وتفاصيل الحجز.
+      </p>
+    </div>
+  </div>
 
+  <a href="/advertise">
+    اعرف المساحات الإعلانية واحجز إعلانك ←
+  </a>
+</section>
 
     <script src="/js/tilt-cards.js" defer></script>
   </Layout>
@@ -453,5 +468,52 @@ const shuffledJokes10 = shuffleJokes(jokes10);
   }
 }
 
+.jokes-advertise-cta {
+  max-width: 850px;
+  margin: 30px auto;
+  padding: 22px;
+  direction: rtl;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: 15px;
+  background: var(--card-bg, #1e293b);
+  text-align: right;
+}
+
+.jokes-advertise-cta__content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.jokes-advertise-cta__content > span {
+  font-size: 2rem;
+}
+
+.jokes-advertise-cta h2 {
+  margin: 0 0 7px;
+  font-size: 1.15rem;
+}
+
+.jokes-advertise-cta p {
+  margin: 0;
+  color: var(--text-secondary, #94a3b8);
+  line-height: 1.8;
+  font-size: 0.9rem;
+}
+
+.jokes-advertise-cta > a {
+  display: inline-block;
+  padding: 11px 18px;
+  border-radius: 9px;
+  background: #6d28d9;
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.jokes-advertise-cta > a:hover {
+  background: #5b21b6;
+}
   </style>
   
