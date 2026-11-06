@@ -219,9 +219,28 @@ function setupImpressionTracking() {
   });
 }
 
+
 function setupCampaignMutationTracking() {
+  if (!("MutationObserver" in window)) return;
+
+  const registerBanner = (element) => {
+    if (!(element instanceof Element)) return;
+
+    if (element.matches("[data-ad-slot]")) {
+      observeBanner(element);
+    }
+
+    element.querySelectorAll?.("[data-ad-slot]").forEach((banner) => {
+      observeBanner(banner);
+    });
+  };
+
   const mutationObserver = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
+      if (mutation.type === "childList") {
+        mutation.addedNodes.forEach(registerBanner);
+      }
+
       if (
         mutation.type === "attributes" &&
         mutation.target instanceof Element &&
@@ -232,13 +251,42 @@ function setupCampaignMutationTracking() {
     }
   });
 
-  document.querySelectorAll("[data-ad-slot]").forEach((banner) => {
-    mutationObserver.observe(banner, {
-      attributes: true,
-      attributeFilter: ["data-ad-type", "data-ad-campaign-id", "data-ad-ready"],
-    });
+  mutationObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: [
+      "data-ad-slot",
+      "data-ad-type",
+      "data-ad-campaign-id",
+      "data-ad-ready",
+    ],
   });
+
+  document.querySelectorAll("[data-ad-slot]").forEach(registerBanner);
 }
+
+// قبل اعلانات الاختبارات الجريد
+// function setupCampaignMutationTracking() {
+//   const mutationObserver = new MutationObserver((mutations) => {
+//     for (const mutation of mutations) {
+//       if (
+//         mutation.type === "attributes" &&
+//         mutation.target instanceof Element &&
+//         mutation.target.matches("[data-ad-slot]")
+//       ) {
+//         observeBanner(mutation.target);
+//       }
+//     }
+//   });
+
+//   document.querySelectorAll("[data-ad-slot]").forEach((banner) => {
+//     mutationObserver.observe(banner, {
+//       attributes: true,
+//       attributeFilter: ["data-ad-type", "data-ad-campaign-id", "data-ad-ready"],
+//     });
+//   });
+// }
 
 function setupClickTracking() {
   document.addEventListener(

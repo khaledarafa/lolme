@@ -1,5 +1,4 @@
-<!-- src/components/admin/ads.astro -->
-<section class="ads-admin" dir="rtl">
+<!-- src/components/admin/ads.astro --><!-- <section class="ads-admin" dir="rtl">
   <h2>📢 إدارة الإعلانات</h2>
   <p>
     أنشئ حملات إعلانية بصور متعددة، وابحث عن حملات كل معلن بالاسم أو البريد
@@ -97,6 +96,46 @@
     >
   </section>
 
+
+    <div class="ad-stats-panel">
+      <h4>🏠 إحصائيات إعلانات الموقع الداخلية</h4>
+
+      <div class="ad-stats-cards">
+        <article class="ad-stat-card">
+          <span>مرات الظهور</span>
+          <strong id="house-stat-impressions">—</strong>
+        </article>
+
+        <article class="ad-stat-card">
+          <span>النقرات</span>
+          <strong id="house-stat-clicks">—</strong>
+        </article>
+
+        <article class="ad-stat-card">
+          <span>معدل النقر CTR</span>
+          <strong id="house-stat-ctr">—</strong>
+        </article>
+      </div>
+
+      <h4>أداء كل مساحة داخل الموقع</h4>
+
+      <div class="ad-stats-table-wrap">
+        <table class="ad-stats-table">
+          <thead>
+            <tr>
+              <th>المساحة</th>
+              <th>الصفحة</th>
+              <th>الظهور</th>
+              <th>النقرات</th>
+              <th>CTR</th>
+            </tr>
+          </thead>
+          <tbody id="house-stats-slots"></tbody>
+        </table>
+      </div>
+    </div>
+
+    
   <form id="ad-campaign-form">
     <input type="hidden" id="campaign-id" />
 
@@ -140,9 +179,14 @@
       <option value="floating-main"
         >floating-main — المساحة العائمة الرئيسية (399 ج.م)</option
       >
+      <option value="grid-1">grid-1 — المساحة الإعلانية 1</option>
+      <option value="grid-2">grid-2 — المساحة الإعلانية 2</option>
+      <option value="grid-3">grid-3 — المساحة الإعلانية 3</option>
+      <option value="grid-4">grid-4 — المساحة الإعلانية 4</option>
+      <option value="grid-5">grid-5 — المساحة الإعلانية 5</option>
+      <option value="grid-6">grid-6 — المساحة الإعلانية 6</option>
     </select>
 
-    <!-- البيانات المالية للحملة -->
     <div class="ad-financial-fields">
       <h3>💰 بيانات الحجز والدفع</h3>
 
@@ -183,6 +227,7 @@
       placeholder="https://example.com/ad1.jpg
                    https://example.com/ad2.jpg"
     ></textarea>
+
     <small>الصورة الأولى تظهر أولًا، ثم تتبدل الصور كل 4.5 ثانية.</small>
 
     <label for="ad-headline">عنوان الإعلان (اختياري)</label>
@@ -261,6 +306,12 @@
           <option value="floating-main"
             >floating-main — المساحة العائمة الرئيسية</option
           >
+          <option value="grid-1">المساحة الإعلانية 1</option>
+          <option value="grid-2">المساحة الإعلانية 2</option>
+          <option value="grid-3">المساحة الإعلانية 3</option>
+          <option value="grid-4">المساحة الإعلانية 4</option>
+          <option value="grid-5">المساحة الإعلانية 5</option>
+          <option value="grid-6">المساحة الإعلانية 6</option>
         </select>
       </div>
       <div>
@@ -283,7 +334,484 @@
   <div id="ad-campaign-list"></div>
   <nav id="ad-pagination" class="ad-pagination" aria-label="صفحات الحملات">
   </nav>
+</section> --><!-- src/components/admin/ads.astro -->
+<section class="ads-admin" dir="rtl">
+  <header class="ads-admin-header">
+    <div>
+      <h2>📢 إدارة الإعلانات</h2>
+      <p>
+        أنشئ حملات إعلانية بصور متعددة، وابحث عن حملات كل معلن بالاسم أو البريد
+        الإلكتروني.
+      </p>
+    </div>
+  </header>
+
+  <div class="ads-admin-layout">
+    <!-- القائمة الجانبية -->
+    <aside class="ads-admin-sidebar">
+      <div class="ads-sidebar-title">إدارة الإعلانات</div>
+
+      <button
+        type="button"
+        class="ads-nav-item active"
+        data-admin-view="overview"
+      >
+        <span>📊</span>
+        <span>نظرة عامة</span>
+      </button>
+
+      <button
+        type="button"
+        class="ads-nav-item"
+        data-admin-view="campaign-form"
+      >
+        <span>➕</span>
+        <span>إضافة حملة</span>
+      </button>
+
+      <button type="button" class="ads-nav-item" data-admin-view="campaigns">
+        <span>📋</span>
+        <span>الحملات المسجلة</span>
+      </button>
+    </aside>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="ads-admin-main">
+      <!-- ================================= -->
+      <!-- القسم الأول: نظرة عامة -->
+      <!-- ================================= -->
+
+      <section class="ads-admin-view" data-admin-panel="overview">
+        <section class="ad-stats" aria-labelledby="ad-stats-title">
+          <div class="ad-stats-header">
+            <div>
+              <h3 id="ad-stats-title">📊 إحصائيات الإعلانات</h3>
+              <p>متابعة أداء الحملات الإعلانية على LOLME</p>
+            </div>
+
+            <button type="button" id="ad-stats-refresh">
+              ↻ تحديث الإحصائيات
+            </button>
+          </div>
+
+          <div class="ad-stats-filters">
+            <div>
+              <label for="ad-stats-start">من تاريخ</label>
+              <input type="date" id="ad-stats-start" />
+            </div>
+
+            <div>
+              <label for="ad-stats-end">إلى تاريخ</label>
+              <input type="date" id="ad-stats-end" />
+            </div>
+          </div>
+
+          <p id="ad-stats-message" role="status">جارٍ تحميل الإحصائيات...</p>
+
+          <div class="ad-stats-cards">
+            <article class="ad-stat-card">
+              <span>مرات الظهور</span>
+              <strong id="stat-impressions">—</strong>
+            </article>
+
+            <article class="ad-stat-card">
+              <span>النقرات</span>
+              <strong id="stat-clicks">—</strong>
+            </article>
+
+            <article class="ad-stat-card">
+              <span>الزوار الفريدون يوميًا*</span>
+              <strong id="stat-visitors">—</strong>
+            </article>
+
+            <article class="ad-stat-card">
+              <span>معدل النقر CTR</span>
+              <strong id="stat-ctr">—</strong>
+            </article>
+          </div>
+
+          <div class="ad-stats-panel">
+            <h4>الأداء اليومي</h4>
+            <div id="ad-stats-chart" class="ad-stats-chart"></div>
+          </div>
+
+          <div class="ad-stats-panel">
+            <h4>أداء الحملات</h4>
+
+            <div class="ad-stats-table-wrap">
+              <table class="ad-stats-table">
+                <thead>
+                  <tr>
+                    <th>الحملة</th>
+                    <th>المساحة</th>
+                    <th>الظهور</th>
+                    <th>النقرات</th>
+                    <th>CTR</th>
+                  </tr>
+                </thead>
+
+                <tbody id="ad-stats-campaign-details"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="ad-stats-panel">
+            <h4>أداء المعلنين</h4>
+
+            <div class="ad-stats-table-wrap">
+              <table class="ad-stats-table">
+                <thead>
+                  <tr>
+                    <th>المعلن</th>
+                    <th>عدد الحملات</th>
+                    <th>مرات الظهور</th>
+                    <th>النقرات</th>
+                    <th>CTR</th>
+                    <th>التفاصيل</th>
+                  </tr>
+                </thead>
+
+                <tbody id="ad-stats-campaigns"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <small>
+            * مجموع الزوار الفريدين اليومي، وليس عدد الأشخاص المختلفين عبر كامل
+            الفترة.
+          </small>
+
+          <!-- إحصائيات الإعلانات الداخلية -->
+
+          <div class="ad-stats-panel">
+            <h4>🏠 إحصائيات إعلانات الموقع الداخلية</h4>
+
+            <div class="ad-stats-cards">
+              <article class="ad-stat-card">
+                <span>مرات الظهور</span>
+                <strong id="house-stat-impressions">—</strong>
+              </article>
+
+              <article class="ad-stat-card">
+                <span>النقرات</span>
+                <strong id="house-stat-clicks">—</strong>
+              </article>
+
+              <article class="ad-stat-card">
+                <span>معدل النقر CTR</span>
+                <strong id="house-stat-ctr">—</strong>
+              </article>
+            </div>
+
+            <h4>أداء كل مساحة داخل الموقع</h4>
+
+            <div class="ad-stats-table-wrap">
+              <table class="ad-stats-table">
+                <thead>
+                  <tr>
+                    <th>المساحة</th>
+                    <th>الصفحة</th>
+                    <th>الظهور</th>
+                    <th>النقرات</th>
+                    <th>CTR</th>
+                  </tr>
+                </thead>
+
+                <tbody id="house-stats-slots"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ================================= -->
+      <!-- القسم الثاني: إضافة حملة -->
+      <!-- ================================= -->
+
+      <section class="ads-admin-view" data-admin-panel="campaign-form" hidden>
+        <h3>➕ إضافة أو تعديل حملة إعلانية</h3>
+
+        <form id="ad-campaign-form">
+          <input type="hidden" id="campaign-id" />
+
+          <label for="advertiser-name">اسم المعلن</label>
+
+          <input
+            id="advertiser-name"
+            required
+            maxlength="100"
+            placeholder="مثال: متجر الملابس"
+          />
+
+          <label for="advertiser-email">البريد الإلكتروني للمعلن</label>
+
+          <input
+            id="advertiser-email"
+            type="email"
+            required
+            maxlength="160"
+            placeholder="name@example.com"
+          />
+
+          <label for="ad-slot">المساحة الإعلانية</label>
+
+          <select id="ad-slot" required>
+            <option value="jokes-1">jokes-1 — بداية صفحة النكت (299 ج.م)</option
+            >
+            <option value="jokes-2">jokes-2 — الجزء الأول (249 ج.م)</option>
+            <option value="jokes-3">jokes-3 — الثلث الأول (199 ج.م)</option>
+            <option value="jokes-4">jokes-4 — قبل المنتصف (179 ج.م)</option>
+            <option value="jokes-5">jokes-5 — منتصف الصفحة (149 ج.م)</option>
+            <option value="jokes-6">jokes-6 — بعد المنتصف (129 ج.م)</option>
+            <option value="jokes-7">jokes-7 — الجزء الثاني (119 ج.م)</option>
+            <option value="jokes-8">jokes-8 — الثلث الأخير (109 ج.م)</option>
+            <option value="jokes-9">jokes-9 — الجزء الأخير (99 ج.م)</option>
+            <option value="jokes-10">jokes-10 — قبل النهاية (89 ج.م)</option>
+            <option value="jokes-11">jokes-11 — نهاية الصفحة (79 ج.م)</option>
+
+            <option value="tests">tests — الاختبارات</option>
+
+            <option value="floating-right">
+              floating-right — المساحة العائمة اليمنى (399 ج.م)
+            </option>
+
+            <option value="floating-left">
+              floating-left — المساحة العائمة اليسرى (399 ج.م)
+            </option>
+
+            <option value="floating-main">
+              floating-main — المساحة العائمة الرئيسية (399 ج.م)
+            </option>
+
+            <option value="grid-1">grid-1 — المساحة الإعلانية 1</option>
+            <option value="grid-2">grid-2 — المساحة الإعلانية 2</option>
+            <option value="grid-3">grid-3 — المساحة الإعلانية 3</option>
+            <option value="grid-4">grid-4 — المساحة الإعلانية 4</option>
+            <option value="grid-5">grid-5 — المساحة الإعلانية 5</option>
+            <option value="grid-6">grid-6 — المساحة الإعلانية 6</option>
+          </select>
+
+          <!-- البيانات المالية للحملة -->
+
+          <div class="ad-financial-fields">
+            <h3>💰 بيانات الحجز والدفع</h3>
+
+            <label for="ad-monthly-price">
+              سعر المساحة لفترة 30 يومًا (جنيه)
+            </label>
+
+            <input
+              id="ad-monthly-price"
+              type="number"
+              min="0"
+              step="1"
+              readonly
+            />
+
+            <label for="ad-duration-days">مدة الحجز (بالأيام)</label>
+
+            <input id="ad-duration-days" type="number" min="1" readonly />
+
+            <label for="ad-total-price">إجمالي الحملة (جنيه)</label>
+
+            <input id="ad-total-price" type="number" min="0" readonly />
+
+            <label for="ad-payment-status">حالة الدفع</label>
+
+            <select id="ad-payment-status">
+              <option value="unpaid">غير مدفوع</option>
+              <option value="paid">مدفوع بالكامل</option>
+            </select>
+
+            <label for="ad-payment-method">طريقة الدفع</label>
+
+            <select id="ad-payment-method">
+              <option value="">لم يتم الدفع</option>
+              <option value="fawry">فوري</option>
+              <option value="transfer">تحويل بنكي</option>
+              <option value="cash">نقدًا</option>
+            </select>
+
+            <label for="ad-paid-at">تاريخ استلام الدفع</label>
+
+            <input id="ad-paid-at" type="date" />
+
+            <p>
+              عند تأكيد الدفع بالكامل، سيتم تسجيل إجمالي قيمة الحملة كمبلغ
+              مدفوع.
+            </p>
+          </div>
+
+          <label for="ad-images"> روابط صور الإعلان (كل رابط في سطر) </label>
+
+          <textarea
+            id="ad-images"
+            rows="5"
+            required
+            placeholder="https://example.com/ad1.jpg
+https://example.com/ad2.jpg"
+          ></textarea>
+
+          <small>
+            الصورة الأولى تظهر أولًا، ثم تتبدل الصور كل 4.5 ثانية.
+          </small>
+
+          <label for="ad-headline">عنوان الإعلان (اختياري)</label>
+
+          <input
+            id="ad-headline"
+            maxlength="160"
+            placeholder="عنوان المنتج أو العرض"
+          />
+
+          <label for="ad-description">وصف الإعلان (اختياري)</label>
+
+          <textarea
+            id="ad-description"
+            rows="5"
+            maxlength="3000"
+            placeholder="اكتب جملة أو وصفًا طويلًا عن المنتج أو الخدمة"
+          ></textarea>
+
+          <label for="ad-button-text">نص زر الإعلان (اختياري)</label>
+
+          <input
+            id="ad-button-text"
+            maxlength="50"
+            placeholder="مثال: اعرف المزيد"
+          />
+
+          <label for="ad-url">رابط الوجهة عند الضغط</label>
+
+          <input
+            id="ad-url"
+            type="url"
+            required
+            placeholder="https://example.com"
+          />
+
+          <label for="ad-start">تاريخ ووقت البداية</label>
+
+          <input id="ad-start" type="datetime-local" required />
+
+          <label for="ad-end">تاريخ ووقت النهاية</label>
+
+          <input id="ad-end" type="datetime-local" required />
+
+          <label for="ad-status">حالة الحملة</label>
+
+          <select id="ad-status">
+            <option value="active">نشطة</option>
+            <option value="paused">متوقفة</option>
+          </select>
+
+          <div class="ad-form-actions">
+            <button type="submit" id="ad-save"> حفظ الحملة </button>
+
+            <button type="button" id="ad-cancel" hidden> إلغاء التعديل </button>
+          </div>
+
+          <p id="ad-form-message" role="status"></p>
+        </form>
+      </section>
+
+      <!-- ================================= -->
+      <!-- القسم الثالث: الحملات المسجلة -->
+      <!-- ================================= -->
+
+      <section class="ads-admin-view" data-admin-panel="campaigns" hidden>
+        <h3>📋 الحملات المسجلة</h3>
+
+        <div class="ad-campaign-filters">
+          <label for="ad-search"> بحث بالاسم أو البريد أو معرّف الحملة </label>
+
+          <input
+            id="ad-search"
+            type="search"
+            placeholder="اكتب اسم المعلن أو بريده..."
+          />
+
+          <div class="ad-filter-row">
+            <div>
+              <label for="ad-filter-slot">المساحة</label>
+
+              <select id="ad-filter-slot">
+                <option value="all">كل المساحات</option>
+
+                <option value="jokes-1">jokes-1 — بداية النكت</option>
+                <option value="jokes-2">jokes-2 — الجزء الأول</option>
+                <option value="jokes-3">jokes-3 — الثلث الأول</option>
+                <option value="jokes-4">jokes-4 — قبل المنتصف</option>
+                <option value="jokes-5">jokes-5 — منتصف الصفحة</option>
+                <option value="jokes-6">jokes-6 — بعد المنتصف</option>
+                <option value="jokes-7">jokes-7 — الجزء الثاني</option>
+                <option value="jokes-8">jokes-8 — الثلث الأخير</option>
+                <option value="jokes-9">jokes-9 — الجزء الأخير</option>
+                <option value="jokes-10">jokes-10 — قبل النهاية</option>
+                <option value="jokes-11">jokes-11 — نهاية الصفحة</option>
+
+                <option value="tests">tests — الاختبارات</option>
+
+                <option value="floating-right">
+                  floating-right — المساحة العائمة اليمنى
+                </option>
+
+                <option value="floating-left">
+                  floating-left — المساحة العائمة اليسرى
+                </option>
+
+                <option value="floating-main">
+                  floating-main — المساحة العائمة الرئيسية
+                </option>
+
+                <option value="grid-1">المساحة الإعلانية 1</option>
+                <option value="grid-2">المساحة الإعلانية 2</option>
+                <option value="grid-3">المساحة الإعلانية 3</option>
+                <option value="grid-4">المساحة الإعلانية 4</option>
+                <option value="grid-5">المساحة الإعلانية 5</option>
+                <option value="grid-6">المساحة الإعلانية 6</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="ad-filter-status">حالة الحملة</label>
+
+              <select id="ad-filter-status">
+                <option value="all">كل الحالات</option>
+                <option value="active">نشطة</option>
+                <option value="paused">متوقفة</option>
+                <option value="expired">منتهية بالتاريخ</option>
+                <option value="scheduled">لم يبدأ موعدها</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="ad-filter-actions">
+            <button type="button" id="ad-refresh"> ↻ تحديث الحملات </button>
+          </div>
+        </div>
+
+        <p id="ad-list-message" role="status">جارٍ تحميل الحملات...</p>
+
+        <div id="ad-campaign-list"></div>
+
+        <nav
+          id="ad-pagination"
+          class="ad-pagination"
+          aria-label="صفحات الحملات"
+        >
+        </nav>
+      </section>
+    </main>
+  </div>
 </section>
+
+<!-- سكربت التنقل بين الأقسام -->
+<script type="module" src="/js/admin/ads/navigation.js"></script>
+<!-- سكربت إدارة الحملات والإحصائيات الحالي -->
+<script type="module" src="/js/admin/ads.js"></script>
+
+<link rel="stylesheet" href="/css/admin/ads-dashboard.css" />
 
 <style is:global>
   /* ===== لوحة إدارة إعلانات LOLME ===== */
@@ -1003,6 +1531,44 @@
 
     .admin-placement-numbers {
       grid-template-columns: 1fr;
+    }
+  }
+
+  /* تحسين عرض لوحة الإعلانات على الموبايل */
+  @media (max-width: 600px) {
+    .ads-admin {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 8px !important;
+      border-radius: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+    .ads-admin-layout {
+      width: 100%;
+      gap: 8px;
+    }
+
+    .ads-admin-main {
+      width: 100%;
+      min-width: 0;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    .ad-stats,
+    .ad-stats-panel {
+      min-width: 0;
+    }
+
+    .ad-stats-header {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    #ad-stats-refresh {
+      width: 100%;
     }
   }
 </style>

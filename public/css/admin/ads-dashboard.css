@@ -1,0 +1,736 @@
+
+/* =========================================
+   LOLME - Ads Admin Dashboard
+   public/css/admin/ads-dashboard.css
+========================================= */
+
+.ads-admin {
+  --ads-bg: #111827;
+  --ads-panel: #1e293b;
+  --ads-card: #263449;
+  --ads-border: #34445c;
+  --ads-text: #f1f5f9;
+  --ads-muted: #94a3b8;
+  --ads-green: #22c55e;
+  --ads-purple: #6366f1;
+  --ads-yellow: #facc15;
+
+  color: var(--ads-text);
+  width: 100%;
+  direction: rtl;
+}
+
+/* Header */
+
+.ads-admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  background: var(--ads-panel);
+  border: 1px solid var(--ads-border);
+  border-radius: 16px;
+}
+
+.ads-admin-header h2 {
+  margin: 0 0 7px;
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.ads-admin-header p {
+  margin: 0;
+  color: var(--ads-muted);
+  line-height: 1.7;
+  font-size: 0.9rem;
+}
+
+/* Main layout */
+
+.ads-admin-layout {
+  display: grid;
+  grid-template-columns: 245px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+/* Sidebar */
+
+.ads-admin-sidebar {
+  position: sticky;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 17px 12px;
+  background: var(--ads-bg);
+  border: 1px solid var(--ads-border);
+  border-radius: 15px;
+}
+
+.ads-sidebar-title {
+  padding: 7px 12px 16px;
+  margin-bottom: 5px;
+  color: var(--ads-yellow);
+  font-weight: 800;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--ads-border);
+}
+
+.ads-admin .ads-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #cbd5e1;
+  text-align: right;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.ads-admin .ads-nav-item span:first-child {
+  font-size: 1.1rem;
+}
+
+.ads-admin .ads-nav-item:hover {
+  background: #1e293b;
+  color: white;
+}
+
+.ads-admin .ads-nav-item.active {
+  background: #263449;
+  color: white;
+  border-color: #3b526d;
+  border-right: 3px solid var(--ads-green);
+  font-weight: 700;
+}
+
+/* Main content */
+
+.ads-admin-main {
+  min-width: 0;
+  padding: 22px;
+  background: var(--ads-panel);
+  border: 1px solid var(--ads-border);
+  border-radius: 16px;
+  min-height: 550px;
+}
+
+.ads-admin-view {
+  min-width: 0;
+  animation: adsFadeIn 0.22s ease;
+}
+
+.ads-admin-view[hidden] {
+  display: none !important;
+}
+
+.ads-admin-view > h3 {
+  margin: 0 0 22px;
+  color: var(--ads-yellow);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+@keyframes adsFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Statistics section */
+
+.ads-admin .ad-stats {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+}
+
+.ad-stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.ad-stats-header h3 {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+}
+
+.ad-stats-header p {
+  margin: 0;
+  color: var(--ads-muted);
+  font-size: 0.85rem;
+}
+
+.ads-admin button {
+  font-family: inherit;
+}
+
+#ad-stats-refresh,
+#ad-refresh {
+  padding: 10px 16px;
+  color: white;
+  background: var(--ads-purple);
+  border: 0;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+#ad-stats-refresh:hover,
+#ad-refresh:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.ad-stats-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 15px;
+  margin-bottom: 17px;
+  background: var(--ads-bg);
+  border: 1px solid var(--ads-border);
+  border-radius: 12px;
+}
+
+.ad-stats-filters label,
+.ad-campaign-filters label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--ads-muted);
+  font-size: 0.82rem;
+}
+
+.ads-admin input,
+.ads-admin select,
+.ads-admin textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 13px;
+  color: var(--ads-text);
+  background: var(--ads-bg);
+  border: 1px solid var(--ads-border);
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.ads-admin input:focus,
+.ads-admin select:focus,
+.ads-admin textarea:focus {
+  border-color: var(--ads-purple);
+}
+
+.ads-admin textarea {
+  resize: vertical;
+  line-height: 1.7;
+}
+
+#ad-stats-message,
+#ad-form-message,
+#ad-list-message {
+  padding: 10px 13px;
+  margin: 12px 0;
+  color: var(--ads-muted);
+  background: var(--ads-bg);
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+/* Statistics cards */
+
+.ad-stats-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.ad-stat-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 13px;
+  min-height: 100px;
+  padding: 17px;
+  background: var(--ads-card);
+  border: 1px solid var(--ads-border);
+  border-radius: 12px;
+}
+
+.ad-stat-card span {
+  color: #cbd5e1;
+  font-size: 0.83rem;
+}
+
+.ad-stat-card strong {
+  color: var(--ads-green);
+  font-size: 1.55rem;
+  font-weight: 900;
+  direction: ltr;
+  text-align: right;
+}
+
+/* Statistics panels */
+
+.ad-stats-panel {
+  padding: 18px;
+  margin-top: 17px;
+  background: var(--ads-bg);
+  border: 1px solid var(--ads-border);
+  border-radius: 13px;
+  overflow: hidden;
+}
+
+.ad-stats-panel h4 {
+  margin: 0 0 16px;
+  color: var(--ads-yellow);
+  font-size: 0.95rem;
+}
+
+.ad-stats-chart {
+  min-height: 180px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.ad-stats-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.ad-stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+  font-size: 0.83rem;
+}
+
+.ad-stats-table th {
+  padding: 13px 10px;
+  color: var(--ads-yellow);
+  background: #263449;
+  text-align: right;
+}
+
+.ad-stats-table td {
+  padding: 12px 10px;
+  color: #e2e8f0;
+  border-bottom: 1px solid var(--ads-border);
+}
+
+.ad-stats-table tbody tr:hover {
+  background: #1e293b;
+}
+
+.ad-stats-panel small,
+.ad-stats small {
+  display: block;
+  margin-top: 12px;
+  color: var(--ads-muted);
+  line-height: 1.7;
+}
+
+/* Campaign form */
+
+#ad-campaign-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+  background: var(--ads-bg);
+  border: 1px solid var(--ads-border);
+  border-radius: 13px;
+}
+
+#ad-campaign-form > label {
+  margin-top: 9px;
+  color: #e2e8f0;
+  font-size: 0.87rem;
+  font-weight: 700;
+}
+
+#ad-campaign-form small {
+  color: var(--ads-muted);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.ad-financial-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 18px;
+  margin: 15px 0;
+  background: var(--ads-panel);
+  border: 1px solid var(--ads-border);
+  border-radius: 12px;
+}
+
+.ad-financial-fields h3 {
+  grid-column: 1 / -1;
+  margin: 0 0 8px;
+  color: var(--ads-yellow);
+  font-size: 0.95rem;
+}
+
+.ad-financial-fields label {
+  align-self: end;
+  color: var(--ads-muted);
+  font-size: 0.82rem;
+}
+
+.ad-financial-fields p {
+  grid-column: 1 / -1;
+  color: var(--ads-muted);
+  font-size: 0.8rem;
+  line-height: 1.7;
+}
+
+.ad-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+#ad-save,
+#ad-cancel {
+  padding: 11px 20px;
+  color: white;
+  background: var(--ads-green);
+  border: 0;
+  border-radius: 9px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+#ad-cancel {
+  background: #475569;
+}
+
+/* Campaign filters */
+
+.ad-campaign-filters {
+  padding: 18px;
+  margin-bottom: 18px;
+  background: var(--ads-bg);
+  border: 1px solid var(--ads-border);
+  border-radius: 12px;
+}
+
+.ad-filter-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.ad-filter-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 15px;
+}
+
+/* Campaign list */
+
+#ad-campaign-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+#ad-campaign-list > * {
+  min-width: 0;
+}
+
+.ad-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+/* Responsive */
+
+
+/* =========================================
+   Mobile Optimization
+========================================= */
+
+@media (max-width: 750px) {
+
+  /* استغلال عرض الشاشة بالكامل */
+  .ads-admin {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .ads-admin-header {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+  }
+
+  .ads-admin-header h2 {
+    font-size: 1.05rem;
+  }
+
+  .ads-admin-header p {
+    font-size: 0.78rem;
+  }
+
+  /* القائمة الجانبية */
+  .ads-admin-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .ads-admin-sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    padding: 8px;
+    box-sizing: border-box;
+    border-radius: 10px;
+  }
+
+  .ads-sidebar-title {
+    grid-column: 1 / -1;
+    padding: 5px 8px 8px;
+    margin: 0;
+    font-size: 0.8rem;
+  }
+
+  .ads-admin .ads-nav-item {
+    min-width: 0;
+    min-height: 58px;
+    padding: 7px 3px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    line-height: 1.3;
+    border-radius: 8px;
+  }
+
+  .ads-admin .ads-nav-item span:first-child {
+    font-size: 1rem;
+  }
+
+  /* المحتوى */
+  .ads-admin-main {
+    width: 100%;
+    min-width: 0;
+    min-height: auto;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .ads-admin-view > h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  /* عنوان الإحصائيات */
+  .ad-stats-header {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .ad-stats-header h3 {
+    font-size: 0.98rem;
+  }
+
+  .ad-stats-header p {
+    font-size: 0.75rem;
+  }
+
+  #ad-stats-refresh,
+  #ad-refresh {
+    width: 100%;
+    padding: 9px;
+    font-size: 0.82rem;
+  }
+
+  /* التاريخ */
+  .ad-stats-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 9px;
+    margin-bottom: 10px;
+  }
+
+  .ad-stats-filters label {
+    font-size: 0.72rem;
+    margin-bottom: 5px;
+  }
+
+  .ads-admin input,
+  .ads-admin select,
+  .ads-admin textarea {
+    padding: 9px;
+    font-size: 0.8rem;
+  }
+
+  /* بطاقات الإحصائيات */
+  .ad-stats-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    margin: 10px 0;
+  }
+
+  .ad-stat-card {
+    min-height: 78px;
+    padding: 10px;
+    gap: 8px;
+    border-radius: 9px;
+  }
+
+  .ad-stat-card span {
+    font-size: 0.7rem;
+    line-height: 1.5;
+  }
+
+  .ad-stat-card strong {
+    font-size: 1.15rem;
+  }
+
+  /* لوحات الإحصائيات */
+  .ad-stats-panel {
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+  }
+
+  .ad-stats-panel h4 {
+    font-size: 0.82rem;
+    margin-bottom: 10px;
+  }
+
+  .ad-stats-chart {
+    min-height: 130px;
+  }
+
+  .ad-stats-table {
+    font-size: 0.72rem;
+  }
+
+  .ad-stats-table th,
+  .ad-stats-table td {
+    padding: 9px 7px;
+  }
+
+  /* نموذج الحملة */
+  #ad-campaign-form {
+    padding: 11px;
+    gap: 7px;
+  }
+
+  #ad-campaign-form > label {
+    font-size: 0.78rem;
+    margin-top: 7px;
+  }
+
+  .ad-financial-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .ad-financial-fields h3,
+  .ad-financial-fields p {
+    grid-column: 1 / -1;
+  }
+
+  .ad-form-actions {
+    flex-wrap: wrap;
+  }
+
+  .ad-form-actions button {
+    flex: 1;
+  }
+
+  /* فلترة الحملات */
+  .ad-campaign-filters {
+    padding: 10px;
+  }
+
+  .ad-filter-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  /* الحملات */
+  #ad-campaign-list {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+}
+
+/* الشاشات الصغيرة جدًا */
+
+@media (max-width: 380px) {
+
+  .ads-admin-main {
+    padding: 7px;
+  }
+
+  .ads-admin-sidebar {
+    padding: 6px;
+  }
+
+  .ads-admin .ads-nav-item {
+    font-size: 0.64rem;
+    min-height: 53px;
+  }
+
+  .ad-stat-card {
+    padding: 8px;
+  }
+
+  .ad-stat-card span {
+    font-size: 0.66rem;
+  }
+
+  .ad-stat-card strong {
+    font-size: 1rem;
+  }
+
+  .ad-stats-filters {
+    gap: 5px;
+    padding: 7px;
+  }
+
+}

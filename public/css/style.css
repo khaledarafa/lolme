@@ -1363,16 +1363,6 @@ h2 {
   display: block;
 }
 
-/* .grid-ad-box {
-  width: 100%;
-  border-radius: 12px;
-  overflow: hidden;
-  background: var(--bg-color);
-  box-shadow: 0 6px 15px var(--shadow-color);
-  display: flex;
-  flex-direction: column;
-} */
-
 /* إخفاء الإعلانات الجانبية والفلوت على الموبايل */
 @media (max-width: 900px) {
   .ad-right,
@@ -4828,7 +4818,6 @@ textarea.hint::placeholder {
   }
 }
 
-
 /* ================================
    LOLME SITE STATISTICS
 ================================ */
@@ -5106,7 +5095,9 @@ textarea.hint::placeholder {
   background: linear-gradient(145deg, #25334a, #1b2739);
   border: 1px solid rgba(148, 163, 184, 0.13);
   border-radius: 16px;
-  transition: transform 0.25s ease, border-color 0.25s ease,
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
     box-shadow 0.25s ease;
 }
 
@@ -5372,12 +5363,7 @@ textarea.hint::placeholder {
   overflow: hidden;
   text-align: right;
   color: #fff;
-  background: linear-gradient(
-    120deg,
-    #111827,
-    #312e81 65%,
-    #6d28d9
-  );
+  background: linear-gradient(120deg, #111827, #312e81 65%, #6d28d9);
   border: 1px solid rgba(139, 92, 246, 0.4);
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
@@ -5429,7 +5415,9 @@ textarea.hint::placeholder {
   color: #fff !important;
   font-weight: 700;
   text-decoration: none !important;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .stats-ad-cta__button:hover {
@@ -5497,8 +5485,6 @@ textarea.hint::placeholder {
   }
 }
 
-
-
 /* الإعلان الاحتياطي للمساحات العائمة */
 .floating-fallback {
   box-sizing: border-box;
@@ -5511,12 +5497,7 @@ textarea.hint::placeholder {
   overflow: hidden;
   border: 1px solid rgba(139, 92, 246, 0.55);
   border-radius: 12px;
-  background: linear-gradient(
-    120deg,
-    #111827,
-    #312e81 65%,
-    #6d28d9
-  );
+  background: linear-gradient(120deg, #111827, #312e81 65%, #6d28d9);
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.2),
     0 0 18px rgba(139, 92, 246, 0.16);
@@ -5636,9 +5617,6 @@ textarea.hint::placeholder {
   }
 }
 
-
-
-
 /* 🌍 إحصائيات الدول */
 .stats-countries {
   margin-top: 28px;
@@ -5682,7 +5660,9 @@ textarea.hint::placeholder {
   border: 1px solid var(--stats-border, rgba(255, 255, 255, 0.08));
   border-radius: 12px;
   background: var(--stats-row-bg, rgba(255, 255, 255, 0.035));
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .stats-country-row::before {
@@ -5747,4 +5727,152 @@ textarea.hint::placeholder {
   #stats-countries-list {
     grid-template-columns: 1fr;
   }
+}
+
+/* =========================================
+   تصميم إعلانات الجريد - LOLME
+   ========================================= */
+
+/* الكارت بالكامل */
+.grid-ad-box {
+  /* height: 300px !important; */
+  min-height: 300px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  text-decoration: none !important;
+  box-sizing: border-box;
+}
+
+/* الجزء العلوي من كارت الحجز */
+.grid-ad-placeholder {
+  min-height: 150px;
+  height: 150px;
+  flex: 0 0 150px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+  padding: 12px;
+  box-sizing: border-box;
+
+  text-align: center;
+
+  background: linear-gradient(120deg, #111827, #312e81 65%, #6d28d9);
+
+  color: #fff;
+
+  border: 1px solid rgba(139, 92, 246, 0.55);
+  border-radius: 0;
+
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    0 0 18px rgba(139, 92, 246, 0.16);
+}
+
+/* الأيقونة */
+.grid-ad-placeholder span {
+  font-size: 2rem;
+  color: #fde68a;
+}
+
+/* عنوان الإعلان */
+.grid-ad-placeholder strong {
+  font-size: 1.1rem;
+  color: #fff;
+  line-height: 1.4;
+}
+
+/* رقم المساحة */
+.grid-ad-box .grid-slot-number {
+  color: #fde047 !important;
+  font-size: 1rem !important;
+  font-weight: 800;
+}
+
+/* الجزء السفلي من الكارت */
+.grid-ad-box .ad-body {
+  flex: 1;
+  min-height: 0;
+
+  padding: 10px !important;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* السعر */
+.grid-ad-box .grid-house-price {
+  color: #fde047 !important;
+  font-size: 1.35rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+/* مدة الإعلان */
+.grid-ad-box .grid-house-duration {
+  color: #fff !important;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0 !important;
+}
+
+/* النصوص العامة داخل الكارت */
+.grid-ad-box .ad-body h3 {
+  margin: 4px 0 !important;
+  font-size: 1rem;
+}
+
+.grid-ad-box .ad-body p {
+  margin: 4px 0 !important;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* زر حجز المساحة */
+.grid-ad-box .ad-body .ad-cta,
+.grid-ad-box .ad-body .ad-cta:hover,
+.grid-ad-box .ad-body .ad-cta:visited {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+
+  padding: 9px 18px !important;
+  margin-top: 3px;
+
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+
+  border: none !important;
+  border-radius: 9px !important;
+
+  background: #16a34a !important;
+  color: #fff !important;
+
+  font-family: inherit !important;
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+
+  line-height: 1.4;
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* تأثير المرور */
+.grid-ad-box .ad-body .ad-cta:hover {
+  background: #15803d !important;
+  color: #fff !important;
+  transform: translateY(-2px);
 }

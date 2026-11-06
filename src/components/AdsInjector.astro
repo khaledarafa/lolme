@@ -10,55 +10,55 @@
 // الإعلانات داخل شبكات الكروت: public/js/adsGrid.js
 // تصميم الإعلانات: AdBox.astro و style.css
 
-// import { adsConfig } from "../data/adsConfig.js";
+import { adsConfig } from "../data/adsConfig.js";
 import AdBox from "./AdBox.astro";
 
 const ua = Astro.request.headers.get("user-agent") || "";
 const isMobile =
   /(Mobile|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop)/i.test(ua);
 
-// type AdItem = {
-//   id: string;
-//   title?: string;
-//   desc?: string;
-//   img?: string;
-//   video?: string;
-//   link: string;
-//   cta?: string;
-//   closeable?: boolean;
-//   desktop?: boolean;
-//   every?: number;
-// };
+type AdItem = {
+  id: string;
+  title?: string;
+  desc?: string;
+  img?: string;
+  video?: string;
+  link: string;
+  cta?: string;
+  closeable?: boolean;
+  desktop?: boolean;
+  every?: number;
+};
 
-// const pickRandomAd = (ads: AdItem[]): AdItem | null => {
-//   if (!ads.length) return null;
-//   return ads[Math.floor(Math.random() * ads.length)];
-// };
+const pickRandomAd = (ads: AdItem[]): AdItem | null => {
+  if (!ads.length) return null;
+  return ads[Math.floor(Math.random() * ads.length)];
+};
 
-// // الإعلانات الداخلية الاحتياطية
-// const internalFallback =
-//   (
-//     adsConfig as typeof adsConfig & {
-//       internalFallback?: AdItem[];
-//     }
-//   ).internalFallback ?? [];
+// الإعلانات الداخلية الاحتياطية
+const internalFallback =
+  (
+    adsConfig as typeof adsConfig & {
+      internalFallback?: AdItem[];
+    }
+  ).internalFallback ?? [];
 
-// // تحديد محتوى كل مساحة حسب الأولوية
-// const resolveSlotAds = (primaryAds?: AdItem[]) => {
-//   if (primaryAds?.length) {
-//     return { ads: primaryAds, type: "house" as const };
-//   }
+// تحديد محتوى كل مساحة حسب الأولوية
+const resolveSlotAds = (primaryAds?: AdItem[]) => {
+  if (primaryAds?.length) {
+    return { ads: primaryAds, type: "house" as const };
+  }
 
-//   if (internalFallback.length) {
-//     return { ads: internalFallback, type: "internal" as const };
-//   }
+  if (internalFallback.length) {
+    return { ads: internalFallback, type: "internal" as const };
+  }
 
-//   return { ads: [], type: "reservation" as const };
-// };
+  return { ads: [], type: "reservation" as const };
+};
 
-// const rightAds = resolveSlotAds(adsConfig.sideRight);
-// const leftAds = resolveSlotAds(adsConfig.sideLeft);
-// const floatingAds = resolveSlotAds(adsConfig.floating);
+const rightAds = resolveSlotAds(adsConfig.sideRight);
+const leftAds = resolveSlotAds(adsConfig.sideLeft);
+const floatingAds = resolveSlotAds(adsConfig.floating);
 
 const v = Date.now();
 
@@ -120,6 +120,7 @@ const {
   )
 } -->
 
+<!-- قبل الفاير -->
 <!-- {/* SIDE LEFT */}
 {
   !isMobile && showSide && (
@@ -158,7 +159,7 @@ const {
   )
 } -->
 
-
+<!-- قبل الفاير -->
 <!-- {/* FLOATING MAIN */}
 {
   !isMobile && showFloating && (
@@ -210,16 +211,16 @@ const {
   )
 } -->
 
-
+<!-- قبل الفاير -->
 {/* CONFIG + SCRIPTS */}
-<!-- <script
+<script
   type="application/json"
   id="ads-config"
   set:html={JSON.stringify(adsConfig)
     .replace(/</g, "\\u003c")
     .replace(/>/g, "\\u003e")
     .replace(/&/g, "\\u0026")}
-/> -->
+/>
 
 {/* SIDE RIGHT */}
 {
@@ -314,7 +315,7 @@ const {
 }
 
 {/* إعلان الحجز الترويجي المستقل */}
-{
+<!-- {
   showFloating && (
     <div id="mobile-floating-ad" class="promo-floating-ad">
       <div class="promo-floating-ad__content" dir="rtl">
@@ -347,7 +348,7 @@ const {
       </div>
     </div>
   )
-}
+} -->
 
 {/* BOTTOM */}
 <!--
@@ -359,7 +360,6 @@ const {
   )
 }
 -->
-
 
 <script>
   function initFloatingAds() {
