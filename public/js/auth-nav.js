@@ -1,4 +1,4 @@
-
+// public/js/auth-nav.js
 import {
   auth,
   onAuthStateChanged

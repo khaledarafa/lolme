@@ -1,4 +1,4 @@
-
+// public/js/login.js
 import {
   auth,
   signInWithEmailAndPassword,

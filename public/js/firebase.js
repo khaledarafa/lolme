@@ -11,7 +11,9 @@ import {
   signInWithPopup,
   signOut,
   sendPasswordResetEmail,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signInAnonymously,
+  sendEmailVerification
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 // Firestore
@@ -34,7 +36,7 @@ import {
   limit,
   startAfter,
   getCountFromServer,
-  serverTimestamp
+  serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // Storage
@@ -42,13 +44,13 @@ import {
   getStorage,
   ref,
   uploadBytes,
-  getDownloadURL
+  getDownloadURL,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // Cloud Functions
 import {
   getFunctions,
-  httpsCallable
+  httpsCallable,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
 // 🔥 CONFIG
@@ -58,7 +60,7 @@ const firebaseConfig = {
   projectId: "lolme-cc",
   storageBucket: "lolme-cc.firebasestorage.app",
   messagingSenderId: "113741468899",
-  appId: "1:113741468899:web:6ab8ae0720d0dad060a1d6"
+  appId: "1:113741468899:web:6ab8ae0720d0dad060a1d6",
 };
 
 // Initialize Firebase
@@ -93,7 +95,7 @@ export {
   limit,
   startAfter,
   getCountFromServer,
-  serverTimestamp
+  serverTimestamp,
 };
 
 // Authentication exports
@@ -104,12 +106,10 @@ export {
   signInWithPopup,
   signOut,
   sendPasswordResetEmail,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signInAnonymously,
+  sendEmailVerification
 };
 
 // Storage exports
-export {
-  ref,
-  uploadBytes,
-  getDownloadURL
-};
+export { ref, uploadBytes, getDownloadURL };

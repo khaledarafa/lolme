@@ -1,21 +1,21 @@
 // public/js/admin/admin.js
 document.addEventListener("DOMContentLoaded", () => {
-  const buttons = document.querySelectorAll('.top-tabs button');
-  const tabs = document.querySelectorAll('.tab');
+  const buttons = document.querySelectorAll(".top-tabs button");
+  const tabs = document.querySelectorAll(".tab");
 
   const passwords = {
     // ditq: "000",
     // addq: "000",
-    addc:   "111111",
+    addc: "111111",
     review: "111111",
-    rooms:  "111111"
+    rooms: "111111",
   };
 
   const unlockedTabs = JSON.parse(localStorage.getItem("admin_tabs") || "{}");
   const savedTab = localStorage.getItem("active_tab") || "addq";
 
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
       const tabId = btn.dataset.tab;
 
       // 🔐 باسورد
@@ -35,12 +35,12 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("active_tab", tabId);
 
       // hide all
-      tabs.forEach(t => t.classList.remove('active'));
-      buttons.forEach(b => b.classList.remove('active'));
+      tabs.forEach((t) => t.classList.remove("active"));
+      buttons.forEach((b) => b.classList.remove("active"));
 
       // show
-      document.getElementById(tabId).classList.add('active');
-      btn.classList.add('active');
+      document.getElementById(tabId).classList.add("active");
+      btn.classList.add("active");
 
       // تشغيل
       if (tabId === "review") window.loadQuestions?.();
@@ -48,14 +48,17 @@ document.addEventListener("DOMContentLoaded", () => {
       if (tabId === "addc") window.initAddC?.();
       if (tabId === "edit") window.loadQuestionsBatch?.();
       if (tabId === "ads") window.initAds?.();
+      if (tabId === "joke-stats") window.initJokeStats?.();
     });
   });
 
   // 🔥 يرجع لنفس التاب بعد الريفريش
-  const defaultBtn = document.querySelector(`.top-tabs button[data-tab="${savedTab}"]`);
+  const defaultBtn = document.querySelector(
+    `.top-tabs button[data-tab="${savedTab}"]`,
+  );
   if (defaultBtn) {
     defaultBtn.click();
   } else {
-    document.querySelector('.top-tabs button')?.click();
+    document.querySelector(".top-tabs button")?.click();
   }
 });

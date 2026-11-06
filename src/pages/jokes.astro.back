@@ -1,0 +1,533 @@
+---
+// jokes.astro
+export const prerender = false;
+import Layout from "../layouts/Layout.astro";
+import AdvertiseBanner from "../components/AdvertiseBanner.astro";
+const siteEmoji = "/images/site-emoji.png";
+
+const jokes = [
+  " واحد بلديتنا طوبة جت في صدره بص وراه 😅",
+  "ليه الصعيدي لما بينام بيحط منبهين جانبه؟ علشان لما منبه يضرب التاني يحوش 😂",
+  "سكران ماسك فرخته، قاعد يضرب فيها ويقول: كل يوم بيض بيض مافيش جبنة 🐓",
+  " واحد مسطول وقف تاكسي وسواقه كمان مسطول، قاله: هات اللي تجيبه وانزل هنا 🤣",
+  " واحد مسطول خرج من العربية ولقى الدنيا بتمطر، راح خارج من الباب التاني 😆",
+  "محشش بيصلي اتصل به صاحبه قال: فينك؟ قال: في الركعة التانية 🙏",
+  " واحد نام متأخر لقى الحلم بدأ 😴",
+  "فيل ما يستخدمش الكمبيوتر ليه؟! لانو خايف من الفارة",
+  " واحد اشترى خاتم لخطيبته، أهلها قالوله: تعالا لبسها الخاتم، قال: يا خسارة، كنت أشتري لها بنطلون 😂",
+  " واحدة اسمها ناهد، عمارة نطت من فوق 😬",
+  " آيس كريم وقع من الدور التالت قال الحسووووووووووووني 😂♥",
+  "اصلع شاف نمله على راسه قال لها انزلي قالتله اخر زحليقه وانزل",
+  " صيدلانية أغمى عليها من الخضة لأنها شافت فارمسي على الحيطة 💊",
+  "مسطول في حصة إنجليزي.. الأستاذ سأله: لو عايز تقول 'تعال هنا' بالإنجليزي تقول إيه؟ قال: come here، الأستاذ: وإذا عايز تقول له 'روح هناك'؟ قال: أروح هناك وأقول له come here 😆",
+  " واحدة سايقة على الـGPS، قال لها: انحرفي قليلًا، راحت شايله الطرحة 🚗",
+];
+const jokes2 = [
+  " واحد بخيل انكسر سن المشط بتاعه… ده كان آخر سن! 😆",
+  "واحد قال لأخوه التوأم: أنت فين من الصبح؟ قاله: بخربيتك، أمك خلتني استحمي مرتين! 🤣",
+  " واحد كان معاه عربية قديمة… صاحبه قال له: حط عليها علامة مرسيدس! 😂",
+  " واحد كسول وقع منه القلم في الامتحان وسلم الورقة 😅",
+  " واحد محشش سأل أخوه: الفرق بين الأسبوع والصحراء؟ مش فيها أحد! 🏜️",
+  " محامي معرفش يتغدى في البيت، لأنهم موكلينه قضية ⚖️",
+  " واحدة كانت بتستحمي، فخبط عليها جارها الأعمي، واداها كيك بمناسبة رجوع بصري 😹",
+  "طفل نظر إلى فم أخيه الرضيع، قال: ضحكوا عليكي وأدوكي طفل من غير أسنان 😆",
+  " واحدة طلبت من جوزها ٤ آلاف لعملية تكميم، اداه ١٠ جنيه وقال لها: هاتي قفل للمطبخ أوفر! 🤣",
+  " واحدة قالت لجوزها: بص أنا عايزة كل الناس تسمع صوتي… قالها: روحي يا شيخة وانتي طالق بالتلاتة 😅",
+];
+const jokes3 = [
+  "واحد محشش شاف النار مولعة في أمه وقال لها: منورة يا حاجة والله!",
+  "واحد بيسأل واحدة عن اسمها، قالت له: وعد، قال لها: مهقول لحد؟",
+  "واحد مسطول دخل على أهله وهو حالق شنبه، قال لهم: تصدقوا والله معرفتكم!",
+  " حرامي دخل على واحد نايم في أوضته وسرق المحفظة، لقاها فاضية رجعها وقاله: انت ليك نفس تنام!",
+  "واحدة بتقول لجوزها: يا ريتني اتجوزت إبليس أحسن منك! قال لها: مينفعش… احنا أخوات!",
+  "واحدة بتقول لخدامتها: احنا بنفطر الساعة ٩، قالت لها: ماشي، لو مصحيتش مش تستنوني!",
+  " واحد بيسأل أبوه: اي هي المواد سريعة التبخر؟ قال له: راتبي لما تشوفه أمك!",
+  " واحدة اتصلت بمامتها: جوزي مزعلني وجاي أقعد عندكم، قالت لها: متجيش… هو محتاج عقاب أكبر، فأنا اللي هجيلك أقعد عندكم!",
+  " محشش بيسألوه الناس: ايه رأيك في الزواج المبكر؟ قال لهم: يعني الساعة كام؟",
+  "واحد بيسأل صاحبه: انت لسه خاطب؟ قال له: لا، قاله: أحسن… دي كانت وحشة! فرد عليه التاني: أنا اتجوزتها!",
+  " واحد شغال في المرور شاف ولد بيتكلم بلغة الإشارة"
+];
+const jokes4 = [
+"اشتري بخيل ٣ برتقالات قطع الأولي لقاها متعفنه فرماها قطع التانيه لقاها أيضا متعفنه فرماها فطفي النور وقطع التالته وأكلها.",
+"محشش بيسأل محشش لو صحيت ولقيت نفسك ميت هتعمل ايه قاله والله ممكن أتهبل.",
+" ٢ مساطيل واحد بيقول للتاني تفتكر الجمعه ممكن ييجي آخر الشهر قاله مش عارف بس يمكن لما نضغط عليه يوافق.",
+" واحد غبي بيذاكر دايما بره البيت علشان الناس يقولو عليه حصل علي الشهاده من الخارج.",
+"كان في  طفل مش عارف ينام فقالتله أمه يعد للمئه حتي ينام فعد للخمسين والنوم غلبه فصحي غسل وشه وكمل عد.",
+" مدرس بيسأل الطالب الثعلب يلد أم يبيض فرد عليه قاله والله الثعلب مكار اتوقع منه أي حاجه.",
+" واحد عجوز الناس بتسأله ليه دايما بتقول لمراتك حياتي وعمري قالهم والله ناسي اسمها وخايف أسألها.",
+" واحد غبي دخل السجن فبيسألوه ليه دوست الراجل بالعربيه فقالهم جالي رساله لو عايز ١٠ دقائق مجانا دوس واحد.",
+" واحده غبيه حملت فسمعت ان جوزها بيخونها فراحت قالت لجوزها قولي الصراحه ال في بطني ده ابن مين.",
+" واحد بيتغزل بزوجته قالها أريد ان اضع رجلي في وجهك فسألته عن السبب قالها علشان اكون أول راجل يضع قدمه علي سطح القمر.",
+];
+const jokes5 = [
+  "واحد غبي بيأكل بملعقة متر ونص، سألوه ليه؟ قال الدكتور قاللي ابعد عن الأكل وأنا مطيع!",
+  "واحد غبي اتعور، الدكتور كتب له م وقال له ادهن مكان الإصابة، راح دهن السلم كله!",
+  "ست بتقول للدكتور: جوزي بيتكلم وهو نايم، أعمل إيه؟ قالها سيبيه يتكلم وهو صاحي يمكن يرتاح.",
+  "غبي اشترى تاكسي، كل ما حد يقوله تاكسي تاكسي، يضحك ويقول: عارف يا عم ده بتاعي!",
+  "ولد بيقول لأبوه: نفسي أكمل دراستي بره، قاله: ماشي يا ابني، هفرشلك في الحوش بس البس تقيل عشان البرد!",
+  "مدرس قال للتلاميذ: أنتم نور المستقبل، واحد بص لزميله النايم وقال: يا أستاذ النور اللي جنبي اتحرق.",
+  "مدرس عربي سأل مراته: تعرفي إيه عن النحو والصرف؟ قالت له: بعرف أصرف مرتبك على النحو اللي يعجبني.",
+  "نمر بيجري ورا عربية، ليه؟ عشان فيها ن!",
+  "غبي سألوه: إيه أصعب حاجة تعملها؟ قالهم: أحلق دقني وأنا بمضغ لبان.",
+  "حرامي دخل شقة ست كبيرة، استنى 3 ساعات لحد ما تخلص تسرّح شعرها، ولما نامت ملقاش حاجة يسرقها، نكش شعرها وهرب.",
+  "بخيل مات أبوه، راح يكتب نعي في الجريدة، قالهم عايز أرخص إعلان، قالوله خمس كلمات، كتب (عاطف ينعي والده)، قالوله باقي كلمتين، قالهم اكتبوا (وبيصلح غسالات).",
+  "بخيل طاحت فلوسه من فوق السطح، جري ينزل بسرعة، وصل قبلها!"
+];
+export const jokes6 = [
+  " واحد خلقه ضاق، أداه لأخوه الصغير.",
+  " واحد رجع في كلامه، خبط في اللي وراه.",
+  " نقاش بنته تعبت، سنفرها برا.",
+  " نجار عجبه بوست، راح مشنّيره.",
+  " واحد أحول جه يعيّط، قام مريل.",
+  " واحد فكهاني اتخانق مع صاحبه، سبّ التين.",
+  " مهندس عايز يسيب الشغل، قالهم أنا مستطيل.",
+  " أستاذ كيمياء خلّف ولد، سماه سامي أكسيد الكربون.",
+  " ممرضة خلّفت توأم، سمت واحد عضل والتاني وليد.",
+  " واحدة اسمها ساندي دخلت هندسة، بقت ساندي متر مربع."
+];
+export const jokes7 = [
+  "واحد غبي راح يقدم على وظيفة، فسأل المدير: المرتب كام؟ المدير قال له: المرتب 2000 جنيه وبعد سنتين هيكون 5000 جنيه، الغبي قال له: خلاص هاجي بعد سنتين.",
+  " واحد غبي ركب تاكسي وخلى مراته تركب قدام علشان السواق ميبصش عليها في المراية.",
+  " واحد شايل كيس سمك، قابل واحد مسطول قاله: لو عرفت الكيس دا فيه إيه هديك سمكة. قاله: بحر 😂.",
+  "راجل عجوز سمع حد بيخبط على الباب فقال: مين؟ قاله: أنا حفيدك. رد عليه: هتفيدني بإيه يعني؟",
+  "واحد مسطول راح لدكتور أسنان، الدكتور قاله: أسنانك محتاجة تقويم. قاله المسطول: بسيطة يا دكتور بس قولي هجري ولا ميلادي؟",
+  "راجل فتح لمراته باب العربية، قالت له: ياه ما أروعك وأنت رومانسي! قالها: اتنيلي انزلي، الباب مبيفتحش إلا من برة 🤦‍♂️.",
+  "واحدة صحيت من النوم مرعوبة، جوزها سألها: مالك؟ قالت له: حلمت إني اترملت. قالها: بعد الشر يا حبيبتي، إن شاء الله أنا ولا انتي 😅.",
+  " واحد مسطول راح المحكمة، القاضي سأله: أنت متجوز مين؟ قال له: متجوز واحدة ست يا سعادة القاضي. القاضي قال له: هو فيه حد بيتجوز راجل؟!، قال له: أيوه والله، أختي متجوزة راجل 😂.",
+  " واحد بخيل راح يزور أمه في المستشفى، لقى لوحة مكتوب عليها (ادفع)، قال: ربنا يشفيها، هشوفها في البيت لما ترجع بقى.",
+  " أستاذ بيقول لطلابه: يعيش القرد في جنوب إفريقيا، ردوا عليه: يعيش يعيش يعيش 🐒.",
+  " واحد غبي قال لصاحبه: أمريكا طلعت القمر، واحنا لازم نطلع الشمس. صاحبه قاله: بس الشمس حر جدًا. قاله: مفيش مشكلة نطلعها بالليل 🌚.",
+  " ناظر بيسأل الأستاذ: هو ليه كل التلاميذ عندك بينطقوا الجيم دال؟ قاله: مش عارف، ما هو دا اللي هيدنني 😂.",
+  " واحد سأل صاحبه: إيه أحلى حاجة في الدنيا؟ قال له: مراتي. قال له: مش بتكلم عن المصايب، بتكلم عن الحاجات الحلوة 😆.",
+  " صعيدي ركب أسانسير مكتوب عليه 'الحمولة 8 أشخاص'، فراح قاعد مستني 7 أشخاص عشان يركب 😂."
+];
+const jokes8 = [
+  " واحد بخيل انكسر سن المشط بتاعه فسألوه الناس ليه زعلان؟ قالهم سن المشط انكسر، قالوله عادي ممكن تمشط شعرك من غير السن ده، قالهم لا مهو ده كان آخر سن 😅",
+  "واحد قال لأخوه التوأم: انت فين من الصبح بخربيتك؟ أمك خلتني أستحمي مرتين 😂",
+  " واحد كان معاه عربية قديمة ومش عارف يبيعها، فصاحبه قاله حط عليها علامة مرسيدس وهي تتباع على طول، فعمل كده وبعد أسبوع صاحبه سأله: بعت العربية؟ قاله: انت أهبل! هو في حد يبيع عربية مرسيدس؟ 🤣",
+  " واحد كسول وقع منه القلم في الامتحان كسل يجيبه وسلم الورقة 😆",
+  " واحد محشش سأل أخوه: إيه الفرق بين الأسبوع والصحراء؟ قاله: مش عارف، رد عليه: الأسبوع فيه أحد لكن الصحراء مفيهاش أحد 😂",
+  " محامي معرفش يتغدى في البيت علشان كانوا موكلينه قضية في المحكمة 😅",
+  " واحدة كانت بتستحمي فخبط عليها جارها الأعمى، فقالت: مين؟ قالها: أنا مصطفى جاركم الأعمى، فقالت: افتح الباب أشوفك عايز إيه وأرجع ألبس، ففتحتله، إدّاها كيك! قالتله: بس إيه المناسبة؟ قالها: بمناسبة رجوع نظري 🤣",
+  "طفل بص في فم أخوه الرضيع باستغراب، أمه سألته: مالك؟ قالها: ضحكوا عليكي وادوكي طفل من غير أسنان 😂",
+  " واحدة طلبت من جوزها ٤ آلاف علشان تعمل عملية تكميم معدة، إدّاها ١٠ جنيه وقالها: هاتي قفل للمطبخ أوفر 😆",
+  " واحدة بتقول لجوزها: بص، أنا عايزة كل الناس تسمع صوتي النهارده! قالها: روحي يا شيخة وانتي طالق بالتلاتة 🔥🤣"
+];
+const jokes9 = [
+  " واحدة صحيت من النوم مخضوضة، جوزها قالها: في إيه؟ قالتله: حلمت إني اترملت! قالها: بعد الشر يا حبيبتي، إن شاء الله أنا وانتي لأ 😅",
+  " واحد مسطول اشترى تاكسي، كل ما الناس تشاورله يفرح ويقول: ياه! ده أنا طلعت مشهور أوي 🤣",
+  " واحد محشش أخوه مات ومش عارف يقول لمراته إزاي، فقالها: أخويا اتجوز عليكي، قالت: إلهي يا رب يجيلي ميت! قالهم دخلوه يا شباب 🤣",
+  " اتنين مساطيل، واحد بيقول للتاني: تعرف تمشي على دخان سيجارتي؟ قاله: انت مجنون! افرض طفيت السيجارة وأنا ماشي أقع؟ 😆",
+  " واحد لقى عياله مشغلين المروحة، ضربهم علشان مشغلينها على ٣ وهما ٢ 😂",
+  " واحد قرر يتجوز جارته اللي جوزها ميت، راح يشوفها من غير مكياج اتصدم وقالها: مفيش أي أخبار عن المرحوم؟ 😅",
+  " واحد غبي اشترى موبايل جديد، قال لأخوه: اكتبلي رسالة علشان خطي وحش 😂",
+  " واحدة راحت تغير اسمها من صباح لضحى، الموظف قالها: مش مستاهلة، ده الفرق بينهم نص ساعة بس 😆",
+  " واحدة قالت لابنها: هاتلي كركم من عند الجيران للفطار، راح ونسي الكلمة، فقالهم: أمي بتقولكم كلكم معزومين على الفطار 🤣",
+  " مدرس بيسأل الطالب: ما هو مفرد كلمة مصائب؟ قاله: مفيش، لأنها بتيجي كلها مع بعض يا أستاذ 😂",
+];
+const jokes10 = [
+  "صيدلي قابل صيدلي في الشارع قاله: مرهم بيك 💊",
+  "اتنين مدرسين حبوا بعض كتبوا كتابهم على السبورة 🧑‍🏫",
+  "واحد راح يرفع قضية على جاره... وقعت عليه ⚖️😂",
+  "ميكانيكي راح فرح نقط زيت 🛠️",
+  "واحد أكل جوز هند... راحت هند موتته 😂",
+  "واحد صيني اتجوز واحدة صينية خلفوا طقم كاسات 🥢",
+  "واحد مراته خلفت توأم، من الفرح قال للدكتور: عليا الطلاق لتاخدلك واحد 👶😂",
+  "خياط كان ماشي في حتة مقطوعة قام مخيطها ✂️",
+  "بتنجانة وقعت قالت: آي، اتأورت 🍆🤣",
+  "جزار خلف بنتين توأم سماهم كيلو باترا وكيلو لحمة 🥩🤣"
+];
+
+// جمع كل النكت الموجودة في الصفحة
+const allJokes = [
+  ...jokes,
+  ...jokes2,
+  ...jokes3,
+  ...jokes4,
+  ...jokes5,
+  ...jokes6,
+  ...jokes7,
+  ...jokes8,
+  ...jokes9,
+  ...jokes10,
+];
+
+// اختيار نكتة عشوائية عند تحميل الصفحة
+const dailyJoke =
+  allJokes[Math.floor(Math.random() * allJokes.length)];
+
+// خلط ترتيب النكت عشوائيًا من غير تعديل المصفوفات الأصلية
+function shuffleJokes<T>(items: T[]): T[] {
+  const shuffled = [...items];
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled;
+}
+
+// نجهز ترتيبًا عشوائيًا مستقلًا لكل مجموعة عند تحميل الصفحة
+const shuffledJokes = shuffleJokes(jokes);
+const shuffledJokes2 = shuffleJokes(jokes2);
+const shuffledJokes3 = shuffleJokes(jokes3);
+const shuffledJokes4 = shuffleJokes(jokes4);
+const shuffledJokes5 = shuffleJokes(jokes5);
+const shuffledJokes6 = shuffleJokes(jokes6);
+const shuffledJokes7 = shuffleJokes(jokes7);
+const shuffledJokes8 = shuffleJokes(jokes8);
+const shuffledJokes9 = shuffleJokes(jokes9);
+const shuffledJokes10 = shuffleJokes(jokes10);
+---
+
+<Layout
+  title="نكت مضحكة جديدة 😂🔥 – لول مي"
+  description="ضحك متواصل… نكت قصيرة جامدة ومناسبة للمشاركة على واتساب وفيس بوك."
+
+  showTopAd={false}
+  showSideAd={false}
+  showFloatingAd={false}
+  showBottomAd={false}
+>
+
+  <script is:inline>
+    window.addEventListener("DOMContentLoaded", () => {
+      window.shareJoke = async (joke) => {
+        const text = `${joke} 😂🤣 من موقع لول مي!`;
+        const url = window.location.href;
+  
+        try {
+          if (navigator.share) {
+            await navigator.share({
+              title: "نكت مضحكة 😆",
+              text,
+              url,
+            });
+            console.log("تمت المشاركة بنجاح 🎉");
+          } else {
+            alert("جهازك مش بيدعم ميزة المشاركة التلقائية. انسخ النكتة يدويًا 😅");
+          }
+        } catch (err) {
+          console.log("تم إلغاء المشاركة أو حدث خطأ:", err);
+        }
+      };
+    });
+  </script>
+
+<section class="daily-joke" aria-labelledby="daily-joke-title">
+  <div class="daily-joke__heading">
+    <span aria-hidden="true">😂</span>
+    <div>
+      <h2 id="daily-joke-title">نكتة اليوم</h2>
+      <p>جرعة ضحك جديدة كل يوم!</p>
+    </div>
+  </div>
+
+  <p class="daily-joke__text">{dailyJoke}</p>
+
+  <div class="daily-joke__actions">
+    <button
+      class="share-btn"
+      onclick={`shareJoke('${dailyJoke.replace(/'/g, "\\'")}')`}
+    >
+      شارك النكتة 😂
+    </button>
+
+    <a class="daily-joke__more" href="#jokes-list">
+      المزيد من النكت ↓
+    </a>
+  </div>
+</section>
+
+  <div class="jokes-page card">
+    <AdvertiseBanner slot="jokes-1" />
+
+    <h1>نكت مضحكة جديدة <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h1>
+    <h3 id="jokes-list" > الضحك وسيلة رائعة لتخفيف الضغط اليومي وإخراج الطاقة السلبية. استمتع بمجموعة من أظرف النكت التي ستجعلك تبتسم بصوت عالي، أنت ومن حولك. كل نكتة هنا قصيرة وسهلة الهضم، مثالية لمشاركة المرح مع الأصدقاء أو العائلة. <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> </h3>
+    <!-- <ul> {jokes.map((joke) => <li>{joke}</li>)} </ul> -->
+    <ul> {shuffledJokes.map((joke) => ( <li class="card tilt-card"> {joke}
+          <br />
+          <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button>
+        </li>
+      ))}
+    </ul>
+  </div>
+  
+  <div class="jokes-page">
+    <AdvertiseBanner slot="jokes-2" />
+    <h2>نكت مضحكة جدا برضه <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
+    <h3> اجعل يومك مليء بالمرح مع هذه النكت الطريفة! هذه المجموعة تجمع بين الفكاهة اليومية والمواقف الغريبة التي تجعل الضحك لا يتوقف. مثالية لقضاء وقت ممتع مع الأصدقاء أو لرفع معنوياتك في أي لحظة. <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h3>
+    <ul> {shuffledJokes2.map((joke) => <li class="card tilt-card">{joke}  <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
+      <br />
+      <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li>)} </ul>
+  </div>
+
+  <div class="jokes-page card">
+    <AdvertiseBanner slot="jokes-3" />
+    <h2>نكت إوعى وشك <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
+    <h3> هنا تجد النكت الغريبة والمفاجئة التي تخطف الأنفاس وتجبرك على الضحك فورًا! هذه النكت قصيرة لكنها مؤثرة، ستجعل مزاجك أفضل بسرعة، سواء كنت بمفردك أو مع من تحب من العائلة والأصدقاء. <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> </h3>
+    <ul> {shuffledJokes3.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+          <br />
+          <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
+  </div>
+    
+  <div class="jokes-page">
+    <AdvertiseBanner slot="jokes-4" />
+    <h2>نكت جامدااااا <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
+    <h3> طب اسمع دي <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> </h3>
+    <ul> {shuffledJokes4.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+          <br />
+          <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
+  </div>
+  
+  <div class="jokes-page card">
+    <AdvertiseBanner slot="jokes-5" />
+    <h2>نكت إوعى تضحك جامد <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
+    <h3>
+      هنا هتلاقي نكت مجنونة وغريبة تخليك تضحك من غير ما تحس 😂  
+      نكت سريعة ومفاجئة، ترفع المود في ثواني، سواء كنت قاعد لوحدك أو مع أصحابك وعيلتك.  
+      استعد لجرعة ضحك محترمة من نكت مفيش زيها! <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
+    </h3>
+    <ul> {shuffledJokes5.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+          <br />
+          <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
+  </div>
+
+  <div class="jokes-page">
+    <AdvertiseBanner slot="jokes-6" />
+    <h2>نكت خفيفة دم <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
+    <h3>
+      اضحك من قلبك مع نكت غريبة ودمها خفيف 😆  
+      مجموعة نكت سريعة ومبدعة تخليك تبتسم غصب عنك،  
+      سواء بتقضي وقت راحة أو عايز ترفع المود شوية.  
+      اضمنلك جرعة ضحك من العيار التقيل! <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
+    </h3>
+    <ul> {shuffledJokes6.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+          <br />
+          <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
+  </div>
+
+  <div class="jokes-page card">
+    <AdvertiseBanner slot="jokes-7" />
+    <h2>نكت جرب تضحك جامد <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
+    <h3> 
+      "اشتهر الشعب المصري بحس الدعابة وخفة الدم ودائمًا ما يحبوا الضحك وإلقاء النكات من حين لآخر. وفي المقال ده جمعنالك أكبر عدد من النكت المصرية المضحكة جدًا من موقع نكت، اللي يعتبر أكبر مكتبة نكت على الإطلاق ومحدثة باستمرار 🤣.",
+      <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
+    </h3>
+    <ul> {shuffledJokes7.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+          <br />
+          <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
+  </div>
+
+  
+  <div class="jokes-page">
+    <AdvertiseBanner slot="jokes-8" />
+    <h2>نكت تموت من الضحك 😂 <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
+    <h3>
+      مجموعة جديدة من أجمد النكت المصرية اللي هتخليك تضحك لحد ما دموعك تنزل. خفة دم المصريين مالهاش حدود، وتعليقاتهم مش ممكن تتكرر! <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
+    </h3>
+    <ul> {shuffledJokes8.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+          <br />
+          <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
+  </div>
+
+  <div class="jokes-page card">
+    <AdvertiseBanner slot="jokes-9" />
+    <h2>اخر نكت تضحك اوى وكفاية كدز بقز <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
+    <h3> 
+      مجموعة نكت خفيفة دم وغريبة جدًا من الحياة اليومية، 🤣.,
+      <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
+    </h3>
+    <ul> {shuffledJokes9.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+          <br />
+          <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
+
+  </div>
+
+  <div class="jokes-page">
+    <AdvertiseBanner slot="jokes-10" />
+    <h2>نكت فيها لعب بالكلمات ومواقف غريبة كلها دمها خفيف زي الشعب المصري 💪 😂 <img src={siteEmoji} class="emoji-icon" alt="site emoji" /></h2>
+    <h3>
+      مجموعة نكت مصرية قصيرة من النوع اللي يخليك تضحك حتى وانت مش ناوي 😅  <img src={siteEmoji} class="emoji-icon" alt="site emoji" />
+    </h3>
+    <ul> {shuffledJokes10.map((joke) => ( <li class="card tilt-card"> {joke} <img src={siteEmoji} class="emoji-icon" alt="site emoji" /> 
+          <br />
+          <button class="share-btn" onclick={`shareJoke('${joke.replace(/'/g, "\\'")}')`}>شارك الضحكة 😂</button></li> ))} </ul>
+  <AdvertiseBanner slot="jokes-11" />
+  </div>
+    <section class="jokes-advertise-cta" dir="rtl">
+  <div class="jokes-advertise-cta__content">
+    <span>📢</span>
+    <div>
+      <h2>عندك مشروع أو منتج وعايز تعلن عنه؟</h2>
+      <p>
+        اعرض إعلانك أمام زوار LOLME، واختار المساحة الإعلانية المناسبة
+        لمشروعك وشوف الأسعار وتفاصيل الحجز.
+      </p>
+    </div>
+  </div>
+
+  <a href="/advertise">
+    اعرف المساحات الإعلانية واحجز إعلانك ←
+  </a>
+</section>
+
+    <script src="/js/tilt-cards.js" defer></script>
+    <script type="module">
+  import { jokesAuthReady } from "/js/jokes-auth.js";
+
+  jokesAuthReady
+    .then((user) => {
+      console.log(
+        "[LOLME Jokes] Authentication ready:",
+        user.isAnonymous ? "Anonymous visitor" : "Registered user"
+      );
+    })
+    .catch((error) => {
+      console.error("[LOLME Jokes] Authentication failed:", error);
+    });
+</script>
+  </Layout>
+  
+  <style>
+    .share-btn {
+      background: #ff4081;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 8px;
+      display: inline-block;
+      transition: background 0.2s;
+    }
+    .share-btn:hover {
+      background: #e91e63;
+    }
+    li.card {
+      margin-bottom: 15px;
+    }
+
+
+.daily-joke {
+  width: calc(100% - 30px);
+  max-width: 728px;
+  box-sizing: border-box;
+  margin: 24px auto;
+  padding: 22px;
+  direction: rtl;
+  text-align: right;
+  color: #fff;
+  background: linear-gradient(135deg, #312e81, #7c3aed);
+  border: 1px solid rgba(167, 139, 250, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.daily-joke__heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.daily-joke__heading > span {
+  font-size: 2.5rem;
+}
+
+.daily-joke__heading h2 {
+  margin: 0 0 4px;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.daily-joke__heading p {
+  margin: 0;
+  color: #ede9fe;
+}
+
+.daily-joke__text {
+  margin: 22px 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.9;
+}
+
+.daily-joke__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.daily-joke__more {
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.daily-joke__more:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .daily-joke {
+    padding: 18px 14px;
+  }
+
+  .daily-joke__text {
+    font-size: 1rem;
+  }
+}
+
+.jokes-advertise-cta {
+  max-width: 850px;
+  margin: 30px auto;
+  padding: 22px;
+  direction: rtl;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: 15px;
+  background: var(--card-bg, #1e293b);
+  text-align: right;
+}
+
+.jokes-advertise-cta__content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.jokes-advertise-cta__content > span {
+  font-size: 2rem;
+}
+
+.jokes-advertise-cta h2 {
+  margin: 0 0 7px;
+  font-size: 1.15rem;
+}
+
+.jokes-advertise-cta p {
+  margin: 0;
+  color: var(--text-secondary, #94a3b8);
+  line-height: 1.8;
+  font-size: 0.9rem;
+}
+
+.jokes-advertise-cta > a {
+  display: inline-block;
+  padding: 11px 18px;
+  border-radius: 9px;
+  background: #6d28d9;
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.jokes-advertise-cta > a:hover {
+  background: #5b21b6;
+}
+  </style>
+  

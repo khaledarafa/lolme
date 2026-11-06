@@ -1,0 +1,494 @@
+---
+// src/pages/send-joke.astro
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="شارك نكتتك مع مجتمع LOLME"
+  description="عندك نكتة مضحكة؟ شاركها مع مجتمع LOLME، وساهم في رسم الابتسامة على وجوه الزوار."
+>
+  <main class="send-joke-page" dir="rtl">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-icon">😂</div>
+
+      <span class="eyebrow">مجتمع LOLME</span>
+
+      <h1>
+        عندك نكتة؟
+        <span>خلّي العالم يضحك معاك!</span>
+      </h1>
+
+      <p class="hero-description">
+        أكيد عندك نكتة تستاهل تتقال!
+        شاركها مع مجتمع LOLME، ويمكن تكون سبب ضحكة شخص
+        ما تعرفوش في مكان بعيد عنك.
+      </p>
+
+      <a href="#how-to-share" class="hero-scroll">
+        اعرف إزاي تشارك نكتتك
+        <span>↓</span>
+      </a>
+    </section>
+
+    <!-- Benefits -->
+    <section class="benefits">
+      <article class="benefit-card">
+        <div class="benefit-icon">✍️</div>
+        <h3>شارك إبداعك</h3>
+        <p>اكتب نكتتك بطريقتك وخلي الآخرين يستمتعوا بيها.</p>
+      </article>
+
+      <article class="benefit-card">
+        <div class="benefit-icon">🌍</div>
+        <h3>وصل ضحكتك للناس</h3>
+        <p>نكتتك ممكن تظهر في قسم نكت المجتمع على LOLME.</p>
+      </article>
+
+      <article class="benefit-card">
+        <div class="benefit-icon">❤️</div>
+        <h3>اعرف رأي الجمهور</h3>
+        <p>الزوار يقدروا يتفاعلوا مع نكتتك بعد نشرها.</p>
+      </article>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-section" id="how-to-share">
+      <div class="section-heading">
+        <span>الموضوع أسهل مما تتخيل</span>
+        <h2>إزاي تشارك نكتتك؟</h2>
+        <p>أربع خطوات بسيطة وتكون نكتتك وصلت لينا.</p>
+      </div>
+
+      <div class="steps">
+        <article class="step">
+          <span class="step-number">01</span>
+          <div class="step-icon">👤</div>
+          <h3>اعمل حساب</h3>
+          <p>لازم يكون عندك حساب على LOLME علشان نقدر ننسب النكتة لصاحبها.</p>
+        </article>
+
+        <article class="step">
+          <span class="step-number">02</span>
+          <div class="step-icon">📝</div>
+          <h3>اكتب نكتتك</h3>
+          <p>اكتب النكتة اللي عايز تشاركها، وراجعها قبل الإرسال.</p>
+        </article>
+
+        <article class="step">
+          <span class="step-number">03</span>
+          <div class="step-icon">🔍</div>
+          <h3>مراجعة النكتة</h3>
+          <p>فريق LOLME هيراجع النكتة قبل نشرها للتأكد من مناسبتها.</p>
+        </article>
+
+        <article class="step">
+          <span class="step-number">04</span>
+          <div class="step-icon">🎉</div>
+          <h3>انشر الضحكة</h3>
+          <p>بعد الموافقة، نكتتك تظهر في قسم نكت المجتمع وتكون متاحة للزوار.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Account requirement -->
+    <section class="account-section">
+      <div class="account-icon">🔐</div>
+
+      <h2>قبل ما تبدأ، محتاج حساب على LOLME</h2>
+
+      <p>
+        إرسال النكت مش متاح للزوار بدون حساب.
+        لازم تسجل أو تدخل بحسابك علشان نقدر نحفظ نكتتك
+        ونربطها بصاحبها.
+      </p>
+
+      <div class="account-actions">
+        <a href="/register" class="primary-button">
+          🎉 إنشاء حساب جديد
+        </a>
+
+        <a href="/login" class="secondary-button">
+          عندك حساب بالفعل؟ تسجيل الدخول
+        </a>
+      </div>
+
+      <span class="account-note">
+        إنشاء الحساب مجاني، والمشاركة في مجتمع النكت مجانية.
+      </span>
+    </section>
+
+    <!-- Rules -->
+    <section class="rules-section">
+      <h2>📌 قبل إرسال نكتتك</h2>
+
+      <ul>
+        <li>خلي النكتة من تأليفك أو عندك الحق في مشاركتها.</li>
+        <li>تجنب الإساءة للأشخاص أو التشهير أو التنمر.</li>
+        <li>ممنوع المحتوى العنصري أو الكراهية أو المحتوى المخالف.</li>
+        <li>راجع النكتة كويس قبل إرسالها.</li>
+        <li>إرسال النكتة لا يعني نشرها تلقائيًا؛ كل المشاركات تخضع للمراجعة.</li>
+      </ul>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+      <div class="final-emoji">🤣</div>
+      <h2>يلا، ورّينا عندك إيه!</h2>
+      <p>يمكن نكتتك تكون النكتة المفضلة لآلاف الزوار.</p>
+      <a href="/register" class="primary-button">
+        ابدأ وشارك نكتتك الآن
+      </a>
+    </section>
+
+  </main>
+</Layout>
+
+<style>
+  .send-joke-page {
+    --joke-bg: #101923;
+    --joke-card: #202c40;
+    --joke-card-dark: #151f30;
+    --joke-border: #34465e;
+    --joke-text: #e5e7eb;
+    --joke-muted: #a7b3c5;
+    --joke-green: #7cff00;
+    --joke-yellow: #facc15;
+
+    width: min(1100px, 94%);
+    margin: 35px auto 60px;
+    color: var(--joke-text);
+  }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    padding: 65px 25px;
+    border: 1px solid var(--joke-border);
+    border-radius: 22px;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(124,255,0,.12), transparent 45%),
+      linear-gradient(145deg, #202c40, #151f30);
+    box-shadow: 0 0 22px rgba(22, 163, 74, .12);
+  }
+
+  .hero-icon {
+    font-size: 65px;
+    margin-bottom: 14px;
+    animation: joke-bounce 2.5s infinite ease-in-out;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    color: var(--joke-green);
+    font-weight: 800;
+    margin-bottom: 14px;
+  }
+
+  .hero h1 {
+    font-size: clamp(30px, 5vw, 48px);
+    line-height: 1.5;
+    margin: 0 auto 15px;
+    color: #fff;
+  }
+
+  .hero h1 span {
+    display: block;
+    color: var(--joke-green);
+  }
+
+  .hero-description {
+    max-width: 650px;
+    margin: 0 auto;
+    color: var(--joke-muted);
+    font-size: 17px;
+    line-height: 2;
+  }
+
+  .hero-scroll {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 28px;
+    color: var(--joke-yellow);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .hero-scroll span {
+    font-size: 25px;
+  }
+
+  .benefits {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 25px 0 65px;
+  }
+
+  .benefit-card {
+    text-align: center;
+    padding: 25px 18px;
+    background: var(--joke-card);
+    border: 1px solid var(--joke-border);
+    border-radius: 16px;
+    transition: .2s ease;
+  }
+
+  .benefit-card:hover,
+  .step:hover {
+    border-color: #16a34a;
+    transform: translateY(-3px);
+  }
+
+  .benefit-icon {
+    font-size: 35px;
+    margin-bottom: 12px;
+  }
+
+  .benefit-card h3,
+  .step h3 {
+    color: var(--joke-yellow);
+    margin: 0 0 10px;
+  }
+
+  .benefit-card p,
+  .step p {
+    color: var(--joke-muted);
+    line-height: 1.9;
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .how-section {
+    margin-bottom: 65px;
+  }
+
+  .section-heading {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .section-heading > span {
+    color: var(--joke-green);
+    font-weight: 700;
+  }
+
+  .section-heading h2 {
+    color: #fff;
+    font-size: 30px;
+    margin: 10px 0;
+  }
+
+  .section-heading p {
+    color: var(--joke-muted);
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+
+  .step {
+    position: relative;
+    background: var(--joke-card);
+    border: 1px solid var(--joke-border);
+    border-radius: 15px;
+    padding: 25px 18px;
+    text-align: center;
+    transition: .2s ease;
+  }
+
+  .step-number {
+    position: absolute;
+    top: 12px;
+    left: 14px;
+    color: #718096;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .step-icon {
+    font-size: 38px;
+    margin: 12px 0 18px;
+  }
+
+  .account-section {
+    text-align: center;
+    padding: 40px 22px;
+    margin-bottom: 45px;
+    border: 1px solid rgba(124,255,0,.4);
+    border-radius: 18px;
+    background: linear-gradient(145deg, #202c40, #151f30);
+    box-shadow: 0 0 20px rgba(22,163,74,.08);
+  }
+
+  .account-icon {
+    font-size: 42px;
+  }
+
+  .account-section h2 {
+    color: var(--joke-green);
+    font-size: clamp(21px, 4vw, 29px);
+    margin: 15px 0;
+  }
+
+  .account-section p {
+    max-width: 650px;
+    margin: 0 auto;
+    color: var(--joke-muted);
+    line-height: 2;
+  }
+
+  .account-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 27px;
+  }
+
+  .primary-button,
+  .secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 800;
+    transition: .2s ease;
+  }
+
+  .primary-button {
+    color: #101923;
+    background: var(--joke-green);
+    box-shadow: 0 4px 15px rgba(124,255,0,.16);
+  }
+
+  .primary-button:hover {
+    background: #a0ff42;
+    transform: translateY(-2px);
+  }
+
+  .secondary-button {
+    color: #e5e7eb;
+    border: 1px solid var(--joke-border);
+    background: #151f30;
+  }
+
+  .secondary-button:hover {
+    border-color: var(--joke-green);
+    color: var(--joke-green);
+  }
+
+  .account-note {
+    display: block;
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--joke-muted);
+  }
+
+  .rules-section {
+    padding: 25px;
+    background: var(--joke-card);
+    border: 1px solid var(--joke-border);
+    border-radius: 16px;
+  }
+
+  .rules-section h2 {
+    color: var(--joke-yellow);
+    margin: 0 0 18px;
+  }
+
+  .rules-section ul {
+    padding-right: 22px;
+    margin: 0;
+  }
+
+  .rules-section li {
+    color: var(--joke-muted);
+    line-height: 2.2;
+    padding-right: 5px;
+  }
+
+  .final-cta {
+    text-align: center;
+    padding: 55px 20px 20px;
+  }
+
+  .final-emoji {
+    font-size: 50px;
+  }
+
+  .final-cta h2 {
+    color: #fff;
+    font-size: 30px;
+    margin: 15px 0 8px;
+  }
+
+  .final-cta p {
+    color: var(--joke-muted);
+    margin-bottom: 25px;
+  }
+
+  @keyframes joke-bounce {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-8px) rotate(-5deg); }
+  }
+
+  @media (max-width: 750px) {
+    .hero {
+      padding: 45px 18px;
+    }
+
+    .benefits {
+      grid-template-columns: 1fr;
+      margin-bottom: 45px;
+    }
+
+    .steps {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .section-heading h2 {
+      font-size: 25px;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .send-joke-page {
+      width: 94%;
+      margin-top: 20px;
+    }
+
+    .steps {
+      grid-template-columns: 1fr;
+    }
+
+    .account-actions {
+      flex-direction: column;
+    }
+
+    .account-actions a {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-icon {
+      animation: none;
+    }
+
+    .benefit-card,
+    .step,
+    .primary-button {
+      transition: none;
+    }
+  }
+</style>

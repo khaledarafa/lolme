@@ -2,6 +2,7 @@ const { setGlobalOptions } = require("firebase-functions");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { initializeApp } = require("firebase-admin/app");
 const { getAuth } = require("firebase-admin/auth");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 const {
   getFirestore,
   FieldValue,
@@ -78,29 +79,27 @@ exports.findAdvertiserByEmail = onCall(async (request) => {
   }
 });
 
-const SITE_SECTIONS = ["home", "jokes", "tests"];
-
 /**
  * Normalizes a page path by removing query strings and trailing slashes.
  *
  * @param {string} path - The original page path.
  * @return {string|null} The normalized path or null if invalid.
  */
-function normalizeSitePath(path) {
-  if (typeof path !== "string") return null;
+// function normalizeSitePath(path) {
+//   if (typeof path !== "string") return null;
 
-  let normalized = path.split("?")[0].split("#")[0].trim();
+//   let normalized = path.split("?")[0].split("#")[0].trim();
 
-  if (!normalized.startsWith("/")) return null;
+//   if (!normalized.startsWith("/")) return null;
 
-  if (normalized.length > 300) return null;
+//   if (normalized.length > 300) return null;
 
-  if (normalized.length > 1) {
-    normalized = normalized.replace(/\/+$/, "");
-  }
+//   if (normalized.length > 1) {
+//     normalized = normalized.replace(/\/+$/, "");
+//   }
 
-  return normalized;
-}
+//   return normalized;
+// }
 
 /**
  * Validates a page path against the allowed analytics sections.
@@ -109,31 +108,31 @@ function normalizeSitePath(path) {
  * @param {string} path - The requested page path.
  * @return {string|null} The validated path or null if invalid.
  */
-function validateSitePage(pageType, path) {
-  const normalizedPath = normalizeSitePath(path);
+// function validateSitePage(pageType, path) {
+//   const normalizedPath = normalizeSitePath(path);
 
-  if (!normalizedPath || !SITE_SECTIONS.includes(pageType)) {
-    return null;
-  }
+//   if (!normalizedPath || !SITE_SECTIONS.includes(pageType)) {
+//     return null;
+//   }
 
-  if (pageType === "home" && normalizedPath !== "/") {
-    return null;
-  }
+//   if (pageType === "home" && normalizedPath !== "/") {
+//     return null;
+//   }
 
-  if (pageType === "jokes" && normalizedPath !== "/jokes") {
-    return null;
-  }
+//   if (pageType === "jokes" && normalizedPath !== "/jokes") {
+//     return null;
+//   }
 
-  if (
-    pageType === "tests" &&
-    normalizedPath !== "/tests" &&
-    !normalizedPath.startsWith("/tests/")
-  ) {
-    return null;
-  }
+//   if (
+//     pageType === "tests" &&
+//     normalizedPath !== "/tests" &&
+//     !normalizedPath.startsWith("/tests/")
+//   ) {
+//     return null;
+//   }
 
-  return normalizedPath;
-}
+//   return normalizedPath;
+// }
 
 /**
  * Returns public GA4 statistics for the last 30 complete days.
@@ -1032,3 +1031,357 @@ exports.getAdvertiserDashboard = onCall(
     };
   },
 );
+
+exports.setJokeReaction = onCall(async (request) => {
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "يجب تسجيل هوية الزائر أولاً");
+  }
+
+  const uid = request.auth.uid;
+  const { jokeId, reactionType } = request.data || {};
+
+  const allowedReactions = ["laugh", "love", "notFunny"];
+
+  if (
+    typeof jokeId !== "string" ||
+    !/^[a-zA-Z0-9_-]{1,100}$/.test(jokeId) ||
+    !allowedReactions.includes(reactionType)
+  ) {
+    throw new HttpsError("invalid-argument", "بيانات التفاعل غير صحيحة");
+  }
+
+  const statsRef = db.collection("jokeStats").doc(jokeId);
+  const reactionRef = db.collection("jokeReactions").doc(`${jokeId}_${uid}`);
+
+  return db.runTransaction(async (transaction) => {
+    const [statsSnap, reactionSnap] = await Promise.all([
+      transaction.get(statsRef),
+      transaction.get(reactionRef),
+    ]);
+
+    const stats = {
+      laugh: Number(statsSnap.get("laugh") || 0),
+      love: Number(statsSnap.get("love") || 0),
+      notFunny: Number(statsSnap.get("notFunny") || 0),
+    };
+
+    // دعم البيانات القديمة التي كانت تحفظ تفاعلًا واحدًا في type.
+    const oldData = reactionSnap.exists ? reactionSnap.data() : {};
+
+    const previous = {
+      laugh: false,
+      love: false,
+      notFunny: false,
+    };
+
+    if (oldData.reactions && typeof oldData.reactions === "object") {
+      previous.laugh = oldData.reactions.laugh === true;
+      previous.love = oldData.reactions.love === true;
+      previous.notFunny = oldData.reactions.notFunny === true;
+    } else if (allowedReactions.includes(oldData.type)) {
+      previous[oldData.type] = true;
+    }
+
+    const next = { ...previous };
+
+    // الضغط على التفاعل نفسه يلغي اختياره.
+    next[reactionType] = !previous[reactionType];
+
+    // ضحكتني ومش مضحكة متعارضان.
+    if (reactionType === "laugh" && next.laugh) {
+      next.notFunny = false;
+    }
+
+    if (reactionType === "notFunny" && next.notFunny) {
+      next.laugh = false;
+    }
+
+    // تحديث العدادات حسب الاختلاف الفعلي.
+    for (const type of allowedReactions) {
+      if (previous[type] !== next[type]) {
+        stats[type] = Math.max(0, stats[type] + (next[type] ? 1 : -1));
+      }
+    }
+
+    const hasReactions = Object.values(next).some(Boolean);
+
+    if (hasReactions) {
+      transaction.set(reactionRef, {
+        uid,
+        jokeId,
+        reactions: next,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    } else {
+      transaction.delete(reactionRef);
+    }
+
+    transaction.set(
+      statsRef,
+      {
+        ...stats,
+        updatedAt: FieldValue.serverTimestamp(),
+      },
+      { merge: true },
+    );
+
+    return {
+      stats,
+      selectedReactions: next,
+    };
+  });
+});
+
+exports.getMyJokeReactions = onCall(async (request) => {
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "يجب تسجيل هوية الزائر أولاً");
+  }
+
+  const uid = request.auth.uid;
+
+  const reactionsSnapshot = await db
+    .collection("jokeReactions")
+    .where("uid", "==", uid)
+    .get();
+
+  const reactions = {};
+
+  reactionsSnapshot.forEach((doc) => {
+    const data = doc.data();
+
+    // دعم التفاعلات الجديدة والقديمة.
+    if (data.reactions && typeof data.reactions === "object") {
+      reactions[data.jokeId] = {
+        laugh: data.reactions.laugh === true,
+        love: data.reactions.love === true,
+        notFunny: data.reactions.notFunny === true,
+      };
+    } else {
+      reactions[data.jokeId] = {
+        laugh: data.type === "laugh",
+        love: data.type === "love",
+        notFunny: data.type === "notFunny",
+      };
+    }
+  });
+
+  const statsSnapshot = await db.collection("jokeStats").get();
+
+  const stats = {};
+
+  statsSnapshot.forEach((doc) => {
+    const data = doc.data();
+
+    stats[doc.id] = {
+      laugh: Number(data.laugh || 0),
+      love: Number(data.love || 0),
+      notFunny: Number(data.notFunny || 0),
+    };
+  });
+
+  return {
+    reactions,
+    stats,
+  };
+});
+
+/**
+ * حفظ لقطة يومية للأعداد النهائية لتفاعلات النكت.
+ * تعمل يوميًا الساعة 11:59 مساءً بتوقيت القاهرة.
+ */
+exports.saveDailyJokeStats = onSchedule(
+  {
+    schedule: "59 23 * * *",
+    timeZone: "Africa/Cairo",
+    maxInstances: 1,
+  },
+  async () => {
+    const statsSnapshot = await db.collection("jokeStats").get();
+
+    const dateParts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Africa/Cairo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(new Date());
+
+    const dateValues = Object.fromEntries(
+      dateParts.map((part) => [part.type, part.value]),
+    );
+
+    const day = `${dateValues.year}-${dateValues.month}-${dateValues.day}`;
+
+    const dailyRef = db.collection("jokeDailyStats").doc(day);
+
+    const totals = {
+      laugh: 0,
+      love: 0,
+      notFunny: 0,
+    };
+
+    const batch = db.batch();
+
+    for (const jokeDoc of statsSnapshot.docs) {
+      const data = jokeDoc.data();
+
+      const jokeStats = {
+        laugh: Math.max(0, Number(data.laugh) || 0),
+        love: Math.max(0, Number(data.love) || 0),
+        notFunny: Math.max(0, Number(data.notFunny) || 0),
+      };
+
+      totals.laugh += jokeStats.laugh;
+      totals.love += jokeStats.love;
+      totals.notFunny += jokeStats.notFunny;
+
+      batch.set(dailyRef.collection("jokes").doc(jokeDoc.id), {
+        jokeId: jokeDoc.id,
+        ...jokeStats,
+      });
+    }
+
+    batch.set(dailyRef, {
+      date: day,
+      totals,
+      totalReactions: totals.laugh + totals.love + totals.notFunny,
+      jokeCount: statsSnapshot.size,
+      capturedAt: FieldValue.serverTimestamp(),
+    });
+
+    await batch.commit();
+
+    console.log(`[Jokes] Daily stats saved for ${day}`, totals);
+  },
+);
+
+exports.getJokeAdminStats = onCall(async (request) => {
+  // حماية الإحصائيات: للأدمن فقط
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "يجب تسجيل الدخول أولاً.");
+  }
+
+  if (request.auth.token.admin !== true) {
+    throw new HttpsError("permission-denied", "هذه الإحصائيات للأدمن فقط.");
+  }
+
+  const days = Number(request.data?.days || 30);
+  const selectedDate = String(request.data?.date || "");
+
+  if (![7, 30, 90].includes(days)) {
+    throw new HttpsError("invalid-argument", "الفترة الزمنية غير صحيحة.");
+  }
+
+  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+
+  if (!datePattern.test(selectedDate)) {
+    throw new HttpsError("invalid-argument", "التاريخ غير صحيح.");
+  }
+
+  const parsedDate = new Date(`${selectedDate}T00:00:00.000Z`);
+
+  if (
+    Number.isNaN(parsedDate.getTime()) ||
+    parsedDate.toISOString().slice(0, 10) !== selectedDate
+  ) {
+    throw new HttpsError("invalid-argument", "التاريخ غير صحيح.");
+  }
+
+  // الإجمالي الحالي من jokeStats
+  const statsSnapshot = await db.collection("jokeStats").get();
+
+  const totals = {
+    laugh: 0,
+    love: 0,
+    notFunny: 0,
+  };
+
+  statsSnapshot.forEach((doc) => {
+    const data = doc.data();
+
+    totals.laugh += Number(data.laugh) || 0;
+    totals.love += Number(data.love) || 0;
+    totals.notFunny += Number(data.notFunny) || 0;
+  });
+
+  totals.totalReactions = totals.laugh + totals.love + totals.notFunny;
+
+  // تجهيز تواريخ الفترة المطلوبة بتوقيت القاهرة
+  const cairoParts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Cairo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+
+  const todayParts = Object.fromEntries(
+    cairoParts.map((part) => [part.type, part.value]),
+  );
+
+  const today = `${todayParts.year}-${todayParts.month}-${todayParts.day}`;
+
+  const todayDate = new Date(`${today}T00:00:00.000Z`);
+
+  const dates = [];
+
+  for (let i = days - 1; i >= 0; i--) {
+    const date = new Date(todayDate);
+    date.setUTCDate(date.getUTCDate() - i);
+    dates.push(date.toISOString().slice(0, 10));
+  }
+
+  // قراءة اللقطات اليومية
+  const dailySnapshots = await Promise.all(
+    dates.map(async (day) => {
+      const snap = await db.collection("jokeDailyStats").doc(day).get();
+
+      const data = snap.exists ? snap.data() : {};
+      const dayTotals = data.totals || {};
+
+      return {
+        date: day,
+        laugh: Number(dayTotals.laugh) || 0,
+        love: Number(dayTotals.love) || 0,
+        notFunny: Number(dayTotals.notFunny) || 0,
+        totalReactions: Number(data.totalReactions) || 0,
+        available: snap.exists,
+      };
+    }),
+  );
+
+  // تفاصيل النكت في التاريخ المختار
+  const selectedDayRef = db.collection("jokeDailyStats").doc(selectedDate);
+  const selectedDaySnap = await selectedDayRef.get();
+
+  let jokes = [];
+
+  if (selectedDaySnap.exists) {
+    const jokesSnapshot = await selectedDayRef.collection("jokes").get();
+
+    jokes = jokesSnapshot.docs.map((doc) => {
+      const data = doc.data();
+
+      const laugh = Number(data.laugh) || 0;
+      const love = Number(data.love) || 0;
+      const notFunny = Number(data.notFunny) || 0;
+
+      return {
+        jokeId: doc.id,
+        laugh,
+        love,
+        notFunny,
+        total: laugh + love + notFunny,
+      };
+    });
+
+    jokes.sort((a, b) => b.total - a.total);
+  }
+
+  return {
+    totals,
+    daily: dailySnapshots,
+    jokes,
+    selectedDate,
+    selectedDateAvailable: selectedDaySnap.exists,
+    updatedAt: new Date().toISOString(),
+  };
+});

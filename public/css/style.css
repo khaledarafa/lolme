@@ -5876,3 +5876,121 @@ textarea.hint::placeholder {
   color: #fff !important;
   transform: translateY(-2px);
 }
+
+/* Community Joke CTA - Shared Design */
+.community-joke-cta,
+.home-community-cta {
+  width: 100%;
+  max-width: 560px;
+  box-sizing: border-box;
+  margin: 25px auto;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  direction: rtl;
+
+  background: linear-gradient(145deg, #202c40, #263a50);
+  border: 1px solid #3b5369;
+  border-bottom: 3px solid #22c55e;
+  border-radius: 18px;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.community-joke-cta:hover,
+.home-community-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(34, 197, 94, 0.12);
+}
+
+/* Emoji */
+.community-joke-emoji,
+.home-community-cta > span:first-child {
+  font-size: 32px;
+  line-height: 1.3;
+}
+
+/* Content */
+.community-joke-cta > div,
+.home-community-cta > div {
+  width: 100%;
+}
+
+.community-joke-cta h2,
+.home-community-cta h3 {
+  margin: 0 0 8px;
+  color: #facc15;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.community-joke-cta p,
+.home-community-cta p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* Button */
+.community-joke-cta a,
+.home-community-cta a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 24px;
+  margin-top: 4px;
+
+  background: #22c55e;
+  color: #10251a;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.community-joke-cta a:hover,
+.home-community-cta a:hover {
+  background: #4ade80;
+  transform: scale(1.03);
+}
+
+.coming-soon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 25px;
+  background: rgba(250, 204, 21, 0.12);
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  border-radius: 10px;
+  color: #facc15;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: default;
+}
+
+@media (max-width: 600px) {
+  .community-joke-cta,
+  .home-community-cta {
+    max-width: 100%;
+    padding: 22px 15px;
+    margin: 20px auto;
+  }
+
+  .community-joke-cta h2,
+  .home-community-cta h3 {
+    font-size: 17px;
+  }
+}

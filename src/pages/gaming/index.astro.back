@@ -92,7 +92,7 @@ description="أفضل مودات Euro Truck Simulator 2 التي أستخدمه�
 
 </main>
 
-<script src="/js/tilt-cards.js" defer></script>
+<!-- <script src="/js/tilt-cards.js" defer></script> -->
 <script src="/js/mods-filter.js" defer></script>
 </Layout>
 

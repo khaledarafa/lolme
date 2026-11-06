@@ -7,6 +7,7 @@ import Rooms from "../../components/admin/rooms.astro";
 import Editq from "../../components/admin/editq.astro";
 import Feedback from "../../components/admin/feedback.astro";
 import Ads from "../../components/admin/ads.astro";
+import JokeStats from "../../components/admin/joke-stats.astro";
 ---
 
 <Layout title="لوحة التحكم">
@@ -18,6 +19,7 @@ import Ads from "../../components/admin/ads.astro";
     <!-- <button data-tab="addc">📁 إضافة فئة</button> -->
     <!-- <button data-tab="review">✅ مراجعة</button> -->
     <button data-tab="feedback">💬 اقتراحات الزوار</button>
+    <button data-tab="joke-stats">📊 إحصائيات النكت</button>
     <!-- <button data-tab="rooms">🎮 الغرف</button> -->
   </div>
 
@@ -27,7 +29,7 @@ import Ads from "../../components/admin/ads.astro";
       <div id="ads" class="tab">
         <Ads />
       </div>
-      
+
       <div id="addq" class="tab active">
         <Addq />
       </div>
@@ -47,13 +49,16 @@ import Ads from "../../components/admin/ads.astro";
       <div id="feedback" class="tab">
         <Feedback />
       </div>
-      
+
       <div id="rooms" class="tab">
         <Rooms />
+      </div>
+
+      <div id="joke-stats" class="tab">
+        <JokeStats />
       </div>
     </div>
   </main>
 
   <script type="module" src="/js/admin/admin.js"></script>
-
 </Layout>

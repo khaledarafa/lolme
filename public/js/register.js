@@ -3,7 +3,8 @@ import {
   auth,
   createUserWithEmailAndPassword,
   signInWithPopup,
-  googleProvider
+  googleProvider,
+  sendEmailVerification,
 } from "./firebase.js";
 
 const form = document.getElementById("register-form");
@@ -15,12 +16,15 @@ const message = document.getElementById("auth-message");
 
 function showError(error) {
   const errors = {
-    "auth/email-already-in-use": "البريد الإلكتروني مسجّل بالفعل. جرّب تسجيل الدخول.",
+    "auth/email-already-in-use":
+      "البريد الإلكتروني مسجّل بالفعل. جرّب تسجيل الدخول.",
     "auth/invalid-email": "البريد الإلكتروني غير صحيح.",
     "auth/weak-password": "كلمة المرور ضعيفة. استخدم 8 أحرف على الأقل.",
     "auth/popup-closed-by-user": "أغلقت نافذة Google قبل إكمال العملية.",
-    "auth/popup-blocked": "المتصفح منع نافذة Google. اسمح بالنوافذ المنبثقة وحاول مجددًا.",
-    "auth/network-request-failed": "تعذر الاتصال. تحقق من الإنترنت وحاول مرة أخرى."
+    "auth/popup-blocked":
+      "المتصفح منع نافذة Google. اسمح بالنوافذ المنبثقة وحاول مجددًا.",
+    "auth/network-request-failed":
+      "تعذر الاتصال. تحقق من الإنترنت وحاول مرة أخرى.",
   };
 
   message.textContent =
@@ -34,13 +38,18 @@ form.addEventListener("submit", async (event) => {
   message.textContent = "جاري إنشاء الحساب...";
 
   try {
-    await createUserWithEmailAndPassword(
+    const userCredential = await createUserWithEmailAndPassword(
       auth,
       email.value.trim(),
-      password.value
+      password.value,
     );
 
-    window.location.href = "/account";
+    await sendEmailVerification(userCredential.user);
+
+    message.textContent =
+      "تم إنشاء حسابك وإرسال رسالة تأكيد إلى بريدك الإلكتروني. راجع صندوق الوارد والرسائل غير المرغوب فيها.";
+
+    form.reset();
   } catch (error) {
     showError(error);
   } finally {

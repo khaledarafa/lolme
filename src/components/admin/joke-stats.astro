@@ -1,0 +1,395 @@
+<!-- src/components/admin/joke-stats.astro -->
+<section class="joke-stats" dir="rtl">
+  <header class="stats-header">
+    <div>
+      <h2>📊 إحصائيات النكت والتفاعلات</h2>
+      <p>تابع تفاعل الزوار مع النكت يومًا بيوم.</p>
+    </div>
+  </header>
+
+  <div class="stats-cards">
+    <article class="stat-card laugh">
+      <span>😂 الضحكات الحالية</span>
+      <strong id="total-laugh">—</strong>
+    </article>
+
+    <article class="stat-card love">
+      <span>❤️ الإعجابات الحالية</span>
+      <strong id="total-love">—</strong>
+    </article>
+
+    <article class="stat-card not-funny">
+      <span>😐 مش مضحكة</span>
+      <strong id="total-not-funny">—</strong>
+    </article>
+
+    <article class="stat-card total">
+      <span>🔥 إجمالي التفاعلات</span>
+      <strong id="total-reactions">—</strong>
+    </article>
+  </div>
+
+  <section class="stats-panel">
+    <div class="panel-header">
+      <h3>📈 سجل التفاعلات اليومية</h3>
+      <select id="stats-period">
+        <option value="7">آخر 7 أيام</option>
+        <option value="30" selected>آخر 30 يومًا</option>
+        <option value="90">آخر 90 يومًا</option>
+      </select>
+    </div>
+
+    <div id="joke-stats-chart" class="chart-placeholder">
+      <span>سيظهر الرسم البياني بعد تحميل البيانات اليومية.</span>
+    </div>
+  </section>
+
+  <section class="stats-panel">
+    <div class="panel-header">
+      <h3>📝 تفاصيل التفاعلات حسب النكتة</h3>
+      <input type="date" id="stats-date" />
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>النكتة</th>
+            <th>😂 ضحكات</th>
+            <th>❤️ إعجابات</th>
+            <th>😐 مش مضحكة</th>
+            <th>الإجمالي</th>
+          </tr>
+        </thead>
+        <tbody id="joke-stats-table">
+          <tr>
+            <td colspan="5" class="empty-state">
+              لم يتم تحميل البيانات بعد.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>
+<script is:inline type="module" src="/js/admin/joke-stats.js"></script>
+
+<style>
+  .joke-stats {
+    padding: 20px;
+    color: #e5e7eb;
+    direction: rtl;
+  }
+
+  .stats-header {
+    margin-bottom: 24px;
+  }
+
+  .stats-header h2 {
+    margin: 0 0 8px;
+    font-size: 23px;
+    color: #facc15;
+  }
+
+  .stats-header p {
+    color: #94a3b8;
+    margin: 0;
+  }
+
+  .stats-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card,
+  .stats-panel {
+    background: #202c40;
+    border: 1px solid #34465e;
+    border-radius: 14px;
+    padding: 20px;
+    color: #e5e7eb;
+  }
+
+  .stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition:
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .stat-card:hover {
+    border-color: #16a34a;
+    transform: translateY(-2px);
+  }
+
+  .stat-card span {
+    font-size: 14px;
+    color: #cbd5e1;
+  }
+
+  .stat-card strong {
+    font-size: 30px;
+    font-weight: 800;
+  }
+
+  .laugh strong {
+    color: #f59e0b;
+  }
+
+  .love strong {
+    color: #fb7185;
+  }
+
+  .not-funny strong {
+    color: #94a3b8;
+  }
+
+  .total strong {
+    color: #38bdf8;
+  }
+
+  .stats-panel {
+    margin-bottom: 22px;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .panel-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #facc15;
+  }
+
+  .panel-header select,
+  .panel-header input {
+    padding: 9px 12px;
+    border: 1px solid #34465e;
+    border-radius: 8px;
+    background: #101827;
+    color: #e5e7eb;
+    font-size: 14px;
+    color-scheme: dark;
+    outline: none;
+  }
+
+  .panel-header select:focus,
+  .panel-header input:focus {
+    border-color: #16a34a;
+    box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.15);
+  }
+
+  .panel-header select option {
+    color: #e5e7eb;
+    background: #202c40;
+  }
+
+  .chart-placeholder {
+    min-height: 220px;
+    display: grid;
+    place-items: center;
+    border: 1px dashed #34465e;
+    border-radius: 10px;
+    color: #94a3b8;
+    text-align: center;
+    padding: 20px;
+    background: #101827;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  .joke-stats table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+  }
+
+  .joke-stats th,
+  .joke-stats td {
+    padding: 13px 12px;
+    text-align: center;
+    border-bottom: 1px solid #34465e;
+    color: #cbd5e1;
+  }
+
+  .joke-stats th {
+    font-size: 13px;
+    color: #facc15;
+    background: #263449;
+  }
+
+  .joke-stats tbody tr {
+    transition: background 0.2s ease;
+  }
+
+  .joke-stats tbody tr:hover {
+    background: rgba(22, 163, 74, 0.07);
+  }
+
+  .empty-state {
+    padding: 35px;
+    color: #94a3b8 !important;
+  }
+
+  @media (max-width: 750px) {
+    .stats-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stats-header h2 {
+      font-size: 19px;
+    }
+
+    .stat-card {
+      padding: 14px;
+    }
+
+    .stat-card strong {
+      font-size: 25px;
+    }
+
+    .panel-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .joke-stats {
+      padding: 12px;
+    }
+
+    .stats-cards {
+      gap: 10px;
+    }
+
+    .stat-card {
+      padding: 12px;
+    }
+  }
+
+  /* .daily-chart {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    min-height: 190px;
+    overflow-x: auto;
+    padding: 12px 4px;
+  }
+
+  .daily-chart-column {
+    flex: 1;
+    min-width: 38px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    font-size: 11px;
+    color: #cbd5e1;
+  }
+
+  .daily-chart-column strong {
+    font-size: 11px;
+    color: #facc15;
+  }
+
+  .daily-chart-track {
+    width: 100%;
+    height: 125px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: #202c40;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .daily-chart-bar {
+    width: 70%;
+    min-height: 2px;
+    background: linear-gradient(to top, #16a34a, #38bdf8);
+    border-radius: 5px 5px 0 0;
+    transition: height 0.3s ease;
+  }
+
+  .daily-chart-legend {
+    color: #94a3b8;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 8px;
+  } */
+
+  .joke-stats .empty-state {
+    color: #94a3b8 !important;
+  }
+
+  /* تنسيق عناصر الرسم البياني التي ينشئها JavaScript */
+  :global(.daily-chart) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-end !important;
+    justify-content: space-between !important;
+    gap: 10px;
+    min-height: 190px;
+    width: 100%;
+    overflow-x: auto;
+    padding: 12px 4px;
+    direction: rtl;
+  }
+
+  :global(.daily-chart-column) {
+    flex: 1 0 38px;
+    min-width: 38px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 8px;
+    height: 175px;
+    font-size: 11px;
+    color: #cbd5e1;
+  }
+
+  :global(.daily-chart-column strong) {
+    font-size: 11px;
+    color: #facc15;
+  }
+
+  :global(.daily-chart-track) {
+    width: 100%;
+    height: 125px;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    background: #101827;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  :global(.daily-chart-bar) {
+    width: 70%;
+    min-height: 2px;
+    background: linear-gradient(to top, #16a34a, #38bdf8);
+    border-radius: 5px 5px 0 0;
+    transition: height 0.3s ease;
+  }
+
+  :global(.daily-chart-legend) {
+    color: #94a3b8;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 8px;
+  }
+</style>
