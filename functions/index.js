@@ -463,6 +463,7 @@ exports.trackAdEvent = onCall({ maxInstances: 10 }, async (request) => {
   const allowedAdPage =
     normalizedPath === "/" ||
     normalizedPath === "/jokes" ||
+    normalizedPath === "/community-jokes" ||
     normalizedPath === "/tests" ||
     normalizedPath.startsWith("/tests/");
 
@@ -1385,3 +1386,258 @@ exports.getJokeAdminStats = onCall(async (request) => {
     updatedAt: new Date().toISOString(),
   };
 });
+
+/**
+ * استقبال نكت الجمهور وإضافتها للمراجعة.
+ * يسمح بثلاث نكت يوميًا لكل UID.
+ */
+exports.submitCommunityJoke = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async (request) => {
+    // التأكد من وجود هوية للزائر، حتى لو كانت Anonymous
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "يجب تجهيز هوية الزائر أولاً.");
+    }
+
+    const uid = request.auth.uid;
+
+    const text =
+      typeof request.data?.text === "string" ? request.data.text.trim() : "";
+
+    const authorName =
+      typeof request.data?.authorName === "string"
+        ? request.data.authorName.trim()
+        : "";
+
+    // التحقق من محتوى النكتة
+    if (text.length < 10 || text.length > 1000) {
+      throw new HttpsError(
+        "invalid-argument",
+        "النكتة يجب أن تكون بين 10 و1000 حرف.",
+      );
+    }
+
+    if (authorName.length > 30) {
+      throw new HttpsError(
+        "invalid-argument",
+        "الاسم المستعار لا يجب أن يزيد عن 30 حرفًا.",
+      );
+    }
+
+    // تاريخ اليوم بتوقيت القاهرة
+    const dateParts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Africa/Cairo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(new Date());
+
+    const dateValues = Object.fromEntries(
+      dateParts.map((part) => [part.type, part.value]),
+    );
+
+    const today = `${dateValues.year}-${dateValues.month}-${dateValues.day}`;
+
+    const limitRef = db.collection("communityJokeLimits").doc(uid);
+
+    const jokeRef = db.collection("communityJokes").doc();
+
+    return db.runTransaction(async (transaction) => {
+      // قراءة سجل الحد قبل أي كتابة
+      const limitSnap = await transaction.get(limitRef);
+
+      const limitData = limitSnap.exists ? limitSnap.data() : {};
+
+      const currentCount =
+        limitData.date === today ? Number(limitData.count || 0) : 0;
+
+      if (currentCount >= 20) {
+        throw new HttpsError(
+          "resource-exhausted",
+          "وصلت للحد الأقصى، يمكنك إرسال 20 نكت يوميًا.",
+        );
+      }
+
+      // حفظ النكتة للمراجعة
+      transaction.create(jokeRef, {
+        text,
+        authorName: authorName || "مجهول",
+        uid,
+        status: "pending",
+        createdAt: FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+
+      // تحديث عدد النكت المرسلة اليوم
+      transaction.set(limitRef, {
+        uid,
+        date: today,
+        count: currentCount + 1,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+
+      return {
+        success: true,
+        jokeId: jokeRef.id,
+        remaining: 2 - currentCount,
+      };
+    });
+  },
+);
+
+// جلب النكت المعلقة - للأدمن فقط
+exports.getPendingCommunityJokes = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "يجب تسجيل الدخول.");
+    }
+
+    if (request.auth.token.admin !== true) {
+      throw new HttpsError("permission-denied", "هذه العملية للأدمن فقط.");
+    }
+
+    const snapshot = await db
+      .collection("communityJokes")
+      .where("status", "==", "pending")
+      .limit(100)
+      .get();
+
+    const jokes = snapshot.docs.map((doc) => {
+      const data = doc.data();
+
+      return {
+        id: doc.id,
+        text: data.text || "",
+        authorName: data.authorName || "مجهول",
+        createdAt: data.createdAt?.toMillis?.() || null,
+      };
+    });
+
+    jokes.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+    return { jokes };
+  },
+);
+
+// الموافقة على النكتة ونشرها - للأدمن فقط
+exports.reviewCommunityJoke = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "يجب تسجيل الدخول.");
+    }
+
+    if (request.auth.token.admin !== true) {
+      throw new HttpsError("permission-denied", "هذه العملية للأدمن فقط.");
+    }
+
+    const jokeId = request.data?.jokeId;
+
+    if (typeof jokeId !== "string" || !/^[a-zA-Z0-9_-]{1,150}$/.test(jokeId)) {
+      throw new HttpsError("invalid-argument", "رقم النكتة غير صحيح.");
+    }
+
+    const jokeRef = db.collection("communityJokes").doc(jokeId);
+
+    await db.runTransaction(async (transaction) => {
+      const snap = await transaction.get(jokeRef);
+
+      if (!snap.exists) {
+        throw new HttpsError("not-found", "النكتة غير موجودة.");
+      }
+
+      if (snap.data().status !== "pending") {
+        throw new HttpsError(
+          "failed-precondition",
+          "النكتة لم تعد معلقة للمراجعة.",
+        );
+      }
+
+      transaction.update(jokeRef, {
+        status: "published",
+        reviewedAt: FieldValue.serverTimestamp(),
+        reviewedBy: request.auth.uid,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    });
+
+    return { success: true };
+  },
+);
+
+// حذف النكتة المرفوضة - للأدمن فقط
+exports.deleteCommunityJoke = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "يجب تسجيل الدخول.");
+    }
+
+    if (request.auth.token.admin !== true) {
+      throw new HttpsError("permission-denied", "هذه العملية للأدمن فقط.");
+    }
+
+    const jokeId = request.data?.jokeId;
+
+    if (typeof jokeId !== "string" || !/^[a-zA-Z0-9_-]{1,150}$/.test(jokeId)) {
+      throw new HttpsError("invalid-argument", "رقم النكتة غير صحيح.");
+    }
+
+    const jokeRef = db.collection("communityJokes").doc(jokeId);
+
+    await db.runTransaction(async (transaction) => {
+      const snap = await transaction.get(jokeRef);
+
+      if (!snap.exists) {
+        throw new HttpsError("not-found", "النكتة غير موجودة.");
+      }
+
+      if (snap.data().status !== "pending") {
+        throw new HttpsError(
+          "failed-precondition",
+          "لا يمكن حذف هذه النكتة من قائمة المراجعة.",
+        );
+      }
+
+      transaction.delete(jokeRef);
+    });
+
+    return { success: true };
+  },
+);
+
+exports.getPublishedCommunityJokes = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async () => {
+    const snapshot = await db
+      .collection("communityJokes")
+      .where("status", "==", "published")
+      .orderBy("createdAt", "desc")
+      .limit(50)
+      .get();
+
+    const jokes = snapshot.docs.map((doc) => {
+      const data = doc.data();
+
+      return {
+        id: doc.id,
+        text: data.text || "",
+        authorName: data.authorName || "مجهول",
+        createdAt: data.createdAt?.toMillis?.() || null,
+      };
+    });
+
+    return { jokes };
+  },
+);

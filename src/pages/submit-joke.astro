@@ -1,0 +1,230 @@
+---
+// src/pages/submit-joke.astro
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="إرسال نكتة | LOLME"
+  description="شارك نكتتك مع مجتمع LOLME."
+>
+  <main class="submit-joke-page" dir="rtl">
+    <section class="submit-joke-card">
+      <div class="submit-joke-icon">🤣</div>
+
+      <h1>ابعت نكتتك</h1>
+
+      <p class="submit-joke-intro">
+        عندك نكتة تستاهل تتقال؟ شاركها معانا وخلي مجتمع LOLME يضحك!
+      </p>
+
+      <form id="submit-joke-form">
+        <div class="form-group">
+          <label for="joke-author">اسمك المستعار <span>(اختياري)</span></label>
+          <input
+            type="text"
+            id="joke-author"
+            name="author"
+            maxlength="30"
+            placeholder="تحب نناديك بإيه؟"
+            autocomplete="nickname"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="joke-text">اكتب نكتتك 😂</label>
+          <textarea
+            id="joke-text"
+            name="joke"
+            minlength="10"
+            maxlength="1000"
+            rows="6"
+            placeholder="يلا ورّينا خفة دمك..."
+            required
+          ></textarea>
+
+          <div class="character-counter">
+            <span id="joke-char-count">0</span> / 1000
+          </div>
+        </div>
+
+        <div id="submit-joke-message" class="submit-joke-message" role="status" aria-live="polite"></div>
+
+        <button type="submit" id="submit-joke-button">
+          <span class="button-text">إرسال النكتة 😂</span>
+        </button>
+      </form>
+
+      <p class="submit-joke-note">
+        💚 نكتتك هتدخل المراجعة، وهتظهر للجميع بعد موافقة الإدارة.
+      </p>
+    </section>
+  </main>
+
+<script type="module" src="/js/submit-joke.js"></script>
+</Layout>
+
+<style>
+
+.submit-joke-page {
+  direction: rtl;
+  width: min(100% - 30px, 760px);
+  margin: 55px auto;
+  padding: 20px 0 50px;
+}
+
+.submit-joke-card {
+  background: #172235;
+  border: 1px solid #293950;
+  border-radius: 22px;
+  padding: 35px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.submit-joke-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.submit-joke-card h1 {
+  color: #f1f5f9;
+  font-size: 30px;
+  margin: 0 0 12px;
+  font-weight: 800;
+}
+
+.submit-joke-intro {
+  color: #aab8ca;
+  font-size: 15px;
+  margin-bottom: 32px;
+  line-height: 1.8;
+}
+
+#submit-joke-form {
+  text-align: right;
+}
+
+.form-group {
+  margin-bottom: 23px;
+}
+
+.form-group label {
+  display: block;
+  color: #e2e8f0;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.form-group label span {
+  color: #8999ad;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.form-group input,
+.form-group textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  background: #101a2a;
+  border: 1px solid #34465e;
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: #f1f5f9;
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input {
+  height: 50px;
+}
+
+.form-group textarea {
+  min-height: 170px;
+  resize: vertical;
+  line-height: 1.9;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #718096;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+}
+
+.character-counter {
+  text-align: left;
+  color: #91a0b4;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+#submit-joke-button {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 15px;
+  background: linear-gradient(135deg, #9333ea, #6d28d9);
+  color: white;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+}
+
+#submit-joke-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+}
+
+#submit-joke-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit-joke-message {
+  display: none;
+  padding: 12px 15px;
+  margin-bottom: 18px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.submit-joke-note {
+  color: #9eafc3;
+  font-size: 13px;
+  line-height: 1.8;
+  margin-top: 22px;
+}
+
+@media (max-width: 600px) {
+  .submit-joke-page {
+    margin: 25px auto;
+    padding: 10px 0 35px;
+  }
+
+  .submit-joke-card {
+    padding: 25px 18px;
+    border-radius: 17px;
+  }
+
+  .submit-joke-card h1 {
+    font-size: 24px;
+  }
+
+  .form-group textarea {
+    min-height: 150px;
+  }
+}
+
+</style>

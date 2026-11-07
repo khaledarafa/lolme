@@ -559,8 +559,8 @@ const shuffledJokes10 = shuffleJokes(jokes10);
       <h2>عندك نكتة أحلى من دول؟</h2>
       <p>شاركنا نكتتك وخلي زوار LOLME يضحكوا معاك!</p>
     </div>
-    <span class="coming-soon">قريبًا 🚀</span>
-    <!-- <a href="/send-joke">ابعت نكتتك للمجتمع ←</a> -->
+    <!-- <span class="coming-soon">قريبًا 🚀</span> -->
+    <a href="/submit-joke">ابعت نكتتك للمجتمع ←</a>
   </div>
 
   <div class="jokes-page card">
@@ -934,7 +934,7 @@ const shuffledJokes10 = shuffleJokes(jokes10);
   </section>
 
   <!-- <script src="/js/tilt-cards.js" defer></script> -->
-
+  <link rel="stylesheet" href="/css/jokes.css" />
   <script type="module">
     import { jokesAuthReady } from "/js/jokes-auth.js";
     import "/js/jokes-reactions.js";
@@ -955,47 +955,7 @@ const shuffledJokes10 = shuffleJokes(jokes10);
   </script>
 </Layout>
 
-<style>
-  /* .joke-reactions {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 8px 0;
-  }
-
-  .joke-reaction {
-    padding: 4px 9px;
-    font-size: 13px;
-    border-radius: 8px;
-    min-height: 30px;
-    background: transparent;
-    border: 1px solid #263746;
-    color: #ddd;
-    cursor: pointer;
-  }
-
-  .joke-reaction:hover {
-    border-color: #22c55e;
-    transform: translateY(-1px);
-  }
-
-  .joke-reaction.is-selected {
-    background: #173d2a;
-    border-color: #16a34a;
-  }
-
-  .joke-reaction:disabled {
-    opacity: 0.65;
-    cursor: wait;
-  }
-
-  .joke-reaction-count {
-    color: #a7f3d0;
-    font-size: 12px;
-    font-variant-numeric: tabular-nums;
-  } */
-
+<!-- <style>
   .share-btn {
     background: #ff4081;
 
@@ -1351,4 +1311,4 @@ const shuffledJokes10 = shuffleJokes(jokes10);
       animation: none !important;
     }
   }
-</style>
+</style> -->

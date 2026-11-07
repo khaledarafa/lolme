@@ -8,6 +8,7 @@ import Editq from "../../components/admin/editq.astro";
 import Feedback from "../../components/admin/feedback.astro";
 import Ads from "../../components/admin/ads.astro";
 import JokeStats from "../../components/admin/joke-stats.astro";
+import CommunityJokes from "../../components/admin/community-jokes.astro";
 ---
 
 <Layout title="لوحة التحكم">
@@ -20,6 +21,7 @@ import JokeStats from "../../components/admin/joke-stats.astro";
     <!-- <button data-tab="review">✅ مراجعة</button> -->
     <button data-tab="feedback">💬 اقتراحات الزوار</button>
     <button data-tab="joke-stats">📊 إحصائيات النكت</button>
+    <button data-tab="community-jokes">🤣 نكت المجتمع</button>
     <!-- <button data-tab="rooms">🎮 الغرف</button> -->
   </div>
 
@@ -56,6 +58,10 @@ import JokeStats from "../../components/admin/joke-stats.astro";
 
       <div id="joke-stats" class="tab">
         <JokeStats />
+      </div>
+
+      <div id="community-jokes" class="tab">
+        <CommunityJokes />
       </div>
     </div>
   </main>

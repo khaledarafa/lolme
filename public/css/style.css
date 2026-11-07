@@ -3827,11 +3827,11 @@ h1 {
   box-shadow: 0 4px 10px rgb(241, 249, 16);
 }
 
-.home-card img {
+/* .home-card img {
   width: 100%;
   height: 180px;
   object-fit: cover;
-}
+} */
 
 .home-card .content {
   padding: 10px;
@@ -3963,8 +3963,10 @@ h1 {
 
 .home-card img {
   width: 100%;
-  height: 150px;
+  aspect-ratio: 16 / 9;
+  height: auto;
   object-fit: cover;
+  display: block;
 }
 
 .home-card::after {
@@ -5992,5 +5994,212 @@ textarea.hint::placeholder {
   .community-joke-cta h2,
   .home-community-cta h3 {
     font-size: 17px;
+  }
+}
+
+/* =========== community-jokes-admin مراجعة نكت المجتمع ========== */
+.community-jokes-admin {
+  direction: rtl;
+  color: #e2e8f0;
+  padding: 25px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* رأس القسم */
+.community-jokes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #34465e;
+}
+
+.community-jokes-header h2 {
+  margin: 0 0 10px;
+  color: #facc15;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.community-jokes-header p {
+  color: #94a3b8;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.community-jokes-header button,
+.community-joke-card button {
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 11px 18px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+
+#refresh-community-jokes {
+  background: #34465e;
+  color: #f1f5f9;
+  border-color: #475569;
+}
+
+#refresh-community-jokes:hover {
+  background: #415875;
+  transform: translateY(-2px);
+}
+
+/* عداد النكت */
+.community-jokes-count {
+  display: inline-flex;
+  align-items: center;
+  background: #172b48;
+  color: #93c5fd;
+  border: 1px solid #29476b;
+  border-radius: 10px;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* قائمة النكت */
+#community-jokes-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+/* بطاقة النكتة */
+.community-joke-card {
+  background: #202c40;
+  border: 1px solid #34465e;
+  border-radius: 15px;
+  padding: 22px;
+  text-align: right;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.community-joke-card:hover {
+  border-color: #526985;
+  transform: translateY(-2px);
+}
+
+/* نص النكتة */
+.community-joke-text {
+  color: #f1f5f9;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 2.1;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 5px 0 15px;
+}
+
+/* بيانات صاحب النكتة */
+.community-joke-meta {
+  color: #94a3b8;
+  font-size: 13px;
+  padding-top: 13px;
+  border-top: 1px solid #34465e;
+  margin: 0 0 17px;
+}
+
+/* الأزرار */
+.community-joke-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.community-joke-card button {
+  min-width: 125px;
+}
+
+.community-joke-approve {
+  background: #14532d;
+  color: #bbf7d0;
+  border-color: #166534 !important;
+}
+
+.community-joke-approve:hover {
+  background: #166534;
+  transform: translateY(-2px);
+}
+
+.community-joke-delete {
+  background: #451f2a;
+  color: #fecaca;
+  border-color: #7f1d1d !important;
+}
+
+.community-joke-delete:hover {
+  background: #7f1d1d;
+  transform: translateY(-2px);
+}
+
+.community-joke-card button:disabled,
+#refresh-community-jokes:disabled {
+  opacity: 0.5;
+  cursor: wait;
+  transform: none;
+}
+
+/* حالة عدم وجود نكت */
+.community-jokes-empty {
+  text-align: center;
+  padding: 45px 20px;
+  color: #a5b4c7;
+  background: #202c40;
+  border: 1px dashed #475569;
+  border-radius: 15px;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+/* الموبايل */
+@media (max-width: 600px) {
+  .community-jokes-admin {
+    padding: 15px 10px;
+  }
+
+  .community-jokes-header {
+    align-items: stretch;
+  }
+
+  .community-jokes-header h2 {
+    font-size: 21px;
+  }
+
+  #refresh-community-jokes {
+    width: 100%;
+  }
+
+  .community-joke-card {
+    padding: 17px;
+  }
+
+  .community-joke-text {
+    font-size: 15px;
+  }
+
+  .community-joke-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+  }
+
+  .community-joke-card button {
+    min-width: 0;
+    padding: 11px 8px;
+    font-size: 13px;
   }
 }

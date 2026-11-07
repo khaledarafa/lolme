@@ -1,0 +1,589 @@
+
+/* ========================================
+   LOLME - Shared Jokes Styles
+   Used by /jokes and /community-jokes
+======================================== */
+
+/* Share button */
+.share-btn {
+  background: #ff4081;
+  border: none;
+  color: white;
+  padding: 2px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-block;
+  transition: background 0.2s;
+}
+
+.share-btn:hover {
+  background: #e91e63;
+}
+
+li.card {
+  margin-bottom: 15px;
+}
+
+/* Daily joke */
+.daily-joke {
+  width: calc(100% - 30px);
+  max-width: 728px;
+  box-sizing: border-box;
+  margin: 24px auto;
+  padding: 22px;
+  direction: rtl;
+  text-align: right;
+  color: #fff;
+  background: linear-gradient(135deg, #312e81, #7c3aed);
+  border: 1px solid rgba(167, 139, 250, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.daily-joke__heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.daily-joke__heading > span {
+  font-size: 2.5rem;
+}
+
+.daily-joke__heading h2 {
+  margin: 0 0 4px;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.daily-joke__heading p {
+  margin: 0;
+  color: #ede9fe;
+}
+
+.daily-joke__text {
+  margin: 22px 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.9;
+}
+
+.daily-joke__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.daily-joke__more {
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.daily-joke__more:hover {
+  text-decoration: underline;
+}
+
+/* Advertise CTA */
+.jokes-advertise-cta {
+  max-width: 850px;
+  margin: 30px auto;
+  padding: 22px;
+  direction: rtl;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: 15px;
+  background: var(--card-bg, #1e293b);
+  text-align: right;
+}
+
+.jokes-advertise-cta__content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.jokes-advertise-cta__content > span {
+  font-size: 2rem;
+}
+
+.jokes-advertise-cta h2 {
+  margin: 0 0 7px;
+  font-size: 1.15rem;
+}
+
+.jokes-advertise-cta p {
+  margin: 0;
+  color: var(--text-secondary, #94a3b8);
+  line-height: 1.8;
+  font-size: 0.9rem;
+}
+
+.jokes-advertise-cta > a {
+  display: inline-block;
+  padding: 11px 18px;
+  border-radius: 9px;
+  background: #6d28d9;
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.jokes-advertise-cta > a:hover {
+  background: #5b21b6;
+}
+
+/* Joke cards */
+.jokes-page .tilt-card {
+  transform: none !important;
+  transition: none !important;
+}
+
+li.card {
+  margin-bottom: 15px;
+}
+
+/* Reactions container */
+.joke-reactions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 5px 0;
+}
+
+/* Reaction buttons */
+.joke-reaction {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: 27px !important;
+  padding: 2px 7px !important;
+  margin: 0 !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  border-radius: 6px !important;
+  background: transparent !important;
+  border: 1px solid #263746 !important;
+  color: #ddd !important;
+  cursor: pointer;
+  box-shadow: none !important;
+  position: relative;
+  overflow: visible !important;
+}
+
+.joke-reaction:hover {
+  border-color: #22c55e !important;
+}
+
+.joke-reaction.is-selected {
+  background: #173d2a !important;
+  border-color: #16a34a !important;
+}
+
+/* Reaction counts */
+.joke-reaction-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 14px;
+  margin-right: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #4ade80;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reaction animations */
+.reaction-emoji-animate {
+  display: inline-block;
+  transform-origin: center;
+  will-change: transform;
+}
+
+button[data-reaction-type="laugh"] .reaction-emoji-animate {
+  animation: laughPop 0.65s ease both;
+}
+
+button[data-reaction-type="love"] .reaction-emoji-animate {
+  animation: heartBeat 0.7s ease both;
+}
+
+button[data-reaction-type="notFunny"] .reaction-emoji-animate {
+  animation: unimpressed 0.55s ease both;
+}
+
+.reaction-burst {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  z-index: 100;
+  white-space: nowrap;
+  pointer-events: none;
+  font-size: 18px;
+  animation: reactionBurst 0.85s ease-out both;
+}
+
+/* Animation keyframes */
+@keyframes laughPop {
+  0% {
+    transform: scale(1) rotate(0);
+  }
+  20% {
+    transform: scale(1.7) rotate(-15deg);
+  }
+  40% {
+    transform: scale(0.8) rotate(15deg);
+  }
+  65% {
+    transform: scale(1.4) rotate(-8deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes heartBeat {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1.5);
+  }
+  40% {
+    transform: scale(0.9);
+  }
+  60% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes unimpressed {
+  0%, 100% {
+    transform: rotate(0);
+  }
+  20%, 60% {
+    transform: rotate(-20deg);
+  }
+  40%, 80% {
+    transform: rotate(20deg);
+  }
+}
+
+@keyframes reactionBurst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.4);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -18px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -65px) scale(0.8);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .daily-joke {
+    padding: 18px 14px;
+  }
+
+  .daily-joke__text {
+    font-size: 1rem;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .reaction-emoji-animate,
+  .reaction-burst {
+    animation: none !important;
+  }
+}
+
+
+  .community-page {
+    width: min(100% - 30px, 900px);
+    margin: 35px auto 60px;
+    color: #e2e8f0;
+  }
+
+  .community-hero {
+    text-align: center;
+    padding: 35px 20px;
+    background: #202c40;
+    border: 1px solid #34465e;
+    border-radius: 16px;
+    margin-bottom: 30px;
+  }
+
+  .community-hero-icon {
+    font-size: 42px;
+  }
+
+  .community-hero h1 {
+    color: #facc15;
+    font-size: 30px;
+    margin: 10px 0;
+    font-weight: 800;
+  }
+
+  .community-hero p {
+    color: #aab8ca;
+    line-height: 1.8;
+    margin: 0 0 22px;
+  }
+
+  .send-joke-link,
+  .community-bottom-cta a {
+    display: inline-block;
+    text-decoration: none;
+    background: #22c55e;
+    color: #10251a;
+    padding: 11px 20px;
+    border-radius: 9px;
+    font-weight: 800;
+    transition: 0.2s ease;
+  }
+
+  .send-joke-link:hover,
+  .community-bottom-cta a:hover {
+    background: #4ade80;
+    transform: translateY(-2px);
+  }
+
+  .feed-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .feed-heading h2 {
+    font-size: 22px;
+    color: #facc15;
+    margin: 0;
+    font-weight: 800;
+  }
+
+  #community-jokes-total {
+    color: #94a3b8;
+    font-size: 13px;
+  }
+
+
+  .send-joke-link,
+  .community-bottom-cta a {
+    display: inline-block;
+    text-decoration: none;
+    background: #22c55e;
+    color: #10251a;
+    padding: 11px 20px;
+    border-radius: 9px;
+    font-weight: 800;
+    transition: 0.2s ease;
+  }
+
+  .send-joke-link:hover,
+  .community-bottom-cta a:hover {
+    background: #4ade80;
+    transform: translateY(-2px);
+  }
+
+  .feed-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .feed-heading h2 {
+    font-size: 22px;
+    color: #facc15;
+    margin: 0;
+    font-weight: 800;
+  }
+
+  #community-jokes-total {
+    color: #94a3b8;
+    font-size: 13px;
+  }
+
+  /* نلغي تنسيق القائمة الافتراضي فقط */
+  #community-jokes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* نفس كروت النكت الأصلية، دون إعادة تعريف أحجامها */
+  :global(#community-jokes-list > li.card) {
+    margin-bottom: 15px;
+  }
+
+  :global(#community-jokes-list .joke-reactions) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 5px 0;
+  }
+
+  .community-loading {
+    text-align: center;
+    color: #aab8ca;
+    padding: 30px 15px;
+  }
+
+  .community-bottom-cta {
+    text-align: center;
+    margin-top: 35px;
+    padding: 30px 20px;
+    background: #202c40;
+    border: 1px solid #34465e;
+    border-radius: 16px;
+  }
+
+  .community-bottom-cta h2 {
+    color: #facc15;
+    margin-top: 0;
+  }
+
+  .community-bottom-cta p {
+    color: #aab8ca;
+    line-height: 1.8;
+    margin-bottom: 22px;
+  }
+
+  @media (max-width: 600px) {
+    .community-page {
+      margin-top: 20px;
+    }
+
+    .community-hero {
+      padding: 28px 15px;
+    }
+
+    .community-hero h1 {
+      font-size: 25px;
+    }
+  }
+
+/* Community joke card layout */
+
+.community-joke-meta {
+  text-align: right;
+  color: #94a3b8;
+  font-size: 12px;
+  margin-bottom: 12px;
+  direction: rtl;
+}
+
+.community-joke-text {
+  color: #f1f5f9;
+  font-size: 16px;
+  line-height: 1.9;
+  margin: 0 0 12px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.community-joke-meta + .community-joke-text {
+  margin-top: 5px;
+}
+
+.community-joke-card .joke-reactions,
+.jokes-page li.card .joke-reactions {
+  margin: 8px 0 12px;
+}
+
+.community-joke-meta ~ .share-btn {
+  margin-top: 5px;
+}
+
+/* Community joke card cleanup */
+
+/* إزالة الخط الفاصل أعلى بيانات الكاتب */
+.community-joke-meta {
+  border: none !important;
+  border-top: none !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 10px !important;
+  text-align: right;
+}
+
+/* إزالة أي فواصل زخرفية داخل الكارت */
+.community-joke-meta::before,
+.community-joke-meta::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* تقليل الفراغات حول نص النكتة */
+.community-joke-text {
+  margin: 0 0 10px !important;
+  padding: 0 !important;
+  line-height: 1.8;
+}
+
+/* تقليل المسافة بين النكتة والتفاعلات */
+.jokes-page li.card .joke-reactions {
+  margin: 6px 0 10px !important;
+}
+
+/* Compact community jokes list */
+.community-jokes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.community-jokes-list > li.card {
+  margin: 0 !important;
+  padding: 14px 18px !important;
+  border-radius: 10px;
+}
+
+.community-jokes-list .community-joke-meta {
+  margin-bottom: 6px !important;
+}
+
+.community-jokes-list .community-joke-text {
+  margin: 0 0 8px !important;
+  line-height: 1.7;
+}
+
+.community-jokes-list .joke-reactions {
+  margin: 5px 0 8px !important;
+}
+
+.community-jokes-list .share-btn {
+  margin-top: 3px;
+}
+
+@media (max-width: 600px) {
+  .community-jokes-list > li.card {
+    padding: 12px !important;
+  }
+}

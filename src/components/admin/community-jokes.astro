@@ -1,0 +1,121 @@
+
+<section class="community-jokes-admin" dir="rtl">
+  <div class="community-jokes-header">
+    <div>
+      <h2>🤣 مراجعة نكت المجتمع</h2>
+      <p>راجع النكت المرسلة من الزوار وقرر نشرها أو حذفها.</p>
+    </div>
+    <button id="refresh-community-jokes">🔄 تحديث</button>
+  </div>
+
+  <div id="community-jokes-count" class="community-jokes-count">
+    جاري تحميل النكت...
+  </div>
+
+  <div id="community-jokes-list"></div>
+</section>
+
+<script type="module" src="/js/admin/community-jokes.js"></script>
+
+<style>
+  .community-jokes-admin {
+    color: #e2e8f0;
+    padding: 20px;
+  }
+
+  .community-jokes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+  }
+
+  .community-jokes-header h2 {
+    margin: 0 0 8px;
+    color: #facc15;
+  }
+
+  .community-jokes-header p {
+    color: #94a3b8;
+    margin: 0;
+  }
+
+  .community-jokes-header button,
+  .community-joke-card button {
+    border: 0;
+    border-radius: 9px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+  }
+
+  #refresh-community-jokes {
+    background: #334155;
+    color: white;
+  }
+
+  .community-jokes-count {
+    color: #a5b4fc;
+    margin-bottom: 18px;
+  }
+
+  #community-jokes-list {
+    display: grid;
+    gap: 15px;
+  }
+
+  .community-joke-card {
+    background: #202c40;
+    border: 1px solid #34465e;
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  .community-joke-text {
+    color: #f1f5f9;
+    font-size: 16px;
+    line-height: 2;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .community-joke-meta {
+    color: #94a3b8;
+    font-size: 13px;
+    margin: 15px 0;
+  }
+
+  .community-joke-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .community-joke-approve {
+    background: #166534;
+    color: white;
+  }
+
+  .community-joke-delete {
+    background: #991b1b;
+    color: white;
+  }
+
+  .community-joke-card button:disabled {
+    opacity: 0.5;
+    cursor: wait;
+  }
+
+  .community-jokes-empty {
+    text-align: center;
+    padding: 40px 15px;
+    color: #94a3b8;
+    background: #202c40;
+    border-radius: 14px;
+  }
+
+  
+</style>

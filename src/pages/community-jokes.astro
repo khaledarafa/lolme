@@ -1,0 +1,180 @@
+---
+// src/pages/community-jokes.astro
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="نكت المجتمع 😂 | LOLME"
+  description="أحدث النكت والمشاركات المضحكة من مجتمع LOLME."
+>
+  <main class="community-page" dir="rtl">
+    <header class="community-hero">
+      <span class="community-hero-icon">🤣</span>
+      <h1>نكت المجتمع</h1>
+      <p>ضحك من تأليف الناس... والضحكة الحلوة تستاهل المشاركة!</p>
+
+      <a href="/submit-joke" class="send-joke-link">
+        ✍️ ابعت نكتتك وشاركنا الضحك
+      </a>
+    </header>
+
+    <section class="community-feed" aria-label="النكت المنشورة">
+      <div class="feed-heading">
+        <h2>😂 أحدث النكت</h2>
+        <span id="community-jokes-total">جاري التحميل...</span>
+      </div>
+
+      <!-- نفس حاوية وكروت صفحة النكت الأساسية -->
+      <div class="jokes-page card">
+        <ul id="community-jokes-list" class="community-jokes-list">
+          <li class="card tilt-card community-loading">
+            🤣
+            <p>بنجهزلك جرعة الضحك...</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="community-bottom-cta">
+      <h2>عندك نكتة أحلى؟ 😎</h2>
+      <p>شاركها معانا، ويمكن تبقى النكتة اللي ضحكت آلاف الناس!</p>
+      <a href="/submit-joke">إرسال نكتة جديدة 😂</a>
+    </section>
+  </main>
+  <link rel="stylesheet" href="/css/jokes.css" />
+  <script type="module" src="/js/community-jokes.js"></script>
+</Layout>
+
+<!-- <style>
+  .community-page {
+    width: min(100% - 30px, 900px);
+    margin: 35px auto 60px;
+    color: #e2e8f0;
+  }
+
+  .community-hero {
+    text-align: center;
+    padding: 35px 20px;
+    background: #202c40;
+    border: 1px solid #34465e;
+    border-radius: 16px;
+    margin-bottom: 30px;
+  }
+
+  .community-hero-icon {
+    font-size: 42px;
+  }
+
+  .community-hero h1 {
+    color: #facc15;
+    font-size: 30px;
+    margin: 10px 0;
+    font-weight: 800;
+  }
+
+  .community-hero p {
+    color: #aab8ca;
+    line-height: 1.8;
+    margin: 0 0 22px;
+  }
+
+  .send-joke-link,
+  .community-bottom-cta a {
+    display: inline-block;
+    text-decoration: none;
+    background: #22c55e;
+    color: #10251a;
+    padding: 11px 20px;
+    border-radius: 9px;
+    font-weight: 800;
+    transition: 0.2s ease;
+  }
+
+  .send-joke-link:hover,
+  .community-bottom-cta a:hover {
+    background: #4ade80;
+    transform: translateY(-2px);
+  }
+
+  .feed-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .feed-heading h2 {
+    font-size: 22px;
+    color: #facc15;
+    margin: 0;
+    font-weight: 800;
+  }
+
+  #community-jokes-total {
+    color: #94a3b8;
+    font-size: 13px;
+  }
+
+  /* نلغي تنسيق القائمة الافتراضي فقط */
+  #community-jokes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* نفس كروت النكت الأصلية، دون إعادة تعريف أحجامها */
+  :global(#community-jokes-list > li.card) {
+    margin-bottom: 15px;
+  }
+
+  :global(#community-jokes-list .joke-reactions) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 5px 0;
+  }
+
+  .community-loading {
+    text-align: center;
+    color: #aab8ca;
+    padding: 30px 15px;
+  }
+
+  .community-bottom-cta {
+    text-align: center;
+    margin-top: 35px;
+    padding: 30px 20px;
+    background: #202c40;
+    border: 1px solid #34465e;
+    border-radius: 16px;
+  }
+
+  .community-bottom-cta h2 {
+    color: #facc15;
+    margin-top: 0;
+  }
+
+  .community-bottom-cta p {
+    color: #aab8ca;
+    line-height: 1.8;
+    margin-bottom: 22px;
+  }
+
+  @media (max-width: 600px) {
+    .community-page {
+      margin-top: 20px;
+    }
+
+    .community-hero {
+      padding: 28px 15px;
+    }
+
+    .community-hero h1 {
+      font-size: 25px;
+    }
+  }
+</style> -->

@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     addc: "111111",
     review: "111111",
     rooms: "111111",
+    "community-jokes": "111111",
   };
 
   const unlockedTabs = JSON.parse(localStorage.getItem("admin_tabs") || "{}");
@@ -49,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (tabId === "edit") window.loadQuestionsBatch?.();
       if (tabId === "ads") window.initAds?.();
       if (tabId === "joke-stats") window.initJokeStats?.();
+      if (tabId === "community-jokes") { window.initCommunityJokes?.(); }
     });
   });
 
