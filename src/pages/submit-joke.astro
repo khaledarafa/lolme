@@ -18,6 +18,24 @@ import Layout from "../layouts/Layout.astro";
       </p>
 
       <form id="submit-joke-form">
+        <div class="joke-guidelines">
+  <h3>📌 قبل ما تبعت نكتتك</h3>
+
+  <p>إحنا بنحب الضحك بكل أنواعه، بس عشان نحافظ على مجتمع LOLME ممتع للجميع، خلي بالك من الآتي:</p>
+
+  <ul>
+    <li>😂 ابعت نكتة مضحكة وواضحة ومناسبة للنشر العام.</li>
+    <li>😂 الهزار عن العادات والمواقف والفئات الاجتماعية مرحّب بيه، بشرط يكون في إطار خفيف من غير إهانة أو تحقير أو كراهية.</li>
+    <li>🚫 ممنوع المحتوى الإباحي أو العنصري أو التحريضي.</li>
+    <li>✍️ ابعت نكتتك بصياغتك، ومتنساش تحترم حقوق أصحاب المحتوى.</li>
+    <li>🔍 كل النكت بتدخل المراجعة قبل ظهورها للجمهور.</li>
+  </ul>
+
+  <p class="guidelines-note">
+    ❤️ مش كل النكت هتكون مناسبة للنشر، وده مش معناه إن نكتتك مش حلوة!
+    أحيانًا بنرفض مشاركة لمجرد إنها مش مناسبة لقواعد المجتمع.
+  </p>
+</div>
         <div class="form-group">
           <label for="joke-author">اسمك المستعار <span>(اختياري)</span></label>
           <input
@@ -68,7 +86,7 @@ import Layout from "../layouts/Layout.astro";
 .submit-joke-page {
   direction: rtl;
   width: min(100% - 30px, 760px);
-  margin: 55px auto;
+  margin: 30px auto;
   padding: 20px 0 50px;
 }
 

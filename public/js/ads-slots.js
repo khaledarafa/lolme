@@ -19,7 +19,7 @@ import {
 const SLOT_IDS = ["floating-right", "floating-left", "floating-main"];
 
 // الصفحات المسموح بعرض إعلانات المعلنين فيها
-const ALLOWED_AD_PATHS = ["/", "/jokes", "/tests", "/community-jokes",];
+const ALLOWED_AD_PATHS = ["/", "/jokes", "/tests", "/community-jokes", "/submit-joke"];
 
 function isAllowedAdPage() {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
