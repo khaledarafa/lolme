@@ -1,4 +1,4 @@
-
+// public/js/advertise-availability.js
 import {
   db,
   collection,
