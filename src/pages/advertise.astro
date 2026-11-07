@@ -1,4 +1,5 @@
 ---
+// src/pages/advertise.astro
 import Layout from "../layouts/Layout.astro";
 
 const slots = [
@@ -113,6 +114,62 @@ const slots = [
     price: 249,
     featured: true,
   },
+
+  {
+    id: "grid-1",
+    section: "tests-grid",
+    number: "13",
+    name: "المساحة الأولى داخل جريد الاختبارات",
+    position: "المساحة الإعلانية الأولى داخل جريد الاختبارات",
+    detail: "ظهور إعلانك بعد أول 4 اختبارات، في بداية شبكة المحتوى.",
+    price: 299,
+    featured: true,
+  },
+  {
+    id: "grid-2",
+    section: "tests-grid",
+    number: "14",
+    name: "المساحة الثانية داخل جريد الاختبارات",
+    position: "المساحة الإعلانية الثانية داخل جريد الاختبارات",
+    detail: "ظهور إعلانك بعد 8 اختبارات، وسط الجزء الأول من الشبكة.",
+    price: 249,
+  },
+  {
+    id: "grid-3",
+    section: "tests-grid",
+    number: "15",
+    name: "المساحة الثالثة داخل جريد الاختبارات",
+    position: "المساحة الإعلانية الثالثة داخل جريد الاختبارات",
+    detail: "ظهور إعلانك بعد 12 اختبارًا داخل شبكة المحتوى.",
+    price: 199,
+  },
+  {
+    id: "grid-4",
+    section: "tests-grid",
+    number: "16",
+    name: "المساحة الرابعة داخل جريد الاختبارات",
+    position: "المساحة الإعلانية الرابعة داخل جريد الاختبارات",
+    detail: "ظهور إعلانك بعد 16 اختبارًا بالقرب من منتصف الصفحة.",
+    price: 179,
+  },
+  {
+    id: "grid-5",
+    section: "tests-grid",
+    number: "17",
+    name: "المساحة الخامسة داخل جريد الاختبارات",
+    position: "المساحة الإعلانية الخامسة داخل جريد الاختبارات",
+    detail: "ظهور إعلانك بعد 20 اختبارًا في الجزء الأخير من الشبكة.",
+    price: 149,
+  },
+  {
+    id: "grid-6",
+    section: "tests-grid",
+    number: "18",
+    name: "المساحة السادسة داخل جريد الاختبارات",
+    position: "المساحة الإعلانية السادسة داخل جريد الاختبارات",
+    detail: "ظهور إعلانك بعد 24 اختبارًا بسعر اقتصادي.",
+    price: 129,
+  },
 ];
 
 const formatPrice = (price: number) =>
@@ -186,7 +243,7 @@ const floatingWhatsappLink = (space: (typeof floatingSpaces)[number]) => {
 
       <div class="hero-stats">
         <div>
-          <strong>12</strong>
+          <strong>18</strong>
           <span>مساحة داخل المحتوى</span>
         </div>
 
@@ -201,7 +258,7 @@ const floatingWhatsappLink = (space: (typeof floatingSpaces)[number]) => {
         </div>
 
         <div>
-          <strong>15</strong>
+          <strong>21</strong>
           <span>مساحة إعلانية إجمالًا</span>
         </div>
       </div>
@@ -236,6 +293,7 @@ const floatingWhatsappLink = (space: (typeof floatingSpaces)[number]) => {
         {
           floatingSpaces.map((space, index) => (
             <article
+              data-slot-id={space.id}
               class:list={[
                 "floating-space-card",
                 { "floating-space-card--featured": index === 2 },
@@ -268,7 +326,9 @@ const floatingWhatsappLink = (space: (typeof floatingSpaces)[number]) => {
                 <p>{space.detail}</p>
 
                 <div class="floating-space-position">📍 {space.position}</div>
-
+                <div class="slot-availability" data-availability>
+                  جاري فحص التوافر...
+                </div>
                 <div class="floating-space-price">
                   <strong>399 جنيه</strong>
                   <span> / 30 يومًا</span>
@@ -326,6 +386,7 @@ const floatingWhatsappLink = (space: (typeof floatingSpaces)[number]) => {
             .filter((slot) => slot.section === "jokes")
             .map((slot) => (
               <article
+                data-slot-id={slot.id}
                 class:list={[
                   "slot-card",
                   { "slot-card--featured": slot.featured },
@@ -343,7 +404,9 @@ const floatingWhatsappLink = (space: (typeof floatingSpaces)[number]) => {
                 <p>{slot.detail}</p>
 
                 <div class="slot-position">📍 {slot.position}</div>
-
+                <div class="slot-availability" data-availability>
+                  جاري فحص التوافر...
+                </div>
                 <div class="slot-price">
                   <strong>{formatPrice(slot.price)}</strong>
                   <span>جنيه / 30 يومًا</span>
@@ -383,7 +446,7 @@ const floatingWhatsappLink = (space: (typeof floatingSpaces)[number]) => {
         slots
           .filter((slot) => slot.section === "tests")
           .map((slot) => (
-            <article class="slot-card slot-card--tests">
+            <article class="slot-card slot-card--tests" data-slot-id={slot.id}>
               <div class="slot-card__top">
                 <span class="slot-number">#{slot.number}</span>
                 <span class="slot-featured">مساحة متاحة</span>
@@ -394,7 +457,9 @@ const floatingWhatsappLink = (space: (typeof floatingSpaces)[number]) => {
               <p>{slot.detail}</p>
 
               <div class="slot-position">📍 {slot.position}</div>
-
+              <div class="slot-availability" data-availability>
+                جاري فحص التوافر...
+              </div>
               <div class="slot-price">
                 <strong>{formatPrice(slot.price)}</strong>
                 <span>جنيه / 30 يومًا</span>
@@ -420,6 +485,82 @@ const floatingWhatsappLink = (space: (typeof floatingSpaces)[number]) => {
             </article>
           ))
       }
+    </section>
+
+    <section class="slots-section tests-grid-slots">
+      <div class="section-heading">
+        <span>🧠 شبكة الاختبارات التفاعلية</span>
+
+        <h2>مساحات إعلانية داخل جريد الاختبارات</h2>
+
+        <p>
+          6 مساحات إعلانية موزعة بين بطاقات الاختبارات، لتعرض علامتك التجارية
+          وسط المحتوى التفاعلي والترفيهي. اختر موقع ظهور إعلانك والسعر المناسب
+          لك.
+        </p>
+      </div>
+
+      <div class="live-preview">
+        <div>
+          <strong>👀 شاهد أماكن ظهور الإعلانات</strong>
+          <p>
+            يمكنك مشاهدة المساحات الإعلانية الستة داخل صفحة الاختبارات قبل
+            اختيار مساحة الحجز.
+          </p>
+        </div>
+
+        <div class="live-preview__buttons">
+          <a href="/tests" target="_blank" rel="noopener noreferrer">
+            مشاهدة صفحة الاختبارات ↗
+          </a>
+        </div>
+      </div>
+
+      <div class="slots-grid">
+        {
+          slots
+            .filter((slot) => slot.section === "tests-grid")
+            .map((slot) => (
+              <article
+                data-slot-id={slot.id}
+                class:list={[
+                  "slot-card",
+                  { "slot-card--featured": slot.featured },
+                ]}
+              >
+                <div class="slot-card__top">
+                  <span class="slot-number">#{slot.number}</span>
+
+                  {slot.featured && (
+                    <span class="slot-featured">موقع مميز</span>
+                  )}
+                </div>
+
+                <h3>{slot.name}</h3>
+
+                <p>{slot.detail}</p>
+
+                <div class="slot-position">📍 {slot.position}</div>
+                <div class="slot-availability" data-availability>
+                  جاري فحص التوافر...
+                </div>
+                <div class="slot-price">
+                  <strong>{formatPrice(slot.price)}</strong>
+                  <span>جنيه / 30 يومًا</span>
+                </div>
+
+                <a
+                  href={whatsappLink(slot)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="slot-button"
+                >
+                  احجز عبر واتساب
+                </a>
+              </article>
+            ))
+        }
+      </div>
     </section>
 
     <section class="advertise-faq" id="advertising-faq" dir="rtl">
@@ -539,6 +680,7 @@ const floatingWhatsappLink = (space: (typeof floatingSpaces)[number]) => {
       المساحة.
     </p>
   </main>
+  <script type="module" src="/js/advertise-availability.js"></script>
 </Layout>
 
 <style>
@@ -1086,5 +1228,41 @@ const floatingWhatsappLink = (space: (typeof floatingSpaces)[number]) => {
     color: var(--text-secondary, #94a3b8);
     line-height: 1.9;
     font-size: 0.92rem;
+  }
+
+  .slot-availability {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    width: fit-content;
+    margin: 12px 0 4px;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    background: rgba(22, 163, 74, 0.12);
+    color: #22c55e;
+    text-align: right;
+  }
+
+  .slot-is-booked .slot-availability {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+  }
+
+  .slot-is-upcoming .slot-availability {
+    background: rgba(234, 179, 8, 0.12);
+    color: #eab308;
+  }
+
+  .slot-availability strong,
+  .slot-availability span {
+    display: block;
+  }
+
+  .slot-availability span {
+    margin-top: 5px;
+    line-height: 1.6;
   }
 </style>

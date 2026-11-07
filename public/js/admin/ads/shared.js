@@ -1,18 +1,6 @@
 import {
   auth,
   onAuthStateChanged,
-  db,
-  collection,
-  doc,
-  addDoc,
-  getDocs,
-  query,
-  where,
-  getDoc,
-  setDoc,
-  updateDoc,
-  deleteDoc,
-  serverTimestamp,
   functions,
   httpsCallable,
 } from "/js/firebase.js";
