@@ -1,12 +1,52 @@
 ---
 // src/pages/community-jokes.astro
 import Layout from "../layouts/Layout.astro";
+export const prerender = false;
+
+const pageUrl = "https://lolme.cc/community-jokes";
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "نكت المجتمع | LOLME",
+  "description":
+    "أحدث النكت المضحكة والمشاركات الكوميدية من مجتمع LOLME. اقرأ نكت الجمهور وشاركنا نكتتك.",
+  "url": pageUrl,
+  "inLanguage": "ar",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "LOLME",
+    "url": "https://lolme.cc/"
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "الرئيسية",
+        "item": "https://lolme.cc/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "نكت المجتمع",
+        "item": pageUrl
+      }
+    ]
+  }
+};
 ---
 
 <Layout
-  title="نكت المجتمع 😂 | LOLME"
-  description="أحدث النكت والمشاركات المضحكة من مجتمع LOLME."
+  title="نكت مضحكة من الجمهور 😂 | نكت المجتمع - LOLME"
+description="اقرأ أحدث النكت المضحكة من مجتمع LOLME، وشارك نكتتك مع الجمهور. نكت مصرية وعربية وضحك متجدد."
 >
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(structuredData)}
+  />
+
   <main class="community-page" dir="rtl">
     <header class="community-hero">
       <span class="community-hero-icon">🤣</span>
@@ -24,7 +64,6 @@ import Layout from "../layouts/Layout.astro";
         <span id="community-jokes-total">جاري التحميل...</span>
       </div>
 
-      <!-- نفس حاوية وكروت صفحة النكت الأساسية -->
       <div class="jokes-page card">
         <ul id="community-jokes-list" class="community-jokes-list">
           <li class="card tilt-card community-loading">
@@ -41,9 +80,11 @@ import Layout from "../layouts/Layout.astro";
       <a href="/submit-joke">إرسال نكتة جديدة 😂</a>
     </section>
   </main>
+
   <link rel="stylesheet" href="/css/jokes.css" />
   <script type="module" src="/js/community-jokes.js"></script>
 </Layout>
+
 
 <!-- <style>
   .community-page {
