@@ -1,4 +1,4 @@
-
+// public/js/admin/community-jokes.js بتاع مراجعة النكت للادمن
 import {
   functions,
   httpsCallable,
