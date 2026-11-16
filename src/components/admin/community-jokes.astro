@@ -1,4 +1,4 @@
- <!-- src/components/admin/community-jokes.astro  بتاع مراجعة النكت للادمن -->
+<!-- src/components/admin/community-jokes.astro  بتاع مراجعة النكت للادمن -->
 <section class="community-jokes-admin" dir="rtl">
   <div class="community-jokes-header">
     <div>
@@ -6,6 +6,23 @@
       <p>راجع النكت المرسلة من الزوار وقرر نشرها أو حذفها.</p>
     </div>
     <button id="refresh-community-jokes">🔄 تحديث</button>
+  </div>
+
+  <!-- إدارة السؤال النشط -->
+  <div class="community-question-admin">
+    <div class="community-question-admin-header">
+      <div>
+        <h3>🗳️ إدارة السؤال النشط</h3>
+        <p>تابع التصويت والتعليقات، وأغلق السؤال وقت ما تقرر.</p>
+      </div>
+      <span id="community-question-status" class="question-status">
+        جاري التحميل...
+      </span>
+    </div>
+
+    <div id="community-question-admin-content">
+      <div class="community-question-loading">جاري تحميل السؤال...</div>
+    </div>
   </div>
 
   <div id="community-jokes-count" class="community-jokes-count">
@@ -52,6 +69,126 @@
     font-weight: 700;
   }
 
+  .community-question-admin {
+    background: #172338;
+    border: 1px solid #3b506b;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 25px;
+  }
+
+  .community-question-admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .community-question-admin-header h3 {
+    color: #38bdf8;
+    margin: 0 0 7px;
+  }
+
+  .community-question-admin-header p {
+    color: #94a3b8;
+    margin: 0;
+    font-size: 13px;
+  }
+
+  .question-status {
+    background: #14532d;
+    color: #86efac;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .question-status.closed {
+    background: #7f1d1d;
+    color: #fecaca;
+  }
+
+  .community-question-loading,
+  .community-question-empty {
+    color: #94a3b8;
+    text-align: center;
+    padding: 25px 10px;
+  }
+
+  .community-question-admin-card {
+    background: #202c40;
+    border: 1px solid #34465e;
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .community-question-admin-prompt {
+    color: #f8fafc;
+    font-size: 16px;
+    line-height: 1.9;
+    margin: 12px 0;
+    white-space: pre-wrap;
+  }
+
+  .community-question-admin-joke {
+    color: #cbd5e1;
+    background: #111c2e;
+    border-radius: 8px;
+    padding: 12px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+
+  .community-question-admin-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+
+  .community-question-stat {
+    flex: 1;
+    min-width: 100px;
+    background: #111c2e;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .community-question-stat strong {
+    display: block;
+    color: #f8fafc;
+    font-size: 22px;
+    margin-top: 5px;
+  }
+
+  .community-question-stat span {
+    color: #94a3b8;
+    font-size: 12px;
+  }
+
+  .community-question-close {
+    background: #991b1b;
+    color: white;
+    border: 0;
+    border-radius: 8px;
+    padding: 11px 18px;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .community-question-close:hover {
+    background: #b91c1c;
+  }
+
+  .community-question-close:disabled {
+    opacity: 0.5;
+    cursor: wait;
+  }
   #refresh-community-jokes {
     background: #334155;
     color: white;
@@ -115,5 +252,39 @@
     color: #94a3b8;
     background: #202c40;
     border-radius: 14px;
+  }
+
+  .community-question-input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 15px 0;
+    padding: 13px;
+    border: 1px solid #475569;
+    border-radius: 9px;
+    background: #111c2e;
+    color: #f1f5f9;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.8;
+    resize: vertical;
+  }
+
+  .community-question-input:focus {
+    outline: none;
+    border-color: #38bdf8;
+  }
+
+  .community-question-input::placeholder {
+    color: #94a3b8;
+  }
+
+  .community-joke-question {
+    background: #075985;
+    color: white;
+  }
+
+  .community-joke-question:hover {
+    background: #0369a1;
   }
 </style>

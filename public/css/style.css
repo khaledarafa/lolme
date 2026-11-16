@@ -6203,3 +6203,226 @@ textarea.hint::placeholder {
     font-size: 13px;
   }
 }
+/* community-jokes.astro */
+/* ===== تحسين عرض أسئلة الجمهور في لوحة الإدارة ===== */
+
+.community-question-admin-card {
+  text-align: right;
+  padding: 18px;
+  margin-bottom: 14px;
+}
+
+/* النكتة الأصلية */
+.community-question-admin-joke {
+  text-align: right;
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+.community-question-admin-joke::before {
+  content: "😂 النكتة الأصلية";
+  display: block;
+  color: #38bdf8;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* سؤال الإدارة */
+.community-question-admin-prompt {
+  background: #172338;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 10px 0;
+  text-align: right;
+}
+
+.community-question-admin-prompt::before {
+  content: "📢 سؤال الإدارة للجمهور";
+  display: block;
+  color: #facc15;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+/* حالة السؤال */
+.community-question-card-status {
+  color: #86efac;
+  font-size: 12px;
+  margin: 10px 0;
+}
+
+/* الإحصائيات في صف واحد */
+.community-question-admin-stats {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.community-question-stat {
+  flex: 0 0 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #111c2e;
+  border: 1px solid #34465e;
+  border-radius: 20px;
+  padding: 7px 12px;
+  text-align: right;
+}
+
+.community-question-stat strong {
+  display: inline;
+  font-size: 13px;
+  margin: 0;
+  color: #f8fafc;
+}
+
+.community-question-stat span {
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+/* التعليقات القابلة للفتح */
+.community-admin-comments {
+  margin-top: 12px;
+  border-top: 1px solid #34465e;
+  padding-top: 10px;
+}
+
+.community-admin-comments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #facc15;
+  font-size: 13px;
+  font-weight: 700;
+  list-style: none;
+  padding: 7px 2px;
+}
+
+.community-admin-comments-header::-webkit-details-marker {
+  display: none;
+}
+
+.community-admin-comments-header::after {
+  content: "＋";
+  font-size: 17px;
+}
+
+.community-admin-comments[open] .community-admin-comments-header::after {
+  content: "−";
+}
+
+.community-admin-comments-count {
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.community-admin-comments-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.community-admin-comment {
+  background: #111c2e;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: right;
+}
+
+.community-admin-comment-meta {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.community-admin-comment p {
+  color: #e2e8f0;
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.community-comments-empty,
+.community-comments-loading {
+  color: #94a3b8;
+  font-size: 12px;
+  padding: 10px;
+}
+
+/* أزرار الإدارة */
+.community-question-admin-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.community-question-admin-actions button {
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.community-question-publish {
+  background: #166534;
+  color: white;
+}
+
+.community-question-delete {
+  background: #7f1d1d;
+  color: white;
+}
+
+.community-question-admin-actions button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+/* الموبايل */
+@media (max-width: 600px) {
+  .community-question-admin {
+    padding: 12px;
+  }
+
+  .community-question-admin-card {
+    padding: 12px;
+  }
+
+  .community-question-admin-stats {
+    gap: 6px;
+  }
+
+  .community-question-stat {
+    padding: 6px 9px;
+  }
+
+  .community-question-stat span {
+    font-size: 11px;
+  }
+
+  .community-question-admin-actions button {
+    flex: 1;
+    padding: 10px 8px;
+  }
+}
+/* community-jokes.astro */

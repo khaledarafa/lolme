@@ -33,7 +33,7 @@ const structuredData = {
   "@type": "CollectionPage",
   name: "نكت المجتمع | LOLME",
   description:
-  "نكت LOLME المضحكة ونكت المجتمع المنشورة. اقرأ النكت وشاركنا الضحك.",
+    "نكت LOLME المضحكة ونكت المجتمع المنشورة. اقرأ النكت وشاركنا الضحك.",
   url: pageUrl,
   inLanguage: "ar",
   isPartOf: {
@@ -81,71 +81,98 @@ const structuredData = {
       </a>
     </header>
 
-    <section class="community-feed" aria-label="النكت المنشورة">
-      <div class="feed-heading">
-        <h2>😂 أحدث النكت</h2>
-        <span id="community-jokes-total">جاري التحميل...</span>
-      </div>
+    <section class="community-feed" aria-label="محتوى المجتمع">
+      <!-- قسم أسئلة الجمهور -->
+      <section
+        class="community-questions-section"
+        aria-labelledby="community-questions-title"
+      >
+        <div class="feed-heading">
+          <h2 id="community-questions-title">🗳️ أسئلة الجمهور</h2>
+          <span>شارك برأيك وصوّت… وطلّع اللي جواك! 🤣</span>
+        </div>
 
-      <div class="jokes-page card">
-      <section class="starter-community-jokes" aria-labelledby="starter-jokes-title" >
-        <h2 id="starter-jokes-title">😂 نكت من LOLME</h2>
-        <p>مجموعة من النكت الافتتاحية اللي بدأنا بيها الضحك!</p>
-
-        <ul class="community-jokes-list">
-          {
-            starterJokes.map((joke, index) => {
-              const jokeId = `starter_${String(index + 1).padStart(2, "0")}`;
-
-              return (
-                <li class="card tilt-card" data-joke-id={jokeId}>
-                  <div class="community-joke-meta">😂 نكتة من LOLME</div>
-
-                  <p class="community-joke-text">{joke}</p>
-
-                  <div class="joke-reactions" data-reactions-for={jokeId} />
-
-                  <button
-                    type="button"
-                    class="share-btn"
-                    data-share-joke={joke}
-                  >
-                    شارك الضحكة 😂
-                  </button>
-                </li>
-              );
-            })
-          }
-        </ul>
+        <div class="jokes-page card">
+          <div id="community-questions-list" class="community-questions-list">
+            <div class="community-loading">جاري تحميل أسئلة الجمهور...</div>
+          </div>
+        </div>
       </section>
-</div>
-      <div class="jokes-page card">
-        <ul id="community-jokes-list" class="community-jokes-list">
-          <li class="card tilt-card community-loading">
-            <div class="loading-hero">
-              <span class="loading-emoji">🤣</span>
-              <h3>بنجهزلك جرعة الضحك!</h3>
-              <p>بنحمّل أحدث نكت المجتمع... استعد للضحك 😂</p>
-            </div>
 
-            <div class="loading-progress">
-              <span></span>
-            </div>
+      <!-- قسم النكت -->
+      <section
+        class="community-jokes-section"
+        aria-labelledby="community-jokes-title"
+      >
+        <div class="feed-heading">
+          <h2 id="community-jokes-title">😂 نكت المجتمع</h2>
+          <span id="community-jokes-total">جاري التحميل...</span>
+        </div>
 
-            <small class="loading-caption">لحظات ونكون جاهزين ❤️</small>
+        <!-- نكت LOLME الافتتاحية -->
+        <div class="jokes-page card">
+          <details class="starter-community-jokes">
+            <summary id="starter-jokes-title">
+              😂 نكت من LOLME
+              <span class="starter-jokes-count">20 نكتة</span>
+            </summary>
 
-            <div class="skeleton-joke">
-              <div class="skeleton-meta">
-                <span></span>
+            <p>مجموعة من النكت الافتتاحية اللي بدأنا بيها الضحك!</p>
+
+            <ul class="community-jokes-list">
+              {
+                starterJokes.map((joke, index) => {
+                  const jokeId = `starter_${String(index + 1).padStart(2, "0")}`;
+
+                  return (
+                    <li class="card tilt-card" data-joke-id={jokeId}>
+                      <div class="community-joke-meta">😂 نكتة من LOLME</div>
+                      <p class="community-joke-text">{joke}</p>
+                      <div class="joke-reactions" data-reactions-for={jokeId} />
+
+                      <button
+                        type="button"
+                        class="share-btn"
+                        data-share-joke={joke}
+                      >
+                        شارك الضحكة 😂
+                      </button>
+                    </li>
+                  );
+                })
+              }
+            </ul>
+          </details>
+        </div>
+
+        <!-- نكت الأعضاء -->
+        <div class="jokes-page card">
+          <ul id="community-jokes-list" class="community-jokes-list">
+            <li class="card tilt-card community-loading">
+              <div class="loading-hero">
+                <span class="loading-emoji">🤣</span>
+                <h3>بنجهزلك جرعة الضحك!</h3>
+                <p>بنحمّل أحدث نكت المجتمع... استعد للضحك 😂</p>
+              </div>
+
+              <div class="loading-progress">
                 <span></span>
               </div>
 
-              <div class="skeleton-line"></div>
-              <div class="skeleton-line short"></div>
-            </div>
-          </li>
-        </ul>
-      </div>
+              <small class="loading-caption">لحظات ونكون جاهزين ❤️</small>
+
+              <div class="skeleton-joke">
+                <div class="skeleton-meta">
+                  <span></span>
+                  <span></span>
+                </div>
+                <div class="skeleton-line"></div>
+                <div class="skeleton-line short"></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
     </section>
 
     <section class="community-bottom-cta">

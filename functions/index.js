@@ -1615,6 +1615,628 @@ exports.deleteCommunityJoke = onCall(
   },
 );
 
+// تحويل نكتة معلقة إلى سؤال للجمهور - للأدمن فقط
+exports.publishCommunityQuestion = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async (request) => {
+    // التحقق من تسجيل الدخول
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "يجب تسجيل الدخول أولاً.");
+    }
+
+    // التحقق من صلاحية الأدمن
+    if (request.auth.token.admin !== true) {
+      throw new HttpsError("permission-denied", "هذه العملية للأدمن فقط.");
+    }
+
+    const jokeId = request.data?.jokeId;
+    const prompt =
+      typeof request.data?.prompt === "string"
+        ? request.data.prompt.trim()
+        : "";
+
+    // التحقق من رقم النكتة
+    if (typeof jokeId !== "string" || !/^[a-zA-Z0-9_-]{1,150}$/.test(jokeId)) {
+      throw new HttpsError("invalid-argument", "رقم النكتة غير صحيح.");
+    }
+
+    // التحقق من السؤال
+    if (prompt.length < 5 || prompt.length > 500) {
+      throw new HttpsError(
+        "invalid-argument",
+        "السؤال يجب أن يكون بين 5 و500 حرف.",
+      );
+    }
+
+    const jokeRef = db.collection("communityJokes").doc(jokeId);
+    const questionRef = db.collection("communityQuestions").doc();
+
+    await db.runTransaction(async (transaction) => {
+      const jokeSnap = await transaction.get(jokeRef);
+
+      if (!jokeSnap.exists) {
+        throw new HttpsError("not-found", "النكتة غير موجودة.");
+      }
+
+      const joke = jokeSnap.data();
+
+      if (joke.status !== "pending") {
+        throw new HttpsError(
+          "failed-precondition",
+          "النكتة لم تعد معلقة للمراجعة.",
+        );
+      }
+
+      // إنشاء سؤال مستقل مرتبط بالنكتة الأصلية
+      transaction.set(questionRef, {
+        sourceJokeId: jokeId,
+        jokeText: joke.text || "",
+        authorName: joke.authorName || "مجهول",
+        prompt,
+
+        status: "clarifying",
+
+        publishVotes: 0,
+        rejectVotes: 0,
+        totalVotes: 0,
+
+        voteOpen: true,
+
+        createdAt: FieldValue.serverTimestamp(),
+        createdBy: request.auth.uid,
+
+        commentsCount: 0,
+      });
+
+      // إخراج النكتة من قائمة المراجعة
+      transaction.update(jokeRef, {
+        status: "question",
+        questionId: questionRef.id,
+        reviewedAt: FieldValue.serverTimestamp(),
+        reviewedBy: request.auth.uid,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    });
+
+    return {
+      success: true,
+      questionId: questionRef.id,
+    };
+  },
+);
+
+// جلب أحدث سؤال نشط لعرضه للزوار
+exports.getActiveCommunityQuestion = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async () => {
+    const snapshot = await db
+      .collection("communityQuestions")
+      .where("status", "in", ["clarifying", "voting"])
+      .limit(10)
+      .get();
+
+    if (snapshot.empty) {
+      return { question: null };
+    }
+
+    // ترتيب الأسئلة من الأحدث للأقدم
+    const questions = snapshot.docs
+      .sort((a, b) => {
+        const dateA = a.data().createdAt?.toMillis?.() || 0;
+        const dateB = b.data().createdAt?.toMillis?.() || 0;
+        return dateB - dateA;
+      })
+      .map((doc) => {
+        const data = doc.data();
+
+        return {
+          id: doc.id,
+          jokeText: data.jokeText || "",
+          prompt: data.prompt || "",
+          authorName: data.authorName || "مجهول",
+          status: data.status,
+          commentsCount: data.commentsCount || 0,
+          publishVotes: data.publishVotes || 0,
+          rejectVotes: data.rejectVotes || 0,
+          totalVotes: data.totalVotes || 0,
+          voteOpen: data.voteOpen !== false,
+          createdAt: data.createdAt?.toMillis?.() || null,
+        };
+      });
+
+    return { questions };
+  },
+);
+
+// جلب أحدث سؤال للأدمن، سواء نشط أو مغلق
+exports.getLatestCommunityQuestionForAdmin = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "يجب تسجيل الدخول أولاً.");
+    }
+
+    if (request.auth.token.admin !== true) {
+      throw new HttpsError("permission-denied", "هذه العملية للأدمن فقط.");
+    }
+
+    const snapshot = await db.collection("communityQuestions").limit(50).get();
+
+    if (snapshot.empty) {
+      return { questions: [] };
+    }
+
+    const questions = snapshot.docs
+      .sort((a, b) => {
+        const dateA = a.data().createdAt?.toMillis?.() || 0;
+        const dateB = b.data().createdAt?.toMillis?.() || 0;
+        return dateB - dateA;
+      })
+      .map((doc) => {
+        const data = doc.data();
+
+        return {
+          id: doc.id,
+          jokeText: data.jokeText || "",
+          prompt: data.prompt || "",
+          authorName: data.authorName || "مجهول",
+          status: data.status,
+          publishedAt: data.publishedAt?.toMillis?.() || null,
+          commentsCount: data.commentsCount || 0,
+          publishVotes: data.publishVotes || 0,
+          rejectVotes: data.rejectVotes || 0,
+          totalVotes: data.totalVotes || 0,
+          voteOpen: data.voteOpen !== false,
+          createdAt: data.createdAt?.toMillis?.() || null,
+        };
+      });
+
+    return { questions };
+  },
+);
+
+// جلب تعليقات سؤال الجمهور
+exports.getCommunityQuestionComments = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async (request) => {
+    const questionId = request.data?.questionId;
+
+    if (
+      typeof questionId !== "string" ||
+      !/^[a-zA-Z0-9_-]{1,150}$/.test(questionId)
+    ) {
+      throw new HttpsError("invalid-argument", "رقم السؤال غير صحيح.");
+    }
+
+    const questionRef = db.collection("communityQuestions").doc(questionId);
+    const questionSnap = await questionRef.get();
+
+    if (!questionSnap.exists) {
+      throw new HttpsError("not-found", "السؤال غير موجود.");
+    }
+
+    const snapshot = await questionRef
+      .collection("comments")
+      .orderBy("createdAt", "desc")
+      .limit(50)
+      .get();
+
+    const comments = snapshot.docs.map((doc) => {
+      const data = doc.data();
+
+      return {
+        id: doc.id,
+        text: data.text || "",
+        authorName: data.authorName || "زائر",
+        createdAt: data.createdAt?.toMillis?.() || null,
+      };
+    });
+
+    return { comments };
+  },
+);
+
+// إضافة تعليق على سؤال الجمهور
+exports.submitCommunityQuestionComment = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "يجب تجهيز هوية الزائر أولاً.");
+    }
+
+    const questionId = request.data?.questionId;
+
+    const commentText =
+      typeof request.data?.text === "string" ? request.data.text.trim() : "";
+
+    const authorName =
+      typeof request.data?.authorName === "string"
+        ? request.data.authorName.trim().slice(0, 30)
+        : "زائر";
+
+    if (
+      typeof questionId !== "string" ||
+      !/^[a-zA-Z0-9_-]{1,150}$/.test(questionId)
+    ) {
+      throw new HttpsError("invalid-argument", "رقم السؤال غير صحيح.");
+    }
+
+    if (commentText.length < 2 || commentText.length > 500) {
+      throw new HttpsError(
+        "invalid-argument",
+        "التعليق يجب أن يكون بين حرفين و500 حرف.",
+      );
+    }
+
+    const uid = request.auth.uid;
+
+    const questionRef = db.collection("communityQuestions").doc(questionId);
+    const commentRef = questionRef.collection("comments").doc();
+
+    const limitId = createHash("sha256")
+      .update(`${questionId}_${uid}`)
+      .digest("hex");
+
+    const limitRef = db
+      .collection("communityQuestionCommentLimits")
+      .doc(limitId);
+
+    await db.runTransaction(async (transaction) => {
+      const questionSnap = await transaction.get(questionRef);
+      const limitSnap = await transaction.get(limitRef);
+
+      if (!questionSnap.exists) {
+        throw new HttpsError("not-found", "السؤال غير موجود.");
+      }
+
+      if (!["clarifying", "voting"].includes(questionSnap.data().status)) {
+        throw new HttpsError(
+          "failed-precondition",
+          "التعليقات على هذا السؤال غير متاحة حاليًا.",
+        );
+      }
+
+      const lastCommentAt = limitSnap.exists
+        ? Number(limitSnap.data().lastCommentAt || 0)
+        : 0;
+
+      if (Date.now() - lastCommentAt < 30000) {
+        throw new HttpsError(
+          "resource-exhausted",
+          "استنى 30 ثانية قبل إرسال تعليق آخر.",
+        );
+      }
+
+      transaction.create(commentRef, {
+        uid,
+        authorName: authorName || "زائر",
+        text: commentText,
+        createdAt: FieldValue.serverTimestamp(),
+      });
+
+      transaction.set(limitRef, {
+        uid,
+        questionId,
+        lastCommentAt: Date.now(),
+      });
+
+      transaction.update(questionRef, {
+        commentsCount: FieldValue.increment(1),
+      });
+    });
+
+    return { success: true };
+  },
+);
+
+exports.submitCommunityQuestionResponse = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "يجب تجهيز هوية الزائر أولاً.");
+    }
+
+    const questionId = request.data?.questionId;
+
+    const commentText =
+      typeof request.data?.text === "string" ? request.data.text.trim() : "";
+
+    const vote = request.data?.vote;
+
+    const hasComment = commentText.length > 0;
+    const hasVote = vote === "publish" || vote === "reject";
+
+    if (
+      typeof questionId !== "string" ||
+      !/^[a-zA-Z0-9_-]{1,150}$/.test(questionId)
+    ) {
+      throw new HttpsError("invalid-argument", "رقم السؤال غير صحيح.");
+    }
+
+    if (!hasComment && !hasVote) {
+      throw new HttpsError(
+        "invalid-argument",
+        "اكتب تعليقًا أو اختر تصويتك على الأقل.",
+      );
+    }
+
+    if (hasComment && (commentText.length < 2 || commentText.length > 500)) {
+      throw new HttpsError(
+        "invalid-argument",
+        "التعليق يجب أن يكون بين حرفين و500 حرف.",
+      );
+    }
+
+    const uid = request.auth.uid;
+
+    const questionRef = db.collection("communityQuestions").doc(questionId);
+    const voteRef = questionRef.collection("votes").doc(uid);
+    const commentRef = questionRef.collection("comments").doc();
+
+    const limitId = createHash("sha256")
+      .update(`${questionId}_${uid}`)
+      .digest("hex");
+
+    const limitRef = db
+      .collection("communityQuestionCommentLimits")
+      .doc(limitId);
+
+    const result = await db.runTransaction(async (transaction) => {
+      // جميع القراءات قبل أي كتابة
+      const questionSnap = await transaction.get(questionRef);
+
+      if (!questionSnap.exists) {
+        throw new HttpsError("not-found", "السؤال غير موجود.");
+      }
+
+      const question = questionSnap.data();
+
+      if (!["clarifying", "voting"].includes(question.status)) {
+        throw new HttpsError(
+          "failed-precondition",
+          "التفاعل على هذا السؤال مغلق.",
+        );
+      }
+
+      let previousVote = null;
+      let limitSnap = null;
+
+      if (hasVote) {
+        const voteSnap = await transaction.get(voteRef);
+        previousVote = voteSnap.exists ? voteSnap.data().choice : null;
+
+        if (question.voteOpen === false) {
+          throw new HttpsError(
+            "failed-precondition",
+            "التصويت على هذه النكتة مغلق.",
+          );
+        }
+      }
+
+      if (hasComment) {
+        limitSnap = await transaction.get(limitRef);
+
+        const lastCommentAt = limitSnap.exists
+          ? Number(limitSnap.data().lastCommentAt || 0)
+          : 0;
+
+        if (Date.now() - lastCommentAt < 30000) {
+          throw new HttpsError(
+            "resource-exhausted",
+            "استنى 30 ثانية قبل إرسال تعليق آخر.",
+          );
+        }
+      }
+
+      // حفظ التعليق إن وُجد
+      if (hasComment) {
+        transaction.create(commentRef, {
+          uid,
+          authorName: "زائر",
+          text: commentText,
+          createdAt: FieldValue.serverTimestamp(),
+        });
+
+        transaction.set(limitRef, {
+          uid,
+          questionId,
+          lastCommentAt: Date.now(),
+        });
+
+        transaction.update(questionRef, {
+          commentsCount: FieldValue.increment(1),
+        });
+      }
+
+      // حفظ التصويت أو تغيير الاختيار السابق
+      if (hasVote && previousVote !== vote) {
+        const updates = {};
+
+        if (previousVote === "publish") {
+          updates.publishVotes = FieldValue.increment(-1);
+        } else if (previousVote === "reject") {
+          updates.rejectVotes = FieldValue.increment(-1);
+        } else {
+          updates.totalVotes = FieldValue.increment(1);
+        }
+
+        if (vote === "publish") {
+          updates.publishVotes = FieldValue.increment(1);
+        } else {
+          updates.rejectVotes = FieldValue.increment(1);
+        }
+
+        transaction.set(voteRef, {
+          uid,
+          choice: vote,
+          updatedAt: FieldValue.serverTimestamp(),
+        });
+
+        transaction.update(questionRef, updates);
+      }
+
+      return {
+        commentAdded: hasComment,
+        voteSaved: hasVote,
+        voteChanged: hasVote && previousVote !== vote,
+      };
+    });
+
+    return {
+      success: true,
+      ...result,
+    };
+  },
+);
+// إغلاق السؤال نهائيًا - للأدمن فقط
+exports.closeCommunityQuestion = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "يجب تسجيل الدخول أولاً.");
+    }
+
+    if (request.auth.token.admin !== true) {
+      throw new HttpsError("permission-denied", "هذه العملية للأدمن فقط.");
+    }
+
+    const questionId = request.data?.questionId;
+
+    if (
+      typeof questionId !== "string" ||
+      !/^[a-zA-Z0-9_-]{1,150}$/.test(questionId)
+    ) {
+      throw new HttpsError("invalid-argument", "رقم السؤال غير صحيح.");
+    }
+
+    const questionRef = db.collection("communityQuestions").doc(questionId);
+
+    await db.runTransaction(async (transaction) => {
+      const snap = await transaction.get(questionRef);
+
+      if (!snap.exists) {
+        throw new HttpsError("not-found", "السؤال غير موجود.");
+      }
+
+      const question = snap.data();
+
+      if (!["clarifying", "voting"].includes(question.status)) {
+        throw new HttpsError(
+          "failed-precondition",
+          "السؤال مغلق بالفعل أو غير متاح.",
+        );
+      }
+
+      transaction.update(questionRef, {
+        status: "closed",
+        voteOpen: false,
+        closedAt: FieldValue.serverTimestamp(),
+        closedBy: request.auth.uid,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    });
+
+    return {
+      success: true,
+      message: "تم إغلاق السؤال بنجاح.",
+    };
+  },
+);
+
+// نشر النكتة بعد انتهاء تصويت الجمهور - للأدمن فقط
+exports.publishCommunityQuestionJoke = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "يجب تسجيل الدخول أولاً.");
+    }
+
+    if (request.auth.token.admin !== true) {
+      throw new HttpsError("permission-denied", "هذه العملية للأدمن فقط.");
+    }
+
+    const questionId = request.data?.questionId;
+
+    if (
+      typeof questionId !== "string" ||
+      !/^[a-zA-Z0-9_-]{1,150}$/.test(questionId)
+    ) {
+      throw new HttpsError("invalid-argument", "رقم السؤال غير صحيح.");
+    }
+
+    const questionRef = db.collection("communityQuestions").doc(questionId);
+
+    await db.runTransaction(async (transaction) => {
+      const questionSnap = await transaction.get(questionRef);
+
+      if (!questionSnap.exists) {
+        throw new HttpsError("not-found", "السؤال غير موجود.");
+      }
+
+      const question = questionSnap.data();
+      const jokeId = question.sourceJokeId;
+
+      if (
+        typeof jokeId !== "string" ||
+        !/^[a-zA-Z0-9_-]{1,150}$/.test(jokeId)
+      ) {
+        throw new HttpsError(
+          "failed-precondition",
+          "النكتة الأصلية المرتبطة بالسؤال غير محددة.",
+        );
+      }
+
+      if (question.publishedAt) {
+        throw new HttpsError("failed-precondition", "تم نشر النكتة بالفعل.");
+      }
+
+      const jokeRef = db.collection("communityJokes").doc(jokeId);
+      const jokeSnap = await transaction.get(jokeRef);
+
+      if (!jokeSnap.exists || jokeSnap.data().status !== "question") {
+        throw new HttpsError(
+          "failed-precondition",
+          "النكتة الأصلية غير متاحة للنشر.",
+        );
+      }
+
+      transaction.update(jokeRef, {
+        status: "published",
+        reviewedAt: FieldValue.serverTimestamp(),
+        reviewedBy: request.auth.uid,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+
+      transaction.update(questionRef, {
+        publishedAt: FieldValue.serverTimestamp(),
+        publishedBy: request.auth.uid,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    });
+
+    return {
+      success: true,
+      message: "تم نشر النكتة بنجاح.",
+    };
+  },
+);
+
 exports.getPublishedCommunityJokes = onCall(
   {
     cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
@@ -1639,5 +2261,81 @@ exports.getPublishedCommunityJokes = onCall(
     });
 
     return { jokes };
+  },
+);
+
+// حذف النكتة والسؤال وتفاعلات الجمهور - للأدمن فقط
+exports.deleteCommunityQuestionJoke = onCall(
+  {
+    cors: ["http://localhost:4321", "https://lolme.cc", "https://www.lolme.cc"],
+  },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "يجب تسجيل الدخول أولاً.");
+    }
+
+    if (request.auth.token.admin !== true) {
+      throw new HttpsError("permission-denied", "هذه العملية للأدمن فقط.");
+    }
+
+    const questionId = request.data?.questionId;
+
+    if (
+      typeof questionId !== "string" ||
+      !/^[a-zA-Z0-9_-]{1,150}$/.test(questionId)
+    ) {
+      throw new HttpsError("invalid-argument", "رقم السؤال غير صحيح.");
+    }
+
+    const questionRef = db.collection("communityQuestions").doc(questionId);
+
+    let jokeRef = null;
+
+    await db.runTransaction(async (transaction) => {
+      const questionSnap = await transaction.get(questionRef);
+
+      if (!questionSnap.exists) {
+        throw new HttpsError("not-found", "السؤال غير موجود.");
+      }
+
+      const question = questionSnap.data();
+
+      const jokeId = question.sourceJokeId;
+
+      if (
+        typeof jokeId !== "string" ||
+        !/^[a-zA-Z0-9_-]{1,150}$/.test(jokeId)
+      ) {
+        throw new HttpsError(
+          "failed-precondition",
+          "النكتة الأصلية المرتبطة بالسؤال غير محددة.",
+        );
+      }
+
+      jokeRef = db.collection("communityJokes").doc(jokeId);
+
+      const jokeSnap = await transaction.get(jokeRef);
+
+      // إيقاف التفاعل أولاً حتى لا يستقبل السؤال تعليقات أو تصويتات جديدة.
+      transaction.update(questionRef, {
+        status: "deleted",
+        voteOpen: false,
+        deletedAt: FieldValue.serverTimestamp(),
+        deletedBy: request.auth.uid,
+      });
+
+      // حذف النكتة الأصلية إذا كانت لا تزال مرتبطة بالسؤال.
+      if (jokeSnap.exists) {
+        transaction.delete(jokeRef);
+      }
+    });
+
+    // حذف السؤال وكل الـ subcollections التابعة له.
+    await db.recursiveDelete(questionRef);
+
+    return {
+      success: true,
+      message: "تم حذف النكتة والسؤال وتفاعلاتهما.",
+    };
   },
 );
