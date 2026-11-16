@@ -5,42 +5,65 @@ export const prerender = false;
 
 const pageUrl = "https://lolme.cc/community-jokes";
 
+const starterJokes = [
+  "واحد راح للدكتور قاله: كل ما أشرب شاي عيني بتوجعني، قاله: شيل المعلقة من الكوباية الأول 😂",
+  "واحد بخيل وقع منه جنيه في البلاعة، نزل وراه وقال: مش هسيبك تغرق لوحدك 🤣",
+  "مدرس سأل طالب: إيه أسرع حاجة في الدنيا؟ قاله: الإجازة يا أستاذ، بتيجي وتخلص قبل ما نحس بيها 😅",
+  "واحد اشترى ساعة ضد الميه، أول ما نزل البحر الساعة غرقت وهو اللي فضل عايش 😂",
+  "واحد كسلان جدًا، لما حلم إنه بيجري صحي من النوم عشان يرتاح 🤣",
+  "واحد راح يشتري نظارة، قال للبياع: عايز نظارة أشوف بيها المستقبل، قاله: دي عند العراف مش عندي 😂",
+  "واحد نام متأخر، صحي لقى نفسه متأخر برضه.. قال: حتى النوم مبقاش بينفع 😆",
+  "واحد بيقول لصاحبه: أنا ذاكرتي قوية جدًا، بس مش فاكر في إيه بالظبط 🤣",
+  "واحد دخل مطعم قال للجرسون: عندكم أكل سريع؟ قاله: أيوه، قاله: طب خليه يجري ورايا 😂",
+  "واحد اشترى موبايل ضد الكسر، وقع منه الموبايل واتكسر هو من الزعل 😅",
+  "واحد راح البنك يفتح حساب، الموظف سأله: معاك كام؟ قاله: لو معايا كنت جيت أفتح حساب ليه؟ 😂",
+  "واحد بيقول لمراته: أنا بحب الهدوء، قالتله: وأنا كمان، قالها: طب اسكتي بقى 🤣",
+  "واحد سأل صاحبه: إنت بتصحى بدري؟ قاله: لأ، أنا بصحى متأخر بس بكون صاحي من بدري 😆",
+  "واحد دخل امتحان جغرافيا، أول سؤال: أين تقع الصين؟ كتب: في قلب آسيا يا أستاذ، متقلقش 😂",
+  "واحد راح الجيم أول يوم، رجع قال لأمه: ادعيلي، قالتله: مالك؟ قالها: المدرب قاللي هنبدأ من الصفر 🤣",
+  "واحد اشترى سرير جديد، نام عليه يومين ورجعه، قالهم: مش مريح، قالوله: ليه؟ قال: كل ما أنام عليه أصحى 😅",
+  "واحد بيقول لصاحبه: أنا بقيت نباتي، قاله: يعني مبتاكلش لحمة؟ قاله: لأ، بس بقعد جنب الزرع وأنا باكل 😂",
+  "واحد سأل صاحبه: إيه أخبار الشغل؟ قاله: زي الفل، كل يوم بروح أستلم المرتب.. في الحلم 🤣",
+  "واحد راح للحلاق قاله: عايز قصة تخليني أصغر عشر سنين، الحلاق قاله: أعملك قصة أطفال؟ 😂",
+  "واحد فتح التلاجة بالليل، لقى النور منور، قال: حتى التلاجة مش عارفة تنام من كتر التفكير 😆",
+];
+
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  "name": "نكت المجتمع | LOLME",
-  "description":
-    "أحدث النكت المضحكة والمشاركات الكوميدية من مجتمع LOLME. اقرأ نكت الجمهور وشاركنا نكتتك.",
-  "url": pageUrl,
-  "inLanguage": "ar",
-  "isPartOf": {
+  name: "نكت المجتمع | LOLME",
+  description:
+  "نكت LOLME المضحكة ونكت المجتمع المنشورة. اقرأ النكت وشاركنا الضحك.",
+  url: pageUrl,
+  inLanguage: "ar",
+  isPartOf: {
     "@type": "WebSite",
-    "name": "LOLME",
-    "url": "https://lolme.cc/"
+    name: "LOLME",
+    url: "https://lolme.cc/",
   },
-  "breadcrumb": {
+  breadcrumb: {
     "@type": "BreadcrumbList",
-    "itemListElement": [
+    itemListElement: [
       {
         "@type": "ListItem",
-        "position": 1,
-        "name": "الرئيسية",
-        "item": "https://lolme.cc/"
+        position: 1,
+        name: "الرئيسية",
+        item: "https://lolme.cc/",
       },
       {
         "@type": "ListItem",
-        "position": 2,
-        "name": "نكت المجتمع",
-        "item": pageUrl
-      }
-    ]
-  }
+        position: 2,
+        name: "نكت المجتمع",
+        item: pageUrl,
+      },
+    ],
+  },
 };
 ---
 
 <Layout
   title="نكت مضحكة من الجمهور 😂 | نكت المجتمع - LOLME"
-description="اقرأ أحدث النكت المضحكة من مجتمع LOLME، وشارك نكتتك مع الجمهور. نكت مصرية وعربية وضحك متجدد."
+  description="اقرأ نكت LOLME المضحكة ونكت المجتمع المنشورة، وشارك نكتتك مع الجمهور. نكت مصرية وعربية وضحك متجدد."
 >
   <script
     type="application/ld+json"
@@ -65,31 +88,63 @@ description="اقرأ أحدث النكت المضحكة من مجتمع LOLME،
       </div>
 
       <div class="jokes-page card">
-<ul id="community-jokes-list" class="community-jokes-list">
-  <li class="card tilt-card community-loading">
-    <div class="loading-hero">
-      <span class="loading-emoji">🤣</span>
-      <h3>بنجهزلك جرعة الضحك!</h3>
-      <p>بنحمّل أحدث نكت المجتمع... استعد للضحك 😂</p>
-    </div>
+      <section class="starter-community-jokes" aria-labelledby="starter-jokes-title" >
+        <h2 id="starter-jokes-title">😂 نكت من LOLME</h2>
+        <p>مجموعة من النكت الافتتاحية اللي بدأنا بيها الضحك!</p>
 
-    <div class="loading-progress">
-      <span></span>
-    </div>
+        <ul class="community-jokes-list">
+          {
+            starterJokes.map((joke, index) => {
+              const jokeId = `starter_${String(index + 1).padStart(2, "0")}`;
 
-    <small class="loading-caption">لحظات ونكون جاهزين ❤️</small>
+              return (
+                <li class="card tilt-card" data-joke-id={jokeId}>
+                  <div class="community-joke-meta">😂 نكتة من LOLME</div>
 
-    <div class="skeleton-joke">
-      <div class="skeleton-meta">
-        <span></span>
-        <span></span>
-      </div>
+                  <p class="community-joke-text">{joke}</p>
 
-      <div class="skeleton-line"></div>
-      <div class="skeleton-line short"></div>
-    </div>
-  </li>
-</ul>
+                  <div class="joke-reactions" data-reactions-for={jokeId} />
+
+                  <button
+                    type="button"
+                    class="share-btn"
+                    data-share-joke={joke}
+                  >
+                    شارك الضحكة 😂
+                  </button>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </section>
+</div>
+      <div class="jokes-page card">
+        <ul id="community-jokes-list" class="community-jokes-list">
+          <li class="card tilt-card community-loading">
+            <div class="loading-hero">
+              <span class="loading-emoji">🤣</span>
+              <h3>بنجهزلك جرعة الضحك!</h3>
+              <p>بنحمّل أحدث نكت المجتمع... استعد للضحك 😂</p>
+            </div>
+
+            <div class="loading-progress">
+              <span></span>
+            </div>
+
+            <small class="loading-caption">لحظات ونكون جاهزين ❤️</small>
+
+            <div class="skeleton-joke">
+              <div class="skeleton-meta">
+                <span></span>
+                <span></span>
+              </div>
+
+              <div class="skeleton-line"></div>
+              <div class="skeleton-line short"></div>
+            </div>
+          </li>
+        </ul>
       </div>
     </section>
 
@@ -103,138 +158,3 @@ description="اقرأ أحدث النكت المضحكة من مجتمع LOLME،
   <link rel="stylesheet" href="/css/jokes.css" />
   <script type="module" src="/js/community-jokes.js"></script>
 </Layout>
-
-
-<!-- <style>
-  .community-page {
-    width: min(100% - 30px, 900px);
-    margin: 35px auto 60px;
-    color: #e2e8f0;
-  }
-
-  .community-hero {
-    text-align: center;
-    padding: 35px 20px;
-    background: #202c40;
-    border: 1px solid #34465e;
-    border-radius: 16px;
-    margin-bottom: 30px;
-  }
-
-  .community-hero-icon {
-    font-size: 42px;
-  }
-
-  .community-hero h1 {
-    color: #facc15;
-    font-size: 30px;
-    margin: 10px 0;
-    font-weight: 800;
-  }
-
-  .community-hero p {
-    color: #aab8ca;
-    line-height: 1.8;
-    margin: 0 0 22px;
-  }
-
-  .send-joke-link,
-  .community-bottom-cta a {
-    display: inline-block;
-    text-decoration: none;
-    background: #22c55e;
-    color: #10251a;
-    padding: 11px 20px;
-    border-radius: 9px;
-    font-weight: 800;
-    transition: 0.2s ease;
-  }
-
-  .send-joke-link:hover,
-  .community-bottom-cta a:hover {
-    background: #4ade80;
-    transform: translateY(-2px);
-  }
-
-  .feed-heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 18px;
-  }
-
-  .feed-heading h2 {
-    font-size: 22px;
-    color: #facc15;
-    margin: 0;
-    font-weight: 800;
-  }
-
-  #community-jokes-total {
-    color: #94a3b8;
-    font-size: 13px;
-  }
-
-  /* نلغي تنسيق القائمة الافتراضي فقط */
-  #community-jokes-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  /* نفس كروت النكت الأصلية، دون إعادة تعريف أحجامها */
-  :global(#community-jokes-list > li.card) {
-    margin-bottom: 15px;
-  }
-
-  :global(#community-jokes-list .joke-reactions) {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin: 5px 0;
-  }
-
-  .community-loading {
-    text-align: center;
-    color: #aab8ca;
-    padding: 30px 15px;
-  }
-
-  .community-bottom-cta {
-    text-align: center;
-    margin-top: 35px;
-    padding: 30px 20px;
-    background: #202c40;
-    border: 1px solid #34465e;
-    border-radius: 16px;
-  }
-
-  .community-bottom-cta h2 {
-    color: #facc15;
-    margin-top: 0;
-  }
-
-  .community-bottom-cta p {
-    color: #aab8ca;
-    line-height: 1.8;
-    margin-bottom: 22px;
-  }
-
-  @media (max-width: 600px) {
-    .community-page {
-      margin-top: 20px;
-    }
-
-    .community-hero {
-      padding: 28px 15px;
-    }
-
-    .community-hero h1 {
-      font-size: 25px;
-    }
-  }
-</style> -->

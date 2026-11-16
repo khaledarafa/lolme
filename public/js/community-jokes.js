@@ -13,7 +13,7 @@ const getPublishedJokes = httpsCallable(
 
 // بدء العمليتين بالتوازي دون انتظار إحداهما للأخرى
 const authPromise = jokesAuthReady;
-const jokesPromise = getPublishedJokes();
+// const jokesPromise = getPublishedJokes();
 
 function formatDate(timestamp) {
   if (!timestamp) return "";
@@ -141,15 +141,57 @@ async function loadReactions() {
   }
 }
 
+// مشاركة النكت الافتتاحية الموجودة في HTML
+document.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-share-joke]");
+
+  if (!button) return;
+
+  const jokeText = button.dataset.shareJoke;
+
+  if (!jokeText) return;
+
+  const shareData = {
+    title: "نكت LOLME 😂",
+    text: `${jokeText} 😂🤣 من موقع لول مي!`,
+    url: window.location.href,
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      await navigator.clipboard.writeText(
+        `${shareData.text}\n${shareData.url}`,
+      );
+
+      button.textContent = "تم النسخ ✓";
+
+      setTimeout(() => {
+        button.textContent = "شارك الضحكة 😂";
+      }, 2000);
+    }
+  } catch (error) {
+    if (error.name !== "AbortError") {
+      console.error("[Community Jokes] Share error:", error);
+    }
+  }
+});
+
 async function loadCommunityJokes() {
   try {
     total.textContent = "جاري التحميل...";
 
     // انتظار تحميل النكت فقط، وليس تسجيل الدخول
-    const result = await jokesPromise;
+    // const result = await jokesPromise;
+    const result = await getPublishedJokes();
     const jokes = result.data.jokes || [];
 
-    total.textContent = `🤣 ${jokes.length} نكتة`;
+    const starterCount = document.querySelectorAll(
+      ".starter-community-jokes [data-joke-id]",
+    ).length;
+
+    total.textContent = `🤣 ${starterCount + jokes.length} نكتة`;
 
     if (!jokes.length) {
       showEmptyState();
@@ -167,13 +209,16 @@ async function loadCommunityJokes() {
     console.log("[Community Jokes] Loaded:", jokes.length);
 
     // تشغيل التفاعلات في الخلفية بعد عرض النكت
-    void loadReactions();
-
+    // void loadReactions();
   } catch (error) {
     console.error("[Community Jokes] Loading error:", error);
 
     total.textContent = "تعذر تحميل النكت";
     showError();
+  } finally {
+    // تشغيل التفاعلات بعد انتهاء محاولة تحميل نكت المجتمع
+    // سواء نجح التحميل أو فشل
+    void loadReactions();
   }
 }
 
